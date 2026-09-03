@@ -13,19 +13,27 @@ api/server.py    ← thin Flask adapter that exposes the engine over HTTP
 src/             ← React + Vite + Tailwind + Framer Motion + Three.js frontend
 ```
 
-## Run locally
+## Run it (one command)
+
+Requires **Python 3.10+** and **Node.js 18+**.
+
+| Windows | macOS / Linux |
+| --- | --- |
+| double-click **`start.bat`** | `./start.sh` |
+
+Then open **http://localhost:5000** — that single server hosts both the website and the API.
+
+<details>
+<summary>Manual / development mode (hot reload)</summary>
 
 ```bash
-# 1. Python API (imports quiz.py as-is)
-pip install flask flask-cors
-python3 api/server.py            # http://localhost:5000
+pip install -r requirements.txt
+python3 api/server.py            # API on http://localhost:5000
 
-# 2. Frontend (dev server proxies /api → :5000)
 npm install
-npm run dev                      # http://localhost:5173
+npm run dev                      # UI on http://localhost:5173 (proxies /api → :5000)
 ```
-
-Production: `npm run build` → the Flask adapter serves `dist/` from `/`.
+</details>
 
 ## API (adapter over the engine)
 
