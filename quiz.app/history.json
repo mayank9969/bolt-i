@@ -1,0 +1,102 @@
+[
+    {
+        "category": "python",
+        "difficulty": "medium",
+        "total_questions": 2,
+        "correct_answers": 2,
+        "wrong_answers": 0,
+        "score": 6.0,
+        "total_marks": 6.0,
+        "percentage": 100.0
+    },
+    {
+        "category": "maths",
+        "difficulty": "easy",
+        "total_questions": 3,
+        "correct_answers": 3,
+        "wrong_answers": 0,
+        "score": 5.0,
+        "total_marks": 5.0,
+        "percentage": 100.0
+    },
+    {
+        "category": "maths",
+        "difficulty": "easy",
+        "total_questions": 3,
+        "correct_answers": 3,
+        "wrong_answers": 0,
+        "score": 5.0,
+        "total_marks": 5.0,
+        "percentage": 100.0
+    },
+    {
+        "category": "python",
+        "difficulty": "easy",
+        "total_questions": 16,
+        "correct_answers": 2,
+        "wrong_answers": 14,
+        "score": 2.0,
+        "total_marks": 24.0,
+        "percentage": 8.333333333333332
+    },
+    {
+        "category": "maths",
+        "difficulty": "easy",
+        "total_questions": 10,
+        "correct_answers": 9,
+        "wrong_answers": 1,
+        "score": 14.0,
+        "total_marks": 16.0,
+        "percentage": 87.5
+    },
+    {
+        "category": "math",
+        "difficulty": "easy",
+        "total_questions": 15,
+        "correct_answers": 13,
+        "wrong_answers": 2,
+        "score": 26,
+        "total_marks": 30,
+        "percentage": 86.66666666666667
+    },
+    {
+        "category": "maths",
+        "difficulty": "easy",
+        "total_questions": 19,
+        "correct_answers": 0,
+        "wrong_answers": 19,
+        "score": 0,
+        "total_marks": 34.0,
+        "percentage": 0.0
+    },
+    {
+        "category": "maths",
+        "difficulty": "medium",
+        "total_questions": 19,
+        "correct_answers": 2,
+        "wrong_answers": 17,
+        "score": 4.0,
+        "total_marks": 64.0,
+        "percentage": 6.25
+    },
+    {
+        "category": "maths",
+        "difficulty": "easy",
+        "total_questions": 14,
+        "correct_answers": 7,
+        "wrong_answers": 7,
+        "score": 11.0,
+        "total_marks": 23.0,
+        "percentage": 47.82608695652174
+    },
+    {
+        "category": "maths",
+        "difficulty": "easy",
+        "total_questions": 5,
+        "correct_answers": 4,
+        "wrong_answers": 1,
+        "score": 7.0,
+        "total_marks": 9.0,
+        "percentage": 77.77777777777779
+    }
+]

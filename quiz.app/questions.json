@@ -1,0 +1,996 @@
+{
+    "maths": {
+        "easy": [
+            {
+                "question": "Solve: 3x + 5 = 20.",
+                "answer": "5",
+                "category": "maths",
+                "difficulty": "easy",
+                "question_type": "normal",
+                "options": {}
+            },
+            {
+                "question": "Find the value of 2^5.",
+                "answer": "32",
+                "category": "maths",
+                "difficulty": "easy",
+                "question_type": "normal",
+                "options": {}
+            },
+            {
+                "question": "Find the HCF of 18 and 24.",
+                "answer": "6",
+                "category": "maths",
+                "difficulty": "easy",
+                "question_type": "normal",
+                "options": {}
+            },
+            {
+                "question": "Find the LCM of 8 and 12.",
+                "answer": "24",
+                "category": "maths",
+                "difficulty": "easy",
+                "question_type": "normal",
+                "options": {}
+            },
+            {
+                "question": "If A = {1,2,3} and B = {3,4,5}, what is A \u00e2\u02c6\u00a9 B?",
+                "answer": "B",
+                "category": "maths",
+                "difficulty": "easy",
+                "question_type": "mcq",
+                "options": {
+                    "A": "{1,2}",
+                    "B": "{3}",
+                    "C": "{1,2,3,4,5}",
+                    "D": "{4,5}"
+                }
+            },
+            {
+                "question": "What is sin 30\u00c2\u00b0?",
+                "answer": "C",
+                "category": "maths",
+                "difficulty": "easy",
+                "question_type": "mcq",
+                "options": {
+                    "A": "0",
+                    "B": "1",
+                    "C": "1/2",
+                    "D": "\u00e2\u02c6\u01613/2"
+                }
+            },
+            {
+                "question": "Find the slope of the line through (1,2) and (3,6).",
+                "answer": "2",
+                "category": "maths",
+                "difficulty": "easy",
+                "question_type": "normal",
+                "options": {}
+            },
+            {
+                "question": "What is the determinant of [[2,0],[0,3]]?",
+                "answer": "A",
+                "category": "maths",
+                "difficulty": "easy",
+                "question_type": "mcq",
+                "options": {
+                    "A": "6",
+                    "B": "5",
+                    "C": "3",
+                    "D": "0"
+                }
+            },
+            {
+                "question": "Differentiate x^2 with respect to x.",
+                "answer": "2x",
+                "category": "maths",
+                "difficulty": "easy",
+                "question_type": "normal",
+                "options": {}
+            },
+            {
+                "question": "Integrate 2x with respect to x.",
+                "answer": "x^2 + C",
+                "category": "maths",
+                "difficulty": "easy",
+                "question_type": "normal",
+                "options": {}
+            },
+            {
+                "question": "What is the probability of getting a head when a fair coin is tossed once?",
+                "answer": "A",
+                "category": "maths",
+                "difficulty": "easy",
+                "question_type": "mcq",
+                "options": {
+                    "A": "1/2",
+                    "B": "1/3",
+                    "C": "1/4",
+                    "D": "1"
+                }
+            },
+            {
+                "question": "Find the 5th term of the arithmetic sequence 2, 5, 8, 11, ...",
+                "answer": "14",
+                "category": "maths",
+                "difficulty": "easy",
+                "question_type": "normal",
+                "options": {}
+            },
+            {
+                "question": "What is the distance between (0,0) and (3,4)?",
+                "answer": "D",
+                "category": "maths",
+                "difficulty": "easy",
+                "question_type": "mcq",
+                "options": {
+                    "A": "3",
+                    "B": "4",
+                    "C": "6",
+                    "D": "5"
+                }
+            },
+            {
+                "question": "Solve: x^2 - 9 = 0.",
+                "answer": "3, -3",
+                "category": "maths",
+                "difficulty": "easy",
+                "question_type": "normal",
+                "options": {}
+            },
+            {
+                "question": "What is log10(100)?",
+                "answer": "B",
+                "category": "maths",
+                "difficulty": "easy",
+                "question_type": "mcq",
+                "options": {
+                    "A": "1",
+                    "B": "2",
+                    "C": "10",
+                    "D": "100"
+                }
+            },
+            {
+                "question": "Find the mean of 4, 6, 8, 10.",
+                "answer": "7",
+                "category": "maths",
+                "difficulty": "easy",
+                "question_type": "normal",
+                "options": {}
+            }
+        ],
+        "medium": [
+            {
+                "question": "Solve: 2x^2 - 5x - 3 = 0.",
+                "answer": "3, -1/2",
+                "category": "maths",
+                "difficulty": "medium",
+                "question_type": "normal",
+                "options": {}
+            },
+            {
+                "question": "If f(x) = x^2 + 2x, find f(3).",
+                "answer": "C",
+                "category": "maths",
+                "difficulty": "medium",
+                "question_type": "mcq",
+                "options": {
+                    "A": "9",
+                    "B": "12",
+                    "C": "15",
+                    "D": "18"
+                }
+            },
+            {
+                "question": "Find the inverse of the matrix [[1,0],[0,2]].",
+                "answer": "[[1,0],[0,1/2]]",
+                "category": "maths",
+                "difficulty": "medium",
+                "question_type": "normal",
+                "options": {}
+            },
+            {
+                "question": "Differentiate x^3 - 4x + 7.",
+                "answer": "3x^2 - 4",
+                "category": "maths",
+                "difficulty": "medium",
+                "question_type": "normal",
+                "options": {}
+            },
+            {
+                "question": "Evaluate \u00e2\u02c6\u00ab_0^2 x dx.",
+                "answer": "A",
+                "category": "maths",
+                "difficulty": "medium",
+                "question_type": "mcq",
+                "options": {
+                    "A": "2",
+                    "B": "4",
+                    "C": "1",
+                    "D": "3"
+                }
+            },
+            {
+                "question": "Find the sum of the first 10 terms of 3, 6, 9, ...",
+                "answer": "165",
+                "category": "maths",
+                "difficulty": "medium",
+                "question_type": "normal",
+                "options": {}
+            },
+            {
+                "question": "If tan \u00ce\u00b8 = 3/4 for an acute angle \u00ce\u00b8, what is sin \u00ce\u00b8?",
+                "answer": "D",
+                "category": "maths",
+                "difficulty": "medium",
+                "question_type": "mcq",
+                "options": {
+                    "A": "4/5",
+                    "B": "3/4",
+                    "C": "5/4",
+                    "D": "3/5"
+                }
+            },
+            {
+                "question": "Find the equation of the line with slope 3 passing through (2,1).",
+                "answer": "y - 1 = 3(x - 2)",
+                "category": "maths",
+                "difficulty": "medium",
+                "question_type": "normal",
+                "options": {}
+            },
+            {
+                "question": "Find the eigenvalues of [[2,0],[0,5]].",
+                "answer": "2, 5",
+                "category": "maths",
+                "difficulty": "medium",
+                "question_type": "normal",
+                "options": {}
+            },
+            {
+                "question": "If two events A and B are independent, then P(A \u00e2\u02c6\u00a9 B) equals:",
+                "answer": "B",
+                "category": "maths",
+                "difficulty": "medium",
+                "question_type": "mcq",
+                "options": {
+                    "A": "P(A)+P(B)",
+                    "B": "P(A)P(B)",
+                    "C": "P(A)-P(B)",
+                    "D": "P(A)/P(B)"
+                }
+            },
+            {
+                "question": "Differentiate sin x.",
+                "answer": "cos x",
+                "category": "maths",
+                "difficulty": "medium",
+                "question_type": "normal",
+                "options": {}
+            },
+            {
+                "question": "Evaluate \u00e2\u02c6\u00ab cos x dx.",
+                "answer": "sin x + C",
+                "category": "maths",
+                "difficulty": "medium",
+                "question_type": "normal",
+                "options": {}
+            },
+            {
+                "question": "What is the rank of the identity matrix of order 3?",
+                "answer": "C",
+                "category": "maths",
+                "difficulty": "medium",
+                "question_type": "mcq",
+                "options": {
+                    "A": "1",
+                    "B": "2",
+                    "C": "3",
+                    "D": "0"
+                }
+            },
+            {
+                "question": "Find the midpoint of (2,5) and (8,11).",
+                "answer": "(5,8)",
+                "category": "maths",
+                "difficulty": "medium",
+                "question_type": "normal",
+                "options": {}
+            },
+            {
+                "question": "For y = x^2, the vertex is:",
+                "answer": "A",
+                "category": "maths",
+                "difficulty": "medium",
+                "question_type": "mcq",
+                "options": {
+                    "A": "(0,0)",
+                    "B": "(1,0)",
+                    "C": "(0,1)",
+                    "D": "(1,1)"
+                }
+            },
+            {
+                "question": "Find the variance of the data 2, 4, 6, 8.",
+                "answer": "5",
+                "category": "maths",
+                "difficulty": "medium",
+                "question_type": "normal",
+                "options": {}
+            }
+        ],
+        "hard": [
+            {
+                "question": "Evaluate \u00e2\u02c6\u00ab x e^x dx.",
+                "answer": "e^x(x - 1) + C",
+                "category": "maths",
+                "difficulty": "hard",
+                "question_type": "normal",
+                "options": {}
+            },
+            {
+                "question": "If A is a 3\u00c3\u20143 matrix and det(A)=4, what is det(2A)?",
+                "answer": "D",
+                "category": "maths",
+                "difficulty": "hard",
+                "question_type": "mcq",
+                "options": {
+                    "A": "8",
+                    "B": "16",
+                    "C": "24",
+                    "D": "32"
+                }
+            },
+            {
+                "question": "Solve dy/dx = 3y with y(0)=2.",
+                "answer": "2e^(3x)",
+                "category": "maths",
+                "difficulty": "hard",
+                "question_type": "normal",
+                "options": {}
+            },
+            {
+                "question": "Find the general solution of y'' - 5y' + 6y = 0.",
+                "answer": "y = C1 e^(2x) + C2 e^(3x)",
+                "category": "maths",
+                "difficulty": "hard",
+                "question_type": "normal",
+                "options": {}
+            },
+            {
+                "question": "The radius of convergence of \u00ce\u00a3 x^n/n! is:",
+                "answer": "B",
+                "category": "maths",
+                "difficulty": "hard",
+                "question_type": "mcq",
+                "options": {
+                    "A": "0",
+                    "B": "\u00e2\u02c6\u017e",
+                    "C": "1",
+                    "D": "2"
+                }
+            },
+            {
+                "question": "Find the area enclosed by y=x^2 and y=2x.",
+                "answer": "4/3",
+                "category": "maths",
+                "difficulty": "hard",
+                "question_type": "normal",
+                "options": {}
+            },
+            {
+                "question": "If A is invertible, which statement is always true?",
+                "answer": "C",
+                "category": "maths",
+                "difficulty": "hard",
+                "question_type": "mcq",
+                "options": {
+                    "A": "det(A)=0",
+                    "B": "A has no inverse",
+                    "C": "det(A)\u00e2\u2030\u00a00",
+                    "D": "rank(A)=0"
+                }
+            },
+            {
+                "question": "Find the maximum value of x(10-x) for real x.",
+                "answer": "25",
+                "category": "maths",
+                "difficulty": "hard",
+                "question_type": "normal",
+                "options": {}
+            },
+            {
+                "question": "Evaluate lim(x\u00e2\u2020\u20190) sin(x)/x.",
+                "answer": "1",
+                "category": "maths",
+                "difficulty": "hard",
+                "question_type": "normal",
+                "options": {}
+            },
+            {
+                "question": "If z = 1 + i, what is |z|?",
+                "answer": "A",
+                "category": "maths",
+                "difficulty": "hard",
+                "question_type": "mcq",
+                "options": {
+                    "A": "\u00e2\u02c6\u01612",
+                    "B": "1",
+                    "C": "2",
+                    "D": "0"
+                }
+            },
+            {
+                "question": "Find the area under y=1/x from x=1 to x=e.",
+                "answer": "1",
+                "category": "maths",
+                "difficulty": "hard",
+                "question_type": "normal",
+                "options": {}
+            },
+            {
+                "question": "For a continuous random variable, P(X=a) is:",
+                "answer": "D",
+                "category": "maths",
+                "difficulty": "hard",
+                "question_type": "mcq",
+                "options": {
+                    "A": "1",
+                    "B": "a",
+                    "C": "0.5",
+                    "D": "0"
+                }
+            },
+            {
+                "question": "Find the solution of x^2 + 4x + 13 = 0.",
+                "answer": "-2 + 3i, -2 - 3i",
+                "category": "maths",
+                "difficulty": "hard",
+                "question_type": "normal",
+                "options": {}
+            },
+            {
+                "question": "Evaluate \u00e2\u02c6\u00ab_0^1 x ln x dx.",
+                "answer": "-1/4",
+                "category": "maths",
+                "difficulty": "hard",
+                "question_type": "normal",
+                "options": {}
+            },
+            {
+                "question": "If vectors a and b are perpendicular, their dot product is:",
+                "answer": "B",
+                "category": "maths",
+                "difficulty": "hard",
+                "question_type": "mcq",
+                "options": {
+                    "A": "1",
+                    "B": "0",
+                    "C": "|a||b|",
+                    "D": "-1"
+                }
+            },
+            {
+                "question": "Find the general solution of dy/dx + y = e^x.",
+                "answer": "y = (x/2)e^x + Ce^(-x)",
+                "category": "maths",
+                "difficulty": "hard",
+                "question_type": "normal",
+                "options": {}
+            }
+        ]
+    },
+    "python": {
+        "easy": [
+            {
+                "question": "Which keyword is used to define a function in Python?",
+                "answer": "B",
+                "category": "python",
+                "difficulty": "easy",
+                "question_type": "mcq",
+                "options": {
+                    "A": "func",
+                    "B": "def",
+                    "C": "function",
+                    "D": "define"
+                }
+            },
+            {
+                "question": "What is the type of the value 10 in Python?",
+                "answer": "int",
+                "category": "python",
+                "difficulty": "easy",
+                "question_type": "normal",
+                "options": {}
+            },
+            {
+                "question": "Which method adds one item to the end of a list?",
+                "answer": "C",
+                "category": "python",
+                "difficulty": "easy",
+                "question_type": "mcq",
+                "options": {
+                    "A": "add()",
+                    "B": "insert_end()",
+                    "C": "append()",
+                    "D": "push()"
+                }
+            },
+            {
+                "question": "What is the result of 7 // 2 in Python?",
+                "answer": "3",
+                "category": "python",
+                "difficulty": "easy",
+                "question_type": "normal",
+                "options": {}
+            },
+            {
+                "question": "Which data type stores key-value pairs?",
+                "answer": "A",
+                "category": "python",
+                "difficulty": "easy",
+                "question_type": "mcq",
+                "options": {
+                    "A": "dict",
+                    "B": "list",
+                    "C": "tuple",
+                    "D": "set"
+                }
+            },
+            {
+                "question": "What is the result of len([10,20,30])?",
+                "answer": "3",
+                "category": "python",
+                "difficulty": "easy",
+                "question_type": "normal",
+                "options": {}
+            },
+            {
+                "question": "Which symbol starts a single-line comment in Python?",
+                "answer": "D",
+                "category": "python",
+                "difficulty": "easy",
+                "question_type": "mcq",
+                "options": {
+                    "A": "//",
+                    "B": "<!--",
+                    "C": "--",
+                    "D": "#"
+                }
+            },
+            {
+                "question": "What does str(25) return?",
+                "answer": "25",
+                "category": "python",
+                "difficulty": "easy",
+                "question_type": "normal",
+                "options": {}
+            },
+            {
+                "question": "Which method removes and returns the last item of a list by default?",
+                "answer": "B",
+                "category": "python",
+                "difficulty": "easy",
+                "question_type": "mcq",
+                "options": {
+                    "A": "remove()",
+                    "B": "pop()",
+                    "C": "delete()",
+                    "D": "discard()"
+                }
+            },
+            {
+                "question": "What is the result of 3 ** 2?",
+                "answer": "9",
+                "category": "python",
+                "difficulty": "easy",
+                "question_type": "normal",
+                "options": {}
+            },
+            {
+                "question": "Which collection does not allow duplicate elements?",
+                "answer": "A",
+                "category": "python",
+                "difficulty": "easy",
+                "question_type": "mcq",
+                "options": {
+                    "A": "set",
+                    "B": "list",
+                    "C": "tuple",
+                    "D": "dict"
+                }
+            },
+            {
+                "question": "What does input() return by default?",
+                "answer": "a string",
+                "category": "python",
+                "difficulty": "easy",
+                "question_type": "normal",
+                "options": {}
+            },
+            {
+                "question": "Which keyword is used for a condition after if?",
+                "answer": "C",
+                "category": "python",
+                "difficulty": "easy",
+                "question_type": "mcq",
+                "options": {
+                    "A": "then",
+                    "B": "otherwise",
+                    "C": "elif",
+                    "D": "elseif"
+                }
+            },
+            {
+                "question": "What is the result of 'Py' + 'thon'?",
+                "answer": "Python",
+                "category": "python",
+                "difficulty": "easy",
+                "question_type": "normal",
+                "options": {}
+            },
+            {
+                "question": "Which method converts a string to lowercase?",
+                "answer": "D",
+                "category": "python",
+                "difficulty": "easy",
+                "question_type": "mcq",
+                "options": {
+                    "A": "lowercase()",
+                    "B": "small()",
+                    "C": "down()",
+                    "D": "lower()"
+                }
+            },
+            {
+                "question": "What is the index of the first element in a Python list?",
+                "answer": "0",
+                "category": "python",
+                "difficulty": "easy",
+                "question_type": "normal",
+                "options": {}
+            }
+        ],
+        "medium": [
+            {
+                "question": "What does dict.get('x') return if 'x' is absent and no default is supplied?",
+                "answer": "A",
+                "category": "python",
+                "difficulty": "medium",
+                "question_type": "mcq",
+                "options": {
+                    "A": "None",
+                    "B": "False",
+                    "C": "0",
+                    "D": "KeyError"
+                }
+            },
+            {
+                "question": "What is the output of [x*2 for x in range(3)]?",
+                "answer": "[0, 2, 4]",
+                "category": "python",
+                "difficulty": "medium",
+                "question_type": "normal",
+                "options": {}
+            },
+            {
+                "question": "Which statement correctly creates a tuple with one element?",
+                "answer": "C",
+                "category": "python",
+                "difficulty": "medium",
+                "question_type": "mcq",
+                "options": {
+                    "A": "(5)",
+                    "B": "[5]",
+                    "C": "(5,)",
+                    "D": "{5}"
+                }
+            },
+            {
+                "question": "What does enumerate(['a','b']) produce conceptually?",
+                "answer": "index-value pairs",
+                "category": "python",
+                "difficulty": "medium",
+                "question_type": "normal",
+                "options": {}
+            },
+            {
+                "question": "Which keyword exits the current loop immediately?",
+                "answer": "B",
+                "category": "python",
+                "difficulty": "medium",
+                "question_type": "mcq",
+                "options": {
+                    "A": "stop",
+                    "B": "break",
+                    "C": "exit",
+                    "D": "return_loop"
+                }
+            },
+            {
+                "question": "What is the result of set([1,1,2,3])?",
+                "answer": "{1, 2, 3}",
+                "category": "python",
+                "difficulty": "medium",
+                "question_type": "normal",
+                "options": {}
+            },
+            {
+                "question": "Which exception is raised by 10 / 0?",
+                "answer": "D",
+                "category": "python",
+                "difficulty": "medium",
+                "question_type": "mcq",
+                "options": {
+                    "A": "ValueError",
+                    "B": "TypeError",
+                    "C": "NameError",
+                    "D": "ZeroDivisionError"
+                }
+            },
+            {
+                "question": "What does 'a,b,c'.split(',') return?",
+                "answer": "['a', 'b', 'c']",
+                "category": "python",
+                "difficulty": "medium",
+                "question_type": "normal",
+                "options": {}
+            },
+            {
+                "question": "Which keyword is used to handle an exception?",
+                "answer": "A",
+                "category": "python",
+                "difficulty": "medium",
+                "question_type": "mcq",
+                "options": {
+                    "A": "except",
+                    "B": "catch",
+                    "C": "handle",
+                    "D": "error"
+                }
+            },
+            {
+                "question": "What is the result of {'a':1, 'b':2}.keys() conceptually?",
+                "answer": "a view of the dictionary keys",
+                "category": "python",
+                "difficulty": "medium",
+                "question_type": "normal",
+                "options": {}
+            },
+            {
+                "question": "What does list.sort() return?",
+                "answer": "C",
+                "category": "python",
+                "difficulty": "medium",
+                "question_type": "mcq",
+                "options": {
+                    "A": "the sorted list",
+                    "B": "a new tuple",
+                    "C": "None",
+                    "D": "True"
+                }
+            },
+            {
+                "question": "What is the difference between append() and extend()?",
+                "answer": "append adds one object; extend adds each item from an iterable",
+                "category": "python",
+                "difficulty": "medium",
+                "question_type": "normal",
+                "options": {}
+            },
+            {
+                "question": "Which keyword creates an anonymous function?",
+                "answer": "D",
+                "category": "python",
+                "difficulty": "medium",
+                "question_type": "mcq",
+                "options": {
+                    "A": "anon",
+                    "B": "func",
+                    "C": "inline",
+                    "D": "lambda"
+                }
+            },
+            {
+                "question": "What does range(2,8,2) produce?",
+                "answer": "2, 4, 6",
+                "category": "python",
+                "difficulty": "medium",
+                "question_type": "normal",
+                "options": {}
+            },
+            {
+                "question": "Which file mode opens a file for writing and truncates existing content?",
+                "answer": "B",
+                "category": "python",
+                "difficulty": "medium",
+                "question_type": "mcq",
+                "options": {
+                    "A": "r",
+                    "B": "w",
+                    "C": "a",
+                    "D": "x"
+                }
+            },
+            {
+                "question": "What does isinstance(5, int) return?",
+                "answer": "True",
+                "category": "python",
+                "difficulty": "medium",
+                "question_type": "normal",
+                "options": {}
+            }
+        ],
+        "hard": [
+            {
+                "question": "What is the output of: x=[1,2]; y=x; y.append(3); print(x)?",
+                "answer": "C",
+                "category": "python",
+                "difficulty": "hard",
+                "question_type": "mcq",
+                "options": {
+                    "A": "[1,2]",
+                    "B": "[3]",
+                    "C": "[1,2,3]",
+                    "D": "Error"
+                }
+            },
+            {
+                "question": "What is the purpose of __init__ in a class?",
+                "answer": "to initialize a new instance",
+                "category": "python",
+                "difficulty": "hard",
+                "question_type": "normal",
+                "options": {}
+            },
+            {
+                "question": "Which method is called when str(obj) is used?",
+                "answer": "A",
+                "category": "python",
+                "difficulty": "hard",
+                "question_type": "mcq",
+                "options": {
+                    "A": "__str__",
+                    "B": "__repr__",
+                    "C": "__string__",
+                    "D": "__display__"
+                }
+            },
+            {
+                "question": "What is inheritance in Python?",
+                "answer": "a class deriving attributes and methods from another class",
+                "category": "python",
+                "difficulty": "hard",
+                "question_type": "normal",
+                "options": {}
+            },
+            {
+                "question": "What does super() commonly provide access to?",
+                "answer": "D",
+                "category": "python",
+                "difficulty": "hard",
+                "question_type": "mcq",
+                "options": {
+                    "A": "only global variables",
+                    "B": "only static methods",
+                    "C": "the Python interpreter",
+                    "D": "the parent class implementation"
+                }
+            },
+            {
+                "question": "What is a decorator in Python?",
+                "answer": "a callable that modifies or extends another function or class",
+                "category": "python",
+                "difficulty": "hard",
+                "question_type": "normal",
+                "options": {}
+            },
+            {
+                "question": "What does a generator function use to produce values lazily?",
+                "answer": "B",
+                "category": "python",
+                "difficulty": "hard",
+                "question_type": "mcq",
+                "options": {
+                    "A": "return",
+                    "B": "yield",
+                    "C": "generate",
+                    "D": "lazy"
+                }
+            },
+            {
+                "question": "What is the difference between shallow copy and deep copy?",
+                "answer": "shallow copy shares nested objects; deep copy recursively copies nested objects",
+                "category": "python",
+                "difficulty": "hard",
+                "question_type": "normal",
+                "options": {}
+            },
+            {
+                "question": "Which module provides deepcopy?",
+                "answer": "C",
+                "category": "python",
+                "difficulty": "hard",
+                "question_type": "mcq",
+                "options": {
+                    "A": "copytools",
+                    "B": "clone",
+                    "C": "copy",
+                    "D": "deepcopy"
+                }
+            },
+            {
+                "question": "What is method overriding?",
+                "answer": "a subclass providing its own implementation of an inherited method",
+                "category": "python",
+                "difficulty": "hard",
+                "question_type": "normal",
+                "options": {}
+            },
+            {
+                "question": "What does the @property decorator allow?",
+                "answer": "A",
+                "category": "python",
+                "difficulty": "hard",
+                "question_type": "mcq",
+                "options": {
+                    "A": "method-style logic to be accessed like an attribute",
+                    "B": "converting a class to a module",
+                    "C": "making every method static",
+                    "D": "deleting an attribute"
+                }
+            },
+            {
+                "question": "What is duck typing?",
+                "answer": "behavior-based compatibility rather than requiring a specific declared type",
+                "category": "python",
+                "difficulty": "hard",
+                "question_type": "normal",
+                "options": {}
+            },
+            {
+                "question": "Which data structure is best suited for average O(1) key lookup?",
+                "answer": "D",
+                "category": "python",
+                "difficulty": "hard",
+                "question_type": "mcq",
+                "options": {
+                    "A": "list",
+                    "B": "tuple",
+                    "C": "string",
+                    "D": "dictionary"
+                }
+            },
+            {
+                "question": "What is a context manager used with the with statement for?",
+                "answer": "controlled setup and cleanup of resources",
+                "category": "python",
+                "difficulty": "hard",
+                "question_type": "normal",
+                "options": {}
+            },
+            {
+                "question": "What does functools.lru_cache provide?",
+                "answer": "B",
+                "category": "python",
+                "difficulty": "hard",
+                "question_type": "mcq",
+                "options": {
+                    "A": "parallel execution",
+                    "B": "memoization/caching of function results",
+                    "C": "file compression",
+                    "D": "garbage collection"
+                }
+            },
+            {
+                "question": "What is the purpose of if __name__ == '__main__':?",
+                "answer": "to run code only when the file is executed directly",
+                "category": "python",
+                "difficulty": "hard",
+                "question_type": "normal",
+                "options": {}
+            }
+        ]
+    }
+}
