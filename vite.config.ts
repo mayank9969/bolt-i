@@ -12,10 +12,15 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  // Only the real app entry — ignore the archived Bolt export in /bolt
+  optimizeDeps: {
+    entries: ['index.html'],
+  },
   server: {
     host: '0.0.0.0',
     port: 5173,
     allowedHosts: true,
+    watch: { ignored: ['**/bolt/**', '**/quiz.app/**'] },
     proxy: {
       '/api': {
         target: process.env.API_URL || 'http://127.0.0.1:5000',
