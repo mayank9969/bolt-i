@@ -31,7 +31,7 @@ export default function TrendChart({ history }: TrendChartProps) {
   const avgY = pad.top + ch - (avg / 100) * ch
 
   return (
-    <div className="surface rounded-2.5xl p-5 sm:p-6">
+    <div className="pt-2">
       <div className="flex items-center justify-between mb-4">
         <div>
           <h3 className="font-display text-lg text-fg">Score trend</h3>

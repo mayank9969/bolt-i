@@ -56,18 +56,23 @@ and the system preference is respected on first visit. The light default is evid
 (positive-polarity reading research); see [`docs/DESIGN-SYSTEM.md`](docs/DESIGN-SYSTEM.md) for
 the research, the 3D reference review, the token contract and the motion system.
 
-### The Nexus (3D identity)
+### The Living Knowledge Network (3D identity)
 
-One persistent WebGL set-piece — a knowledge lattice of ceramic nodes joined by metal struts around
-a dark core — lives in a single canvas under every page and changes state per route:
+One persistent WebGL scene lives in a single canvas under every page. Three regions of knowledge
+(Maths · Python · Mixed) sit at different depths, each with a dark core, a ring of topic nodes and a
+cloud of question nodes joined by hairline links. Signals travel outward from the cores; optional
+links relink slowly so the network rearranges instead of spinning; depth fog dissolves the far
+regions into the paper. The page decides how it behaves:
 
-| Page    | Mode        | What drives it                                  |
-| ------- | ----------- | ----------------------------------------------- |
-| Home    | establish   | scroll moves the camera; cursor tilts the object |
-| Setup   | configure   | topic → sector focus, difficulty → density, count → lit fraction |
-| Quiz    | quiet       | dims to a corner so the question dominates      |
-| Result  | resolve     | score → fraction of nodes lit                   |
-| History | archive     | number of attempts → nodes lit                  |
+| Page    | State       | What drives it                                                        |
+| ------- | ----------- | --------------------------------------------------------------------- |
+| Home    | alive       | scroll dollies the camera in; cursor repels nearby nodes; hover labels a node |
+| Setup   | responsive  | region → camera and focus move there; tier → link density; size → activation |
+| Quiz    | quiet       | recedes into the fog at half update rate; one soft signal per question |
+| Result  | activated   | camera pulls back from a core while the score lights the network outward |
+| History | accumulated | each region is "established" from real attempts there, weighted by accuracy |
+| About   | atmospheric | museum-slow, off to the side                                           |
 
-Quality tiers (high / medium / low) are chosen from device signals; devices without WebGL or with
-`prefers-reduced-motion` get a static SVG lattice instead.
+Quality tiers (high / medium / low) come from device signals and a frame-rate monitor steps the
+resolution down under load; devices without WebGL or with `prefers-reduced-motion` get a static
+SVG network instead. The canvas is `pointer-events: none`, so it can never block a tap.

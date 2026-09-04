@@ -5,20 +5,21 @@ import { getCategories, startQuiz } from '@/api/quizApi'
 import { useQuiz } from '@/context/QuizContext'
 import type { CategoryInfo, DifficultyChoice } from '@/types/quiz'
 import Reveal from '@/components/Reveal'
-import { useLattice } from '@/components/three/store'
-import { ArrowRight, Check, Code, Cross, Layers, Minus, Plus, Sigma } from '@/components/ui/Icons'
+import { pulseNetwork, useNetwork } from '@/components/three/store'
+import { ArrowRight, Check, Code, Cross, Minus, Plus, Sigma } from '@/components/ui/Icons'
 import Tier from '@/components/ui/Tier'
 import { DIFFICULTY_ORDER, difficultyLevel, labelCategory, labelDifficulty } from '@/lib/format'
 
 const DIFFICULTY_META: Record<DifficultyChoice, { blurb: string; marks: string }> = {
-  easy: { blurb: 'Warm up. Fundamentals only.', marks: '2 marks' },
-  medium: { blurb: 'Solid understanding required.', marks: '4 marks' },
-  hard: { blurb: 'For when you want to be tested.', marks: '6 marks' },
-  mixed: { blurb: 'A blend from every tier.', marks: 'Varies' },
+  easy: { blurb: 'Fundamentals only.', marks: '2 marks' },
+  medium: { blurb: 'Solid understanding.', marks: '4 marks' },
+  hard: { blurb: 'Exact answers.', marks: '6 marks' },
+  mixed: { blurb: 'A blend of every tier.', marks: 'Varies' },
 }
 
 const PRESETS = [5, 10, 15, 20]
 const MAX_COUNT = 50
+const ease = [0.22, 1, 0.36, 1] as const
 
 export default function Setup() {
   const navigate = useNavigate()
@@ -39,7 +40,6 @@ export default function Setup() {
       .catch((e: Error) => setLoadError(e.message))
   }, [])
 
-  // Only the difficulties that actually exist in the bank.
   const difficulties = useMemo<DifficultyChoice[]>(() => {
     if (!catalog) return []
     const present = new Set<string>()
@@ -52,7 +52,6 @@ export default function Setup() {
     if (difficulties.length && !difficulties.includes(difficulty)) setDifficulty(difficulties[0])
   }, [difficulties, difficulty])
 
-  // How many questions the current selection can actually provide.
   const available = useMemo(() => {
     if (!catalog) return 0
     const cats = category === 'all' ? catalog : catalog.filter((c) => c.id === category)
@@ -63,23 +62,31 @@ export default function Setup() {
   }, [catalog, category, difficulty])
 
   const maxCount = Math.max(1, Math.min(available || MAX_COUNT, MAX_COUNT))
-
-  // The lattice reacts to the configuration: topic → sector, tier → density.
-  useLattice(
-    {
-      layout: 'side',
-      mode: 'configure',
-      sector: category === 'all' ? -1 : category === 'maths' ? 0 : category === 'python' ? 1 : 2,
-      density: difficulty === 'easy' ? 0.35 : difficulty === 'medium' ? 0.6 : difficulty === 'hard' ? 1 : 0.75,
-      progress: Math.min(0.9, 0.2 + (count / MAX_COUNT) * 0.7),
-      litCount: -1,
-    },
-    [category, difficulty, count],
-  )
-
   useEffect(() => {
     if (count > maxCount) setCount(maxCount)
   }, [maxCount, count])
+
+  // SETUP — responsive: the chosen region comes forward, the tier sets density, the size sets activation.
+  const clusterIndex = useMemo(() => {
+    if (category === 'all') return 2
+    const idx = (catalog ?? []).findIndex((c) => c.id === category)
+    return idx >= 0 ? Math.min(idx, 1) : 2
+  }, [category, catalog])
+  useNetwork(
+    {
+      mode: 'responsive',
+      camera: 'side',
+      focusCluster: clusterIndex,
+      density: difficulty === 'easy' ? 0.3 : difficulty === 'medium' ? 0.6 : difficulty === 'hard' ? 1 : 0.8,
+      activation: 0.1 + (count / MAX_COUNT) * 0.6,
+      clusterLabels: [labelCategory(catalog?.[0]?.id ?? 'maths'), labelCategory(catalog?.[1]?.id ?? 'python'), 'Mixed'],
+    },
+    [clusterIndex, difficulty, count, catalog],
+  )
+  // a selection sends a signal through the chosen region
+  useEffect(() => {
+    if (catalog) pulseNetwork(1)
+  }, [category, difficulty, catalog])
 
   const handleStart = async () => {
     setError('')
@@ -96,66 +103,69 @@ export default function Setup() {
     }
   }
 
+  const totalOf = (c: CategoryInfo) => Object.values(c.difficulties).reduce((a, b) => a + b, 0)
+
   return (
     <div className="relative flex-1">
-      <div className="relative z-10 max-w-6xl mx-auto px-5 sm:px-6 lg:px-8 py-12 md:py-20 grid lg:grid-cols-12 gap-10 items-start">
-        <div className="lg:col-span-4 lg:sticky lg:top-28">
+      <div className="relative z-10 max-w-page mx-auto px-5 sm:px-6 lg:px-8 py-10 md:py-16 grid lg:grid-cols-12 gap-10">
+        {/* left: the form, as three numbered movements */}
+        <div className="lg:col-span-7 xl:col-span-6 max-w-2xl">
           <Reveal>
-            <span className="index">Configure</span>
-            <h1 className="font-display t-title text-fg mt-3">Set up your quiz</h1>
-            <p className="text-fg-2 mt-4 text-pretty max-w-sm">
-              Choose what you want to be tested on. The lattice behind the page takes the shape of the quiz you're
-              building — topic, tier and size.
-            </p>
+            <span className="opener">Choose your path</span>
+            <h1 className="font-display t-title text-fg mt-5 text-balance">
+              Which part of the network <span className="t-italic">do you want to light?</span>
+            </h1>
           </Reveal>
-        </div>
-        <div className="lg:col-span-8 lg:max-w-2xl">
 
-        {loadError ? (
-          <Reveal>
-            <div className="surface-strong rounded-3xl p-10 text-center">
-              <div className="w-12 h-12 rounded-xl mx-auto mb-5 flex items-center justify-center bg-err/10 text-err">
-                <Cross className="w-5 h-5" />
+          {loadError ? (
+            <Reveal>
+              <div className="surface-strong rounded-2xl p-8 mt-10 text-center">
+                <div className="w-12 h-12 rounded-full mx-auto mb-5 flex items-center justify-center bg-err/10 text-err">
+                  <Cross className="w-5 h-5" />
+                </div>
+                <p className="text-fg font-medium">{loadError}</p>
+                <p className="text-fg-2 text-sm mt-2">Make sure the NEXUSQuiz server is running, then reload.</p>
               </div>
-              <p className="text-fg font-medium">{loadError}</p>
-              <p className="text-fg-2 text-sm mt-2">Make sure the NEXUSQuiz server is running, then reload.</p>
-            </div>
-          </Reveal>
-        ) : (
-          <Reveal delay={0.1}>
-            <div className="surface-strong rounded-3xl md:rounded-4xl p-5 sm:p-8 md:p-10 space-y-9">
-              {/* Category */}
-              <Section title="Category" hint={catalog ? undefined : 'Loading…'}>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            </Reveal>
+          ) : (
+            <div className="mt-12 space-y-14">
+              {/* 01 Region */}
+              <Movement index="01" title="Region" hint={catalog ? `${catalog.length + 1} available` : 'Loading…'}>
+                <div role="radiogroup" aria-label="Region" className="border-t border-line-strong">
                   {catalog ? (
                     <>
-                      <ChoiceCard
-                        selected={category === 'all'}
-                        onClick={() => setCategory('all')}
-                        icon={<Layers className="w-5 h-5" />}
-                        title="All"
-                        sub={`${catalog.reduce((s, c) => s + Object.values(c.difficulties).reduce((a, b) => a + b, 0), 0)} questions`}
-                      />
                       {catalog.map((c) => (
-                        <ChoiceCard
+                        <RegionRow
                           key={c.id}
                           selected={category === c.id}
-                          onClick={() => setCategory(c.id)}
-                          icon={c.id === 'python' ? <Code className="w-5 h-5" /> : <Sigma className="w-5 h-5" />}
+                          onSelect={() => setCategory(c.id)}
+                          icon={c.id === 'python' ? <Code className="w-4 h-4" /> : <Sigma className="w-4 h-4" />}
                           title={labelCategory(c.id)}
-                          sub={`${Object.values(c.difficulties).reduce((a, b) => a + b, 0)} questions`}
+                          meta={`${totalOf(c)} questions`}
+                          detail={Object.entries(c.difficulties)
+                            .sort(([a], [b]) => DIFFICULTY_ORDER.indexOf(a as never) - DIFFICULTY_ORDER.indexOf(b as never))
+                            .map(([d, n]) => `${n} ${d}`)
+                            .join(' · ')}
                         />
                       ))}
+                      <RegionRow
+                        selected={category === 'all'}
+                        onSelect={() => setCategory('all')}
+                        icon={<span className="w-2 h-2 rounded-full bg-current" />}
+                        title="Mixed"
+                        meta={`${catalog.reduce((s, c) => s + totalOf(c), 0)} questions`}
+                        detail="Every region, bridges included"
+                      />
                     </>
                   ) : (
-                    [0, 1, 2].map((i) => <Skeleton key={i} />)
+                    [0, 1, 2].map((i) => <div key={i} className="h-[76px] border-b border-line skeleton" />)
                   )}
                 </div>
-              </Section>
+              </Movement>
 
-              {/* Difficulty */}
-              <Section title="Difficulty">
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+              {/* 02 Tier */}
+              <Movement index="02" title="Tier">
+                <div role="radiogroup" aria-label="Difficulty" className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-line-strong border border-line-strong rounded-2xl overflow-hidden">
                   {(difficulties.length ? difficulties : (['easy', 'medium', 'hard', 'mixed'] as DifficultyChoice[])).map((d) => {
                     const meta = DIFFICULTY_META[d]
                     const selected = difficulty === d
@@ -163,36 +173,33 @@ export default function Setup() {
                       <button
                         key={d}
                         type="button"
+                        role="radio"
+                        aria-checked={selected}
                         disabled={!catalog}
-                        data-selected={selected}
                         onClick={() => setDifficulty(d)}
-                        className="choice p-4 sm:p-5"
+                        className={`relative text-left p-4 sm:p-5 transition-colors duration-base focus-visible:z-10 ${selected ? 'bg-cta text-cta-text' : 'bg-canvas hover:bg-hover text-fg'}`}
                       >
-                        <div className="flex items-center justify-between">
-                          <span className={`tier ${selected ? 'text-accent' : 'text-fg-2'}`} data-level={difficultyLevel(d)} aria-hidden="true">
-                            <i /><i /><i />
-                          </span>
-                          <span className="text-[11px] font-mono text-fg-3 uppercase tracking-wider">{meta.marks}</span>
-                        </div>
-                        <p className="font-display text-lg mt-3 text-fg">{labelDifficulty(d)}</p>
-                        <p className="text-xs text-fg-2 mt-1 leading-snug">{meta.blurb}</p>
+                        <span className={`tier ${selected ? '' : 'text-fg-2'}`} data-level={difficultyLevel(d)} aria-hidden="true" style={selected ? { color: 'var(--nx-accent-on-ink)' } : undefined}>
+                          <i /><i /><i />
+                        </span>
+                        <p className="font-display text-2xl mt-4">{labelDifficulty(d)}</p>
+                        <p className={`text-xs mt-1 ${selected ? 'opacity-70' : 'text-fg-2'}`}>{meta.blurb}</p>
+                        <p className={`font-mono text-[10px] tracking-[0.18em] uppercase mt-4 ${selected ? 'opacity-80' : 'text-fg-3'}`}>{meta.marks}</p>
+                        {selected && <span className="sr-only">(selected)</span>}
                       </button>
                     )
                   })}
                 </div>
-              </Section>
+              </Movement>
 
-              {/* Count */}
-              <Section
-                title="Number of questions"
-                hint={catalog ? `${available} available` : undefined}
-              >
-                <div className="grid sm:grid-cols-[1fr_auto] gap-3 items-stretch">
-                  <div className="surface-recessed rounded-2xl p-2 flex items-center gap-2">
+              {/* 03 Size */}
+              <Movement index="03" title="Size" hint={catalog ? `${available} available` : undefined}>
+                <div className="grid sm:grid-cols-[auto_1fr] gap-8 items-center">
+                  <div className="flex items-center gap-3">
                     <Stepper onClick={() => setCount((c) => Math.max(1, c - 1))} disabled={count <= 1} label="Fewer">
-                      <Minus className="w-5 h-5" />
+                      <Minus className="w-4 h-4" />
                     </Stepper>
-                    <div className="flex-1 text-center">
+                    <div className="relative w-[7.5rem] text-center">
                       <input
                         type="number"
                         inputMode="numeric"
@@ -205,26 +212,39 @@ export default function Setup() {
                           if (Number.isNaN(v)) return setCount(1)
                           setCount(Math.max(1, Math.min(v, maxCount)))
                         }}
-                        className="w-full bg-transparent text-center font-display text-3xl text-fg outline-none num"
+                        className="w-full bg-transparent text-center font-display text-6xl leading-none text-fg outline-none num focus-visible:text-accent transition-colors"
                       />
-                      <p className="text-[11px] text-fg-3 -mt-0.5">of {maxCount} max</p>
+                      <p className="figcap mt-1">of {maxCount}</p>
                     </div>
                     <Stepper onClick={() => setCount((c) => Math.min(maxCount, c + 1))} disabled={count >= maxCount} label="More">
-                      <Plus className="w-5 h-5" />
+                      <Plus className="w-4 h-4" />
                     </Stepper>
                   </div>
-                  <div className="flex sm:flex-col gap-2">
-                    <div className="grid grid-cols-4 sm:grid-cols-2 gap-2 w-full">
+                  <div>
+                    <input
+                      type="range"
+                      min={1}
+                      max={maxCount}
+                      value={count}
+                      aria-label="Number of questions slider"
+                      onChange={(e) => setCount(parseInt(e.target.value, 10))}
+                      className="nx-range"
+                      style={{ ['--p' as string]: `${((count - 1) / Math.max(maxCount - 1, 1)) * 100}%` }}
+                    />
+                    <div className="mt-4 flex items-center gap-2">
                       {PRESETS.map((n) => {
                         const disabled = n > maxCount
+                        const on = count === n
                         return (
                           <button
                             key={n}
                             type="button"
                             disabled={disabled}
-                            data-selected={count === n}
+                            aria-pressed={on}
                             onClick={() => setCount(n)}
-                            className="choice !rounded-xl px-3 py-2.5 text-center text-sm font-medium num"
+                            className={`h-9 min-w-[2.75rem] px-3 rounded-full border text-sm num transition-colors duration-fast ${
+                              on ? 'bg-cta text-cta-text border-cta' : 'border-line-strong text-fg-2 hover:text-fg hover:border-fg-3'
+                            } disabled:opacity-40 disabled:cursor-not-allowed`}
                           >
                             {n}
                           </button>
@@ -233,120 +253,95 @@ export default function Setup() {
                     </div>
                   </div>
                 </div>
-                {/* range slider */}
-                <input
-                  type="range"
-                  min={1}
-                  max={maxCount}
-                  value={count}
-                  aria-label="Number of questions slider"
-                  onChange={(e) => setCount(parseInt(e.target.value, 10))}
-                  className="nx-range mt-4"
-                  style={{ ['--p' as string]: `${((count - 1) / Math.max(maxCount - 1, 1)) * 100}%` }}
-                />
-              </Section>
+              </Movement>
 
-              {/* Summary + CTA */}
-              <div className="pt-2">
-                <div className="flex flex-wrap items-center gap-2 mb-4 text-sm">
-                  <span className="text-fg-3">You'll get</span>
-                  <span className="chip chip-accent num">{count} questions</span>
-                  <span className="chip">{labelCategory(category)}</span>
-                  <Tier difficulty={difficulty} />
+              {/* ticket + go */}
+              <Reveal>
+                <div className="border-t border-line-strong pt-8">
+                  <div className="flex flex-wrap items-baseline gap-x-3 gap-y-2 font-display text-2xl text-fg">
+                    <span className="text-fg-2 text-lg font-sans">You’ll get</span>
+                    <span className="num">{count}</span>
+                    <span className="text-fg-2">×</span>
+                    <span>{labelCategory(category)}</span>
+                    <span className="text-fg-2">·</span>
+                    <Tier difficulty={difficulty} className="translate-y-[-3px]" />
+                  </div>
+
+                  <AnimatePresence>
+                    {error && (
+                      <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden">
+                        <div role="alert" className="mt-4 px-4 py-3 rounded-xl bg-err/10 border border-err/30 text-err text-sm">{error}</div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  <button type="button" onClick={handleStart} disabled={!catalog || starting || available === 0} className="btn-primary btn-lg mt-6 w-full sm:w-auto sm:min-w-[16rem]">
+                    {starting ? (
+                      <>
+                        <span className="w-5 h-5 rounded-full border-2 border-cta-text/30 border-t-cta-text animate-spin" />
+                        Preparing your quiz
+                      </>
+                    ) : (
+                      <>
+                        Begin
+                        <ArrowRight className="arrow w-5 h-5" />
+                      </>
+                    )}
+                  </button>
                 </div>
-
-                <AnimatePresence>
-                  {error && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      className="overflow-hidden"
-                    >
-                      <div role="alert" className="mb-4 px-4 py-3 rounded-xl bg-err/10 border border-err/30 text-err text-sm">{error}</div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-
-                <button
-                  type="button"
-                  onClick={handleStart}
-                  disabled={!catalog || starting || available === 0}
-                  className="btn-primary btn-lg w-full group"
-                >
-                  {starting ? (
-                    <>
-                      <span className="w-5 h-5 rounded-full border-2 border-cta-text/30 border-t-cta-text animate-spin" />
-                      Preparing your quiz
-                    </>
-                  ) : (
-                    <>
-                      Start Quiz
-                      <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" />
-                    </>
-                  )}
-                </button>
-              </div>
+              </Reveal>
             </div>
-          </Reveal>
-        )}
+          )}
+        </div>
+
+        {/* right: the network lives here; only a caption in the DOM */}
+        <div className="hidden lg:flex lg:col-span-5 xl:col-span-6 items-end justify-end pb-4 pointer-events-none">
+          <motion.p key={category + difficulty} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease }} className="figcap text-right">
+            Fig. 02 — {labelCategory(category)} region · {labelDifficulty(difficulty)} density
+          </motion.p>
         </div>
       </div>
     </div>
   )
 }
 
-function Section({ title, hint, children }: { title: string; hint?: string; children: React.ReactNode }) {
+function Movement({ index, title, hint, children }: { index: string; title: string; hint?: string; children: React.ReactNode }) {
   return (
-    <section>
-      <div className="flex items-baseline justify-between mb-3.5">
-        <h2 className="font-sans text-sm font-medium text-fg tracking-wide">{title}</h2>
-        {hint && <span className="text-xs text-fg-3 num">{hint}</span>}
-      </div>
-      {children}
-    </section>
+    <Reveal>
+      <section>
+        <div className="flex items-baseline justify-between mb-5">
+          <h2 className="font-sans text-sm font-medium text-fg tracking-wide flex items-center gap-3">
+            <span className="index">{index}</span>
+            {title}
+          </h2>
+          {hint && <span className="text-xs text-fg-3 num">{hint}</span>}
+        </div>
+        {children}
+      </section>
+    </Reveal>
   )
 }
 
-function ChoiceCard({
-  selected,
-  onClick,
-  icon,
-  title,
-  sub,
-}: {
-  selected: boolean
-  onClick: () => void
-  icon: React.ReactNode
-  title: string
-  sub: string
-}) {
+function RegionRow({ selected, onSelect, icon, title, meta, detail }: { selected: boolean; onSelect: () => void; icon: React.ReactNode; title: string; meta: string; detail: string }) {
   return (
-    <button type="button" data-selected={selected} onClick={onClick} className="choice p-4 sm:p-5 flex sm:flex-col items-center sm:items-start gap-4 sm:gap-0">
-      <div
-        className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
-          selected ? 'bg-selected text-fg-inverse' : 'surface-recessed text-fg'
-        }`}
-      >
-        {icon}
-      </div>
-      <div className="sm:mt-4 flex-1 min-w-0">
-        <p className="font-display text-lg leading-tight text-fg">{title}</p>
-        <p className="text-xs text-fg-2 mt-0.5 num">{sub}</p>
-      </div>
-      <AnimatePresence>
-        {selected && (
-          <motion.span
-            initial={{ scale: 0.5, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.5, opacity: 0 }}
-            transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-            className="sm:absolute sm:top-4 sm:right-4 w-5 h-5 rounded-full bg-selected text-fg-inverse flex items-center justify-center shrink-0"
-          >
-            <Check className="w-3 h-3" />
-          </motion.span>
-        )}
-      </AnimatePresence>
+    <button
+      type="button"
+      role="radio"
+      aria-checked={selected}
+      onClick={onSelect}
+      className={`group w-full text-left grid grid-cols-[2.5rem_1fr_auto] items-center gap-4 py-4 border-b border-line -mx-3 px-3 rounded-lg transition-colors duration-fast hover:bg-hover ${selected ? 'text-fg' : 'text-fg-2'}`}
+    >
+      <span className={`w-9 h-9 rounded-full border flex items-center justify-center transition-colors duration-base ${selected ? 'bg-accent border-accent text-fg-inverse' : 'border-line-strong text-fg group-hover:border-fg-3'}`}>
+        {selected ? <Check className="w-4 h-4" /> : icon}
+      </span>
+      <span className="min-w-0">
+        <span className={`font-display text-3xl leading-none block ${selected ? 'text-fg' : 'text-fg group-hover:text-fg'}`}>{title}</span>
+        <span className="block text-xs mt-1.5 text-fg-2">{detail}</span>
+      </span>
+      <span className="text-right">
+        <span className="block text-sm num text-fg-2">{meta}</span>
+        <span className={`block font-mono text-[10px] tracking-[0.18em] uppercase mt-1 ${selected ? 'text-accent' : 'text-transparent group-hover:text-fg-3'}`}>{selected ? 'Selected' : 'Select'}</span>
+      </span>
     </button>
   )
 }
@@ -358,13 +353,9 @@ function Stepper({ children, onClick, disabled, label }: { children: React.React
       onClick={onClick}
       disabled={disabled}
       aria-label={label}
-      className="w-12 h-12 rounded-xl bg-card border border-line-strong text-fg flex items-center justify-center hover:bg-card-strong hover:border-fg-3 transition-colors disabled:text-disabled-text disabled:bg-transparent disabled:border-line disabled:cursor-not-allowed"
+      className="w-11 h-11 rounded-full border border-line-strong text-fg flex items-center justify-center hover:border-fg-3 hover:bg-hover transition-colors disabled:text-disabled-text disabled:border-line disabled:cursor-not-allowed"
     >
       {children}
     </button>
   )
-}
-
-function Skeleton() {
-  return <div className="h-[104px] rounded-2xl skeleton" />
 }

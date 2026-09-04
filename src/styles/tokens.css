@@ -20,16 +20,16 @@
   color-scheme: light;
 
   /* canvas & surfaces — on paper, elevation = lighter */
-  --nx-canvas-rgb: 244 241 234;        /* warm ivory */
-  --nx-surface-rgb: 236 232 223;       /* secondary background / recessed */
-  --nx-elevated-rgb: 250 249 245;      /* fields, inputs */
-  --nx-card-rgb: 253 252 249;          /* card */
-  --nx-card-strong-rgb: 255 255 255;   /* strongest surface */
+  --nx-canvas-rgb: 242 238 229;        /* warm parchment */
+  --nx-surface-rgb: 233 228 217;       /* secondary background / recessed (warm gray) */
+  --nx-elevated-rgb: 247 244 237;      /* fields, inputs */
+  --nx-card-rgb: 249 246 240;          /* card — a tone up, never white */
+  --nx-card-strong-rgb: 252 250 246;   /* strongest surface */
 
   /* text — warm ink, never pure black */
   --nx-text-rgb: 26 25 23;
   --nx-text-2-rgb: 84 82 77;
-  --nx-text-3-rgb: 124 121 114;
+  --nx-text-3-rgb: 110 106 98;
   --nx-text-inverse-rgb: 255 255 255;
 
   /* lines */
@@ -75,17 +75,17 @@
   --nx-noise-opacity: 0.06;
 
   /* 3D material palette */
-  --nx-3d-core: #1a1917;
-  --nx-3d-strut: #8d8880;
-  --nx-3d-node: #efe9dd;
+  --nx-3d-core: #1c1a17;
+  --nx-3d-strut: #7d766b;
+  --nx-3d-node: #fbf7ee;
   --nx-3d-shadow: #1a1917;
   --nx-3d-shadow-opacity: 0.32;
   --nx-3d-key: #fff4e6;
   --nx-3d-fill: #b9c6dd;
 
-  --nx-shadow-1: 0 1px 0 0 rgb(255 255 255 / 0.9) inset, 0 1px 2px rgb(26 25 23 / 0.04), 0 12px 32px -16px rgb(26 25 23 / 0.16);
-  --nx-shadow-2: 0 1px 0 0 rgb(255 255 255 / 1) inset, 0 2px 4px rgb(26 25 23 / 0.04), 0 28px 60px -24px rgb(26 25 23 / 0.22);
-  --nx-shadow-inset: 0 0 0 1px rgb(26 25 23 / 0.03) inset, 0 1px 6px rgb(26 25 23 / 0.06) inset;
+  --nx-shadow-1: 0 1px 0 0 rgb(255 255 255 / 0.6) inset, 0 1px 2px rgb(60 48 30 / 0.05), 0 14px 36px -18px rgb(60 48 30 / 0.18);
+  --nx-shadow-2: 0 1px 0 0 rgb(255 255 255 / 0.8) inset, 0 2px 4px rgb(60 48 30 / 0.05), 0 30px 64px -26px rgb(60 48 30 / 0.26);
+  --nx-shadow-inset: 0 0 0 1px rgb(60 48 30 / 0.03) inset, 0 1px 6px rgb(60 48 30 / 0.07) inset;
 }
 
 [data-theme='ink'] {
@@ -100,7 +100,7 @@
 
   --nx-text-rgb: 240 236 228;          /* bone */
   --nx-text-2-rgb: 170 166 158;
-  --nx-text-3-rgb: 122 119 112;
+  --nx-text-3-rgb: 134 131 123;
   --nx-text-inverse-rgb: 17 17 19;
 
   --nx-line: rgb(var(--nx-text-rgb) / 0.08);
@@ -138,9 +138,9 @@
   --nx-grid: rgb(var(--nx-text-rgb) / 0.035);
   --nx-noise-opacity: 0.035;
 
-  --nx-3d-core: #2a2a30;
-  --nx-3d-strut: #75726c;
-  --nx-3d-node: #e9e3d6;
+  --nx-3d-core: #2b2a2f;
+  --nx-3d-strut: #8a867e;
+  --nx-3d-node: #efe9dc;
   --nx-3d-shadow: #000000;
   --nx-3d-shadow-opacity: 0.5;
   --nx-3d-key: #fff1e0;

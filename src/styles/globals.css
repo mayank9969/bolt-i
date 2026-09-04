@@ -33,21 +33,23 @@
   [data-theme='ink'] body { letter-spacing: 0.005em; } /* slightly positive on dark */
 
   h1, h2, h3, h4 {
-    font-family: 'Clash Display', 'Inter', system-ui, sans-serif;
-    font-weight: 500;
+    font-family: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+    font-weight: 400;
     line-height: 1.05;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.01em;
     color: var(--nx-text);
     text-wrap: balance;
   }
+  ::selection { background: rgb(var(--nx-accent-rgb) / 0.18); }
 
   /* Type scale — display sizes are fluid, UI sizes are fixed */
-  .t-hero    { font-size: clamp(2.75rem, 2rem + 4.2vw, 5.5rem); line-height: 0.98; letter-spacing: -0.03em; }
-  .t-title   { font-size: clamp(2.25rem, 1.6rem + 2.4vw, 3.5rem); line-height: 1.02; letter-spacing: -0.025em; }
-  .t-section { font-size: clamp(1.75rem, 1.3rem + 1.6vw, 2.75rem); line-height: 1.06; letter-spacing: -0.02em; }
-  .t-question{ font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2.2rem); line-height: 1.22; letter-spacing: -0.012em; font-weight: 500; }
-  .t-score   { font-size: clamp(3.5rem, 2.5rem + 4vw, 6rem); line-height: 0.9; letter-spacing: -0.04em; }
+  .t-hero    { font-size: clamp(3.25rem, 2.2rem + 5.4vw, 7rem); line-height: 0.94; letter-spacing: -0.02em; font-weight: 400; }
+  .t-title   { font-size: clamp(2.5rem, 1.8rem + 2.8vw, 4.25rem); line-height: 0.98; letter-spacing: -0.015em; font-weight: 400; }
+  .t-section { font-size: clamp(2rem, 1.5rem + 1.8vw, 3.25rem); line-height: 1.02; letter-spacing: -0.01em; font-weight: 400; }
+  .t-question{ font-size: clamp(1.625rem, 1.25rem + 1.4vw, 2.5rem); line-height: 1.2; letter-spacing: -0.005em; font-weight: 400; }
+  .t-score   { font-size: clamp(4.5rem, 3rem + 6vw, 8.5rem); line-height: 0.85; letter-spacing: -0.03em; font-weight: 400; }
   .t-lead    { font-size: clamp(1.0625rem, 1rem + 0.35vw, 1.25rem); line-height: 1.55; }
+  .t-italic  { font-style: italic; }
 
   ::selection {
     background: var(--nx-accent);
@@ -123,7 +125,7 @@
 
   /* ── Buttons ─────────────────────────────────────────── */
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl font-medium select-none whitespace-nowrap;
+    @apply inline-flex items-center justify-center gap-2 rounded-full font-medium select-none whitespace-nowrap;
     transition:
       transform 0.3s var(--nx-ease),
       box-shadow 0.3s var(--nx-ease),
@@ -143,13 +145,16 @@
     @apply btn px-6 py-3 text-sm sm:text-[15px];
     background: var(--nx-cta);
     color: var(--nx-cta-text);
-    box-shadow: 0 1px 0 0 rgb(255 255 255 / 0.25) inset, 0 10px 24px -12px rgb(0 0 0 / 0.5);
+    box-shadow: 0 1px 0 0 rgb(255 255 255 / 0.18) inset, 0 12px 28px -14px rgb(26 25 23 / 0.45);
   }
   .btn-primary:hover:not(:disabled) {
     background: var(--nx-cta-hover);
     transform: translateY(-1px);
-    box-shadow: 0 1px 0 0 rgb(255 255 255 / 0.3) inset, 0 16px 32px -12px rgb(0 0 0 / 0.55);
+    box-shadow: 0 1px 0 0 rgb(255 255 255 / 0.22) inset, 0 18px 36px -14px rgb(26 25 23 / 0.5);
   }
+  /* the arrow inside a button travels; the label does not */
+  .btn .arrow { transition: transform var(--nx-dur) var(--nx-ease); }
+  .btn:hover:not(:disabled) .arrow { transform: translateX(4px); }
   .btn-primary:active:not(:disabled) { transform: translateY(0); }
   .btn-primary:disabled {
     background: var(--nx-disabled);
@@ -191,11 +196,27 @@
     background: var(--nx-accent-soft);
   }
 
-  .btn-lg { @apply px-8 py-4 text-base rounded-2xl; }
+  .btn-lg { @apply px-8 py-4 text-base; }
+  /* underlined text link with a growing rule */
+  .link-rule {
+    @apply relative inline-flex items-center gap-2 font-medium;
+    color: var(--nx-text);
+  }
+  .link-rule::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; bottom: -3px;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0.35);
+    transform-origin: left;
+    transition: transform var(--nx-dur) var(--nx-ease);
+  }
+  .link-rule:hover::after { transform: scaleX(1); }
 
   /* ── Selectable choice cards — every state is a token ─── */
   .choice {
-    @apply relative text-left rounded-2xl w-full;
+    @apply relative text-left rounded-xl w-full;
     background: var(--nx-card);
     border: 1px solid var(--nx-line);
     color: var(--nx-text);
@@ -238,7 +259,7 @@
 
   /* Option key badge (A/B/C/D) inside a choice */
   .choice-key {
-    @apply w-9 h-9 rounded-lg flex items-center justify-center font-display text-base shrink-0;
+    @apply w-9 h-9 rounded-full flex items-center justify-center font-display text-lg shrink-0;
     background: var(--nx-elevated);
     border: 1px solid var(--nx-line-strong);
     color: var(--nx-text-2);
@@ -371,10 +392,10 @@
     color: var(--nx-accent);
   }
   .stat-big {
-    font-family: 'Clash Display', 'Inter', system-ui, sans-serif;
-    font-size: clamp(3rem, 2rem + 4vw, 5.5rem);
-    line-height: 0.9;
-    letter-spacing: -0.04em;
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-size: clamp(3.5rem, 2.4rem + 4.6vw, 6.5rem);
+    line-height: 0.88;
+    letter-spacing: -0.03em;
     font-variant-numeric: tabular-nums;
   }
   /* a rule with a label, used to open sections */
@@ -382,6 +403,16 @@
     @apply flex items-center gap-4;
   }
   .rule::after { content: ''; flex: 1; height: 1px; background: var(--nx-line-strong); }
+
+  /* editorial figure caption */
+  .figcap { @apply font-mono text-[11px] tracking-[0.18em] uppercase; color: var(--nx-text-3); }
+  /* section opener: index + rule + optional right label */
+  .opener { @apply flex items-center gap-4 font-mono text-[11px] tracking-[0.2em] uppercase; color: var(--nx-text-3); }
+  .opener::before { content: ''; width: 2rem; height: 1px; background: var(--nx-accent); }
+  /* numbered list row with hairline */
+  .row { @apply grid items-baseline gap-4 py-4 border-b; border-color: var(--nx-line); }
+  /* soft ink wash behind key numbers (Result) */
+  .wash { background: radial-gradient(60% 60% at 50% 40%, var(--nx-accent-soft), transparent 70%); }
 
   .skeleton {
     background: var(--nx-elevated);

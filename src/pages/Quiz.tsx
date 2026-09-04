@@ -5,7 +5,7 @@ import { useQuiz } from '@/context/QuizContext'
 import { submitQuiz } from '@/api/quizApi'
 import { ArrowLeft, ArrowRight, Check } from '@/components/ui/Icons'
 import Tier from '@/components/ui/Tier'
-import { useLattice } from '@/components/three/store'
+import { pulseNetwork, useNetwork } from '@/components/three/store'
 import { labelCategory, labelDifficulty } from '@/lib/format'
 import { repairText } from '@/lib/text'
 
@@ -29,11 +29,16 @@ export default function Quiz() {
     if (!session) navigate('/setup', { replace: true })
   }, [session, navigate])
 
-  // Quiz: the lattice recedes to a corner; lit nodes track answered count.
-  useLattice(
-    { layout: 'corner', mode: 'quiet', progress: total ? answers.filter((a) => a.trim() !== '').length / total : 0, sector: -1, litCount: -1 },
-    [answers, total],
+  // QUIZ — focus mode: the network recedes into the paper; activation tracks answered count.
+  const answeredForScene = answers.filter((a) => a.trim() !== '').length
+  useNetwork(
+    { mode: 'quiet', camera: 'far', density: 0.4, activation: total ? 0.1 + (answeredForScene / total) * 0.5 : 0.1 },
+    [answeredForScene, total],
   )
+  // moving between questions sends one quiet signal
+  useEffect(() => {
+    pulseNetwork(0.5)
+  }, [index])
 
   const current = questions[index]
   const isMCQ = current?.question_type === 'mcq'
@@ -114,20 +119,19 @@ export default function Quiz() {
   return (
     <div className="relative flex-1 flex flex-col">
       {/* ── Progress header ─────────────────────────────── */}
-      <div className="sticky top-16 z-30 bg-canvas/85 backdrop-blur-md border-b border-line">
-        <div className="max-w-3xl mx-auto px-5 sm:px-6 py-3.5">
+      <div className="sticky top-16 z-30 bg-canvas/90 backdrop-blur-md border-b border-line">
+        <div className="max-w-3xl mx-auto px-5 sm:px-6 py-3">
           <div className="flex items-center justify-between gap-4 mb-2.5">
-            <div className="flex items-center gap-3 min-w-0">
-              <span className="font-display text-base sm:text-lg text-fg num whitespace-nowrap">
-                Question <span className="text-accent">{index + 1}</span>
-                <span className="text-fg-3"> / {total}</span>
+            <div className="flex items-baseline gap-3 min-w-0">
+              <span className="font-display text-xl text-fg num whitespace-nowrap">
+                <span className="text-accent">{String(index + 1).padStart(2, '0')}</span>
+                <span className="text-fg-3 text-base"> / {String(total).padStart(2, '0')}</span>
               </span>
-              <span className="hidden sm:inline text-fg-3">·</span>
-              <span className="hidden sm:inline text-xs text-fg-2 truncate">
+              <span className="hidden sm:inline figcap truncate">
                 {labelCategory(session.category)} · {labelDifficulty(session.difficulty)}
               </span>
             </div>
-            <span className="text-xs text-fg-2 num whitespace-nowrap">
+            <span className="figcap whitespace-nowrap">
               {answeredCount} answered
             </span>
           </div>
@@ -161,7 +165,7 @@ export default function Quiz() {
       </div>
 
       {/* ── Question ────────────────────────────────────── */}
-      <div className="flex-1 flex items-start md:items-center justify-center px-5 sm:px-6 py-8 md:py-12">
+      <div className="flex-1 flex items-start md:items-center justify-center px-5 sm:px-6 py-10 md:py-14">
         <div className="w-full max-w-3xl">
           <AnimatePresence mode="wait" custom={direction} initial={false}>
             <motion.div
@@ -177,9 +181,9 @@ export default function Quiz() {
               exit="exit"
               transition={{ duration: 0.28, ease }}
             >
-              <div className="surface-strong rounded-3xl md:rounded-4xl p-6 sm:p-8 md:p-10 relative overflow-hidden">
-                {/* current-question marker: a single accent rule, top-left */}
-                <span className="absolute left-0 top-8 sm:top-10 h-10 w-[3px] rounded-r bg-accent" aria-hidden="true" />
+              <div className="relative pl-5 sm:pl-8 border-l border-line-strong">
+                {/* current-question marker: a single accent rule on the margin line */}
+                <span className="absolute -left-px top-1 h-12 w-[2px] bg-accent" aria-hidden="true" />
 
                 <div className="flex flex-wrap items-center gap-2 mb-6">
                   <span className="chip">{labelCategory(current.category)}</span>
@@ -187,13 +191,13 @@ export default function Quiz() {
                   <span className="chip">{isMCQ ? 'Multiple choice' : 'Typed answer'}</span>
                 </div>
 
-                <h1 className="font-display t-question text-fg text-pretty">
+                <h1 className="font-display t-question text-fg text-pretty max-w-[26ch]">
                   {repairText(current.question)}
                 </h1>
 
-                <div className="mt-8">
+                <div className="mt-10">
                   {isMCQ && current.options ? (
-                    <div className="grid sm:grid-cols-2 gap-3">
+                    <div className="grid gap-2.5">
                       {Object.entries(current.options).map(([key, text], i) => {
                         const selected = currentAnswer === key
                         return (
@@ -206,16 +210,16 @@ export default function Quiz() {
                             onClick={() => setAnswer(key)}
                             data-selected={selected}
                             aria-pressed={selected}
-                            className="group choice p-4 sm:p-5 flex items-start gap-4"
+                            className="group choice px-4 py-3.5 sm:px-5 sm:py-4 flex items-center gap-4"
                           >
                             <span className="choice-key">
                               {selected ? <Check className="w-4 h-4" /> : key}
                             </span>
-                            <span className={`flex-1 text-[15px] sm:text-base leading-relaxed pt-1.5 font-mono ${selected ? 'text-fg font-medium' : 'text-fg-2'}`}>
+                            <span className={`flex-1 text-[15px] sm:text-base leading-relaxed font-mono ${selected ? 'text-fg font-medium' : 'text-fg-2 group-hover:text-fg'}`}>
                               {repairText(text)}
                             </span>
                             {/* state is also spoken as text, not colour alone */}
-                            <span className={`pt-2 font-mono text-[10px] uppercase tracking-[0.18em] shrink-0 ${selected ? 'text-accent' : 'text-fg-3 opacity-0 group-hover:opacity-100'}`}>
+                            <span className={`font-mono text-[10px] uppercase tracking-[0.18em] shrink-0 ${selected ? 'text-accent' : 'text-fg-3 opacity-0 group-hover:opacity-100'}`}>
                               {selected ? 'Selected' : key}
                             </span>
                           </motion.button>
@@ -232,7 +236,7 @@ export default function Quiz() {
                         placeholder="Type your answer…"
                         autoComplete="off"
                         spellCheck={false}
-                        className="field px-5 py-4 text-lg font-mono"
+                        className="field px-5 py-4 text-lg font-mono !rounded-xl"
                       />
                       <p className="text-xs text-fg-3 mt-3">
                         {current.difficulty === 'hard'
@@ -280,7 +284,7 @@ export default function Quiz() {
               ) : (
                 <>
                   Next
-                  <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+                  <ArrowRight className="arrow w-4 h-4" />
                 </>
               )}
             </button>

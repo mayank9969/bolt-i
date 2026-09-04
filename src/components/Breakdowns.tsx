@@ -19,7 +19,7 @@ export function CategoryBreakdown({ history }: Props) {
   const max = Math.max(...rows.map((r) => r.count), 1)
 
   return (
-    <div className="surface rounded-2.5xl p-5 sm:p-6 h-full">
+    <div className="pt-2 h-full">
       <h3 className="font-display text-lg text-fg">By topic</h3>
       <p className="text-xs text-fg-3 mt-0.5 mb-5">Attempts and average accuracy</p>
       <div className="space-y-4">
@@ -62,7 +62,7 @@ export function DifficultyBreakdown({ history }: Props) {
   const max = Math.max(...data.map((d) => d.count), 1)
 
   return (
-    <div className="surface rounded-2.5xl p-5 sm:p-6 h-full">
+    <div className="pt-2 h-full">
       <h3 className="font-display text-lg text-fg">By difficulty</h3>
       <p className="text-xs text-fg-3 mt-0.5 mb-5">Where you spend your time</p>
       <div className="flex items-end gap-4 h-36">

@@ -45,7 +45,7 @@ export default function Layout({ children }: { children: ReactNode }) {
           </Link>
 
           {/* Desktop nav */}
-          <nav className="hidden md:flex items-center gap-0.5 p-1 rounded-xl surface-recessed">
+          <nav className="hidden md:flex items-center gap-1">
             {NAV.map((item) => (
               <NavItem key={item.to} to={item.to} label={item.label} />
             ))}
@@ -126,13 +126,13 @@ export default function Layout({ children }: { children: ReactNode }) {
 
 function NavItem({ to, label }: { to: string; label: string }) {
   return (
-    <RouterNavLink to={to} end={to === '/'} className="relative px-3.5 py-1.5 rounded-lg text-sm font-medium">
+    <RouterNavLink to={to} end={to === '/'} className="relative px-3.5 py-1.5 rounded-full text-sm font-medium">
       {({ isActive }) => (
         <>
           {isActive && (
             <motion.span
               layoutId="nav-active"
-              className="absolute inset-0 rounded-lg bg-card-strong border border-line-strong"
+              className="absolute inset-0 rounded-full border border-line-strong"
               transition={{ type: 'spring', stiffness: 400, damping: 32 }}
             />
           )}
@@ -147,15 +147,16 @@ function NavItem({ to, label }: { to: string; label: string }) {
 
 function Footer() {
   return (
-    <footer className="relative z-10 mt-auto border-t border-line">
-      <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 py-8 flex flex-col sm:flex-row items-center justify-between gap-5">
-        <div className="flex items-center gap-2.5">
-          <LogoMark size={22} />
-          <Wordmark className="text-sm" />
-          <span className="text-fg-3 text-sm hidden sm:inline">·</span>
-          <span className="text-xs text-fg-3 hidden sm:inline">Test your knowledge. Build your mastery.</span>
+    <footer className="relative z-10 mt-auto border-t border-line-strong bg-canvas/70 backdrop-blur-sm">
+      <div className="max-w-page mx-auto px-5 sm:px-6 lg:px-8 py-10 grid sm:grid-cols-12 gap-6 items-end">
+        <div className="sm:col-span-6 flex items-center gap-3">
+          <LogoMark size={24} />
+          <Wordmark className="text-base" />
         </div>
-        <p className="text-xs text-fg-3">
+        <p className="sm:col-span-3 font-mono text-[11px] tracking-[0.18em] uppercase text-fg-3">
+          Living knowledge network
+        </p>
+        <p className="sm:col-span-3 sm:text-right text-xs text-fg-3">
           Built by <span className="text-fg-2 font-medium">Mayank Sarwal</span>
         </p>
       </div>

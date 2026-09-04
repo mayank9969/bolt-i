@@ -86,13 +86,13 @@ neutral plus one accent.
 
 ### Principles distilled
 
-1. **Warm neutral, not white; ink, not black.** Canvas `#f4f1ea`, text `#1a1917` (Paper); canvas `#111113`, text `#f0ece4` (Ink).
+1. **Warm neutral, not white; ink, not black.** Canvas `#f2eee5`, text `#1a1917` (Paper); canvas `#111113`, text `#f0ece4` (Ink).
 2. **One punctuation accent** (vermilion / ember) reserved for selection, focus, progress and brand; a **quiet secondary** (slate) for information; the primary CTA is the inverted neutral, not another hue.
 3. **Luminance stacking** for surfaces; translucent hairlines; no blur walls, no glow halos.
 4. **Semantic colours appear only when they carry meaning**, always with an icon and a word.
 5. **Difficulty is intensity** (1–3 segment tier), never a rainbow.
-6. **Typography carries hierarchy**: one display face (`Instrument Serif` for headlines / question / score), one UI face (`Inter`), mono uppercase for labels and indices.
-7. **The 3D object is the identity, the UI is the instrument.** The lattice never sits under a question; the question owns the page.
+6. **Typography carries hierarchy**: one display face (`Instrument Serif`, with italics as the emphasis device, for headlines / question / score), one UI face (`Inter`), mono uppercase for labels and indices. Layouts are ruled rows and asymmetric 12-column grids, not repeated card grids.
+7. **The 3D object is the identity, the UI is the instrument.** The network never sits under a question; the question owns the page.
 
 ---
 
@@ -100,32 +100,45 @@ neutral plus one accent.
 
 | # | Direction | Canvas | Signature | Why not / why |
 |---|---|---|---|---|
-| A | **Paper & Nexus** (chosen) | warm ivory | one knowledge lattice: ceramic nodes, metal struts, dark core | Best fit for reading evidence, editorial brief and the "knowledge → connection → mastery" story. |
+| A | **Paper & the Living Knowledge Network** (chosen) | warm parchment | three regions of nodes in depth, hairline links, travelling signals, dark cores | Best fit for reading evidence, editorial brief and the "knowledge → connection → mastery" story; the only direction where the 3D *is* the product model. |
 | B | Obsidian Archive | ink-navy | a library of illuminated slabs | Strong, but dark-first contradicts the reading evidence for a text-heavy product; kept as the *Ink* theme's mood. |
 | C | Question Constellation | deep charcoal | point cloud that rearranges per topic | Reads as "particles" quickly; hard to make feel *heavy* and premium. |
 | D | Knowledge Core | bone | single machined sphere with an inner glow | The "glowing sphere" cliché the brief warns against. |
 | E | Nexus Grid | paper | flat isometric grid that extrudes with progress | Elegant but feels like a dashboard; weak first-5-seconds. |
 
-### The chosen set-piece — *The Nexus*
+### The chosen set-piece — *The Living Knowledge Network*
 
-A lattice: **nodes = questions, struts = connections, core = the learner, lit
-nodes = mastery.** One object, one canvas, one material story (matte ceramic,
-brushed metal, dark lacquer, a thin vermilion halo). Lighting is a warm key, a
-cool fill and a rim; a soft contact shadow grounds it; no bloom.
+**Regions = disciplines, nodes = topics and questions, links = relationships,
+signals = attention, activation = mastery.** Three regions sit along a diagonal
+through depth (Maths nearest, Python mid, Mixed far) so the scene has real
+foreground/background instead of one centred object. Hierarchy comes from scale:
+one dark lacquer core per region, a ring of larger secondary nodes, a gaussian
+cloud of small leaves. Links are hairlines drawn in a custom shader: trunks,
+links, two bridges between each pair of regions, and a pool of *optional* links
+that breathe in and out so the structure rearranges rather than rotates.
+Signals are expanding shells fired from a core; the page controls their rate.
+Depth fog resolves to the canvas colour so the far region dissolves into paper.
+A sparse warm dust field (≤ 240 points) gives the volume air. No bloom.
 
-| Page | Mode | Layout | Evolves by |
+| Page | Behaviour | Camera | Evolves by |
 |---|---|---|---|
-| Home | `establish` | hero → retreats into depth on scroll | camera Z on scroll; cursor tilt + parallax |
-| Setup | `configure` | side | topic → sector focus, difficulty → strut density, count → lit fraction |
-| Quiz | `quiet` | corner, dimmed | answered fraction lights nodes slowly |
-| Result | `resolve` | top, above the score | score % → lit fraction, halo brightens |
-| History | `archive` | corner | attempts → nodes lit |
-| About | `establish` | corner | static |
+| Home | `alive` | hero → dollies forward on scroll | cursor repulsion + parallax; hover lights a node and its links and shows a DOM label |
+| Setup | `responsive` | side, look-at drifts to the chosen region | region → focus (others recede), tier → link density, size → activation |
+| Quiz | `quiet` | far, faint, half update rate, no dust, no ambient signals | answered count → activation; one soft signal per question change |
+| Result | `activated` | starts close to a core, pulls back over ~3 s | score → fraction of nodes lit from the cores outward; two signal bursts |
+| History | `accumulated` | archive (high, looking down) | per-region weights from real attempts × accuracy; filter → focus |
+| About | `atmospheric` | museum, off to the side | static |
 
-Implementation: `src/components/three/` — `lattice.ts` (geometry + smoothed
-state), `store.ts` (pub/sub + `useLattice()` hook), `NexusScene.tsx` (R3F,
-instanced nodes and struts → 4 draw calls + shadows), `NexusStage.tsx` (fixed
-stage, WebGL / reduced-motion detection, static SVG fallback).
+Camera framings were checked numerically (projected core positions for 16:9 and
+9:16) so the cores land beside the copy on desktop and in the upper half on phones.
+
+Implementation: `src/components/three/` — `network.ts` (deterministic graph
+builder, BFS activation order, behaviour presets; pure TS, unit-tested in Node),
+`store.ts` (pub/sub + `useNetwork()` / `pulseNetwork()`), `NexusScene.tsx`
+(R3F: one instanced mesh for all nodes, one `LineSegments` for all links, one
+`Points` for dust, three cores + halos → 9 draw calls; two small GLSL shaders;
+`PerformanceMonitor` steps DPR down under load), `NexusStage.tsx` (fixed stage,
+WebGL / reduced-motion detection, static SVG fallback, hover label).
 
 ---
 
@@ -160,7 +173,7 @@ a raw hex value; SVG and 3D code read tokens via `readToken()`.
 |---|---|---|---|
 | text / canvas | 15.6 | 16.0 | 4.5 |
 | text-2 / card | 7.6 | 6.8 | 4.5 |
-| text-3 (labels ≥ 12 px mono caps) / card | 4.2 | 3.7 | 3.0 |
+| text-3 (mono captions) / canvas | 4.6 | 4.9 | 4.5 |
 | accent (large / UI) / card | 4.8 | 5.8 | 3.0 |
 | accent-2 (small text) / card | 6.5 | 9.3 | 4.5 |
 | text-inverse / accent (selected key) | 5.0 | 6.6 | 4.5 |
@@ -184,16 +197,18 @@ critically-damped smoothing (`LatticeState.step`) so it never overshoots.
 
 ## 6. Performance & quality tiers
 
-| Tier | Trigger | Nodes / struts | DPR | Shadows | AA |
+| Tier | Trigger | Nodes / links | DPR | Environment | AA |
 |---|---|---|---|---|---|
-| high | desktop, > 4 logical cores and > 4 GB device memory | 72 / 132 | ≤ 1.75 | contact shadows 512 px, env 128 px | on |
-| medium | desktop / tablet with ≤ 4 cores or ≤ 4 GB | 72 / 132 | ≤ 1.4 | contact shadows 256 px, env 64 px | on |
-| low | viewport ≤ 768 px | 52 / 105, lower-poly primitives | ≤ 1.1 | off, no environment | off |
-| none | no WebGL or reduced-motion | static SVG lattice | — | — | — |
+| high | desktop, > 4 logical cores and > 4 GB device memory | 132 / 269 + 240 dust | ≤ 1.75 (auto-steps down) | env 128 px | on |
+| medium | desktop / tablet with ≤ 4 cores or ≤ 4 GB | 132 / 269 + 140 dust | ≤ 1.4 | env 64 px | on |
+| low | viewport ≤ 768 px or Save-Data | 84 / 179, no dust, lower-poly | 1 | none | off |
+| none | no WebGL or reduced-motion | static SVG network | — | — | — |
 
-The scene is one lazy-loaded chunk; rendering pauses when the tab is hidden; the
-canvas is `pointer-events: none` and sits under all content so it can never block
-a tap on mobile.
+The scene is one lazy-loaded chunk (~17 kB + three.js); rendering pauses when the
+tab is hidden; in `quiet` mode node positions and line buffers update every other
+frame; the canvas is `pointer-events: none` and sits under all content so it can
+never block a tap on mobile. Hover information is mirrored into a DOM label and
+nothing in the 3D carries information that is not also in the page.
 
 ## 7. Hierarchy test
 

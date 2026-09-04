@@ -8,7 +8,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        display: ['"Clash Display"', 'Inter', 'system-ui', 'sans-serif'],
+        display: ['"Instrument Serif"', 'Georgia', '"Times New Roman"', 'serif'],
         sans: ['Inter', 'system-ui', 'sans-serif'],
         mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
       },
@@ -44,6 +44,10 @@ export default {
       borderRadius: {
         '2.5xl': '1.25rem',
         '4xl': '2rem',
+      },
+      maxWidth: {
+        page: '80rem',
+        prose2: '68ch',
       },
       boxShadow: {
         card: 'var(--nx-shadow-1)',

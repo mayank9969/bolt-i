@@ -1,334 +1,270 @@
-import { motion } from 'framer-motion'
+import { motion, useScroll, useTransform } from 'framer-motion'
 import { Link } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Reveal from '@/components/Reveal'
 import MagneticLink from '@/components/ui/MagneticLink'
 import CountUp from '@/components/ui/CountUp'
-import { ArrowRight, Clock, Code, Shield, Sigma, Target, Trend } from '@/components/ui/Icons'
+import { ArrowRight, Code, Shield, Sigma } from '@/components/ui/Icons'
 import { getCategories } from '@/api/quizApi'
 import type { CategoriesResponse } from '@/types/quiz'
 import { difficultyLevel, labelCategory } from '@/lib/format'
-import { useLattice } from '@/components/three/store'
+import { useNetwork } from '@/components/three/store'
 
 const ease = [0.22, 1, 0.36, 1] as const
-const stagger = (i: number) => ({ duration: 0.7, delay: 0.08 + i * 0.09, ease })
+const enter = (i: number) => ({ duration: 0.9, delay: 0.15 + i * 0.1, ease })
 
 export default function Home() {
   const [catalog, setCatalog] = useState<CategoriesResponse | null>(null)
+  const heroRef = useRef<HTMLElement>(null)
+  const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
+  const copyY = useTransform(scrollYProgress, [0, 1], [0, 90])
+  const copyO = useTransform(scrollYProgress, [0, 0.6], [1, 0])
 
   useEffect(() => {
     getCategories().then(setCatalog).catch(() => setCatalog(null))
   }, [])
 
-  // The lattice establishes the world: full presence, medium density.
-  useLattice({ layout: 'hero', mode: 'establish', progress: 0.42, density: 0.6, sector: -1, litCount: -1 })
-
-  const categoryCount = catalog?.categories.length ?? 0
+  const cats = catalog?.categories ?? []
+  const categoryCount = cats.length
   const questionCount = catalog?.total_questions ?? 0
+
+  // HOME — the network is alive: full presence, hover on, slow drift, scroll dollies the camera in.
+  useNetwork(
+    {
+      mode: 'alive',
+      camera: 'hero',
+      density: 0.65,
+      activation: 0.16,
+      hoverable: true,
+      clusterLabels: [labelCategory(cats[0]?.id ?? 'maths'), labelCategory(cats[1]?.id ?? 'python'), 'Mixed'],
+    },
+    [cats.length],
+  )
 
   return (
     <div className="relative">
-      {/* ── Hero ─────────────────────────────────────────────── */}
-      <section className="relative min-h-[calc(100svh-4rem)] flex items-end md:items-center overflow-hidden">
-        {/* readability scrim behind the copy (mobile: the object sits above the copy) */}
-        <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-canvas via-canvas/60 to-transparent md:bg-gradient-to-r md:from-canvas md:via-canvas/70 md:to-transparent" />
-
-        <div className="relative z-10 max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 w-full pt-40 pb-14 md:py-24">
-          <div className="grid lg:grid-cols-12 gap-10">
-            <div className="lg:col-span-7 xl:col-span-6">
-              <motion.p initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={stagger(0)} className="rule text-fg-3">
-                <span className="eyebrow">NEXUSQuiz</span>
-                <span className="font-mono text-[11px] tracking-[0.18em] uppercase text-fg-3">
-                  {catalog ? `${questionCount} questions · ${categoryCount} topics` : 'Maths · Python'}
-                </span>
+      {/* ── Hero: type set into the network ──────────────────────── */}
+      <section ref={heroRef} className="relative min-h-[100svh] -mt-16 pt-16 flex flex-col">
+        {/* readability wash: the network stays fully visible above, the copy sits on paper */}
+        <div className="absolute inset-x-0 bottom-0 h-[58%] pointer-events-none bg-gradient-to-t from-canvas via-canvas/70 to-transparent" aria-hidden="true" />
+        <div className="relative z-10 flex-1 flex flex-col justify-end max-w-page mx-auto w-full px-5 sm:px-6 lg:px-8 pb-10 md:pb-14">
+          <motion.div style={{ y: copyY, opacity: copyO }} className="grid lg:grid-cols-12 gap-x-10 gap-y-10 items-end">
+            {/* headline: bottom-left, big serif */}
+            <div className="lg:col-span-8 xl:col-span-7">
+              <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={enter(0)} className="opener">
+                <span>Living knowledge network</span>
+                <span className="hidden sm:inline text-fg-3/70">·</span>
+                <span className="hidden sm:inline">{catalog ? `${questionCount} questions` : 'Maths · Python'}</span>
               </motion.p>
 
-              <motion.h1
-                initial={{ opacity: 0, y: 26 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={stagger(1)}
-                className="font-display t-hero text-fg mt-7"
-              >
-                Test your knowledge.
+              <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={enter(1)} className="font-display t-hero text-fg mt-6 max-w-[14ch]">
+                Every question is a <span className="t-italic text-accent">node.</span>
                 <br />
-                <span className="hl">Build your mastery.</span>
+                Every answer, a <span className="t-italic">connection.</span>
               </motion.h1>
+            </div>
 
-              <motion.p
-                initial={{ opacity: 0, y: 18 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={stagger(2)}
-                className="mt-7 t-lead text-fg-2 max-w-lg text-pretty"
-              >
-                Pick a topic, set the tier, answer one question at a time. Every attempt is scored on the server
-                and added to a history you can actually learn from.
+            {/* lede + actions: bottom-right column */}
+            <div className="lg:col-span-4 xl:col-span-5 lg:pl-8 xl:pl-16 lg:border-l lg:border-line">
+              <motion.p initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={enter(2)} className="t-lead text-fg-2 max-w-md text-pretty">
+                NEXUSQuiz maps what you know in Maths and Python as a network you can watch grow. Pick a region, set the tier, and light it up — one honest, server-scored answer at a time.
               </motion.p>
 
-              <motion.div
-                initial={{ opacity: 0, y: 18 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={stagger(3)}
-                className="mt-9 flex flex-col sm:flex-row sm:items-center gap-3"
-              >
-                <MagneticLink to="/setup" className="btn-primary btn-lg group">
-                  Start Quiz
-                  <ArrowRight className="w-5 h-5 transition-transform duration-base ease-out group-hover:translate-x-1" />
+              <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={enter(3)} className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
+                <MagneticLink to="/setup" className="btn-primary btn-lg">
+                  Enter the network
+                  <ArrowRight className="arrow w-5 h-5" />
                 </MagneticLink>
-                <MagneticLink to="/history" strength={0.1} className="btn-secondary btn-lg">
-                  <Clock className="w-5 h-5 text-fg-2" />
-                  View History
-                </MagneticLink>
+                <Link to="/about" className="link-rule text-sm">
+                  How it works
+                </Link>
               </motion.div>
-
-              {/* quick facts — small, mono, ruled */}
-              <motion.dl
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.8, delay: 0.55 }}
-                className="mt-14 grid grid-cols-3 max-w-md divide-x divide-line border-y border-line"
-              >
-                <Fact value={catalog ? String(categoryCount) : '—'} label="Topics" />
-                <Fact value="3" label="Tiers" />
-                <Fact value="2" label="Formats" />
-              </motion.dl>
             </div>
-          </div>
+          </motion.div>
         </div>
 
-        {/* caption for the object — editorial figure label */}
-        <motion.figcaption
+        {/* figure caption + scroll hint, pinned to the hero's lower edge */}
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 1.1, duration: 0.8 }}
-          className="absolute right-6 lg:right-10 bottom-8 hidden md:flex items-center gap-3 font-mono text-[11px] tracking-[0.18em] uppercase text-fg-3"
+          transition={{ delay: 1.2, duration: 0.8 }}
+          className="relative z-10 max-w-page mx-auto w-full px-5 sm:px-6 lg:px-8 pb-6 flex items-center justify-between figcap"
         >
-          <span className="w-8 h-px bg-line-strong" />
-          Fig. 01 — The Nexus · {catalog ? `${questionCount} nodes` : 'knowledge lattice'}
-        </motion.figcaption>
+          <span className="hidden md:inline-flex items-center gap-3">
+            <span className="w-8 h-px bg-line-strong" />
+            Fig. 01 — three regions of knowledge, {catalog ? `${questionCount} nodes` : 'live'}
+          </span>
+          <span className="inline-flex items-center gap-3">
+            Scroll to move through it
+            <motion.span animate={{ y: [0, 5, 0] }} transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }} className="block w-px h-6 bg-line-strong origin-top" />
+          </span>
+        </motion.div>
       </section>
 
-      {/* ── Topics (real data) ───────────────────────────────── */}
-      <section className="relative py-20 md:py-28 px-5 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-start">
-            <div className="lg:col-span-5">
-              <Reveal>
-                <span className="index">01</span>
-                <h2 className="font-display t-section text-fg mt-3">
-                  Two disciplines. <br className="hidden sm:block" />
-                  Three tiers each.
-                </h2>
-              </Reveal>
-              <Reveal delay={0.08}>
-                <p className="mt-5 text-fg-2 leading-relaxed text-pretty max-w-md">
-                  Every question is hand-written and stored in the NEXUS question bank. Mix topics, mix
-                  difficulties, or go deep on a single tier.
-                </p>
-                <Link to="/setup" className="btn-accent mt-6 -ml-4 group">
-                  Configure a quiz
-                  <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-                </Link>
-              </Reveal>
-            </div>
+      {/* ── Manifesto: one line, huge, ruled ───────────────────────── */}
+      <section className="relative max-w-page mx-auto px-5 sm:px-6 lg:px-8 pt-24 md:pt-36 pb-16 md:pb-24">
+        <Reveal>
+          <div className="grid lg:grid-cols-12 gap-8 items-start">
+            <span className="lg:col-span-2 index">01 — Idea</span>
+            <h2 className="lg:col-span-10 font-display t-section text-fg max-w-[24ch] text-balance">
+              Knowledge isn’t a list you finish. It’s a <span className="t-italic">structure</span> you build — and it should look like one.
+            </h2>
+          </div>
+        </Reveal>
+      </section>
 
-            <div className="lg:col-span-7 grid sm:grid-cols-2 gap-4">
-              {(catalog?.categories ?? [{ id: 'maths', difficulties: {} }, { id: 'python', difficulties: {} }]).map((cat, i) => {
-                const total = Object.values(cat.difficulties).reduce((a, b) => a + b, 0)
+      {/* ── Regions: real catalogue, ruled rows not cards ──────────── */}
+      <section className="relative max-w-page mx-auto px-5 sm:px-6 lg:px-8 pb-24 md:pb-36">
+        <Reveal>
+          <div className="grid lg:grid-cols-12 gap-8 items-baseline mb-6">
+            <span className="lg:col-span-2 index">02 — Regions</span>
+            <p className="lg:col-span-6 text-fg-2 max-w-prose text-pretty">
+              Two disciplines, three tiers each, two answer formats. Each region below is a live cluster in the network — the numbers come straight from the question bank.
+            </p>
+          </div>
+        </Reveal>
+
+        <div className="border-t border-line-strong">
+          {catalog
+            ? cats.map((c, i) => {
+                const total = Object.values(c.difficulties).reduce((a, b) => a + b, 0)
                 return (
-                  <Reveal key={cat.id} delay={0.05 + i * 0.08}>
+                  <Reveal key={c.id} delay={i * 0.06} y={12}>
                     <Link
                       to="/setup"
-                      state={{ category: cat.id }}
-                      className="block surface surface-hover rounded-2.5xl p-6 sm:p-7 h-full group"
+                      state={{ category: c.id }}
+                      className="group row grid-cols-[2.5rem_1fr_auto] md:grid-cols-[4rem_minmax(0,1.2fr)_minmax(0,1fr)_auto] hover:bg-hover transition-colors -mx-4 px-4 rounded-lg"
                     >
-                      <div className="flex items-start justify-between">
-                        <div className="w-12 h-12 rounded-xl surface-recessed flex items-center justify-center text-fg">
-                          {cat.id === 'python' ? <Code className="w-6 h-6" /> : <Sigma className="w-6 h-6" />}
-                        </div>
-                        <span className="chip">{total ? `${total} questions` : 'Topic'}</span>
-                      </div>
-                      <h3 className="font-display text-2xl text-fg mt-8">{labelCategory(cat.id)}</h3>
-                      <p className="text-sm text-fg-2 mt-1.5">
-                        {cat.id === 'python'
-                          ? 'Syntax, data structures, functions and idioms.'
-                          : 'Algebra, calculus, matrices, probability and more.'}
-                      </p>
-                      <div className="mt-6 flex items-center gap-2">
-                        {(['easy', 'medium', 'hard'] as const).map((d) => (
-                          <span key={d} className="chip">
-                            <span className="tier" data-level={difficultyLevel(d)} aria-hidden="true">
-                              <i />
-                              <i />
-                              <i />
+                      <span className="font-mono text-xs text-fg-3 num">0{i + 1}</span>
+                      <span className="flex items-center gap-4 min-w-0">
+                        <span className="w-9 h-9 rounded-full border border-line-strong flex items-center justify-center text-fg shrink-0 group-hover:border-accent group-hover:text-accent transition-colors">
+                          {c.id === 'python' ? <Code className="w-4 h-4" /> : <Sigma className="w-4 h-4" />}
+                        </span>
+                        <span className="font-display text-3xl md:text-4xl text-fg truncate">{labelCategory(c.id)}</span>
+                      </span>
+                      <span className="hidden md:flex items-center gap-5">
+                        {Object.entries(c.difficulties)
+                          .sort(([a], [b]) => ['easy', 'medium', 'hard'].indexOf(a) - ['easy', 'medium', 'hard'].indexOf(b))
+                          .map(([d, n]) => (
+                            <span key={d} className="inline-flex items-center gap-2 text-xs text-fg-2">
+                              <span className="tier text-fg-2" data-level={difficultyLevel(d)} aria-hidden="true"><i /><i /><i /></span>
+                              <span className="num">{n}</span>
+                              <span className="sr-only">{d}</span>
                             </span>
-                            {d}
-                            {cat.difficulties[d] ? <span className="text-fg-3">· {cat.difficulties[d]}</span> : null}
-                          </span>
-                        ))}
-                      </div>
+                          ))}
+                      </span>
+                      <span className="flex items-center gap-3 text-sm text-fg-2 num">
+                        {total} <span className="hidden sm:inline">questions</span>
+                        <ArrowRight className="arrow w-4 h-4 text-fg-3 group-hover:text-fg" />
+                      </span>
                     </Link>
                   </Reveal>
                 )
-              })}
-            </div>
-          </div>
+              })
+            : [0, 1].map((i) => <div key={i} className="h-[73px] border-b border-line skeleton" />)}
+          <Reveal delay={0.14} y={12}>
+            <Link to="/setup" state={{ category: 'all' }} className="group row grid-cols-[2.5rem_1fr_auto] md:grid-cols-[4rem_minmax(0,1.2fr)_minmax(0,1fr)_auto] hover:bg-hover transition-colors -mx-4 px-4 rounded-lg">
+              <span className="font-mono text-xs text-fg-3 num">0{categoryCount + 1}</span>
+              <span className="flex items-center gap-4">
+                <span className="w-9 h-9 rounded-full bg-accent text-fg-inverse flex items-center justify-center shrink-0">
+                  <span className="w-2 h-2 rounded-full bg-current" />
+                </span>
+                <span className="font-display text-3xl md:text-4xl text-fg">Mixed <span className="t-italic text-fg-2">— cross the bridges</span></span>
+              </span>
+              <span className="hidden md:block text-xs text-fg-2">Every region, every tier, one session</span>
+              <span className="flex items-center gap-3 text-sm text-fg-2 num">
+                {catalog ? questionCount : '—'} <span className="hidden sm:inline">questions</span>
+                <ArrowRight className="arrow w-4 h-4 text-fg-3 group-hover:text-fg" />
+              </span>
+            </Link>
+          </Reveal>
         </div>
       </section>
 
-      {/* ── Why NEXUS — editorial bento, controlled variation ─── */}
-      <section className="relative py-6 md:py-12 px-5 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <Reveal className="max-w-2xl">
-            <span className="index">02</span>
-            <h2 className="font-display t-section text-fg mt-3">Built to make progress visible</h2>
+      {/* ── How it scores: asymmetric editorial band ───────────────── */}
+      <section className="relative max-w-page mx-auto px-5 sm:px-6 lg:px-8 pb-24 md:pb-36">
+        <div className="grid lg:grid-cols-12 gap-x-10 gap-y-12">
+          <Reveal className="lg:col-span-5">
+            <span className="index">03 — Scoring</span>
+            <h2 className="font-display t-section text-fg mt-4 text-balance">Marks scale with the tier. Nothing is graded in your browser.</h2>
+            <p className="text-fg-2 mt-6 max-w-prose text-pretty">
+              Easy, medium and hard questions are worth 2, 4 and 6 marks; multiple-choice is half. Answers never leave the server, so the score you see is the score you earned.
+            </p>
+            <div className="mt-8 flex items-center gap-3 text-sm text-fg-2">
+              <Shield className="w-4 h-4 text-accent" />
+              Server-side validation · single-use sessions
+            </div>
           </Reveal>
 
-          <div className="grid md:grid-cols-6 gap-4 mt-10">
-            {/* 1 — large feature: the ink panel */}
-            <Reveal className="md:col-span-4">
-              <div className="panel-ink rounded-3xl p-7 sm:p-10 h-full flex flex-col justify-between min-h-[320px]">
-                <div>
-                  <span className="eyebrow">Server-side scoring</span>
-                  <h3 className="font-display text-3xl sm:text-4xl mt-4 max-w-md">
-                    Answers never reach the browser before you submit.
-                  </h3>
+          <div className="lg:col-span-7 lg:pl-10 grid sm:grid-cols-3 gap-px bg-line-strong border border-line-strong rounded-2xl overflow-hidden">
+            {[
+              ['Easy', 2, 'Fundamentals, warm-up pace'],
+              ['Medium', 4, 'Solid understanding required'],
+              ['Hard', 6, 'Exact answers, no leniency'],
+            ].map(([name, marks, blurb], i) => (
+              <Reveal key={String(name)} delay={i * 0.07} className="bg-canvas">
+                <div className="p-6 sm:p-7 h-full flex flex-col">
+                  <span className="tier text-accent" data-level={String(i + 1)} aria-hidden="true"><i /><i /><i /></span>
+                  <span className="stat-big text-fg mt-6 num">
+                    <CountUp value={Number(marks)} />
+                  </span>
+                  <span className="font-mono text-[11px] tracking-[0.18em] uppercase text-fg-3 mt-2">marks · {String(name)}</span>
+                  <p className="text-sm text-fg-2 mt-5 leading-relaxed">{String(blurb)}</p>
                 </div>
-                <div className="mt-10 flex flex-col sm:flex-row sm:items-end justify-between gap-6">
-                  <p className="muted text-sm max-w-sm leading-relaxed">
-                    The NEXUS engine checks every response with its own validation rules — exact match, case-insensitive
-                    or whitespace-normalised depending on the tier.
-                  </p>
-                  <Shield className="w-9 h-9 shrink-0 opacity-80" />
-                </div>
-              </div>
-            </Reveal>
-
-            {/* 2 — big statistic */}
-            <Reveal delay={0.06} className="md:col-span-2">
-              <div className="surface rounded-3xl p-7 h-full flex flex-col justify-between">
-                <span className="eyebrow-muted">Question bank</span>
-                <div>
-                  <p className="stat-big text-fg mt-6">
-                    {catalog ? <CountUp value={questionCount} duration={1.2} /> : '—'}
-                  </p>
-                  <p className="text-sm text-fg-2 mt-3">
-                    hand-written questions across {catalog ? categoryCount : 'two'} topics and three tiers.
-                  </p>
-                </div>
-              </div>
-            </Reveal>
-
-            {/* 3 — compact */}
-            <Reveal delay={0.08} className="md:col-span-2">
-              <div className="surface surface-hover rounded-3xl p-7 h-full">
-                <div className="w-11 h-11 rounded-xl surface-recessed flex items-center justify-center text-accent mb-6">
-                  <Target className="w-5 h-5" />
-                </div>
-                <h3 className="font-display text-xl text-fg">Two answer formats</h3>
-                <p className="text-sm text-fg-2 leading-relaxed mt-2">
-                  Multiple-choice for speed, typed answers for precision.
-                </p>
-              </div>
-            </Reveal>
-
-            {/* 4 — horizontal feature with the tier meter as the visual */}
-            <Reveal delay={0.1} className="md:col-span-4">
-              <div className="surface surface-hover rounded-3xl p-7 h-full grid sm:grid-cols-[1fr_auto] gap-8 items-center">
-                <div>
-                  <h3 className="font-display text-xl text-fg">Marks that scale with the challenge</h3>
-                  <p className="text-sm text-fg-2 leading-relaxed mt-2 max-w-md">
-                    Easy, medium and hard tiers — or mix them all. Multiple-choice questions are worth half a typed
-                    answer at the same tier.
-                  </p>
-                </div>
-                <dl className="grid grid-cols-3 gap-6 sm:gap-8 text-center sm:text-left">
-                  {(
-                    [
-                      ['easy', '2'],
-                      ['medium', '4'],
-                      ['hard', '6'],
-                    ] as const
-                  ).map(([d, m]) => (
-                    <div key={d}>
-                      <dt className="tier text-fg-2 mb-2" data-level={difficultyLevel(d)} aria-label={d}>
-                        <i />
-                        <i />
-                        <i />
-                      </dt>
-                      <dd className="font-display text-3xl text-fg num">{m}</dd>
-                      <dd className="text-[11px] font-mono uppercase tracking-wider text-fg-3 mt-1">{d}</dd>
-                    </div>
-                  ))}
-                </dl>
-              </div>
-            </Reveal>
-
-            {/* 5 — trend sparkline (illustrative geometry, no fake numbers) */}
-            <Reveal delay={0.12} className="md:col-span-3">
-              <Link to="/history" className="surface surface-hover rounded-3xl p-7 h-full flex flex-col group">
-                <div className="flex items-center justify-between">
-                  <div className="w-11 h-11 rounded-xl surface-recessed flex items-center justify-center text-accent">
-                    <Trend className="w-5 h-5" />
-                  </div>
-                  <ArrowRight className="w-4 h-4 text-fg-3 transition-transform group-hover:translate-x-1" />
-                </div>
-                <h3 className="font-display text-xl text-fg mt-6">Progress you can see</h3>
-                <p className="text-sm text-fg-2 leading-relaxed mt-2">
-                  Every attempt is saved. Trends, accuracy and your strongest topics build up over time.
-                </p>
-              </Link>
-            </Reveal>
-
-            {/* 6 — the flow */}
-            <Reveal delay={0.14} className="md:col-span-3">
-              <div className="surface rounded-3xl p-7 h-full">
-                <span className="eyebrow-muted">How it works</span>
-                <ol className="mt-5 space-y-4">
-                  {steps.map((s, i) => (
-                    <li key={s.title} className="grid grid-cols-[2.5rem_1fr] gap-3 items-baseline">
-                      <span className="index">0{i + 1}</span>
-                      <div>
-                        <p className="font-display text-lg text-fg">{s.title}</p>
-                        <p className="text-sm text-fg-2 leading-relaxed">{s.desc}</p>
-                      </div>
-                    </li>
-                  ))}
-                </ol>
-              </div>
-            </Reveal>
+              </Reveal>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* ── CTA ──────────────────────────────────────────────── */}
-      <section className="relative py-24 md:py-32 px-5 sm:px-6 lg:px-8">
-        <Reveal className="max-w-3xl mx-auto text-center">
-          <h2 className="font-display t-title text-fg text-balance">Ready when you are.</h2>
-          <p className="mt-4 text-fg-2 max-w-lg mx-auto text-pretty">A quiz takes a couple of minutes. Mastery takes a few more.</p>
-          <div className="mt-8 flex justify-center">
-            <MagneticLink to="/setup" className="btn-primary btn-lg group">
-              Start Quiz
-              <ArrowRight className="w-5 h-5 transition-transform duration-base group-hover:translate-x-1" />
-            </MagneticLink>
+      {/* ── Ink band: the journey through the pages ────────────────── */}
+      <section className="relative max-w-page mx-auto px-5 sm:px-6 lg:px-8 pb-24 md:pb-36">
+        <Reveal>
+          <div className="panel-ink rounded-3xl md:rounded-4xl p-7 sm:p-10 md:p-14 relative overflow-hidden">
+            <div className="grid lg:grid-cols-12 gap-10">
+              <div className="lg:col-span-4">
+                <span className="eyebrow">The path</span>
+                <h2 className="font-display t-section mt-4 text-balance">One network, five states.</h2>
+                <p className="muted text-sm mt-5 max-w-sm leading-relaxed">The same structure follows you through the product and changes with what you do — it is the interface, not a backdrop.</p>
+              </div>
+              <ol className="lg:col-span-8 grid sm:grid-cols-2 gap-x-10">
+                {[
+                  ['Home', 'Alive', 'Signals travel between regions; the camera drifts through depth.'],
+                  ['Setup', 'Responsive', 'Choose a region and it moves toward you; the tier sets how dense it is.'],
+                  ['Quiz', 'Quiet', 'It recedes into the paper so the question owns the page.'],
+                  ['Result', 'Activated', 'Your score lights the network from its cores outward.'],
+                  ['History', 'Accumulated', 'Regions you have practised stay established, attempt after attempt.'],
+                ].map(([page, state, desc], i) => (
+                  <li key={page} className="py-5 border-b" style={{ borderColor: 'rgb(var(--nx-cta-text-rgb) / 0.14)' }}>
+                    <div className="flex items-baseline justify-between gap-4">
+                      <span className="font-display text-2xl">{page}</span>
+                      <span className="index">0{i + 1} · {state}</span>
+                    </div>
+                    <p className="muted text-sm mt-2 leading-relaxed">{desc}</p>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          </div>
+        </Reveal>
+      </section>
+
+      {/* ── Closing CTA ────────────────────────────────────────────── */}
+      <section className="relative max-w-page mx-auto px-5 sm:px-6 lg:px-8 pb-28 md:pb-40">
+        <Reveal>
+          <div className="grid lg:grid-cols-12 gap-8 items-end border-t border-line-strong pt-10">
+            <h2 className="lg:col-span-8 font-display t-title text-fg text-balance">
+              Start with a region. <span className="t-italic text-fg-2">Watch it light up.</span>
+            </h2>
+            <div className="lg:col-span-4 flex lg:justify-end">
+              <MagneticLink to="/setup" className="btn-primary btn-lg">
+                Start a quiz
+                <ArrowRight className="arrow w-5 h-5" />
+              </MagneticLink>
+            </div>
           </div>
         </Reveal>
       </section>
     </div>
   )
 }
-
-function Fact({ value, label }: { value: string; label: string }) {
-  return (
-    <div className="py-4 first:pl-0 pl-5">
-      <dt className="sr-only">{label}</dt>
-      <dd className="font-display text-2xl sm:text-3xl text-fg num">{value}</dd>
-      <dd className="font-mono text-[10px] sm:text-[11px] text-fg-3 uppercase tracking-[0.18em] mt-1">{label}</dd>
-    </div>
-  )
-}
-
-const steps = [
-  { title: 'Configure', desc: 'Topic, tier, and how many questions.' },
-  { title: 'Answer', desc: 'One focused question at a time.' },
-  { title: 'Review', desc: 'Score, every answer, and your history.' },
-]
