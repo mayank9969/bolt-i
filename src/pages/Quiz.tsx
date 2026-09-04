@@ -24,9 +24,12 @@ export default function Quiz() {
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
+  // Set once the server has scored the session, so the "no session → setup" guard below
+  // doesn't fire while this page is still mounted during its exit transition.
+  const finishedRef = useRef(false)
 
   useEffect(() => {
-    if (!session) navigate('/setup', { replace: true })
+    if (!session && !finishedRef.current) navigate('/setup', { replace: true })
   }, [session, navigate])
 
   // QUIZ — focus mode: the network recedes into the paper; activation tracks answered count.
@@ -76,6 +79,7 @@ export default function Quiz() {
     setError('')
     try {
       const result = await submitQuiz(session.session_id, answers)
+      finishedRef.current = true
       finishSession(result)
       navigate('/result', { replace: true })
     } catch (e) {

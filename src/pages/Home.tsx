@@ -196,7 +196,8 @@ export default function Home() {
             </div>
           </Reveal>
 
-          <div className="lg:col-span-7 lg:pl-10 grid sm:grid-cols-3 gap-px bg-line-strong border border-line-strong rounded-2xl overflow-hidden">
+          <div className="lg:col-span-7 lg:pl-10">
+          <div className="grid sm:grid-cols-3 gap-px bg-line-strong border border-line-strong rounded-2xl overflow-hidden shadow-card">
             {[
               ['Easy', 2, 'Fundamentals, warm-up pace'],
               ['Medium', 4, 'Solid understanding required'],
@@ -213,6 +214,7 @@ export default function Home() {
                 </div>
               </Reveal>
             ))}
+          </div>
           </div>
         </div>
       </section>

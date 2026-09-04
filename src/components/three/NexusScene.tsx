@@ -325,8 +325,8 @@ function NetworkObject({ palette, quality }: { palette: Palette; quality: Qualit
   const coreMat = useMemo(
     () =>
       quality === 'low'
-        ? new THREE.MeshStandardMaterial({ color: palette.core, roughness: 0.35, metalness: 0.3 })
-        : new THREE.MeshPhysicalMaterial({ color: palette.core, roughness: 0.22, metalness: 0.15, clearcoat: 1, clearcoatRoughness: 0.15 }),
+        ? new THREE.MeshStandardMaterial({ color: palette.core, roughness: 0.35, metalness: 0.3, transparent: true })
+        : new THREE.MeshPhysicalMaterial({ color: palette.core, roughness: 0.22, metalness: 0.15, clearcoat: 1, clearcoatRoughness: 0.15, transparent: true }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [quality],
   )
@@ -422,7 +422,10 @@ function NetworkObject({ palette, quality }: { palette: Palette; quality: Qualit
     const targetAct = s.clusterWeights ? 1 : s.activation
     S.activation = damp(S.activation, targetAct, s.mode === 'activated' ? 0.55 : 2.2, dt)
     S.density = damp(S.density, s.density, 2.5, dt)
-    S.presence = damp(S.presence, B.presence * (narrow && quiet ? 0.7 : 1), 2.5, dt)
+    // Home: once the reader scrolls past the hero the network recedes so section copy stays legible.
+    const sk = s.camera === 'hero' ? Math.min(1, Math.max(0, (s.scroll - 0.22) / 0.6)) : 0
+    const scrollFade = 1 - sk * sk * (3 - 2 * sk) * 0.55
+    S.presence = damp(S.presence, B.presence * (narrow && quiet ? 0.7 : 1) * scrollFade, 2.5, dt)
     S.dust = damp(S.dust, B.dust, 2, dt)
     S.liveliness = damp(S.liveliness, B.liveliness, 2, dt)
     S.cursor = damp(S.cursor, B.cursor * (s.pointerIn ? 1 : 0), 3, dt)
@@ -443,10 +446,11 @@ function NetworkObject({ palette, quality }: { palette: Palette; quality: Qualit
     // scroll on Home: dolly forward into the network along its depth axis
     if (s.camera === 'hero' && s.scroll > 0) {
       const k = s.scroll
-      _v.x -= k * 1.6
-      _v.z -= k * 4.2
-      _v.y -= k * 0.2
-      _v2.z -= k * 2.5
+      _v.x -= k * 1.2
+      _v.z -= k * 2.4
+      _v.y += k * 0.9
+      _v2.z -= k * 1.6
+      _v2.y -= k * 0.6
     }
     // focus: drift the look target toward the region
     if (S.focusMix > 0 && S.focus >= 0) {
@@ -594,6 +598,8 @@ function NetworkObject({ palette, quality }: { palette: Palette; quality: Qualit
     }
 
     // ── cores and halos ──
+    // cores recede with the rest of the network (Quiz, scrolled Home) instead of sitting opaque over copy
+    ;(coreMat as THREE.MeshStandardMaterial).opacity = Math.min(1, 0.08 + S.presence * 0.95)
     for (let c = 0; c < 3; c++) {
       const h = net.hubs[c]
       const mesh = hubRefs.current[c]

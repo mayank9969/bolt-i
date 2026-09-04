@@ -25,8 +25,10 @@ export default function History() {
       .catch((e: Error) => setError(e.message))
   }, [])
 
-  const categories = useMemo(() => Array.from(new Set((history ?? []).map((h) => h.category).filter((c) => c !== 'all'))), [history])
-  const visible = useMemo(() => (history ?? []).filter((h) => filter === 'all' || h.category === filter), [history, filter])
+  // The engine has stored both 'math' and 'maths' over time — group them under one label for filtering/display.
+  const norm = (c: string) => (c === 'math' ? 'maths' : c)
+  const categories = useMemo(() => Array.from(new Set((history ?? []).map((h) => norm(h.category)).filter((c) => c !== 'all'))), [history])
+  const visible = useMemo(() => (history ?? []).filter((h) => filter === 'all' || norm(h.category) === filter), [history, filter])
   const newestFirst = useMemo(() => [...visible].reverse(), [visible])
 
   const stats = useMemo(() => {
@@ -50,7 +52,7 @@ export default function History() {
       const sat = 1 - Math.exp(-items.length / 4)
       return Math.min(1, 0.15 + sat * 0.55 + acc * 0.3)
     }
-    return [ids[0] ? w((h) => h.category === ids[0]) : 0, ids[1] ? w((h) => h.category === ids[1]) : 0, w((h) => h.category === 'all' || h.category === 'mixed')]
+    return [ids[0] ? w((h) => norm(h.category) === ids[0]) : 0, ids[1] ? w((h) => norm(h.category) === ids[1]) : 0, w((h) => h.category === 'all' || h.category === 'mixed')]
   }, [history, categories])
 
   useNetwork(
@@ -86,7 +88,7 @@ export default function History() {
             </div>
             {categories.length > 0 && (
               <div className="lg:col-span-4 flex lg:justify-end">
-                <div role="tablist" aria-label="Filter by region" className="flex items-center gap-1 border border-line-strong rounded-full p-1">
+                <div role="tablist" aria-label="Filter by region" className="flex items-center gap-1 border border-line-strong rounded-full p-1 bg-canvas/80 backdrop-blur-sm shadow-card">
                   {(['all', ...categories] as Filter[]).map((f) => (
                     <button
                       key={f}
@@ -155,8 +157,8 @@ export default function History() {
                 </div>
                 <ul className="lg:col-span-8 border-t border-line">
                   {[
-                    [labelCategory(categories[0] ?? 'maths'), weights[0], history.filter((h) => h.category === categories[0]).length],
-                    [labelCategory(categories[1] ?? 'python'), weights[1], history.filter((h) => h.category === categories[1]).length],
+                    [labelCategory(categories[0] ?? 'maths'), weights[0], history.filter((h) => norm(h.category) === categories[0]).length],
+                    [labelCategory(categories[1] ?? 'python'), weights[1], history.filter((h) => norm(h.category) === categories[1]).length],
                     ['Mixed', weights[2], history.filter((h) => h.category === 'all' || h.category === 'mixed').length],
                   ].map(([name, w, n], i) => (
                     <li key={String(name)} className="grid grid-cols-[1fr_auto] sm:grid-cols-[10rem_1fr_auto] items-center gap-x-6 gap-y-2 py-5 border-b border-line">

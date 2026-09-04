@@ -12,7 +12,8 @@ export const THEMES = [
 export type ThemeId = (typeof THEMES)[number]['id']
 
 export const DEFAULT_THEME: ThemeId = 'paper'
-const STORAGE_KEY = 'nexusquiz.theme'
+// v3: key bumped with the Paper/Ink system so nobody is pinned to an older dark default.
+const STORAGE_KEY = 'nexusquiz.theme.v3'
 const EVENT = 'nx-theme'
 
 export function isTheme(v: unknown): v is ThemeId {
@@ -46,9 +47,8 @@ export function initTheme() {
   } catch {
     /* ignore */
   }
-  // Legacy ids from the first token system map onto the two current systems.
-  const legacy: Record<string, ThemeId> = { editorial: 'paper', obsidian: 'ink', oxblood: 'ink', acid: 'ink', mono: 'ink' }
-  const resolved = isTheme(stored) ? stored : stored && legacy[stored] ? legacy[stored] : DEFAULT_THEME
+  // Only ids from the current system are honoured; anything older falls back to the light default.
+  const resolved = isTheme(stored) ? stored : DEFAULT_THEME
   applyTheme(resolved, false)
 }
 

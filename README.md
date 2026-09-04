@@ -13,6 +13,19 @@ api/server.py    ← thin Flask adapter that exposes the engine over HTTP
 src/             ← React + Vite + Tailwind + Framer Motion + Three.js frontend
 ```
 
+
+## What it looks like (rendered screenshots)
+
+Real headless-Chromium captures of the built app, in `docs/screenshots/`:
+
+| Before (original build) | Now — Home, Paper theme |
+| --- | --- |
+| ![before](docs/screenshots/00-before-home.jpg) | ![home](docs/screenshots/01-home.jpg) |
+
+More: [Home scrolled](docs/screenshots/02-home-scrolled.jpg) · [Setup](docs/screenshots/03-setup.jpg) · [Quiz](docs/screenshots/04-quiz.jpg) · [Result](docs/screenshots/05-result.jpg) · [History](docs/screenshots/06-history.jpg) · [About](docs/screenshots/07-about.jpg) · [Ink (dark) theme](docs/screenshots/08-ink-theme.jpg) · [Mobile](docs/screenshots/09-mobile-home.jpg)
+
+> If your local copy still looks like the "before" image, you are running an old build: delete the old folder, re-download the ZIP, run `start.bat` again and press **Ctrl+F5** in the browser.
+
 ## Run it (one command)
 
 Requires **Python 3.10+** and **Node.js 18+**.
