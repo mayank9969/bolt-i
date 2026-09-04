@@ -1,10 +1,12 @@
 import { Link } from 'react-router-dom'
 import Reveal from '@/components/Reveal'
+import { useLattice } from '@/components/three/store'
 import { LogoMark } from '@/components/Logo'
 import Tier from '@/components/ui/Tier'
 import { ArrowRight, Bolt, Layers, Shield, Sparkle, Target, Trend } from '@/components/ui/Icons'
 
 export default function About() {
+  useLattice({ layout: 'corner', mode: 'establish', progress: 0.42, density: 0.6, sector: -1, litCount: -1 })
   return (
     <div className="relative flex-1">
       <div className="max-w-5xl mx-auto px-5 sm:px-6 lg:px-8 py-12 md:py-20">
@@ -13,8 +15,8 @@ export default function About() {
           <div className="grid md:grid-cols-[auto_1fr] gap-8 items-start">
             <LogoMark size={72} className="hidden md:block" />
             <div>
-              <span className="eyebrow">About</span>
-              <h1 className="font-display text-4xl sm:text-5xl md:text-6xl text-fg mt-3 text-balance leading-[1.05]">
+              <span className="index">About</span>
+              <h1 className="font-display t-title text-fg mt-3 text-balance">
                 A quiz platform built around one idea: <span className="hl">progression.</span>
               </h1>
               <p className="text-fg-2 mt-6 text-lg leading-relaxed text-pretty max-w-2xl">
@@ -27,8 +29,7 @@ export default function About() {
 
         {/* ── Meaning ─────────────────────────────────── */}
         <Reveal delay={0.08}>
-          <div className="surface-strong rounded-4xl p-7 sm:p-10 mt-14 relative overflow-hidden">
-            <div className="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-accent/[0.07] blur-[100px] pointer-events-none" />
+          <div className="panel-ink rounded-4xl p-7 sm:p-10 mt-14 relative overflow-hidden">
             <span className="eyebrow">The name</span>
             <div className="grid sm:grid-cols-3 gap-8 mt-6">
               {[
@@ -38,11 +39,11 @@ export default function About() {
               ].map((item, i) => (
                 <div key={item.k}>
                   <div className="flex items-center gap-3">
-                    <span className="font-mono text-xs text-accent tracking-widest">0{i + 1}</span>
+                    <span className="index">0{i + 1}</span>
                     <span className="hairline flex-1" />
                   </div>
-                  <h3 className="font-display text-xl text-fg mt-4">{item.k}</h3>
-                  <p className="text-sm text-fg-2 leading-relaxed mt-2">{item.d}</p>
+                  <h3 className="font-display text-xl mt-4">{item.k}</h3>
+                  <p className="text-sm muted leading-relaxed mt-2">{item.d}</p>
                 </div>
               ))}
             </div>
@@ -52,8 +53,8 @@ export default function About() {
         {/* ── Features ────────────────────────────────── */}
         <div className="mt-14">
           <Reveal>
-            <span className="eyebrow">What you get</span>
-            <h2 className="font-display text-3xl sm:text-4xl text-fg mt-3">Everything you need to practise properly</h2>
+            <span className="index">What you get</span>
+            <h2 className="font-display t-section text-fg mt-3">Everything you need to practise properly</h2>
           </Reveal>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
             {features.map((f, i) => (

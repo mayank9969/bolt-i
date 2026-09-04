@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { useQuiz } from '@/context/QuizContext'
 import Reveal from '@/components/Reveal'
-import SceneLayer from '@/components/SceneLayer'
+import { useLattice } from '@/components/three/store'
 import CountUp from '@/components/ui/CountUp'
 import MagneticLink from '@/components/ui/MagneticLink'
 import { ArrowRight, Check, Clock, Cross, Refresh } from '@/components/ui/Icons'
@@ -21,9 +21,12 @@ export default function Result() {
     if (!result) navigate('/setup', { replace: true })
   }, [result, navigate])
 
+  const pct = result?.percentage ?? 0
+  // Result: the lattice resolves — nodes light in proportion to the score.
+  useLattice({ layout: 'top', mode: 'resolve', progress: pct / 100, density: 0.8, sector: -1, litCount: -1 }, [pct])
+
   if (!result) return null
 
-  const pct = result.percentage
   const tone = performanceTone(pct)
   const headline = pct >= 90 ? 'Exceptional.' : pct >= 80 ? 'Outstanding.' : pct >= 65 ? 'Strong work.' : pct >= 50 ? 'Solid effort.' : pct > 0 ? 'Keep going.' : 'Reset and retry.'
   const sub =
@@ -39,10 +42,7 @@ export default function Result() {
 
   return (
     <div className="relative flex-1 overflow-hidden">
-      <SceneLayer variant="ambient" opacity={0.3} />
-      <div className="absolute inset-0 bg-gradient-to-b from-canvas/30 via-canvas/80 to-canvas pointer-events-none" />
-
-      <div className="relative z-10 max-w-4xl mx-auto px-5 sm:px-6 py-12 md:py-16">
+      <div className="relative z-10 max-w-4xl mx-auto px-5 sm:px-6 pt-36 md:pt-44 pb-12 md:pb-16">
         {/* ── Header ──────────────────────────────────── */}
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease }} className="text-center">
           <span className="inline-flex items-center gap-2 pl-1.5 pr-3.5 py-1.5 rounded-full surface text-xs text-fg-2">
@@ -51,7 +51,7 @@ export default function Result() {
             </span>
             Quiz complete
           </span>
-          <h1 className="font-display text-4xl sm:text-5xl md:text-6xl text-fg mt-5">{headline}</h1>
+          <h1 className="font-display t-title text-fg mt-5">{headline}</h1>
           <p className="text-fg-2 mt-3 max-w-md mx-auto text-pretty">{sub}</p>
         </motion.div>
 
@@ -85,7 +85,7 @@ export default function Result() {
                 />
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="font-display text-5xl sm:text-[3.4rem] leading-none text-score num">
+                <span className="font-display text-5xl sm:text-[3.4rem] leading-none text-score num tracking-[-0.04em]">
                   <CountUp value={pct} decimals={pct % 1 === 0 ? 0 : 1} delay={0.35} duration={1.3} suffix="%" />
                 </span>
                 <span className="eyebrow-muted mt-2">Accuracy</span>
@@ -164,8 +164,11 @@ export default function Result() {
                 <Reveal key={i} delay={Math.min(i * 0.04, 0.3)} y={16}>
                   <li className={`surface rounded-2xl p-5 sm:p-6 border-l-[3px] ${ok ? 'border-l-ok' : 'border-l-err'}`}>
                     <div className="flex gap-4">
-                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${ok ? 'bg-ok/15 text-ok' : 'bg-err/15 text-err'}`}>
-                        {ok ? <Check className="w-4 h-4" /> : <Cross className="w-4 h-4" />}
+                      <div className="flex flex-col items-center gap-1.5 shrink-0">
+                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${ok ? 'bg-ok/15 text-ok' : 'bg-err/15 text-err'}`} aria-hidden="true">
+                          {ok ? <Check className="w-4 h-4" /> : <Cross className="w-4 h-4" />}
+                        </div>
+                        <span className={`font-mono text-[9px] uppercase tracking-[0.16em] ${ok ? 'text-ok' : 'text-err'}`}>{ok ? 'Right' : 'Wrong'}</span>
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between gap-3">

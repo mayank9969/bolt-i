@@ -27,7 +27,7 @@ export default {
           strong: 'var(--nx-line-strong)',
         },
 
-        accent: { DEFAULT: t('accent'), 2: t('accent-2') },
+        accent: { DEFAULT: t('accent'), 2: t('accent-2'), dark: t('accent-dark'), b: t('accent-b') },
         cta: { DEFAULT: t('cta'), hover: t('cta-hover'), text: t('cta-text') },
 
         ok: t('success'),
@@ -39,6 +39,7 @@ export default {
         score: t('score'),
         disabled: { DEFAULT: 'var(--nx-disabled)', text: t('disabled-text') },
         track: 'var(--nx-track)',
+        hover: 'var(--nx-hover)',
       },
       borderRadius: {
         '2.5xl': '1.25rem',
@@ -52,6 +53,11 @@ export default {
       },
       transitionTimingFunction: {
         out: 'cubic-bezier(0.22, 1, 0.36, 1)',
+      },
+      transitionDuration: {
+        fast: '150ms',
+        base: '320ms',
+        slow: '640ms',
       },
       animation: {
         'pulse-soft': 'pulseSoft 2.4s ease-in-out infinite',

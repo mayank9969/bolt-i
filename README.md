@@ -50,6 +50,24 @@ Sessions are single-use and expire; correct answers never reach the browser befo
 ## Visual system & themes
 
 All colours come from design tokens in `src/styles/tokens.css` (no hex values in components).
-Five complete themes ship — **Obsidian** (default), Editorial, Oxblood, Acid, Mono — switchable from
-the footer; the choice is remembered in `localStorage`. Research notes, principles and the token
-contract are in [`docs/DESIGN-SYSTEM.md`](docs/DESIGN-SYSTEM.md).
+Two complete themes ship — **Paper** (default; warm ivory + ink + vermilion) and **Ink** (deep
+charcoal + bone + ember) — switchable from the header; the choice is remembered in `localStorage`
+and the system preference is respected on first visit. The light default is evidence-based
+(positive-polarity reading research); see [`docs/DESIGN-SYSTEM.md`](docs/DESIGN-SYSTEM.md) for
+the research, the 3D reference review, the token contract and the motion system.
+
+### The Nexus (3D identity)
+
+One persistent WebGL set-piece — a knowledge lattice of ceramic nodes joined by metal struts around
+a dark core — lives in a single canvas under every page and changes state per route:
+
+| Page    | Mode        | What drives it                                  |
+| ------- | ----------- | ----------------------------------------------- |
+| Home    | establish   | scroll moves the camera; cursor tilts the object |
+| Setup   | configure   | topic → sector focus, difficulty → density, count → lit fraction |
+| Quiz    | quiet       | dims to a corner so the question dominates      |
+| Result  | resolve     | score → fraction of nodes lit                   |
+| History | archive     | number of attempts → nodes lit                  |
+
+Quality tiers (high / medium / low) are chosen from device signals; devices without WebGL or with
+`prefers-reduced-motion` get a static SVG lattice instead.

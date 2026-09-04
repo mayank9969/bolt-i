@@ -27,17 +27,27 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11', 'ss01';
-    letter-spacing: 0.005em; /* slightly positive: reads better on dark (Raycast) */
-    transition: background-color 0.4s var(--nx-ease), color 0.4s var(--nx-ease);
+    letter-spacing: 0;
+    transition: background-color var(--nx-dur-slow) var(--nx-ease), color var(--nx-dur-slow) var(--nx-ease);
   }
+  [data-theme='ink'] body { letter-spacing: 0.005em; } /* slightly positive on dark */
 
   h1, h2, h3, h4 {
     font-family: 'Clash Display', 'Inter', system-ui, sans-serif;
-    font-weight: 600;
-    line-height: 1.1;
-    letter-spacing: -0.015em;
+    font-weight: 500;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
     color: var(--nx-text);
+    text-wrap: balance;
   }
+
+  /* Type scale — display sizes are fluid, UI sizes are fixed */
+  .t-hero    { font-size: clamp(2.75rem, 2rem + 4.2vw, 5.5rem); line-height: 0.98; letter-spacing: -0.03em; }
+  .t-title   { font-size: clamp(2.25rem, 1.6rem + 2.4vw, 3.5rem); line-height: 1.02; letter-spacing: -0.025em; }
+  .t-section { font-size: clamp(1.75rem, 1.3rem + 1.6vw, 2.75rem); line-height: 1.06; letter-spacing: -0.02em; }
+  .t-question{ font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2.2rem); line-height: 1.22; letter-spacing: -0.012em; font-weight: 500; }
+  .t-score   { font-size: clamp(3.5rem, 2.5rem + 4vw, 6rem); line-height: 0.9; letter-spacing: -0.04em; }
+  .t-lead    { font-size: clamp(1.0625rem, 1rem + 0.35vw, 1.25rem); line-height: 1.55; }
 
   ::selection {
     background: var(--nx-accent);
@@ -100,6 +110,16 @@
     border-color: var(--nx-line-strong);
     box-shadow: var(--nx-shadow-2);
   }
+  /* editorial panel: ink block on paper (or bone on ink) — used once per page at most */
+  .panel-ink {
+    background: var(--nx-cta);
+    color: var(--nx-cta-text);
+    border: 1px solid transparent;
+  }
+  .panel-ink .eyebrow, .panel-ink .index { color: var(--nx-accent-on-ink); }
+  .panel-ink h2, .panel-ink h3 { color: inherit; }
+  .panel-ink .muted { color: rgb(var(--nx-cta-text-rgb) / 0.62); }
+  .panel-ink .hairline { background: linear-gradient(90deg, transparent, rgb(var(--nx-cta-text-rgb) / 0.3), transparent); }
 
   /* ── Buttons ─────────────────────────────────────────── */
   .btn {
@@ -190,7 +210,9 @@
     transform: translateY(-1px);
     border-color: var(--nx-line-strong);
     background: var(--nx-card-strong);
+    box-shadow: var(--nx-shadow-1);
   }
+  .choice:focus-visible { outline-offset: 2px; }
   .choice[data-selected='true'] {
     background: var(--nx-selected-soft);
     border-color: var(--nx-selected);
@@ -220,7 +242,7 @@
     background: var(--nx-elevated);
     border: 1px solid var(--nx-line-strong);
     color: var(--nx-text-2);
-    transition: background-color 0.25s var(--nx-ease), color 0.25s var(--nx-ease), border-color 0.25s var(--nx-ease);
+    transition: background-color var(--nx-dur-fast) var(--nx-ease), color var(--nx-dur-fast) var(--nx-ease), border-color var(--nx-dur-fast) var(--nx-ease);
   }
   .choice[data-selected='true'] .choice-key {
     background: var(--nx-selected);
@@ -319,12 +341,14 @@
 
   /* ── Background layers ───────────────────────────────── */
   .bg-grid {
-    background-image:
-      linear-gradient(var(--nx-grid) 1px, transparent 1px),
-      linear-gradient(90deg, var(--nx-grid) 1px, transparent 1px);
-    background-size: 72px 72px;
-    -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, black 20%, transparent 80%);
-    mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, black 20%, transparent 80%);
+    background-image: radial-gradient(var(--nx-grid) 1px, transparent 1.5px);
+    background-size: 28px 28px;
+    -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, black 10%, transparent 75%);
+    mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, black 10%, transparent 75%);
+  }
+  /* mobile: fewer decorative layers */
+  @media (max-width: 640px) {
+    .bg-grid { opacity: 0.6; }
   }
 
   .bg-noise::after {
@@ -340,6 +364,24 @@
     height: 1px;
     background: linear-gradient(90deg, transparent, var(--nx-line-strong), transparent);
   }
+
+  /* editorial index number (01, 02 …) */
+  .index {
+    @apply font-mono text-[11px] tracking-[0.2em];
+    color: var(--nx-accent);
+  }
+  .stat-big {
+    font-family: 'Clash Display', 'Inter', system-ui, sans-serif;
+    font-size: clamp(3rem, 2rem + 4vw, 5.5rem);
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+    font-variant-numeric: tabular-nums;
+  }
+  /* a rule with a label, used to open sections */
+  .rule {
+    @apply flex items-center gap-4;
+  }
+  .rule::after { content: ''; flex: 1; height: 1px; background: var(--nx-line-strong); }
 
   .skeleton {
     background: var(--nx-elevated);

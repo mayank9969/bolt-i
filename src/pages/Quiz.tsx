@@ -5,6 +5,7 @@ import { useQuiz } from '@/context/QuizContext'
 import { submitQuiz } from '@/api/quizApi'
 import { ArrowLeft, ArrowRight, Check } from '@/components/ui/Icons'
 import Tier from '@/components/ui/Tier'
+import { useLattice } from '@/components/three/store'
 import { labelCategory, labelDifficulty } from '@/lib/format'
 import { repairText } from '@/lib/text'
 
@@ -27,6 +28,12 @@ export default function Quiz() {
   useEffect(() => {
     if (!session) navigate('/setup', { replace: true })
   }, [session, navigate])
+
+  // Quiz: the lattice recedes to a corner; lit nodes track answered count.
+  useLattice(
+    { layout: 'corner', mode: 'quiet', progress: total ? answers.filter((a) => a.trim() !== '').length / total : 0, sector: -1, litCount: -1 },
+    [answers, total],
+  )
 
   const current = questions[index]
   const isMCQ = current?.question_type === 'mcq'
@@ -180,7 +187,7 @@ export default function Quiz() {
                   <span className="chip">{isMCQ ? 'Multiple choice' : 'Typed answer'}</span>
                 </div>
 
-                <h1 className="font-display text-2xl sm:text-3xl md:text-[2.15rem] leading-snug text-fg text-pretty">
+                <h1 className="font-display t-question text-fg text-pretty">
                   {repairText(current.question)}
                 </h1>
 
@@ -199,13 +206,17 @@ export default function Quiz() {
                             onClick={() => setAnswer(key)}
                             data-selected={selected}
                             aria-pressed={selected}
-                            className="choice p-4 sm:p-5 flex items-start gap-4"
+                            className="group choice p-4 sm:p-5 flex items-start gap-4"
                           >
                             <span className="choice-key">
                               {selected ? <Check className="w-4 h-4" /> : key}
                             </span>
-                            <span className={`text-[15px] sm:text-base leading-relaxed pt-1.5 font-mono ${selected ? 'text-fg' : 'text-fg-2'}`}>
+                            <span className={`flex-1 text-[15px] sm:text-base leading-relaxed pt-1.5 font-mono ${selected ? 'text-fg font-medium' : 'text-fg-2'}`}>
                               {repairText(text)}
+                            </span>
+                            {/* state is also spoken as text, not colour alone */}
+                            <span className={`pt-2 font-mono text-[10px] uppercase tracking-[0.18em] shrink-0 ${selected ? 'text-accent' : 'text-fg-3 opacity-0 group-hover:opacity-100'}`}>
+                              {selected ? 'Selected' : key}
                             </span>
                           </motion.button>
                         )

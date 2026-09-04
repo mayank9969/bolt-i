@@ -5,16 +5,13 @@
  */
 
 export const THEMES = [
-  { id: 'obsidian', label: 'Obsidian', note: 'Night, paper, one ember signal' },
-  { id: 'editorial', label: 'Editorial', note: 'Warm paper, ink, print rhythm' },
-  { id: 'oxblood', label: 'Oxblood', note: 'Wine black with gold' },
-  { id: 'acid', label: 'Acid', note: 'Graphite with one acid accent' },
-  { id: 'mono', label: 'Mono', note: 'Pure restraint' },
+  { id: 'paper', label: 'Paper', note: 'Warm ivory · ink · vermilion' },
+  { id: 'ink', label: 'Ink', note: 'Charcoal · bone · ember' },
 ] as const
 
 export type ThemeId = (typeof THEMES)[number]['id']
 
-export const DEFAULT_THEME: ThemeId = 'obsidian'
+export const DEFAULT_THEME: ThemeId = 'paper'
 const STORAGE_KEY = 'nexusquiz.theme'
 const EVENT = 'nx-theme'
 
@@ -49,7 +46,10 @@ export function initTheme() {
   } catch {
     /* ignore */
   }
-  applyTheme(isTheme(stored) ? stored : DEFAULT_THEME, false)
+  // Legacy ids from the first token system map onto the two current systems.
+  const legacy: Record<string, ThemeId> = { editorial: 'paper', obsidian: 'ink', oxblood: 'ink', acid: 'ink', mono: 'ink' }
+  const resolved = isTheme(stored) ? stored : stored && legacy[stored] ? legacy[stored] : DEFAULT_THEME
+  applyTheme(resolved, false)
 }
 
 export function onThemeChange(cb: (id: ThemeId) => void) {

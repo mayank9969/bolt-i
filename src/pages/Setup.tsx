@@ -5,7 +5,7 @@ import { getCategories, startQuiz } from '@/api/quizApi'
 import { useQuiz } from '@/context/QuizContext'
 import type { CategoryInfo, DifficultyChoice } from '@/types/quiz'
 import Reveal from '@/components/Reveal'
-import SceneLayer from '@/components/SceneLayer'
+import { useLattice } from '@/components/three/store'
 import { ArrowRight, Check, Code, Cross, Layers, Minus, Plus, Sigma } from '@/components/ui/Icons'
 import Tier from '@/components/ui/Tier'
 import { DIFFICULTY_ORDER, difficultyLevel, labelCategory, labelDifficulty } from '@/lib/format'
@@ -64,6 +64,19 @@ export default function Setup() {
 
   const maxCount = Math.max(1, Math.min(available || MAX_COUNT, MAX_COUNT))
 
+  // The lattice reacts to the configuration: topic → sector, tier → density.
+  useLattice(
+    {
+      layout: 'side',
+      mode: 'configure',
+      sector: category === 'all' ? -1 : category === 'maths' ? 0 : category === 'python' ? 1 : 2,
+      density: difficulty === 'easy' ? 0.35 : difficulty === 'medium' ? 0.6 : difficulty === 'hard' ? 1 : 0.75,
+      progress: Math.min(0.9, 0.2 + (count / MAX_COUNT) * 0.7),
+      litCount: -1,
+    },
+    [category, difficulty, count],
+  )
+
   useEffect(() => {
     if (count > maxCount) setCount(maxCount)
   }, [maxCount, count])
@@ -84,18 +97,19 @@ export default function Setup() {
   }
 
   return (
-    <div className="relative flex-1 overflow-hidden">
-      <SceneLayer variant="ambient" opacity={0.35} />
-      <div className="absolute inset-0 bg-gradient-to-b from-canvas/40 via-canvas/70 to-canvas pointer-events-none" />
-
-      <div className="relative z-10 max-w-3xl mx-auto px-5 sm:px-6 py-12 md:py-20">
-        <Reveal>
-          <div className="text-center mb-10 md:mb-12">
-            <span className="eyebrow">Configure</span>
-            <h1 className="font-display text-4xl sm:text-5xl text-fg mt-3">Set up your quiz</h1>
-            <p className="text-fg-2 mt-3 text-pretty">Choose what you want to be tested on. You can change this any time.</p>
-          </div>
-        </Reveal>
+    <div className="relative flex-1">
+      <div className="relative z-10 max-w-6xl mx-auto px-5 sm:px-6 lg:px-8 py-12 md:py-20 grid lg:grid-cols-12 gap-10 items-start">
+        <div className="lg:col-span-4 lg:sticky lg:top-28">
+          <Reveal>
+            <span className="index">Configure</span>
+            <h1 className="font-display t-title text-fg mt-3">Set up your quiz</h1>
+            <p className="text-fg-2 mt-4 text-pretty max-w-sm">
+              Choose what you want to be tested on. The lattice behind the page takes the shape of the quiz you're
+              building — topic, tier and size.
+            </p>
+          </Reveal>
+        </div>
+        <div className="lg:col-span-8 lg:max-w-2xl">
 
         {loadError ? (
           <Reveal>
@@ -276,8 +290,8 @@ export default function Setup() {
             </div>
           </Reveal>
         )}
+        </div>
       </div>
-
     </div>
   )
 }

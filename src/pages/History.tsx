@@ -8,6 +8,7 @@ import TrendChart from '@/components/TrendChart'
 import { CategoryBreakdown, DifficultyBreakdown } from '@/components/Breakdowns'
 import { ArrowRight, Clock, Code, Cross, Layers, Sigma } from '@/components/ui/Icons'
 import Tier from '@/components/ui/Tier'
+import { useLattice } from '@/components/three/store'
 import { formatPercent, formatScore, labelCategory, performanceTone, toneBg, toneText, type Tone } from '@/lib/format'
 
 type Filter = 'all' | string
@@ -39,6 +40,12 @@ export default function History() {
     return { n, avg, q, c, best, accuracy: q ? (c / q) * 100 : 0 }
   }, [visible])
 
+  // History: the archive — one lit node per attempt, density from average accuracy.
+  useLattice(
+    { layout: 'corner', mode: 'archive', litCount: history ? Math.min(history.length, 80) : -1, progress: stats.avg / 100, density: 0.5 + (stats.avg / 100) * 0.5, sector: -1 },
+    [history, stats.avg],
+  )
+
   return (
     <div className="relative flex-1">
       <div className="max-w-6xl mx-auto px-5 sm:px-6 lg:px-8 py-12 md:py-16">
@@ -46,8 +53,8 @@ export default function History() {
         <Reveal>
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
             <div>
-              <span className="eyebrow">Progress</span>
-              <h1 className="font-display text-4xl sm:text-5xl text-fg mt-3">Your history</h1>
+              <span className="index">Progress</span>
+              <h1 className="font-display t-title text-fg mt-3">Your history</h1>
               <p className="text-fg-2 mt-3 text-pretty max-w-lg">Every attempt, recorded by the NEXUS engine. Filter by topic to see how you’re trending.</p>
             </div>
             {categories.length > 0 && (
