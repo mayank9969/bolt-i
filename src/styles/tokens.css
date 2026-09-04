@@ -1,0 +1,317 @@
+/* ═══════════════════════════════════════════════════════════════════
+   NEXUSQuiz design tokens
+   ───────────────────────────────────────────────────────────────────
+   Every colour in the UI resolves to one of these variables.
+   Themes are switched with  <html data-theme="…">.
+   Each theme is a complete system: canvas → surfaces → text → lines →
+   accent → CTA → semantics → states → decorative/3D.
+
+   *-rgb tokens are space-separated triplets so Tailwind can apply
+   opacity modifiers:  rgb(var(--nx-accent-rgb) / 0.12)
+   ═══════════════════════════════════════════════════════════════════ */
+
+:root,
+[data-theme='obsidian'] {
+  color-scheme: dark;
+
+  /* canvas & surfaces — luminance stacking: deeper = darker */
+  --nx-canvas-rgb: 7 10 18;
+  --nx-elevated-rgb: 12 16 26;
+  --nx-surface-rgb: 17 22 32;
+  --nx-card-rgb: 21 27 38;
+  --nx-card-strong-rgb: 27 34 48;
+
+  /* text — bone, never pure white */
+  --nx-text-rgb: 242 239 230;
+  --nx-text-2-rgb: 169 173 184;
+  --nx-text-3-rgb: 118 123 136;
+  --nx-text-inverse-rgb: 10 13 20;
+
+  /* lines — translucent text colour */
+  --nx-line: rgb(var(--nx-text-rgb) / 0.08);
+  --nx-line-subtle: rgb(var(--nx-text-rgb) / 0.05);
+  --nx-line-strong: rgb(var(--nx-text-rgb) / 0.16);
+
+  /* accent — ember. Selection, progress, focus, brand punctuation. */
+  --nx-accent-rgb: 255 106 60;
+  --nx-accent-2-rgb: 255 176 143;   /* lighter, for small accent text */
+  --nx-accent-soft: rgb(var(--nx-accent-rgb) / 0.12);
+  --nx-accent-glow: rgb(var(--nx-accent-rgb) / 0.30);
+
+  /* primary action — highest luminance element on the page */
+  --nx-cta-rgb: 242 239 230;
+  --nx-cta-hover-rgb: 255 255 255;
+  --nx-cta-text-rgb: 10 13 20;
+
+  /* semantics — only where they carry meaning */
+  --nx-success-rgb: 90 209 154;
+  --nx-warning-rgb: 242 181 68;
+  --nx-error-rgb: 255 92 92;
+
+  /* interaction states */
+  --nx-selected-rgb: var(--nx-accent-rgb);
+  --nx-focus: rgb(var(--nx-accent-rgb) / 0.85);
+  --nx-progress-rgb: var(--nx-accent-rgb);
+  --nx-track: rgb(var(--nx-text-rgb) / 0.08);
+  --nx-score-rgb: var(--nx-text-rgb);
+  --nx-disabled: rgb(var(--nx-text-rgb) / 0.06);
+  --nx-disabled-text-rgb: 96 101 112;
+
+  /* decorative / atmosphere (background layer + 3D) */
+  --nx-deco-1: rgb(var(--nx-accent-rgb) / 0.14);          /* warm light */
+  --nx-deco-2: rgb(70 92 150 / 0.22);                      /* cold navy field */
+  --nx-grid: rgb(var(--nx-text-rgb) / 0.035);
+  --nx-3d-core: #10162a;
+  --nx-3d-card: #161d2c;
+  --nx-3d-line: #8b93a6;
+
+  --nx-noise-opacity: 0.035;
+  --nx-shadow-1: 0 1px 0 0 rgb(255 255 255 / 0.04) inset, 0 12px 32px -14px rgb(0 0 0 / 0.55);
+  --nx-shadow-2: 0 1px 0 0 rgb(255 255 255 / 0.06) inset, 0 28px 60px -20px rgb(0 0 0 / 0.65);
+  --nx-shadow-inset: 0 0 12px rgb(0 0 0 / 0.25) inset;
+}
+
+/* ── Editorial — warm paper, ink text, the same ember as punctuation ── */
+[data-theme='editorial'] {
+  color-scheme: light;
+
+  --nx-canvas-rgb: 243 239 231;
+  --nx-elevated-rgb: 249 246 240;
+  --nx-surface-rgb: 235 230 220;
+  --nx-card-rgb: 255 255 255;
+  --nx-card-strong-rgb: 251 249 244;
+
+  --nx-text-rgb: 21 23 29;
+  --nx-text-2-rgb: 74 78 89;
+  --nx-text-3-rgb: 118 122 133;
+  --nx-text-inverse-rgb: 255 252 247;
+
+  --nx-line: rgb(var(--nx-text-rgb) / 0.10);
+  --nx-line-subtle: rgb(var(--nx-text-rgb) / 0.06);
+  --nx-line-strong: rgb(var(--nx-text-rgb) / 0.22);
+
+  --nx-accent-rgb: 196 62 20;
+  --nx-accent-2-rgb: 168 52 16;
+  --nx-accent-soft: rgb(var(--nx-accent-rgb) / 0.10);
+  --nx-accent-glow: rgb(var(--nx-accent-rgb) / 0.22);
+
+  --nx-cta-rgb: 21 23 29;
+  --nx-cta-hover-rgb: 0 0 0;
+  --nx-cta-text-rgb: 243 239 231;
+
+  --nx-success-rgb: 22 118 78;
+  --nx-warning-rgb: 150 95 12;
+  --nx-error-rgb: 190 40 38;
+
+  --nx-selected-rgb: var(--nx-accent-rgb);
+  --nx-focus: rgb(var(--nx-accent-rgb) / 0.9);
+  --nx-progress-rgb: var(--nx-accent-rgb);
+  --nx-track: rgb(var(--nx-text-rgb) / 0.10);
+  --nx-score-rgb: var(--nx-text-rgb);
+  --nx-disabled: rgb(var(--nx-text-rgb) / 0.06);
+  --nx-disabled-text-rgb: 160 163 170;
+
+  --nx-deco-1: rgb(var(--nx-accent-rgb) / 0.10);
+  --nx-deco-2: rgb(120 110 90 / 0.14);
+  --nx-grid: rgb(var(--nx-text-rgb) / 0.045);
+  --nx-3d-core: #dcd6c9;
+  --nx-3d-card: #ffffff;
+  --nx-3d-line: #7b7f8a;
+
+  --nx-noise-opacity: 0.05;
+  --nx-shadow-1: 0 1px 0 0 rgb(255 255 255 / 0.8) inset, 0 10px 28px -14px rgb(21 23 29 / 0.18), 0 0 0 1px rgb(21 23 29 / 0.04);
+  --nx-shadow-2: 0 1px 0 0 rgb(255 255 255 / 0.9) inset, 0 24px 56px -20px rgb(21 23 29 / 0.22), 0 0 0 1px rgb(21 23 29 / 0.05);
+  --nx-shadow-inset: 0 0 10px rgb(21 23 29 / 0.06) inset;
+}
+
+/* ── Oxblood — wine black, ivory text, gold accent ── */
+[data-theme='oxblood'] {
+  color-scheme: dark;
+
+  --nx-canvas-rgb: 20 10 13;
+  --nx-elevated-rgb: 26 14 18;
+  --nx-surface-rgb: 32 19 26;
+  --nx-card-rgb: 38 24 32;
+  --nx-card-strong-rgb: 46 29 38;
+
+  --nx-text-rgb: 244 236 228;
+  --nx-text-2-rgb: 183 169 164;
+  --nx-text-3-rgb: 130 114 114;
+  --nx-text-inverse-rgb: 26 12 16;
+
+  --nx-line: rgb(var(--nx-text-rgb) / 0.08);
+  --nx-line-subtle: rgb(var(--nx-text-rgb) / 0.05);
+  --nx-line-strong: rgb(var(--nx-text-rgb) / 0.16);
+
+  --nx-accent-rgb: 230 180 85;
+  --nx-accent-2-rgb: 243 208 138;
+  --nx-accent-soft: rgb(var(--nx-accent-rgb) / 0.12);
+  --nx-accent-glow: rgb(var(--nx-accent-rgb) / 0.28);
+
+  --nx-cta-rgb: 244 236 228;
+  --nx-cta-hover-rgb: 255 250 245;
+  --nx-cta-text-rgb: 26 12 16;
+
+  --nx-success-rgb: 111 207 155;
+  --nx-warning-rgb: 240 138 75;
+  --nx-error-rgb: 255 107 107;
+
+  --nx-selected-rgb: var(--nx-accent-rgb);
+  --nx-focus: rgb(var(--nx-accent-rgb) / 0.85);
+  --nx-progress-rgb: var(--nx-accent-rgb);
+  --nx-track: rgb(var(--nx-text-rgb) / 0.08);
+  --nx-score-rgb: var(--nx-text-rgb);
+  --nx-disabled: rgb(var(--nx-text-rgb) / 0.06);
+  --nx-disabled-text-rgb: 110 96 98;
+
+  --nx-deco-1: rgb(var(--nx-accent-rgb) / 0.12);
+  --nx-deco-2: rgb(120 30 50 / 0.28);
+  --nx-grid: rgb(var(--nx-text-rgb) / 0.035);
+  --nx-3d-core: #2a1219;
+  --nx-3d-card: #30191f;
+  --nx-3d-line: #a08f8a;
+
+  --nx-noise-opacity: 0.04;
+  --nx-shadow-1: 0 1px 0 0 rgb(255 255 255 / 0.04) inset, 0 12px 32px -14px rgb(0 0 0 / 0.6);
+  --nx-shadow-2: 0 1px 0 0 rgb(255 255 255 / 0.06) inset, 0 28px 60px -20px rgb(0 0 0 / 0.7);
+  --nx-shadow-inset: 0 0 12px rgb(0 0 0 / 0.3) inset;
+}
+
+/* ── Acid — graphite, one acid accent, experimental energy ── */
+[data-theme='acid'] {
+  color-scheme: dark;
+
+  --nx-canvas-rgb: 11 12 10;
+  --nx-elevated-rgb: 16 18 16;
+  --nx-surface-rgb: 21 24 20;
+  --nx-card-rgb: 26 30 25;
+  --nx-card-strong-rgb: 34 39 34;
+
+  --nx-text-rgb: 238 241 230;
+  --nx-text-2-rgb: 166 171 156;
+  --nx-text-3-rgb: 118 123 110;
+  --nx-text-inverse-rgb: 11 12 10;
+
+  --nx-line: rgb(var(--nx-text-rgb) / 0.08);
+  --nx-line-subtle: rgb(var(--nx-text-rgb) / 0.05);
+  --nx-line-strong: rgb(var(--nx-text-rgb) / 0.16);
+
+  --nx-accent-rgb: 200 242 60;
+  --nx-accent-2-rgb: 220 255 107;
+  --nx-accent-soft: rgb(var(--nx-accent-rgb) / 0.12);
+  --nx-accent-glow: rgb(var(--nx-accent-rgb) / 0.28);
+
+  --nx-cta-rgb: 200 242 60;
+  --nx-cta-hover-rgb: 217 255 92;
+  --nx-cta-text-rgb: 11 12 10;
+
+  --nx-success-rgb: 95 211 194;
+  --nx-warning-rgb: 245 185 66;
+  --nx-error-rgb: 255 93 93;
+
+  --nx-selected-rgb: var(--nx-accent-rgb);
+  --nx-focus: rgb(var(--nx-accent-rgb) / 0.85);
+  --nx-progress-rgb: var(--nx-accent-rgb);
+  --nx-track: rgb(var(--nx-text-rgb) / 0.08);
+  --nx-score-rgb: var(--nx-text-rgb);
+  --nx-disabled: rgb(var(--nx-text-rgb) / 0.06);
+  --nx-disabled-text-rgb: 98 103 92;
+
+  --nx-deco-1: rgb(var(--nx-accent-rgb) / 0.10);
+  --nx-deco-2: rgb(60 80 60 / 0.22);
+  --nx-grid: rgb(var(--nx-text-rgb) / 0.035);
+  --nx-3d-core: #161a15;
+  --nx-3d-card: #1c211b;
+  --nx-3d-line: #8f9486;
+
+  --nx-noise-opacity: 0.04;
+  --nx-shadow-1: 0 1px 0 0 rgb(255 255 255 / 0.04) inset, 0 12px 32px -14px rgb(0 0 0 / 0.6);
+  --nx-shadow-2: 0 1px 0 0 rgb(255 255 255 / 0.06) inset, 0 28px 60px -20px rgb(0 0 0 / 0.7);
+  --nx-shadow-inset: 0 0 12px rgb(0 0 0 / 0.3) inset;
+}
+
+/* ── Mono — pure restraint; only the semantic colours remain ── */
+[data-theme='mono'] {
+  color-scheme: dark;
+
+  --nx-canvas-rgb: 5 5 5;
+  --nx-elevated-rgb: 10 10 10;
+  --nx-surface-rgb: 17 17 17;
+  --nx-card-rgb: 22 22 22;
+  --nx-card-strong-rgb: 31 31 31;
+
+  --nx-text-rgb: 237 237 237;
+  --nx-text-2-rgb: 161 161 161;
+  --nx-text-3-rgb: 115 115 115;
+  --nx-text-inverse-rgb: 5 5 5;
+
+  --nx-line: rgb(var(--nx-text-rgb) / 0.10);
+  --nx-line-subtle: rgb(var(--nx-text-rgb) / 0.06);
+  --nx-line-strong: rgb(var(--nx-text-rgb) / 0.20);
+
+  --nx-accent-rgb: 255 255 255;
+  --nx-accent-2-rgb: 237 237 237;
+  --nx-accent-soft: rgb(var(--nx-accent-rgb) / 0.10);
+  --nx-accent-glow: rgb(var(--nx-accent-rgb) / 0.20);
+
+  --nx-cta-rgb: 237 237 237;
+  --nx-cta-hover-rgb: 255 255 255;
+  --nx-cta-text-rgb: 5 5 5;
+
+  --nx-success-rgb: 62 207 142;
+  --nx-warning-rgb: 245 166 35;
+  --nx-error-rgb: 255 77 77;
+
+  --nx-selected-rgb: var(--nx-accent-rgb);
+  --nx-focus: rgb(var(--nx-accent-rgb) / 0.85);
+  --nx-progress-rgb: var(--nx-accent-rgb);
+  --nx-track: rgb(var(--nx-text-rgb) / 0.10);
+  --nx-score-rgb: var(--nx-text-rgb);
+  --nx-disabled: rgb(var(--nx-text-rgb) / 0.06);
+  --nx-disabled-text-rgb: 90 90 90;
+
+  --nx-deco-1: rgb(255 255 255 / 0.05);
+  --nx-deco-2: rgb(255 255 255 / 0.03);
+  --nx-grid: rgb(var(--nx-text-rgb) / 0.04);
+  --nx-3d-core: #141414;
+  --nx-3d-card: #1a1a1a;
+  --nx-3d-line: #8a8a8a;
+
+  --nx-noise-opacity: 0.03;
+  --nx-shadow-1: 0 1px 0 0 rgb(255 255 255 / 0.05) inset, 0 12px 32px -14px rgb(0 0 0 / 0.7);
+  --nx-shadow-2: 0 1px 0 0 rgb(255 255 255 / 0.07) inset, 0 28px 60px -20px rgb(0 0 0 / 0.8);
+  --nx-shadow-inset: 0 0 12px rgb(0 0 0 / 0.35) inset;
+}
+
+/* ── Resolved colour aliases (hex-like convenience, used by CSS + JS) ── */
+:root,
+[data-theme] {
+  --nx-canvas: rgb(var(--nx-canvas-rgb));
+  --nx-elevated: rgb(var(--nx-elevated-rgb));
+  --nx-surface: rgb(var(--nx-surface-rgb));
+  --nx-card: rgb(var(--nx-card-rgb));
+  --nx-card-strong: rgb(var(--nx-card-strong-rgb));
+  --nx-text: rgb(var(--nx-text-rgb));
+  --nx-text-2: rgb(var(--nx-text-2-rgb));
+  --nx-text-3: rgb(var(--nx-text-3-rgb));
+  --nx-text-inverse: rgb(var(--nx-text-inverse-rgb));
+  --nx-accent: rgb(var(--nx-accent-rgb));
+  --nx-accent-2: rgb(var(--nx-accent-2-rgb));
+  --nx-cta: rgb(var(--nx-cta-rgb));
+  --nx-cta-hover: rgb(var(--nx-cta-hover-rgb));
+  --nx-cta-text: rgb(var(--nx-cta-text-rgb));
+  --nx-success: rgb(var(--nx-success-rgb));
+  --nx-success-soft: rgb(var(--nx-success-rgb) / 0.12);
+  --nx-warning: rgb(var(--nx-warning-rgb));
+  --nx-warning-soft: rgb(var(--nx-warning-rgb) / 0.12);
+  --nx-error: rgb(var(--nx-error-rgb));
+  --nx-error-soft: rgb(var(--nx-error-rgb) / 0.12);
+  --nx-selected: rgb(var(--nx-selected-rgb));
+  --nx-selected-soft: rgb(var(--nx-selected-rgb) / 0.12);
+  --nx-progress: rgb(var(--nx-progress-rgb));
+  --nx-score: rgb(var(--nx-score-rgb));
+  --nx-disabled-text: rgb(var(--nx-disabled-text-rgb));
+
+  --nx-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --nx-nav-h: 4rem;
+}

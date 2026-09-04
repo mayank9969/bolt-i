@@ -46,3 +46,10 @@ npm run dev                      # UI on http://localhost:5173 (proxies /api →
 
 Scoring, answer validation, marks and randomisation all come from `quiz.py`.
 Sessions are single-use and expire; correct answers never reach the browser before submission.
+
+## Visual system & themes
+
+All colours come from design tokens in `src/styles/tokens.css` (no hex values in components).
+Five complete themes ship — **Obsidian** (default), Editorial, Oxblood, Acid, Mono — switchable from
+the footer; the choice is remembered in `localStorage`. Research notes, principles and the token
+contract are in [`docs/DESIGN-SYSTEM.md`](docs/DESIGN-SYSTEM.md).

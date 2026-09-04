@@ -43,13 +43,10 @@ export default function CustomCursor() {
       aria-hidden="true"
     >
       <motion.div
-        className="rounded-full border -translate-x-1/2 -translate-y-1/2"
-        animate={{
-          width: hover ? 40 : 26,
-          height: hover ? 40 : 26,
-          borderColor: hover ? 'rgba(93,220,255,0.7)' : 'rgba(159,173,204,0.35)',
-          backgroundColor: hover ? 'rgba(44,196,245,0.08)' : 'rgba(44,196,245,0)',
-        }}
+        className={`rounded-full border -translate-x-1/2 -translate-y-1/2 transition-colors duration-200 ${
+          hover ? 'border-accent bg-accent/10' : 'border-line-strong bg-transparent'
+        }`}
+        animate={{ width: hover ? 40 : 26, height: hover ? 40 : 26 }}
         transition={{ type: 'spring', stiffness: 420, damping: 28 }}
       />
     </motion.div>

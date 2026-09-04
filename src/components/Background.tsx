@@ -1,9 +1,11 @@
 import { useEffect, useRef } from 'react'
 
 /**
- * Global ambient background: deep navy base, perspective grid,
- * two slow-drifting glow fields and a cursor-reactive light.
- * Everything is fixed, non-interactive and sits behind the UI.
+ * Global ambient background.
+ * One tinted canvas, a fading grid, a cold field top-left, one warm
+ * light top-right and a cursor-reactive light. All colours are tokens,
+ * everything is fixed, non-interactive and sits behind the UI.
+ * Density is intentionally lower on small screens.
  */
 export default function Background() {
   const lightRef = useRef<HTMLDivElement>(null)
@@ -39,22 +41,27 @@ export default function Background() {
   }, [])
 
   return (
-    <div className="fixed inset-0 -z-10 overflow-hidden bg-ink-975 bg-noise" aria-hidden="true">
-      {/* base gradient */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(28,37,64,0.9),transparent_70%)]" />
+    <div className="fixed inset-0 -z-10 overflow-hidden bg-canvas bg-noise" aria-hidden="true">
+      {/* cold field — gives the canvas its depth */}
+      <div
+        className="absolute inset-0"
+        style={{ background: 'radial-gradient(ellipse 80% 60% at 30% -10%, var(--nx-deco-2), transparent 70%)' }}
+      />
       {/* grid */}
       <div className="absolute inset-0 bg-grid" />
-      {/* glow fields */}
-      <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[900px] h-[600px] rounded-full blur-[140px] opacity-[0.16] animate-drift bg-[radial-gradient(circle,#2cc4f5_0%,transparent_65%)]" />
-      <div className="absolute top-[40%] -right-40 w-[600px] h-[600px] rounded-full blur-[160px] opacity-[0.08] animate-drift-slow bg-[radial-gradient(circle,#5ddcff_0%,transparent_65%)]" />
-      <div className="absolute -bottom-60 -left-40 w-[700px] h-[700px] rounded-full blur-[160px] opacity-[0.07] bg-[radial-gradient(circle,#0aa3d4_0%,transparent_65%)]" />
+      {/* one warm light, off-centre — the ember */}
+      <div
+        className="absolute -top-32 right-[-10%] w-[640px] h-[640px] rounded-full blur-[140px] animate-drift hidden sm:block"
+        style={{ background: 'radial-gradient(circle, var(--nx-deco-1) 0%, transparent 62%)' }}
+      />
       {/* cursor light */}
       <div
         ref={lightRef}
-        className="absolute top-0 left-0 w-[600px] h-[600px] rounded-full opacity-[0.07] blur-[120px] hidden md:block will-change-transform bg-[radial-gradient(circle,#5ddcff_0%,transparent_60%)]"
+        className="absolute top-0 left-0 w-[600px] h-[600px] rounded-full blur-[120px] hidden md:block will-change-transform"
+        style={{ background: 'radial-gradient(circle, var(--nx-deco-1) 0%, transparent 60%)', opacity: 0.5 }}
       />
       {/* bottom vignette */}
-      <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-ink-975 to-transparent" />
+      <div className="absolute inset-x-0 bottom-0 h-64" style={{ background: 'linear-gradient(to top, var(--nx-canvas), transparent)' }} />
     </div>
   )
 }

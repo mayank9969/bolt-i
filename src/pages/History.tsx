@@ -6,17 +6,9 @@ import type { HistoryEntry } from '@/types/quiz'
 import Reveal from '@/components/Reveal'
 import TrendChart from '@/components/TrendChart'
 import { CategoryBreakdown, DifficultyBreakdown } from '@/components/Breakdowns'
-import { ArrowRight, Clock, Code, Layers, Sigma } from '@/components/ui/Icons'
-import {
-  difficultyTone,
-  formatPercent,
-  formatScore,
-  labelCategory,
-  labelDifficulty,
-  performanceTone,
-  toneBg,
-  toneText,
-} from '@/lib/format'
+import { ArrowRight, Clock, Code, Cross, Layers, Sigma } from '@/components/ui/Icons'
+import Tier from '@/components/ui/Tier'
+import { formatPercent, formatScore, labelCategory, performanceTone, toneBg, toneText, type Tone } from '@/lib/format'
 
 type Filter = 'all' | string
 
@@ -55,20 +47,21 @@ export default function History() {
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
             <div>
               <span className="eyebrow">Progress</span>
-              <h1 className="font-display text-4xl sm:text-5xl text-ink-50 mt-3">Your history</h1>
-              <p className="text-ink-300 mt-3 text-pretty max-w-lg">Every attempt, recorded by the NEXUS engine. Filter by topic to see how you’re trending.</p>
+              <h1 className="font-display text-4xl sm:text-5xl text-fg mt-3">Your history</h1>
+              <p className="text-fg-2 mt-3 text-pretty max-w-lg">Every attempt, recorded by the NEXUS engine. Filter by topic to see how you’re trending.</p>
             </div>
             {categories.length > 0 && (
-              <div className="flex items-center gap-1 p-1 rounded-xl bg-ink-900/60 border border-ink-800/60 self-start md:self-auto">
+              <div className="flex items-center gap-0.5 p-1 rounded-xl surface-recessed self-start md:self-auto">
                 {(['all', ...categories] as Filter[]).map((f) => (
                   <button
                     key={f}
                     type="button"
                     onClick={() => setFilter(f)}
-                    className={`relative px-3.5 py-1.5 rounded-lg text-sm font-medium transition-colors ${filter === f ? 'text-ink-50' : 'text-ink-400 hover:text-ink-100'}`}
+                    aria-pressed={filter === f}
+                    className={`relative px-3.5 py-1.5 rounded-lg text-sm font-medium transition-colors ${filter === f ? 'text-fg' : 'text-fg-2 hover:text-fg'}`}
                   >
                     {filter === f && (
-                      <motion.span layoutId="history-filter" className="absolute inset-0 rounded-lg bg-ink-800 border border-ink-700/60" transition={{ type: 'spring', stiffness: 400, damping: 32 }} />
+                      <motion.span layoutId="history-filter" className="absolute inset-0 rounded-lg bg-card-strong border border-line-strong" transition={{ type: 'spring', stiffness: 400, damping: 32 }} />
                     )}
                     <span className="relative z-10">{f === 'all' ? 'All' : labelCategory(f)}</span>
                   </button>
@@ -79,24 +72,27 @@ export default function History() {
         </Reveal>
 
         {error ? (
-          <div className="surface-strong rounded-3xl p-10 text-center">
-            <p className="text-danger-300 font-medium">{error}</p>
-            <p className="text-ink-400 text-sm mt-2">Make sure the NEXUSQuiz server is running, then reload.</p>
+          <div className="surface-strong rounded-3xl p-10 text-center" role="alert">
+            <div className="w-12 h-12 rounded-xl mx-auto mb-5 flex items-center justify-center bg-err/10 text-err">
+              <Cross className="w-5 h-5" />
+            </div>
+            <p className="text-fg font-medium">{error}</p>
+            <p className="text-fg-2 text-sm mt-2">Make sure the NEXUSQuiz server is running, then reload.</p>
           </div>
         ) : history === null ? (
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
             {[0, 1, 2, 3].map((i) => (
-              <div key={i} className="h-28 rounded-2xl bg-ink-900/60 border border-ink-800/60 animate-pulse" />
+              <div key={i} className="h-28 rounded-2xl skeleton" />
             ))}
           </div>
         ) : history.length === 0 ? (
           <Reveal>
             <div className="surface-strong rounded-4xl p-12 sm:p-16 text-center">
-              <div className="w-16 h-16 rounded-2xl bg-ink-900/80 border border-ink-700/60 flex items-center justify-center mx-auto mb-6 text-accent-300">
+              <div className="w-16 h-16 rounded-2xl surface-recessed flex items-center justify-center mx-auto mb-6 text-accent">
                 <Clock className="w-7 h-7" />
               </div>
-              <h2 className="font-display text-2xl text-ink-50">No attempts yet</h2>
-              <p className="text-ink-400 mt-2 max-w-sm mx-auto">Your first quiz will show up here, along with trends and breakdowns as you go.</p>
+              <h2 className="font-display text-2xl text-fg">No attempts yet</h2>
+              <p className="text-fg-2 mt-2 max-w-sm mx-auto">Your first quiz will show up here, along with trends and breakdowns as you go.</p>
               <Link to="/setup" className="btn-primary mt-8">
                 Start your first quiz <ArrowRight className="w-4 h-4" />
               </Link>
@@ -110,7 +106,7 @@ export default function History() {
                 <Summary label="Quizzes taken" value={String(stats.n)} />
                 <Summary label="Average score" value={formatPercent(stats.avg, 1)} tone={performanceTone(stats.avg)} />
                 <Summary label="Overall accuracy" value={formatPercent(stats.accuracy, 0)} sub={`${stats.c} / ${stats.q} correct`} />
-                <Summary label="Best result" value={formatPercent(stats.best, 1)} tone="accent" />
+                <Summary label="Best result" value={formatPercent(stats.best, 1)} tone={performanceTone(stats.best)} />
               </div>
             </Reveal>
 
@@ -130,12 +126,12 @@ export default function History() {
             {/* ── Attempts ──────────────────────────────── */}
             <Reveal delay={0.12}>
               <div className="flex items-end justify-between mb-4">
-                <h2 className="font-display text-2xl text-ink-50">Attempts</h2>
-                <span className="text-xs text-ink-500 num">{newestFirst.length} shown · newest first</span>
+                <h2 className="font-display text-2xl text-fg">Attempts</h2>
+                <span className="text-xs text-fg0 num">{newestFirst.length} shown · newest first</span>
               </div>
             </Reveal>
 
-            <div className="hidden md:grid grid-cols-[3rem_1fr_7rem_6rem_7rem_8rem] gap-4 px-5 pb-2 text-[11px] uppercase tracking-wider text-ink-500">
+            <div className="hidden md:grid grid-cols-[3rem_1fr_7rem_6rem_7rem_8rem] gap-4 px-5 pb-2 eyebrow-muted">
               <span>#</span>
               <span>Quiz</span>
               <span>Questions</span>
@@ -157,28 +153,28 @@ export default function History() {
                     className="surface surface-hover rounded-2xl px-5 py-4"
                   >
                     <div className="grid grid-cols-[auto_1fr_auto] md:grid-cols-[3rem_1fr_7rem_6rem_7rem_8rem] gap-x-4 gap-y-3 items-center">
-                      <span className="font-mono text-xs text-ink-500 num">{String(h.attempt).padStart(2, '0')}</span>
+                      <span className="font-mono text-xs text-fg0 num">{String(h.attempt).padStart(2, '0')}</span>
 
                       <div className="flex items-center gap-3 min-w-0">
-                        <div className="w-10 h-10 rounded-xl bg-ink-900/80 border border-ink-700/60 flex items-center justify-center text-accent-300 shrink-0">
+                        <div className="w-10 h-10 rounded-xl surface-recessed flex items-center justify-center text-fg shrink-0">
                           {h.category === 'python' ? <Code className="w-5 h-5" /> : h.category === 'all' ? <Layers className="w-5 h-5" /> : <Sigma className="w-5 h-5" />}
                         </div>
                         <div className="min-w-0">
-                          <p className="text-ink-50 font-medium truncate">{labelCategory(h.category)}</p>
-                          <span className={`chip chip-${difficultyTone(h.difficulty)} mt-1`}>{labelDifficulty(h.difficulty)}</span>
+                          <p className="text-fg font-medium truncate">{labelCategory(h.category)}</p>
+                          <Tier difficulty={h.difficulty} className="mt-1" />
                         </div>
                       </div>
 
                       {/* accuracy — appears first on mobile (col 3), last on desktop */}
                       <div className="md:order-last text-right">
                         <p className={`font-display text-2xl num ${toneText[tone]}`}>{formatPercent(h.percentage, 1)}</p>
-                        <div className="w-20 h-1 rounded-full bg-ink-900/80 overflow-hidden ml-auto mt-1.5">
+                        <div className="w-20 h-1 rounded-full track ml-auto mt-1.5">
                           <div className={`h-full rounded-full ${toneBg[tone]}`} style={{ width: `${Math.min(h.percentage, 100)}%` }} />
                         </div>
                       </div>
 
                       <Cell label="Questions" value={String(h.total_questions)} />
-                      <Cell label="Correct" value={String(h.correct_answers)} className="text-success-400" />
+                      <Cell label="Correct" value={String(h.correct_answers)} />
                       <Cell label="Score" value={`${formatScore(h.score)} / ${formatScore(h.total_marks)}`} />
                     </div>
                   </motion.li>
@@ -192,20 +188,20 @@ export default function History() {
   )
 }
 
-function Summary({ label, value, sub, tone }: { label: string; value: string; sub?: string; tone?: 'success' | 'warning' | 'danger' | 'accent' }) {
+function Summary({ label, value, sub, tone }: { label: string; value: string; sub?: string; tone?: Tone }) {
   return (
     <div className="surface rounded-2xl p-5">
-      <p className="text-[11px] uppercase tracking-wider text-ink-400">{label}</p>
-      <p className={`font-display text-3xl mt-2 num ${tone ? toneText[tone] : 'text-ink-50'}`}>{value}</p>
-      {sub && <p className="text-xs text-ink-500 mt-1 num">{sub}</p>}
+      <p className="eyebrow-muted">{label}</p>
+      <p className={`font-display text-3xl mt-2 num ${tone ? toneText[tone] : 'text-fg'}`}>{value}</p>
+      {sub && <p className="text-xs text-fg0 mt-1 num">{sub}</p>}
     </div>
   )
 }
 
-function Cell({ label, value, className = 'text-ink-100' }: { label: string; value: string; className?: string }) {
+function Cell({ label, value, className = 'text-fg' }: { label: string; value: string; className?: string }) {
   return (
     <div className="col-span-1 md:col-auto">
-      <p className="md:hidden text-[10px] uppercase tracking-wider text-ink-500">{label}</p>
+      <p className="md:hidden text-[10px] uppercase tracking-wider text-fg-3">{label}</p>
       <p className={`text-sm font-medium num ${className}`}>{value}</p>
     </div>
   )

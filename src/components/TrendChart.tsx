@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import type { HistoryEntry } from '@/types/quiz'
-import { formatPercent, labelCategory } from '@/lib/format'
+import { formatPercent, labelCategory, performanceTone, toneText } from '@/lib/format'
 
 interface TrendChartProps {
   history: HistoryEntry[] // oldest → newest
@@ -34,22 +34,18 @@ export default function TrendChart({ history }: TrendChartProps) {
     <div className="surface rounded-2.5xl p-5 sm:p-6">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="font-display text-lg text-ink-50">Score trend</h3>
-          <p className="text-xs text-ink-500 mt-0.5">Last {data.length} attempt{data.length === 1 ? '' : 's'}</p>
+          <h3 className="font-display text-lg text-fg">Score trend</h3>
+          <p className="text-xs text-fg-3 mt-0.5">Last {data.length} attempt{data.length === 1 ? '' : 's'}</p>
         </div>
-        <span className="chip chip-accent num">avg {formatPercent(avg, 0)}</span>
+        <span className="chip num">avg <span className={toneText[performanceTone(avg)]}>{formatPercent(avg, 0)}</span></span>
       </div>
 
       <div className="relative">
         <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto" onMouseLeave={() => setHover(null)}>
           <defs>
             <linearGradient id="nx-area" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#2cc4f5" stopOpacity="0.28" />
-              <stop offset="100%" stopColor="#2cc4f5" stopOpacity="0" />
-            </linearGradient>
-            <linearGradient id="nx-line" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stopColor="#5ddcff" />
-              <stop offset="100%" stopColor="#2cc4f5" />
+              <stop offset="0%" stopColor="var(--nx-accent)" stopOpacity="0.22" />
+              <stop offset="100%" stopColor="var(--nx-accent)" stopOpacity="0" />
             </linearGradient>
           </defs>
 
@@ -57,8 +53,8 @@ export default function TrendChart({ history }: TrendChartProps) {
             const y = pad.top + ch - (v / 100) * ch
             return (
               <g key={v}>
-                <line x1={pad.left} x2={W - pad.right} y1={y} y2={y} stroke="rgba(159,173,204,0.08)" />
-                <text x={pad.left - 8} y={y + 3.5} textAnchor="end" fontSize="10" fill="#52648d" fontFamily="JetBrains Mono, monospace">
+                <line x1={pad.left} x2={W - pad.right} y1={y} y2={y} stroke="var(--nx-line)" />
+                <text x={pad.left - 8} y={y + 3.5} textAnchor="end" fontSize="10" fill="var(--nx-text-3)" fontFamily="JetBrains Mono, monospace">
                   {v}
                 </text>
               </g>
@@ -66,14 +62,14 @@ export default function TrendChart({ history }: TrendChartProps) {
           })}
 
           {/* average line */}
-          <line x1={pad.left} x2={W - pad.right} y1={avgY} y2={avgY} stroke="rgba(93,220,255,0.35)" strokeDasharray="3 5" />
+          <line x1={pad.left} x2={W - pad.right} y1={avgY} y2={avgY} stroke="var(--nx-text-3)" strokeDasharray="3 5" />
 
           {area && <motion.path d={area} fill="url(#nx-area)" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 0.4 }} />}
           {pts.length > 1 && (
             <motion.path
               d={line}
               fill="none"
-              stroke="url(#nx-line)"
+              stroke="var(--nx-accent)"
               strokeWidth="2.5"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -99,16 +95,15 @@ export default function TrendChart({ history }: TrendChartProps) {
                 cx={p.x}
                 cy={p.y}
                 r={hover === i ? 6 : 4}
-                fill="#070b16"
-                stroke="#5ddcff"
+                fill="var(--nx-canvas)"
+                stroke="var(--nx-accent)"
                 strokeWidth="2"
                 initial={{ opacity: 0, scale: 0 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.4 + i * 0.05, duration: 0.3 }}
-                style={{ filter: hover === i ? 'drop-shadow(0 0 6px rgba(93,220,255,0.9))' : undefined }}
               />
-              {hover === i && <line x1={p.x} x2={p.x} y1={pad.top} y2={pad.top + ch} stroke="rgba(93,220,255,0.25)" />}
-              <text x={p.x} y={H - 8} textAnchor="middle" fontSize="10" fill="#52648d" fontFamily="JetBrains Mono, monospace">
+              {hover === i && <line x1={p.x} x2={p.x} y1={pad.top} y2={pad.top + ch} stroke="var(--nx-line-strong)" />}
+              <text x={p.x} y={H - 8} textAnchor="middle" fontSize="10" fill="var(--nx-text-3)" fontFamily="JetBrains Mono, monospace">
                 #{p.e.attempt}
               </text>
             </g>
@@ -120,8 +115,8 @@ export default function TrendChart({ history }: TrendChartProps) {
             className="absolute pointer-events-none surface-strong rounded-xl px-3 py-2 text-xs -translate-x-1/2 -translate-y-full"
             style={{ left: `${(pts[hover].x / W) * 100}%`, top: `${(pts[hover].y / H) * 100}%`, marginTop: -12 }}
           >
-            <p className="font-display text-base text-ink-50 num">{formatPercent(pts[hover].e.percentage)}</p>
-            <p className="text-ink-400 whitespace-nowrap">
+            <p className={`font-display text-base num ${toneText[performanceTone(pts[hover].e.percentage)]}`}>{formatPercent(pts[hover].e.percentage)}</p>
+            <p className="text-fg-2 whitespace-nowrap">
               {labelCategory(pts[hover].e.category)} · {pts[hover].e.difficulty}
             </p>
           </div>

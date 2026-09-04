@@ -4,6 +4,9 @@ import { BrowserRouter } from 'react-router-dom'
 import { QuizProvider } from './context/QuizContext'
 import App from './App'
 import './styles/globals.css'
+import { initTheme } from './lib/theme'
+
+initTheme()
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

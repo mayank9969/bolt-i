@@ -4,7 +4,8 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useQuiz } from '@/context/QuizContext'
 import { submitQuiz } from '@/api/quizApi'
 import { ArrowLeft, ArrowRight, Check } from '@/components/ui/Icons'
-import { difficultyTone, labelCategory, labelDifficulty } from '@/lib/format'
+import Tier from '@/components/ui/Tier'
+import { labelCategory, labelDifficulty } from '@/lib/format'
 import { repairText } from '@/lib/text'
 
 const ease = [0.22, 1, 0.36, 1] as const
@@ -102,25 +103,24 @@ export default function Quiz() {
   if (!session || !current) return null
 
   const progress = (answeredCount / total) * 100
-  const tone = difficultyTone(current.difficulty)
 
   return (
     <div className="relative flex-1 flex flex-col">
       {/* ── Progress header ─────────────────────────────── */}
-      <div className="sticky top-16 z-30 bg-ink-975/85 backdrop-blur-xl border-b border-ink-800/60">
+      <div className="sticky top-16 z-30 bg-canvas/85 backdrop-blur-md border-b border-line">
         <div className="max-w-3xl mx-auto px-5 sm:px-6 py-3.5">
           <div className="flex items-center justify-between gap-4 mb-2.5">
             <div className="flex items-center gap-3 min-w-0">
-              <span className="font-display text-base sm:text-lg text-ink-50 num whitespace-nowrap">
-                Question <span className="text-accent-300">{index + 1}</span>
-                <span className="text-ink-500"> / {total}</span>
+              <span className="font-display text-base sm:text-lg text-fg num whitespace-nowrap">
+                Question <span className="text-accent">{index + 1}</span>
+                <span className="text-fg-3"> / {total}</span>
               </span>
-              <span className="hidden sm:inline text-ink-700">·</span>
-              <span className="hidden sm:inline text-xs text-ink-400 truncate">
+              <span className="hidden sm:inline text-fg-3">·</span>
+              <span className="hidden sm:inline text-xs text-fg-2 truncate">
                 {labelCategory(session.category)} · {labelDifficulty(session.difficulty)}
               </span>
             </div>
-            <span className="text-xs text-ink-400 num whitespace-nowrap">
+            <span className="text-xs text-fg-2 num whitespace-nowrap">
               {answeredCount} answered
             </span>
           </div>
@@ -135,15 +135,16 @@ export default function Quiz() {
                   type="button"
                   aria-label={`Go to question ${i + 1}`}
                   onClick={() => go(i)}
-                  className="relative h-1.5 flex-1 rounded-full bg-ink-800/80 overflow-hidden group"
+                  aria-current={active ? 'step' : undefined}
+                  className="relative h-1.5 flex-1 rounded-full track group"
                 >
                   <motion.span
-                    className="absolute inset-0 rounded-full bg-gradient-to-r from-accent-300 to-accent-500"
+                    className="absolute inset-0 rounded-full fill"
                     initial={false}
-                    animate={{ opacity: done ? 1 : active ? 0.45 : 0, boxShadow: done ? '0 0 10px rgba(44,196,245,0.6)' : 'none' }}
+                    animate={{ opacity: done ? 1 : active ? 0.4 : 0 }}
                     transition={{ duration: 0.35, ease }}
                   />
-                  {active && <span className="absolute inset-0 rounded-full ring-1 ring-accent-300/70" />}
+                  {active && <span className="absolute inset-0 rounded-full ring-1 ring-accent" />}
                 </button>
               )
             })}
@@ -170,15 +171,16 @@ export default function Quiz() {
               transition={{ duration: 0.28, ease }}
             >
               <div className="surface-strong rounded-3xl md:rounded-4xl p-6 sm:p-8 md:p-10 relative overflow-hidden">
-                <div className="absolute -top-24 -right-24 w-64 h-64 rounded-full bg-accent-400/[0.08] blur-[90px] pointer-events-none" />
+                {/* current-question marker: a single accent rule, top-left */}
+                <span className="absolute left-0 top-8 sm:top-10 h-10 w-[3px] rounded-r bg-accent" aria-hidden="true" />
 
                 <div className="flex flex-wrap items-center gap-2 mb-6">
                   <span className="chip">{labelCategory(current.category)}</span>
-                  <span className={`chip chip-${tone}`}>{current.difficulty}</span>
+                  <Tier difficulty={current.difficulty} />
                   <span className="chip">{isMCQ ? 'Multiple choice' : 'Typed answer'}</span>
                 </div>
 
-                <h1 className="font-display text-2xl sm:text-3xl md:text-[2.15rem] leading-snug text-ink-50 text-pretty">
+                <h1 className="font-display text-2xl sm:text-3xl md:text-[2.15rem] leading-snug text-fg text-pretty">
                   {repairText(current.question)}
                 </h1>
 
@@ -199,14 +201,10 @@ export default function Quiz() {
                             aria-pressed={selected}
                             className="choice p-4 sm:p-5 flex items-start gap-4"
                           >
-                            <span
-                              className={`w-9 h-9 rounded-lg flex items-center justify-center font-display text-base shrink-0 transition-colors ${
-                                selected ? 'bg-accent-400 text-ink-975' : 'bg-ink-900/80 border border-ink-700/60 text-ink-300'
-                              }`}
-                            >
+                            <span className="choice-key">
                               {selected ? <Check className="w-4 h-4" /> : key}
                             </span>
-                            <span className={`text-[15px] sm:text-base leading-relaxed pt-1.5 font-mono ${selected ? 'text-ink-50' : 'text-ink-200'}`}>
+                            <span className={`text-[15px] sm:text-base leading-relaxed pt-1.5 font-mono ${selected ? 'text-fg' : 'text-fg-2'}`}>
                               {repairText(text)}
                             </span>
                           </motion.button>
@@ -225,7 +223,7 @@ export default function Quiz() {
                         spellCheck={false}
                         className="field px-5 py-4 text-lg font-mono"
                       />
-                      <p className="text-xs text-ink-500 mt-3">
+                      <p className="text-xs text-fg-3 mt-3">
                         {current.difficulty === 'hard'
                           ? 'Hard tier: answers must match exactly, including spacing and case.'
                           : current.difficulty === 'medium'
@@ -246,10 +244,10 @@ export default function Quiz() {
               <span className="hidden sm:inline">Previous</span>
             </button>
 
-            <div className="hidden sm:flex items-center gap-1.5 text-xs text-ink-500">
-              <kbd className="px-1.5 py-0.5 rounded bg-ink-900 border border-ink-800 font-mono">{isMCQ ? 'A–D' : 'Type'}</kbd>
+            <div className="hidden sm:flex items-center gap-1.5 text-xs text-fg-3">
+              <kbd className="key">{isMCQ ? 'A–D' : 'Type'}</kbd>
               <span>then</span>
-              <kbd className="px-1.5 py-0.5 rounded bg-ink-900 border border-ink-800 font-mono">Enter</kbd>
+              <kbd className="key">Enter</kbd>
             </div>
 
             <button
@@ -260,7 +258,7 @@ export default function Quiz() {
             >
               {submitting ? (
                 <>
-                  <span className="w-4 h-4 rounded-full border-2 border-ink-975/30 border-t-ink-975 animate-spin" />
+                  <span className="w-4 h-4 rounded-full border-2 border-cta-text/30 border-t-cta-text animate-spin" />
                   Scoring
                 </>
               ) : isLast ? (
@@ -283,7 +281,8 @@ export default function Quiz() {
                 initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
-                className="mt-4 px-4 py-3 rounded-xl bg-danger-500/10 border border-danger-500/25 text-danger-300 text-sm"
+                role="alert"
+                className="mt-4 px-4 py-3 rounded-xl bg-err/10 border border-err/30 text-err text-sm"
               >
                 {error}
               </motion.p>
@@ -291,7 +290,7 @@ export default function Quiz() {
           </AnimatePresence>
 
           {isLast && answeredCount < total && (
-            <p className="mt-4 text-center text-xs text-ink-500">
+            <p className="mt-4 text-center text-xs text-warn">
               {total - answeredCount} question{total - answeredCount === 1 ? '' : 's'} still unanswered — they’ll be marked wrong.
             </p>
           )}
