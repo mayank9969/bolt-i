@@ -170,7 +170,7 @@ export default function Result() {
 
         <ol className="lg:grid lg:grid-cols-12 lg:gap-8">
           <div className="lg:col-span-2" />
-          <div className="lg:col-span-10 border-t border-line">
+          <div className="lg:col-span-10 border-t border-line quiz-paper">
             {review.map((item, i) => {
               const ok = item.is_correct
               const shown = (v: string) => repairText(item.question_type === 'mcq' && item.options ? `${v} — ${item.options[v] ?? '—'}` : v || '—')
@@ -189,7 +189,11 @@ export default function Result() {
                       <dl className="mt-4 grid sm:grid-cols-2 gap-x-8 gap-y-3 text-sm">
                         <div>
                           <dt className="figcap">Your answer</dt>
-                          <dd className={`mt-1 num ${ok ? 'text-ok' : 'text-err line-through decoration-err/60'}`}>{shown(item.user_answer)}</dd>
+                          {item.user_answer.trim() ? (
+                            <dd className={`mt-1 num ${ok ? 'text-ok' : 'text-err line-through decoration-err/60'}`}>{shown(item.user_answer)}</dd>
+                          ) : (
+                            <dd className="mt-1 text-fg-3 italic">Not answered</dd>
+                          )}
                         </div>
                         {!ok && (
                           <div>

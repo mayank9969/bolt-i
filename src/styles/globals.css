@@ -266,26 +266,32 @@
   }
   .link-rule:hover::after { transform: scaleX(1); }
 
-  /* ── Selectable choice cards — every state is a token ─── */
+  /* ── Answer choices — a radio row, not a card ────────────
+        Anatomy: [key] text ............................ [✓]
+        States: rest · hover · focus-visible · selected · disabled · correct/incorrect (review)
+        Every state changes at least two things (colour + mark/border) so it never relies on colour alone. */
   .choice {
-    @apply relative text-left rounded-xl w-full;
+    @apply relative w-full text-left flex items-center gap-4 rounded-xl;
+    padding: 0.875rem 1rem 0.875rem 0.875rem;
+    min-height: 3.5rem;
     background: var(--nx-card);
-    border: 1px solid var(--nx-line);
+    border: 1px solid var(--nx-line-strong);
     color: var(--nx-text);
-    box-shadow: 0 1px 0 0 var(--nx-highlight) inset;
+    cursor: pointer;
     transition:
-      transform 0.25s var(--nx-ease),
-      box-shadow 0.25s var(--nx-ease),
-      border-color 0.25s var(--nx-ease),
-      background-color 0.25s var(--nx-ease);
+      border-color 0.15s var(--nx-ease),
+      background-color 0.15s var(--nx-ease),
+      box-shadow 0.15s var(--nx-ease);
   }
-  .choice:hover:not(:disabled) {
-    transform: translateY(-1px);
-    border-color: var(--nx-line-strong);
+  .choice:hover:not(:disabled):not([data-selected='true']) {
+    border-color: var(--nx-text-3);
     background: var(--nx-card-strong);
-    box-shadow: var(--nx-shadow-1);
   }
-  .choice:focus-visible { outline-offset: 2px; }
+  .choice:active:not(:disabled) { background: var(--nx-elevated); }
+  .choice:focus-visible {
+    outline: 2px solid var(--nx-focus);
+    outline-offset: 2px;
+  }
   .choice[data-selected='true'] {
     background: var(--nx-selected-soft);
     border-color: var(--nx-selected);
@@ -301,36 +307,92 @@
     border-color: var(--nx-error);
     box-shadow: 0 0 0 1px var(--nx-error) inset;
   }
-  .choice:disabled {
-    cursor: not-allowed;
+  .choice:disabled { cursor: not-allowed; }
+  .choice:disabled:not([data-selected='true']):not([data-state]) {
     color: var(--nx-disabled-text);
-    background: var(--nx-disabled);
-    border-color: var(--nx-line-subtle);
-    box-shadow: none;
+    border-color: var(--nx-line);
+    background: transparent;
   }
 
-  /* Option key badge (A/B/C/D) inside a choice */
+  .choice-text {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow-wrap: anywhere;      /* long options and code wrap, never shrink */
+    color: var(--nx-text);
+  }
+  .choice[data-selected='true'] .choice-text { font-weight: 500; }
+  .choice:disabled:not([data-selected='true']):not([data-state]) .choice-text { color: inherit; }
+
+  /* Option key badge (A/B/C/D) */
   .choice-key {
-    @apply w-9 h-9 rounded-full flex items-center justify-center text-[15px] font-semibold shrink-0;
+    @apply w-8 h-8 rounded-md flex items-center justify-center text-[14px] font-semibold shrink-0 num;
     background: var(--nx-elevated);
     border: 1px solid var(--nx-line-strong);
     color: var(--nx-text-2);
-    transition: background-color var(--nx-dur-fast) var(--nx-ease), color var(--nx-dur-fast) var(--nx-ease), border-color var(--nx-dur-fast) var(--nx-ease);
+    transition: background-color 0.15s var(--nx-ease), color 0.15s var(--nx-ease), border-color 0.15s var(--nx-ease);
   }
-  .choice[data-selected='true'] .choice-key {
+  .choice[data-selected='true'] .choice-key,
+  .choice[data-state='correct'] .choice-key,
+  .choice[data-state='incorrect'] .choice-key {
+    color: var(--nx-text-inverse);
+  }
+  .choice[data-selected='true'] .choice-key { background: var(--nx-selected); border-color: var(--nx-selected); }
+  .choice[data-state='correct'] .choice-key { background: var(--nx-success); border-color: var(--nx-success); }
+  .choice[data-state='incorrect'] .choice-key { background: var(--nx-error); border-color: var(--nx-error); }
+
+  /* Right-hand mark: an empty ring at rest (this is selectable), a filled check when selected */
+  .choice-mark {
+    @apply w-6 h-6 rounded-full flex items-center justify-center shrink-0;
+    border: 1.5px solid var(--nx-line-strong);
+    color: transparent;
+    transition: background-color 0.15s var(--nx-ease), border-color 0.15s var(--nx-ease), color 0.15s var(--nx-ease), transform 0.15s var(--nx-ease);
+  }
+  .choice:hover:not(:disabled) .choice-mark { border-color: var(--nx-text-3); }
+  .choice[data-selected='true'] .choice-mark {
     background: var(--nx-selected);
     border-color: var(--nx-selected);
     color: var(--nx-text-inverse);
   }
-  .choice[data-state='correct'] .choice-key {
-    background: var(--nx-success);
-    border-color: var(--nx-success);
-    color: var(--nx-text-inverse);
+  .choice[data-state='correct'] .choice-mark { background: var(--nx-success); border-color: var(--nx-success); color: var(--nx-text-inverse); }
+  .choice[data-state='incorrect'] .choice-mark { background: var(--nx-error); border-color: var(--nx-error); color: var(--nx-text-inverse); }
+  .choice:disabled:not([data-selected='true']):not([data-state]) .choice-mark { border-color: var(--nx-line); }
+
+  /* ── Quiz progress strip — one segment per question ──── */
+  .progress-seg {
+    @apply relative flex-1 rounded-full;
+    height: 1.25rem;              /* generous hit area, thin visual */
+    min-width: 0.375rem;
+    background: transparent;
   }
-  .choice[data-state='incorrect'] .choice-key {
-    background: var(--nx-error);
-    border-color: var(--nx-error);
-    color: var(--nx-text-inverse);
+  .progress-seg-bar {
+    @apply absolute left-0 right-0 rounded-full;
+    top: 50%;
+    height: 0.25rem;
+    transform: translateY(-50%);
+    background: var(--nx-track);
+    transition: background-color 0.25s var(--nx-ease), box-shadow 0.25s var(--nx-ease);
+  }
+  .progress-seg[data-done='true'] .progress-seg-bar { background: var(--nx-progress); }
+  .progress-seg[data-active='true'] .progress-seg-bar {
+    box-shadow: 0 0 0 1.5px var(--nx-canvas), 0 0 0 3px var(--nx-accent);
+  }
+  .progress-seg:not([data-done='true']):hover .progress-seg-bar { background: var(--nx-line-strong); }
+  .progress-seg:focus-visible { outline-offset: 0; }
+
+  /* ── Quiz column: a soft paper wash so the network never sits under the words ── */
+  .quiz-paper { position: relative; }
+  .quiz-paper::before {
+    content: '';
+    position: absolute;
+    inset: -3rem -4rem;
+    pointer-events: none;
+    z-index: -1;
+    background: radial-gradient(ellipse at 50% 45%, rgb(var(--nx-canvas-rgb) / 0.96) 40%, rgb(var(--nx-canvas-rgb) / 0) 78%);
+  }
+  .quiz-controls {
+    margin-top: 2rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--nx-line);
   }
 
   /* ── Text field ──────────────────────────────────────── */

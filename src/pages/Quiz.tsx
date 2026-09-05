@@ -1,19 +1,32 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { AnimatePresence, motion } from 'framer-motion'
+import { Link, useNavigate } from 'react-router-dom'
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { useQuiz } from '@/context/QuizContext'
 import { submitQuiz } from '@/api/quizApi'
 import { ArrowLeft, ArrowRight, Check } from '@/components/ui/Icons'
-import Tier from '@/components/ui/Tier'
 import { pulseNetwork, useNetwork } from '@/components/three/store'
 import { labelCategory, labelDifficulty } from '@/lib/format'
 import { repairText } from '@/lib/text'
 
 const ease = [0.22, 1, 0.36, 1] as const
 
+/**
+ * QUIZ — the answering surface.
+ *
+ * One column, one job. Reading order is fixed: where am I → the question →
+ * the answers → what happens next. Everything else (category, tier, format,
+ * keyboard hints) is a single quiet line of context, never a row of badges.
+ *
+ * Rules the page keeps:
+ *  · an answer can always be changed until Finish is pressed
+ *  · Next requires an answer; Skip (same button, unanswered) never does
+ *  · every question is reachable from the progress strip
+ *  · Enter continues only when there is an answer, so it can't skip by accident
+ */
 export default function Quiz() {
   const navigate = useNavigate()
   const { session, finishSession } = useQuiz()
+  const reduceMotion = useReducedMotion()
 
   const questions = useMemo(() => session?.questions ?? [], [session])
   const total = questions.length
@@ -24,6 +37,8 @@ export default function Quiz() {
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
+  const headingRef = useRef<HTMLHeadingElement>(null)
+  const optionRefs = useRef<(HTMLButtonElement | null)[]>([])
   // Set once the server has scored the session, so the "no session → setup" guard below
   // doesn't fire while this page is still mounted during its exit transition.
   const finishedRef = useRef(false)
@@ -33,10 +48,10 @@ export default function Quiz() {
   }, [session, navigate])
 
   // QUIZ — focus mode: the network recedes into the paper; activation tracks answered count.
-  const answeredForScene = answers.filter((a) => a.trim() !== '').length
+  const answeredCount = answers.filter((a) => a.trim() !== '').length
   useNetwork(
-    { mode: 'quiet', camera: 'far', density: 0.4, activation: total ? 0.1 + (answeredForScene / total) * 0.5 : 0.1 },
-    [answeredForScene, total],
+    { mode: 'quiet', camera: 'far', density: 0.4, activation: total ? 0.1 + (answeredCount / total) * 0.5 : 0.1 },
+    [answeredCount, total],
   )
   // moving between questions sends one quiet signal
   useEffect(() => {
@@ -45,13 +60,21 @@ export default function Quiz() {
 
   const current = questions[index]
   const isMCQ = current?.question_type === 'mcq'
+  const optionEntries = useMemo(() => (isMCQ && current?.options ? Object.entries(current.options) : []), [isMCQ, current])
   const currentAnswer = answers[index] ?? ''
-  const answeredCount = answers.filter((a) => a.trim() !== '').length
+  const hasAnswer = currentAnswer.trim() !== ''
   const isLast = index === total - 1
+  const unanswered = total - answeredCount
 
+  // On arrival at a question: typed → cursor in the field; choice → focus the
+  // question itself so screen readers read it, then Tab lands on the answers.
   useEffect(() => {
-    if (!isMCQ) inputRef.current?.focus()
-  }, [index, isMCQ])
+    const t = window.setTimeout(() => {
+      if (isMCQ) headingRef.current?.focus({ preventScroll: true })
+      else inputRef.current?.focus({ preventScroll: true })
+    }, reduceMotion ? 0 : 120)
+    return () => window.clearTimeout(t)
+  }, [index, isMCQ, reduceMotion])
 
   const setAnswer = useCallback(
     (value: string) => {
@@ -66,7 +89,7 @@ export default function Quiz() {
 
   const go = useCallback(
     (to: number) => {
-      if (to < 0 || to >= total) return
+      if (to < 0 || to >= total || to === index) return
       setDirection(to > index ? 1 : -1)
       setIndex(to)
     },
@@ -88,59 +111,98 @@ export default function Quiz() {
     }
   }, [session, submitting, answers, finishSession, navigate])
 
-  const next = useCallback(() => {
-    if (!currentAnswer.trim()) return
+  // The primary button: Next when answered, Skip when not, Finish on the last question.
+  const advance = useCallback(() => {
+    if (submitting) return
     if (isLast) finish()
     else go(index + 1)
-  }, [currentAnswer, isLast, finish, go, index])
+  }, [submitting, isLast, finish, go, index])
 
-  // Keyboard: A–D pick options, Enter continues, arrows navigate.
+  // Keyboard: A–D choose, ↑/↓ move the choice, Enter continues (only with an answer), ←/→ move between questions.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      if (e.metaKey || e.ctrlKey || e.altKey) return
       const tag = (e.target as HTMLElement)?.tagName
       const typing = tag === 'INPUT' || tag === 'TEXTAREA'
-      if (isMCQ && !typing && current?.options) {
+      if (isMCQ && !typing && optionEntries.length) {
         const k = e.key.toUpperCase()
-        if (current.options[k]) {
-          setAnswer(k)
+        const hit = optionEntries.findIndex(([key]) => key === k)
+        if (hit >= 0) {
+          setAnswer(optionEntries[hit][0])
+          optionRefs.current[hit]?.focus()
+          return
+        }
+        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+          e.preventDefault()
+          const cur = optionEntries.findIndex(([key]) => key === currentAnswer)
+          const step = e.key === 'ArrowDown' ? 1 : -1
+          const nextIdx = cur < 0 ? (step > 0 ? 0 : optionEntries.length - 1) : (cur + step + optionEntries.length) % optionEntries.length
+          setAnswer(optionEntries[nextIdx][0])
+          optionRefs.current[nextIdx]?.focus()
           return
         }
       }
       if (e.key === 'Enter' && !e.shiftKey) {
+        if (!hasAnswer) return
         e.preventDefault()
-        next()
+        advance()
       } else if (e.key === 'ArrowLeft' && !typing) go(index - 1)
-      else if (e.key === 'ArrowRight' && !typing && currentAnswer.trim()) go(index + 1)
+      else if (e.key === 'ArrowRight' && !typing) go(index + 1)
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [isMCQ, current, setAnswer, next, go, index, currentAnswer])
+  }, [isMCQ, optionEntries, setAnswer, advance, go, index, currentAnswer, hasAnswer])
 
-  if (!session || !current) return null
+  if (!session) return null
 
-  const progress = (answeredCount / total) * 100
+  // Empty state — the server returned a session with no questions.
+  if (!current) {
+    return (
+      <div className="flex-1 flex items-center justify-center px-5 py-16">
+        <div className="surface rounded-2xl p-8 max-w-md text-center" role="alert">
+          <p className="t-h3 text-fg">No questions came back for this selection.</p>
+          <p className="t-body text-fg-2 mt-2">Try a different region or tier.</p>
+          <Link to="/setup" className="btn-primary mt-6">Back to setup</Link>
+        </div>
+      </div>
+    )
+  }
+
+  const status = submitting
+    ? 'Sending your answers to be scored…'
+    : !hasAnswer
+      ? isLast
+        ? unanswered > 1
+          ? `${unanswered} questions are unanswered — they’ll count as wrong if you finish now.`
+          : 'This question is unanswered — it’ll count as wrong if you finish now.'
+        : `${isMCQ ? 'Choose an answer' : 'Type an answer'} to continue, or skip and come back later.`
+      : isLast
+        ? unanswered > 0
+          ? `${unanswered} earlier question${unanswered === 1 ? ' is' : 's are'} unanswered — use the strip above to go back.`
+          : 'All answered. Finish to see your score.'
+        : 'Saved. You can change any answer until you finish.'
+
+  const primaryLabel = submitting ? 'Scoring…' : isLast ? 'Finish quiz' : hasAnswer ? 'Next' : 'Skip'
+
+  const slide = reduceMotion ? 0 : 20
 
   return (
     <div className="relative flex-1 flex flex-col">
-      {/* ── Progress header ─────────────────────────────── */}
+      {/* ── Where am I ──────────────────────────────────── */}
       <div className="sticky top-16 z-30 bg-canvas/90 backdrop-blur-md border-b border-line">
-        <div className="max-w-3xl mx-auto px-5 sm:px-6 py-3">
-          <div className="flex items-center justify-between gap-4 mb-2.5">
-            <div className="flex items-baseline gap-3 min-w-0">
-              <span className="t-h3 text-fg num whitespace-nowrap">
-                <span className="text-accent">{String(index + 1).padStart(2, '0')}</span>
-                <span className="text-fg-3 text-base"> / {String(total).padStart(2, '0')}</span>
-              </span>
-              <span className="hidden sm:inline figcap truncate">
-                {labelCategory(session.category)} · {labelDifficulty(session.difficulty)}
-              </span>
-            </div>
-            <span className="figcap whitespace-nowrap">
-              {answeredCount} answered
-            </span>
+        <div className="max-w-2xl mx-auto px-5 sm:px-6 pt-3 pb-1">
+          <div className="flex items-baseline justify-between gap-4">
+            <p className="t-h3 text-fg num whitespace-nowrap">
+              Question {index + 1} <span className="text-fg-3 font-normal">of {total}</span>
+            </p>
+            <p className="figcap num whitespace-nowrap">
+              <span className="hidden sm:inline">{labelCategory(session.category)} · {labelDifficulty(session.difficulty)} · </span>
+              {answeredCount} of {total} answered
+            </p>
           </div>
-          {/* segmented bar */}
-          <div className="flex gap-1">
+
+          {/* progress strip: one segment per question — filled = answered, ringed = current; every segment is a link */}
+          <div className="flex gap-1 mt-1.5" role="list" aria-label="Questions">
             {questions.map((_, i) => {
               const done = answers[i]?.trim() !== ''
               const active = i === index
@@ -148,171 +210,162 @@ export default function Quiz() {
                 <button
                   key={i}
                   type="button"
-                  aria-label={`Go to question ${i + 1}`}
-                  onClick={() => go(i)}
+                  role="listitem"
+                  aria-label={`Question ${i + 1}${done ? ', answered' : ', not answered'}${active ? ', current' : ''}`}
                   aria-current={active ? 'step' : undefined}
-                  className="relative h-1.5 flex-1 rounded-full track group"
+                  title={`Question ${i + 1}${done ? ' · answered' : ''}`}
+                  onClick={() => go(i)}
+                  className="progress-seg"
+                  data-done={done}
+                  data-active={active}
                 >
-                  <motion.span
-                    className="absolute inset-0 rounded-full fill"
-                    initial={false}
-                    animate={{ opacity: done ? 1 : active ? 0.4 : 0 }}
-                    transition={{ duration: 0.35, ease }}
-                  />
-                  {active && <span className="absolute inset-0 rounded-full ring-1 ring-accent" />}
+                  <span className="progress-seg-bar" />
                 </button>
               )
             })}
           </div>
-          <div className="sr-only" aria-live="polite">{Math.round(progress)}% complete</div>
+          <p className="sr-only" aria-live="polite">{answeredCount} of {total} answered</p>
         </div>
       </div>
 
-      {/* ── Question ────────────────────────────────────── */}
-      <div className="flex-1 flex items-start md:items-center justify-center px-5 sm:px-6 py-10 md:py-14">
-        <div className="w-full max-w-3xl">
+      {/* ── The question ────────────────────────────────── */}
+      <div className="flex-1 flex items-start md:items-center justify-center px-5 sm:px-6 pt-8 pb-4 md:py-14">
+        <div className="w-full max-w-2xl quiz-paper">
           <AnimatePresence mode="wait" custom={direction} initial={false}>
-            <motion.div
+            <motion.section
               key={index}
               custom={direction}
               variants={{
-                enter: (d: number) => ({ x: d > 0 ? 36 : -36, opacity: 0 }),
+                enter: (d: number) => ({ x: d > 0 ? slide : -slide, opacity: 0 }),
                 center: { x: 0, opacity: 1 },
-                exit: (d: number) => ({ x: d > 0 ? -28 : 28, opacity: 0 }),
+                exit: (d: number) => ({ x: d > 0 ? -slide : slide, opacity: 0 }),
               }}
               initial="enter"
               animate="center"
               exit="exit"
-              transition={{ duration: 0.28, ease }}
+              transition={{ duration: reduceMotion ? 0 : 0.22, ease }}
+              aria-labelledby="quiz-question"
             >
-              <div className="relative pl-5 sm:pl-8 border-l border-line-strong">
-                {/* current-question marker: a single accent rule on the margin line */}
-                <span className="absolute -left-px top-1 h-12 w-[2px] bg-accent" aria-hidden="true" />
+              {/* one line of context — never a row of badges */}
+              <p className="figcap num">
+                {labelCategory(current.category)} · {labelDifficulty(current.difficulty)} · {isMCQ ? 'Choose one' : 'Type the answer'}
+              </p>
 
-                <div className="flex flex-wrap items-center gap-2 mb-6">
-                  <span className="chip">{labelCategory(current.category)}</span>
-                  <Tier difficulty={current.difficulty} />
-                  <span className="chip">{isMCQ ? 'Multiple choice' : 'Typed answer'}</span>
-                </div>
+              <h1
+                id="quiz-question"
+                ref={headingRef}
+                tabIndex={-1}
+                className="t-question text-fg text-pretty max-w-[38ch] mt-3 outline-none"
+              >
+                {repairText(current.question)}
+              </h1>
 
-                <h1 className="t-question text-fg text-pretty max-w-[26ch]">
-                  {repairText(current.question)}
-                </h1>
-
-                <div className="mt-10">
-                  {isMCQ && current.options ? (
-                    <div className="grid gap-2.5">
-                      {Object.entries(current.options).map(([key, text], i) => {
-                        const selected = currentAnswer === key
-                        return (
-                          <motion.button
-                            key={key}
-                            type="button"
-                            initial={{ opacity: 0, y: 12 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.05 + i * 0.05, duration: 0.35, ease }}
-                            onClick={() => setAnswer(key)}
-                            data-selected={selected}
-                            aria-pressed={selected}
-                            className="group choice px-4 py-3.5 sm:px-5 sm:py-4 flex items-center gap-4"
-                          >
-                            <span className="choice-key">
-                              {selected ? <Check className="w-4 h-4" /> : key}
-                            </span>
-                            <span className={`flex-1 t-answer ${selected ? 'text-fg font-medium' : 'text-fg-2 group-hover:text-fg'}`}>
-                              {repairText(text)}
-                            </span>
-                            {/* state is also spoken as text, not colour alone */}
-                            <span className={`t-label shrink-0 ${selected ? 'text-accent' : 'text-fg-3 opacity-0 group-hover:opacity-100'}`}>
-                              {selected ? 'Selected' : key}
-                            </span>
-                          </motion.button>
-                        )
-                      })}
-                    </div>
-                  ) : (
-                    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08, duration: 0.35, ease }}>
-                      <input
-                        ref={inputRef}
-                        type="text"
-                        value={currentAnswer}
-                        onChange={(e) => setAnswer(e.target.value)}
-                        placeholder="Type your answer…"
-                        autoComplete="off"
-                        spellCheck={false}
-                        className="field px-5 py-4 t-answer !text-lg !rounded-xl num"
-                      />
-                      <p className="t-caption text-fg-3 mt-3">
-                        {current.difficulty === 'hard'
-                          ? 'Hard tier: answers must match exactly, including spacing and case.'
-                          : current.difficulty === 'medium'
-                            ? 'Medium tier: case doesn’t matter, extra spaces are ignored.'
-                            : 'Easy tier: case doesn’t matter.'}
-                      </p>
-                    </motion.div>
-                  )}
-                </div>
+              <div className="mt-8">
+                {isMCQ ? (
+                  <div role="radiogroup" aria-labelledby="quiz-question" className="grid gap-2">
+                    {optionEntries.map(([key, text], i) => {
+                      const selected = currentAnswer === key
+                      return (
+                        <button
+                          key={key}
+                          ref={(el) => { optionRefs.current[i] = el }}
+                          type="button"
+                          role="radio"
+                          aria-checked={selected}
+                          tabIndex={selected || (!hasAnswer && i === 0) ? 0 : -1}
+                          disabled={submitting}
+                          onClick={() => setAnswer(key)}
+                          data-selected={selected}
+                          className="choice"
+                        >
+                          <span className="choice-key" aria-hidden="true">{key}</span>
+                          <span className="choice-text t-answer">{repairText(text)}</span>
+                          <span className="choice-mark" aria-hidden="true">
+                            <Check className="w-4 h-4" strokeWidth={2.4} />
+                          </span>
+                          {selected && <span className="sr-only">Selected</span>}
+                        </button>
+                      )
+                    })}
+                  </div>
+                ) : (
+                  <div>
+                    <label htmlFor="quiz-answer" className="t-label text-fg-2 block mb-2">Your answer</label>
+                    <input
+                      id="quiz-answer"
+                      ref={inputRef}
+                      type="text"
+                      value={currentAnswer}
+                      onChange={(e) => setAnswer(e.target.value)}
+                      placeholder="Type here…"
+                      autoComplete="off"
+                      autoCapitalize="off"
+                      spellCheck={false}
+                      disabled={submitting}
+                      enterKeyHint={isLast ? 'done' : 'next'}
+                      aria-describedby="quiz-answer-hint"
+                      className="field px-4 py-3.5 t-answer !rounded-xl num max-w-xl"
+                    />
+                    <p id="quiz-answer-hint" className="t-caption text-fg-3 mt-2">
+                      {current.difficulty === 'hard'
+                        ? 'Hard tier: must match exactly, including spacing and capital letters.'
+                        : current.difficulty === 'medium'
+                          ? 'Medium tier: capital letters don’t matter; extra spaces are ignored.'
+                          : 'Easy tier: capital letters don’t matter.'}
+                    </p>
+                  </div>
+                )}
               </div>
-            </motion.div>
+            </motion.section>
           </AnimatePresence>
 
-          {/* ── Controls ─────────────────────────────────── */}
-          <div className="mt-6 flex items-center justify-between gap-3">
-            <button type="button" onClick={() => go(index - 1)} disabled={index === 0} className="btn-secondary">
-              <ArrowLeft className="w-4 h-4" />
-              <span className="hidden sm:inline">Previous</span>
-            </button>
+          {/* ── What happens next ─────────────────────────── */}
+          <div className="quiz-controls">
+            <p className={`t-caption num ${!hasAnswer && isLast ? 'text-warn' : 'text-fg-3'}`} aria-live="polite">
+              {status}
+            </p>
+            <div className="flex items-center justify-between gap-3 mt-3">
+              <button type="button" onClick={() => go(index - 1)} disabled={index === 0 || submitting} className="btn-secondary">
+                <ArrowLeft className="w-4 h-4" />
+                Previous
+              </button>
 
-            <div className="hidden sm:flex items-center gap-1.5 t-caption text-fg-3">
-              <kbd className="key">{isMCQ ? 'A–D' : 'Type'}</kbd>
-              <span>then</span>
-              <kbd className="key">Enter</kbd>
+              <p className="hidden sm:flex items-center gap-1.5 t-caption text-fg-3" aria-hidden="true">
+                {isMCQ ? <kbd className="key">A–{optionEntries[optionEntries.length - 1]?.[0] ?? 'D'}</kbd> : <kbd className="key">Type</kbd>}
+                <span>then</span>
+                <kbd className="key">Enter</kbd>
+              </p>
+
+              <button
+                type="button"
+                onClick={advance}
+                disabled={submitting}
+                aria-busy={submitting || undefined}
+                className={hasAnswer || isLast ? 'btn-primary min-w-[8.5rem]' : 'btn-secondary min-w-[8.5rem]'}
+              >
+                {submitting && <span className="w-4 h-4 rounded-full border-2 border-current/30 border-t-current animate-spin" />}
+                {primaryLabel}
+                {!submitting && (isLast ? <Check className="w-4 h-4" /> : <ArrowRight className="arrow w-4 h-4" />)}
+              </button>
             </div>
-
-            <button
-              type="button"
-              onClick={next}
-              disabled={!currentAnswer.trim() || submitting}
-              className={`btn-primary group ${isLast ? 'min-w-[9.5rem]' : ''}`}
-            >
-              {submitting ? (
-                <>
-                  <span className="w-4 h-4 rounded-full border-2 border-cta-text/30 border-t-cta-text animate-spin" />
-                  Scoring
-                </>
-              ) : isLast ? (
-                <>
-                  Finish quiz
-                  <Check className="w-4 h-4" />
-                </>
-              ) : (
-                <>
-                  Next
-                  <ArrowRight className="arrow w-4 h-4" />
-                </>
-              )}
-            </button>
           </div>
 
           <AnimatePresence>
             {error && (
-              <motion.p
+              <motion.div
                 initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
                 role="alert"
-                className="mt-4 px-4 py-3 rounded-xl bg-err/10 border border-err/30 text-err text-sm"
+                className="mt-4 px-4 py-3 rounded-xl bg-err/10 border border-err/30 text-sm"
               >
-                {error}
-              </motion.p>
+                <p className="text-err font-medium">Your answers couldn’t be scored.</p>
+                <p className="text-fg-2 mt-1">
+                  {error}. Nothing was lost — check the server window is still open, then press <strong>Finish quiz</strong> again.
+                </p>
+              </motion.div>
             )}
           </AnimatePresence>
-
-          {isLast && answeredCount < total && (
-            <p className="mt-4 text-center t-caption text-warn">
-              {total - answeredCount} question{total - answeredCount === 1 ? '' : 's'} still unanswered — they’ll be marked wrong.
-            </p>
-          )}
         </div>
       </div>
     </div>
