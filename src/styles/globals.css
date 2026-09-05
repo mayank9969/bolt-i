@@ -197,12 +197,12 @@
     @apply btn px-6 py-3 t-button;
     background: var(--nx-cta);
     color: var(--nx-cta-text);
-    box-shadow: 0 1px 0 0 rgb(255 255 255 / 0.18) inset, 0 12px 28px -14px rgb(26 25 23 / 0.45);
+    box-shadow: var(--nx-shadow-cta);
   }
   .btn-primary:hover:not(:disabled) {
     background: var(--nx-cta-hover);
     transform: translateY(-1px);
-    box-shadow: 0 1px 0 0 rgb(255 255 255 / 0.22) inset, 0 18px 36px -14px rgb(26 25 23 / 0.5);
+    box-shadow: var(--nx-shadow-cta-hover);
   }
   /* the arrow inside a button travels; the label does not */
   .btn .arrow { transition: transform var(--nx-dur) var(--nx-ease); }
@@ -272,7 +272,7 @@
     background: var(--nx-card);
     border: 1px solid var(--nx-line);
     color: var(--nx-text);
-    box-shadow: 0 1px 0 0 rgb(255 255 255 / 0.03) inset;
+    box-shadow: 0 1px 0 0 var(--nx-highlight) inset;
     transition:
       transform 0.25s var(--nx-ease),
       box-shadow 0.25s var(--nx-ease),
@@ -481,7 +481,7 @@
     border-radius: 50%;
     background: var(--nx-cta);
     border: 2px solid var(--nx-canvas);
-    box-shadow: 0 0 0 1px var(--nx-line-strong), 0 4px 12px rgb(0 0 0 / 0.35);
+    box-shadow: 0 0 0 1px var(--nx-line-strong), 0 4px 12px rgb(var(--nx-shadow-ink) / 0.25);
     cursor: pointer;
     transition: transform 0.2s var(--nx-ease), box-shadow 0.2s var(--nx-ease);
   }

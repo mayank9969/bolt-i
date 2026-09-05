@@ -19,46 +19,48 @@
 [data-theme='paper'] {
   color-scheme: light;
 
-  /* canvas & surfaces — on paper, elevation = lighter */
-  --nx-canvas-rgb: 242 238 229;        /* warm parchment */
-  --nx-surface-rgb: 233 228 217;       /* secondary background / recessed (warm gray) */
-  --nx-elevated-rgb: 247 244 237;      /* fields, inputs */
-  --nx-card-rgb: 249 246 240;          /* card — a tone up, never white */
-  --nx-card-strong-rgb: 252 250 246;   /* strongest surface */
+  /* ── Paper: canvas & surfaces. Three visible tones do the layering:
+        surface (recessed)  <  canvas (page)  <  card (lifted)  <  card-strong.
+        Nothing here is #FFFFFF. ─────────────────────────────────────── */
+  --nx-canvas-rgb: 244 241 234;        /* #F4F1EA warm parchment */
+  --nx-surface-rgb: 235 230 220;       /* #EBE6DC recessed warm gray — rails, quiet bands */
+  --nx-elevated-rgb: 248 246 240;      /* #F8F6F0 inputs / keys */
+  --nx-card-rgb: 250 248 243;          /* #FAF8F3 lifted paper */
+  --nx-card-strong-rgb: 253 252 249;   /* #FDFCF9 popovers, focused field */
 
-  /* text — warm ink, never pure black */
-  --nx-text-rgb: 26 25 23;
-  --nx-text-2-rgb: 84 82 77;
-  --nx-text-3-rgb: 104 100 92;         /* ≥4.5:1 on every paper surface incl. --nx-surface */
-  --nx-text-inverse-rgb: 255 255 255;
+  /* ── Ink: warm charcoal, never pure black ─────────────────────────── */
+  --nx-text-rgb: 28 27 24;             /* #1C1B18  15.3:1 on canvas */
+  --nx-text-2-rgb: 79 76 69;           /* #4F4C45   7.6:1 */
+  --nx-text-3-rgb: 104 100 92;         /* #68645C   5.1:1 on canvas, 4.6:1 on surface */
+  --nx-text-inverse-rgb: 246 243 236;
 
-  /* lines */
+  /* ── Lines: ink at low alpha so they warm with the surface beneath ── */
   --nx-line: rgb(var(--nx-text-rgb) / 0.10);
   --nx-line-subtle: rgb(var(--nx-text-rgb) / 0.06);
   --nx-line-strong: rgb(var(--nx-text-rgb) / 0.22);
 
-  /* signature accent — vermilion */
-  --nx-accent-rgb: 204 60 24;
-  --nx-accent-2-rgb: 168 52 16;        /* small accent text */
-  --nx-accent-dark-rgb: 132 40 12;     /* pressed / dense */
-  --nx-accent-on-ink-rgb: 255 128 84;  /* accent text on an ink panel */
+  /* ── Signature accent: vermilion. One hue, three strengths. ───────── */
+  --nx-accent-rgb: 186 58 22;          /* #BA3A16  5.0:1 canvas, 4.6:1 surface — passes AA at every size */
+  --nx-accent-2-rgb: 163 52 18;        /* #A33412  6.1:1 — small accent text */
+  --nx-accent-dark-rgb: 126 42 15;     /* #7E2A0F  pressed */
+  --nx-accent-on-ink-rgb: 255 138 92;  /* #FF8A5C  7.4:1 on an ink panel */
   --nx-accent-soft: rgb(var(--nx-accent-rgb) / 0.10);
   --nx-accent-glow: rgb(var(--nx-accent-rgb) / 0.22);
 
-  /* secondary accent — slate ink. Rare: info, cool 3D light, chart mean */
+  /* secondary tone — slate. Not a UI accent: 3D fill light + chart mean line only */
   --nx-accent-b-rgb: 58 76 110;
 
-  /* primary action — ink on paper */
-  --nx-cta-rgb: 26 25 23;
+  /* ── Primary action: ink on paper ─────────────────────────────────── */
+  --nx-cta-rgb: 28 27 24;
   --nx-cta-hover-rgb: 0 0 0;
-  --nx-cta-text-rgb: 244 241 234;
+  --nx-cta-text-rgb: 246 243 236;      /* 15.5:1 */
 
-  /* semantics — only where they carry meaning */
-  --nx-success-rgb: 22 118 78;
-  --nx-warning-rgb: 150 95 12;
-  --nx-error-rgb: 190 40 38;
+  /* ── Semantics — always paired with an icon or a word ─────────────── */
+  --nx-success-rgb: 31 111 74;         /* #1F6F4A 5.4:1 */
+  --nx-warning-rgb: 143 90 10;         /* #8F5A0A 5.1:1 */
+  --nx-error-rgb: 179 38 30;           /* #B3261E 5.8:1 */
 
-  /* states */
+  /* ── States ───────────────────────────────────────────────────────── */
   --nx-selected-rgb: var(--nx-accent-rgb);
   --nx-hover: rgb(var(--nx-text-rgb) / 0.04);
   --nx-focus: rgb(var(--nx-accent-rgb) / 0.9);
@@ -66,26 +68,33 @@
   --nx-track: rgb(var(--nx-text-rgb) / 0.10);
   --nx-score-rgb: var(--nx-text-rgb);
   --nx-disabled: rgb(var(--nx-text-rgb) / 0.06);
-  --nx-disabled-text-rgb: 150 147 140;
+  --nx-disabled-text-rgb: 138 133 122; /* #8A857A decorative / disabled only (3.3:1) */
 
-  /* decorative / atmosphere */
-  --nx-deco-1: rgb(var(--nx-accent-rgb) / 0.08);     /* warm light */
-  --nx-deco-2: rgb(var(--nx-accent-b-rgb) / 0.10);   /* cool field */
+  /* ── Atmosphere ───────────────────────────────────────────────────── */
+  --nx-deco-1: rgb(var(--nx-accent-rgb) / 0.07);     /* warm light, top-right */
+  --nx-deco-2: rgb(var(--nx-accent-b-rgb) / 0.08);   /* cool field, bottom-left */
   --nx-grid: rgb(var(--nx-text-rgb) / 0.05);
   --nx-noise-opacity: 0.06;
 
-  /* 3D material palette */
+  /* ── Shadows: tinted with warm ink-brown, diffuse, low alpha.
+        The inset top hairline is what makes a card read as paper stock. */
+  --nx-shadow-ink: 60 48 30;
+  --nx-shadow-1: 0 1px 0 0 rgb(255 255 255 / 0.6) inset, 0 1px 2px rgb(var(--nx-shadow-ink) / 0.05), 0 14px 36px -18px rgb(var(--nx-shadow-ink) / 0.18);
+  --nx-shadow-2: 0 1px 0 0 rgb(255 255 255 / 0.8) inset, 0 2px 4px rgb(var(--nx-shadow-ink) / 0.05), 0 30px 64px -26px rgb(var(--nx-shadow-ink) / 0.26);
+  --nx-shadow-inset: 0 0 0 1px rgb(var(--nx-shadow-ink) / 0.03) inset, 0 1px 6px rgb(var(--nx-shadow-ink) / 0.07) inset;
+  --nx-shadow-cta: 0 1px 0 0 rgb(255 255 255 / 0.18) inset, 0 12px 28px -14px rgb(var(--nx-cta-rgb) / 0.45);
+  --nx-shadow-cta-hover: 0 1px 0 0 rgb(255 255 255 / 0.22) inset, 0 18px 36px -14px rgb(var(--nx-cta-rgb) / 0.5);
+  --nx-highlight: rgb(255 255 255 / 0.5);           /* inner top edge on lifted surfaces */
+
+  /* ── 3D material palette (read by NexusScene) ─────────────────────── */
   --nx-3d-core: #1c1a17;
   --nx-3d-strut: #7d766b;
   --nx-3d-node: #fbf7ee;
   --nx-3d-shadow: #1a1917;
   --nx-3d-shadow-opacity: 0.32;
-  --nx-3d-key: #fff4e6;
-  --nx-3d-fill: #b9c6dd;
-
-  --nx-shadow-1: 0 1px 0 0 rgb(255 255 255 / 0.6) inset, 0 1px 2px rgb(60 48 30 / 0.05), 0 14px 36px -18px rgb(60 48 30 / 0.18);
-  --nx-shadow-2: 0 1px 0 0 rgb(255 255 255 / 0.8) inset, 0 2px 4px rgb(60 48 30 / 0.05), 0 30px 64px -26px rgb(60 48 30 / 0.26);
-  --nx-shadow-inset: 0 0 0 1px rgb(60 48 30 / 0.03) inset, 0 1px 6px rgb(60 48 30 / 0.07) inset;
+  --nx-3d-key: #fff4e6;      /* warm key — paper sunlight */
+  --nx-3d-fill: #b9c6dd;     /* cool fill for form separation */
+  --nx-3d-ground: #cdc4b4;   /* hemisphere ground bounce */
 }
 
 [data-theme='ink'] {
@@ -145,10 +154,15 @@
   --nx-3d-shadow-opacity: 0.5;
   --nx-3d-key: #fff1e0;
   --nx-3d-fill: #8aa0c8;
+  --nx-3d-ground: #1a1a1e;
 
+  --nx-shadow-ink: 0 0 0;
   --nx-shadow-1: 0 1px 0 0 rgb(255 255 255 / 0.04) inset, 0 12px 32px -14px rgb(0 0 0 / 0.55);
   --nx-shadow-2: 0 1px 0 0 rgb(255 255 255 / 0.06) inset, 0 28px 60px -20px rgb(0 0 0 / 0.65);
   --nx-shadow-inset: 0 0 12px rgb(0 0 0 / 0.25) inset;
+  --nx-shadow-cta: 0 1px 0 0 rgb(255 255 255 / 0.5) inset, 0 12px 28px -14px rgb(0 0 0 / 0.6);
+  --nx-shadow-cta-hover: 0 1px 0 0 rgb(255 255 255 / 0.6) inset, 0 18px 36px -14px rgb(0 0 0 / 0.7);
+  --nx-highlight: rgb(255 255 255 / 0.05);
 }
 
 /* ── Resolved aliases + motion system ─────────────────────────────── */

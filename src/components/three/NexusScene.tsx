@@ -34,6 +34,7 @@ interface Palette {
   line: THREE.Color
   key: string
   fill: string
+  ground: string
   dark: boolean
 }
 
@@ -51,6 +52,7 @@ function readPalette(): Palette {
     line: new THREE.Color(readToken('--nx-3d-strut') || '#8d8880'),
     key: readToken('--nx-3d-key') || '#fff4e6',
     fill: readToken('--nx-3d-fill') || '#b9c6dd',
+    ground: readToken('--nx-3d-ground') || (dark ? '#1a1a1e' : '#cdc4b4'),
     dark,
   }
 }
@@ -689,7 +691,7 @@ function NetworkObject({ palette, quality }: { palette: Palette; quality: Qualit
 function Lights({ palette }: { palette: Palette }) {
   return (
     <>
-      <hemisphereLight args={[palette.key, palette.dark ? '#1a1a1e' : '#c9bfae', palette.dark ? 0.45 : 0.75]} />
+      <hemisphereLight args={[palette.key, palette.ground, palette.dark ? 0.45 : 0.75]} />
       {/* key: warm, high-left — the reading lamp */}
       <directionalLight position={[-4, 6, 5]} intensity={palette.dark ? 1.7 : 1.9} color={palette.key} />
       {/* fill: cool, low-right, quiet */}

@@ -86,7 +86,7 @@ export default function Result() {
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.6, ease }}
-            className="lg:col-span-5 lg:pl-10 lg:border-l lg:border-line grid grid-cols-2 gap-x-8"
+            className="lg:col-span-5 surface rounded-2xl p-6 sm:p-8 grid grid-cols-2 gap-x-8"
           >
             <Ledger label="Score" delay={0.7}>
               <CountUp value={result.score} decimals={Number.isInteger(result.score) ? 0 : 1} delay={0.7} />
