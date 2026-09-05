@@ -17,7 +17,7 @@ export default function About() {
             <LogoMark size={72} className="hidden md:block" />
             <div>
               <span className="opener">About</span>
-              <h1 className="font-display t-title text-fg mt-5 text-balance">
+              <h1 className="t-title text-fg mt-5 text-balance">
                 A quiz platform built around one idea: <span className="t-italic text-accent">progression.</span>
               </h1>
               <p className="text-fg-2 mt-6 text-lg leading-relaxed text-pretty max-w-2xl">
@@ -43,7 +43,7 @@ export default function About() {
                     <span className="index">0{i + 1}</span>
                     <span className="hairline flex-1" />
                   </div>
-                  <h3 className="font-display text-2xl mt-4">{item.k}</h3>
+                  <h3 className="t-h3 mt-4">{item.k}</h3>
                   <p className="text-sm muted leading-relaxed mt-2">{item.d}</p>
                 </div>
               ))}
@@ -55,7 +55,7 @@ export default function About() {
         <div className="mt-14">
           <Reveal>
             <span className="index">What you get</span>
-            <h2 className="font-display t-section text-fg mt-3">Everything you need to practise properly</h2>
+            <h2 className="t-section text-fg mt-3">Everything you need to practise properly</h2>
           </Reveal>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-px bg-line-strong border border-line-strong rounded-2xl overflow-hidden mt-8">
             {features.map((f, i) => (
@@ -65,7 +65,7 @@ export default function About() {
                     <span className="text-accent">{f.icon}</span>
                     <span className="index">0{i + 1}</span>
                   </div>
-                  <h3 className="font-display text-2xl text-fg mt-6">{f.title}</h3>
+                  <h3 className="t-h3 text-fg mt-6">{f.title}</h3>
                   <p className="text-sm text-fg-2 leading-relaxed mt-2">{f.desc}</p>
                 </div>
               </Reveal>
@@ -78,7 +78,7 @@ export default function About() {
           <div className="mt-14 grid md:grid-cols-2 gap-4">
             <div className="surface rounded-2xl p-6 sm:p-8">
               <span className="eyebrow">Scoring</span>
-              <h3 className="font-display text-2xl text-fg mt-2">Marks per question</h3>
+              <h3 className="t-h3 text-fg mt-2">Marks per question</h3>
               <ul className="mt-5 space-y-3">
                 {[
                   ['easy', '2 marks'],
@@ -87,15 +87,15 @@ export default function About() {
                 ].map(([tier, marks]) => (
                   <li key={tier} className="flex items-center justify-between py-2.5 border-b border-line last:border-0">
                     <Tier difficulty={tier} />
-                    <span className="font-mono text-sm text-fg">{marks}</span>
+                    <span className="text-sm font-medium text-fg num">{marks}</span>
                   </li>
                 ))}
               </ul>
-              <p className="text-xs text-fg-3 mt-4">Multiple-choice questions are worth half the marks of a typed answer at the same tier.</p>
+              <p className="t-caption text-fg-3 mt-4">Multiple-choice questions are worth half the marks of a typed answer at the same tier.</p>
             </div>
             <div className="surface rounded-2xl p-6 sm:p-8">
               <span className="eyebrow">Validation</span>
-              <h3 className="font-display text-2xl text-fg mt-2">How answers are checked</h3>
+              <h3 className="t-h3 text-fg mt-2">How answers are checked</h3>
               <ul className="mt-5 space-y-3 text-sm">
                 {[
                   ['Multiple choice', 'Exact option letter.'],

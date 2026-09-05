@@ -66,13 +66,13 @@ export default function Result() {
 
             <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.15, ease }} className="relative mt-6">
               <div className="wash absolute -inset-x-10 -inset-y-6 pointer-events-none" aria-hidden="true" />
-              <p className="relative font-display t-score text-fg num" aria-label={`${pct} percent accuracy`}>
+              <p className="relative t-score text-fg num" aria-label={`${pct} percent accuracy`}>
                 <CountUp value={pct} decimals={pct % 1 === 0 ? 0 : 1} delay={0.4} duration={1.6} />
                 <span className="text-[0.4em] align-top ml-1 text-fg-2">%</span>
               </p>
             </motion.div>
 
-            <motion.h1 initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.45, ease }} className="font-display t-title text-fg mt-4">
+            <motion.h1 initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.45, ease }} className="t-title text-fg mt-4">
               {headline.replace('.', '')}
               <span className="t-italic text-fg-2">.</span>
             </motion.h1>
@@ -164,7 +164,7 @@ export default function Result() {
         <Reveal>
           <div className="grid lg:grid-cols-12 gap-8 items-baseline border-t border-line-strong pt-10 mb-8">
             <span className="lg:col-span-2 index">Review</span>
-            <h2 className="lg:col-span-10 font-display t-section text-fg">Every answer, <span className="t-italic">explained.</span></h2>
+            <h2 className="lg:col-span-10 t-section text-fg">Every answer, <span className="t-italic">explained.</span></h2>
           </div>
         </Reveal>
 
@@ -178,29 +178,29 @@ export default function Result() {
                 <Reveal key={i} delay={Math.min(i * 0.03, 0.2)} y={12}>
                   <li id={`q${i + 1}`} className="grid grid-cols-[2.5rem_1fr] sm:grid-cols-[4rem_1fr_auto] gap-x-4 gap-y-3 py-6 border-b border-line scroll-mt-28">
                     <div className="flex flex-col items-start gap-2">
-                      <span className="font-mono text-xs text-fg-3 num">{String(i + 1).padStart(2, '0')}</span>
-                      <span className={`inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.16em] ${ok ? 'text-ok' : 'text-err'}`}>
+                      <span className="t-caption text-fg-3 num">{String(i + 1).padStart(2, '0')}</span>
+                      <span className={`inline-flex items-center gap-1.5 t-label ${ok ? 'text-ok' : 'text-err'}`}>
                         {ok ? <Check className="w-3 h-3" /> : <Cross className="w-3 h-3" />}
                         <span className="hidden sm:inline">{ok ? 'Right' : 'Wrong'}</span>
                       </span>
                     </div>
                     <div className="min-w-0">
-                      <p className="font-display text-xl sm:text-2xl text-fg leading-snug text-pretty">{repairText(item.question)}</p>
+                      <p className="t-h3 text-fg leading-snug text-pretty">{repairText(item.question)}</p>
                       <dl className="mt-4 grid sm:grid-cols-2 gap-x-8 gap-y-3 text-sm">
                         <div>
                           <dt className="figcap">Your answer</dt>
-                          <dd className={`font-mono mt-1 ${ok ? 'text-ok' : 'text-err line-through decoration-err/60'}`}>{shown(item.user_answer)}</dd>
+                          <dd className={`mt-1 num ${ok ? 'text-ok' : 'text-err line-through decoration-err/60'}`}>{shown(item.user_answer)}</dd>
                         </div>
                         {!ok && (
                           <div>
                             <dt className="figcap">Correct answer</dt>
-                            <dd className="font-mono mt-1 text-fg">{shown(item.correct_answer)}</dd>
+                            <dd className="mt-1 num text-fg">{shown(item.correct_answer)}</dd>
                           </div>
                         )}
                       </dl>
                     </div>
                     <div className="col-start-2 sm:col-start-3 flex sm:flex-col items-center sm:items-end gap-2">
-                      <span className={`font-display text-2xl num ${ok ? 'text-fg' : 'text-fg-3'}`}>{ok ? `+${formatScore(item.marks)}` : '0'}</span>
+                      <span className={`t-h3 num ${ok ? 'text-fg' : 'text-fg-3'}`}>{ok ? `+${formatScore(item.marks)}` : '0'}</span>
                       <Tier difficulty={item.difficulty} />
                     </div>
                   </li>
@@ -228,7 +228,7 @@ function Ledger({ label, children, delay, tone }: { label: string; children: Rea
   return (
     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay, ease }} className="py-4 border-b border-line">
       <dt className="figcap">{label}</dt>
-      <dd className={`font-display text-4xl mt-1.5 num ${tone === 'ok' ? 'text-ok' : tone === 'err' ? 'text-err' : 'text-fg'}`}>{children}</dd>
+      <dd className={`t-stat-sm mt-1.5 num ${tone === 'ok' ? 'text-ok' : tone === 'err' ? 'text-err' : 'text-fg'}`}>{children}</dd>
     </motion.div>
   )
 }

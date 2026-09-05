@@ -35,7 +35,7 @@ export function LogoMark({ size = 36, className = '' }: LogoProps) {
 
 export function Wordmark({ className = '' }: { className?: string }) {
   return (
-    <span className={`font-display tracking-tight text-fg ${className}`}>
+    <span className={`font-semibold tracking-tight text-fg ${className}`}>
       NEXUS<span className="t-italic text-accent">Quiz</span>
     </span>
   )

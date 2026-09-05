@@ -57,7 +57,7 @@ export default function Home() {
                 <span className="hidden sm:inline">{catalog ? `${questionCount} questions` : 'Maths · Python'}</span>
               </motion.p>
 
-              <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={enter(1)} className="font-display t-hero text-fg mt-6 max-w-[14ch]">
+              <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={enter(1)} className="t-hero text-fg mt-6 max-w-[14ch]">
                 Every question is a <span className="t-italic text-accent">node.</span>
                 <br />
                 Every answer, a <span className="t-italic">connection.</span>
@@ -106,7 +106,7 @@ export default function Home() {
         <Reveal>
           <div className="grid lg:grid-cols-12 gap-8 items-start">
             <span className="lg:col-span-2 index">01 — Idea</span>
-            <h2 className="lg:col-span-10 font-display t-section text-fg max-w-[24ch] text-balance">
+            <h2 className="lg:col-span-10 t-section text-fg max-w-[24ch] text-balance">
               Knowledge isn’t a list you finish. It’s a <span className="t-italic">structure</span> you build — and it should look like one.
             </h2>
           </div>
@@ -135,18 +135,18 @@ export default function Home() {
                       state={{ category: c.id }}
                       className="group row grid-cols-[2.5rem_1fr_auto] md:grid-cols-[4rem_minmax(0,1.2fr)_minmax(0,1fr)_auto] hover:bg-hover transition-colors -mx-4 px-4 rounded-lg"
                     >
-                      <span className="font-mono text-xs text-fg-3 num">0{i + 1}</span>
+                      <span className="t-caption text-fg-3 num">0{i + 1}</span>
                       <span className="flex items-center gap-4 min-w-0">
                         <span className="w-9 h-9 rounded-full border border-line-strong flex items-center justify-center text-fg shrink-0 group-hover:border-accent group-hover:text-accent transition-colors">
                           {c.id === 'python' ? <Code className="w-4 h-4" /> : <Sigma className="w-4 h-4" />}
                         </span>
-                        <span className="font-display text-3xl md:text-4xl text-fg truncate">{labelCategory(c.id)}</span>
+                        <span className="t-h3 !text-2xl md:!text-3xl text-fg truncate">{labelCategory(c.id)}</span>
                       </span>
                       <span className="hidden md:flex items-center gap-5">
                         {Object.entries(c.difficulties)
                           .sort(([a], [b]) => ['easy', 'medium', 'hard'].indexOf(a) - ['easy', 'medium', 'hard'].indexOf(b))
                           .map(([d, n]) => (
-                            <span key={d} className="inline-flex items-center gap-2 text-xs text-fg-2">
+                            <span key={d} className="inline-flex items-center gap-2 t-caption text-fg-2">
                               <span className="tier text-fg-2" data-level={difficultyLevel(d)} aria-hidden="true"><i /><i /><i /></span>
                               <span className="num">{n}</span>
                               <span className="sr-only">{d}</span>
@@ -164,14 +164,14 @@ export default function Home() {
             : [0, 1].map((i) => <div key={i} className="h-[73px] border-b border-line skeleton" />)}
           <Reveal delay={0.14} y={12}>
             <Link to="/setup" state={{ category: 'all' }} className="group row grid-cols-[2.5rem_1fr_auto] md:grid-cols-[4rem_minmax(0,1.2fr)_minmax(0,1fr)_auto] hover:bg-hover transition-colors -mx-4 px-4 rounded-lg">
-              <span className="font-mono text-xs text-fg-3 num">0{categoryCount + 1}</span>
+              <span className="t-caption text-fg-3 num">0{categoryCount + 1}</span>
               <span className="flex items-center gap-4">
                 <span className="w-9 h-9 rounded-full bg-accent text-fg-inverse flex items-center justify-center shrink-0">
                   <span className="w-2 h-2 rounded-full bg-current" />
                 </span>
-                <span className="font-display text-3xl md:text-4xl text-fg">Mixed <span className="t-italic text-fg-2">— cross the bridges</span></span>
+                <span className="t-h3 !text-2xl md:!text-3xl text-fg">Mixed <span className="text-fg-2 font-normal">— cross the bridges</span></span>
               </span>
-              <span className="hidden md:block text-xs text-fg-2">Every region, every tier, one session</span>
+              <span className="hidden md:block t-caption text-fg-2">Every region, every tier, one session</span>
               <span className="flex items-center gap-3 text-sm text-fg-2 num">
                 {catalog ? questionCount : '—'} <span className="hidden sm:inline">questions</span>
                 <ArrowRight className="arrow w-4 h-4 text-fg-3 group-hover:text-fg" />
@@ -186,7 +186,7 @@ export default function Home() {
         <div className="grid lg:grid-cols-12 gap-x-10 gap-y-12">
           <Reveal className="lg:col-span-5">
             <span className="index">03 — Scoring</span>
-            <h2 className="font-display t-section text-fg mt-4 text-balance">Marks scale with the tier. Nothing is graded in your browser.</h2>
+            <h2 className="t-section text-fg mt-4 text-balance">Marks scale with the tier. Nothing is graded in your browser.</h2>
             <p className="text-fg-2 mt-6 max-w-prose text-pretty">
               Easy, medium and hard questions are worth 2, 4 and 6 marks; multiple-choice is half. Answers never leave the server, so the score you see is the score you earned.
             </p>
@@ -209,7 +209,7 @@ export default function Home() {
                   <span className="stat-big text-fg mt-6 num">
                     <CountUp value={Number(marks)} />
                   </span>
-                  <span className="font-mono text-[11px] tracking-[0.18em] uppercase text-fg-3 mt-2">marks · {String(name)}</span>
+                  <span className="t-label text-fg-3 mt-2">marks · {String(name)}</span>
                   <p className="text-sm text-fg-2 mt-5 leading-relaxed">{String(blurb)}</p>
                 </div>
               </Reveal>
@@ -226,7 +226,7 @@ export default function Home() {
             <div className="grid lg:grid-cols-12 gap-10">
               <div className="lg:col-span-4">
                 <span className="eyebrow">The path</span>
-                <h2 className="font-display t-section mt-4 text-balance">One network, five states.</h2>
+                <h2 className="t-section mt-4 text-balance">One network, five states.</h2>
                 <p className="muted text-sm mt-5 max-w-sm leading-relaxed">The same structure follows you through the product and changes with what you do — it is the interface, not a backdrop.</p>
               </div>
               <ol className="lg:col-span-8 grid sm:grid-cols-2 gap-x-10">
@@ -239,7 +239,7 @@ export default function Home() {
                 ].map(([page, state, desc], i) => (
                   <li key={page} className="py-5 border-b" style={{ borderColor: 'rgb(var(--nx-cta-text-rgb) / 0.14)' }}>
                     <div className="flex items-baseline justify-between gap-4">
-                      <span className="font-display text-2xl">{page}</span>
+                      <span className="t-h3">{page}</span>
                       <span className="index">0{i + 1} · {state}</span>
                     </div>
                     <p className="muted text-sm mt-2 leading-relaxed">{desc}</p>
@@ -255,7 +255,7 @@ export default function Home() {
       <section className="relative max-w-page mx-auto px-5 sm:px-6 lg:px-8 pb-28 md:pb-40">
         <Reveal>
           <div className="grid lg:grid-cols-12 gap-8 items-end border-t border-line-strong pt-10">
-            <h2 className="lg:col-span-8 font-display t-title text-fg text-balance">
+            <h2 className="lg:col-span-8 t-title text-fg text-balance">
               Start with a region. <span className="t-italic text-fg-2">Watch it light up.</span>
             </h2>
             <div className="lg:col-span-4 flex lg:justify-end">

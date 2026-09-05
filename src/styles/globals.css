@@ -20,36 +20,88 @@
   }
 
   body {
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: var(--nx-font);
+    font-size: var(--nx-fs-body);
+    line-height: var(--nx-lh-body);
     background-color: var(--nx-canvas);
     color: var(--nx-text);
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11', 'ss01';
+    font-feature-settings: 'kern', 'liga', 'calt';
     letter-spacing: 0;
     transition: background-color var(--nx-dur-slow) var(--nx-ease), color var(--nx-dur-slow) var(--nx-ease);
   }
-  [data-theme='ink'] body { letter-spacing: 0.005em; } /* slightly positive on dark */
 
   h1, h2, h3, h4 {
-    font-family: 'Instrument Serif', Georgia, 'Times New Roman', serif;
-    font-weight: 400;
-    line-height: 1.05;
-    letter-spacing: -0.01em;
+    font-family: var(--nx-font);
+    font-weight: 600;
+    line-height: 1.12;
+    letter-spacing: -0.02em;
     color: var(--nx-text);
     text-wrap: balance;
   }
   ::selection { background: rgb(var(--nx-accent-rgb) / 0.18); }
 
-  /* Type scale — display sizes are fluid, UI sizes are fixed */
-  .t-hero    { font-size: clamp(3.25rem, 2.2rem + 5.4vw, 7rem); line-height: 0.94; letter-spacing: -0.02em; font-weight: 400; }
-  .t-title   { font-size: clamp(2.5rem, 1.8rem + 2.8vw, 4.25rem); line-height: 0.98; letter-spacing: -0.015em; font-weight: 400; }
-  .t-section { font-size: clamp(2rem, 1.5rem + 1.8vw, 3.25rem); line-height: 1.02; letter-spacing: -0.01em; font-weight: 400; }
-  .t-question{ font-size: clamp(1.625rem, 1.25rem + 1.4vw, 2.5rem); line-height: 1.2; letter-spacing: -0.005em; font-weight: 400; }
-  .t-score   { font-size: clamp(4.5rem, 3rem + 6vw, 8.5rem); line-height: 0.85; letter-spacing: -0.03em; font-weight: 400; }
-  .t-lead    { font-size: clamp(1.0625rem, 1rem + 0.35vw, 1.25rem); line-height: 1.55; }
-  .t-italic  { font-style: italic; }
+  /* ═══════════════════════════════════════════════════════════════════
+     TYPE SYSTEM — one family (IBM Plex Sans), 11 roles, 3 weights (400/500/600)
+     Sizes: display roles are fluid; UI roles are fixed so controls never drift.
+     Priority is question + answer text: largest comfortable size, generous leading.
+     ═══════════════════════════════════════════════════════════════════ */
+  :root {
+    --nx-font: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+    --nx-fs-display:  clamp(2.75rem, 1.9rem + 4vw, 5.5rem);      /* 44 → 88px  hero only */
+    --nx-fs-h1:       clamp(2.125rem, 1.6rem + 2.2vw, 3.5rem);   /* 34 → 56px  page titles */
+    --nx-fs-h2:       clamp(1.625rem, 1.35rem + 1.1vw, 2.25rem); /* 26 → 36px  sections */
+    --nx-fs-h3:       1.25rem;                                    /* 20px */
+    --nx-fs-question: clamp(1.375rem, 1.2rem + 0.8vw, 1.875rem); /* 22 → 30px */
+    --nx-fs-answer:   1.0625rem;                                  /* 17px */
+    --nx-fs-lead:     1.125rem;                                   /* 18px */
+    --nx-fs-body:     1rem;                                       /* 16px */
+    --nx-fs-nav:      0.9375rem;                                  /* 15px */
+    --nx-fs-label:    0.8125rem;                                  /* 13px — never smaller for text that must be read */
+    --nx-fs-caption:  0.8125rem;                                  /* 13px */
+    --nx-fs-button:   0.9375rem;                                  /* 15px */
+    --nx-fs-stat:     clamp(2.5rem, 1.9rem + 3vw, 4.5rem);        /* 40 → 72px */
+    --nx-fs-score:    clamp(4rem, 2.6rem + 6vw, 8rem);            /* 64 → 128px */
+
+    --nx-lh-body: 1.6;
+    --nx-lh-tight: 1.1;
+    --nx-lh-heading: 1.15;
+  }
+
+  /* Display / Hero */
+  .t-hero     { font-size: var(--nx-fs-display); line-height: 1.02; letter-spacing: -0.03em; font-weight: 600; }
+  /* H1 — page titles */
+  .t-title    { font-size: var(--nx-fs-h1); line-height: 1.08; letter-spacing: -0.025em; font-weight: 600; }
+  /* H2 — section headings */
+  .t-section  { font-size: var(--nx-fs-h2); line-height: 1.15; letter-spacing: -0.02em; font-weight: 600; }
+  /* H3 — row / card titles */
+  .t-h3       { font-size: var(--nx-fs-h3); line-height: 1.3; letter-spacing: -0.01em; font-weight: 600; }
+  /* Question text — the most important role in the product */
+  .t-question { font-size: var(--nx-fs-question); line-height: 1.35; letter-spacing: -0.012em; font-weight: 500; }
+  /* Answer text */
+  .t-answer   { font-size: var(--nx-fs-answer); line-height: 1.5; letter-spacing: 0; font-weight: 400; }
+  /* Lead paragraph */
+  .t-lead     { font-size: var(--nx-fs-lead); line-height: 1.55; font-weight: 400; }
+  /* Body */
+  .t-body     { font-size: var(--nx-fs-body); line-height: var(--nx-lh-body); font-weight: 400; }
+  /* Navigation */
+  .t-nav      { font-size: var(--nx-fs-nav); line-height: 1.2; font-weight: 500; letter-spacing: 0; }
+  /* Labels — small caps replaced by medium weight + modest tracking, 13px minimum */
+  .t-label    { font-size: var(--nx-fs-label); line-height: 1.3; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; }
+  /* Caption / helper text */
+  .t-caption  { font-size: var(--nx-fs-caption); line-height: 1.45; font-weight: 400; letter-spacing: 0; }
+  /* Button label */
+  .t-button   { font-size: var(--nx-fs-button); line-height: 1; font-weight: 500; letter-spacing: 0; }
+  /* Stat numbers (History summary, marks) */
+  .t-stat-sm  { font-size: 2.25rem; line-height: 1; letter-spacing: -0.025em; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .t-stat     { font-size: var(--nx-fs-stat); line-height: 1; letter-spacing: -0.03em; font-weight: 600; font-variant-numeric: tabular-nums; }
+  /* Score (Result hero number) */
+  .t-score    { font-size: var(--nx-fs-score); line-height: 0.95; letter-spacing: -0.04em; font-weight: 600; font-variant-numeric: tabular-nums; }
+  /* Emphasised word inside a heading: weight/colour contrast, not a second typeface */
+  .t-italic   { font-style: italic; font-weight: inherit; }
 
   ::selection {
     background: var(--nx-accent);
@@ -142,7 +194,7 @@
 
   /* Primary CTA: the brightest element on the page — no gradient, no glow. */
   .btn-primary {
-    @apply btn px-6 py-3 text-sm sm:text-[15px];
+    @apply btn px-6 py-3 t-button;
     background: var(--nx-cta);
     color: var(--nx-cta-text);
     box-shadow: 0 1px 0 0 rgb(255 255 255 / 0.18) inset, 0 12px 28px -14px rgb(26 25 23 / 0.45);
@@ -162,7 +214,7 @@
   }
 
   .btn-secondary {
-    @apply btn px-6 py-3 text-sm sm:text-[15px];
+    @apply btn px-6 py-3 t-button;
     background: var(--nx-card);
     color: var(--nx-text);
     border: 1px solid var(--nx-line-strong);
@@ -196,7 +248,7 @@
     background: var(--nx-accent-soft);
   }
 
-  .btn-lg { @apply px-8 py-4 text-base; }
+  .btn-lg { @apply px-8 py-4; font-size: 1.0625rem; }
   /* underlined text link with a growing rule */
   .link-rule {
     @apply relative inline-flex items-center gap-2 font-medium;
@@ -259,7 +311,7 @@
 
   /* Option key badge (A/B/C/D) inside a choice */
   .choice-key {
-    @apply w-9 h-9 rounded-full flex items-center justify-center font-display text-lg shrink-0;
+    @apply w-9 h-9 rounded-full flex items-center justify-center text-[15px] font-semibold shrink-0;
     background: var(--nx-elevated);
     border: 1px solid var(--nx-line-strong);
     color: var(--nx-text-2);
@@ -303,8 +355,8 @@
 
   /* ── Chips ───────────────────────────────────────────── */
   .chip {
-    @apply inline-flex items-center gap-1.5 rounded-md px-2 py-[3px] text-[11px] font-mono font-medium uppercase;
-    letter-spacing: 0.08em;
+    @apply inline-flex items-center gap-1.5 rounded-md px-2 py-[3px] text-[13px] font-medium;
+    letter-spacing: 0;
     background: var(--nx-elevated);
     border: 1px solid var(--nx-line);
     color: var(--nx-text-2);
@@ -316,13 +368,11 @@
 
   /* ── Typography helpers ──────────────────────────────── */
   .eyebrow {
-    @apply text-[11px] font-mono font-medium uppercase;
-    letter-spacing: 0.22em;
+    @apply t-label;
     color: var(--nx-accent-2);
   }
   .eyebrow-muted {
-    @apply text-[11px] font-mono font-medium uppercase;
-    letter-spacing: 0.18em;
+    @apply t-label;
     color: var(--nx-text-3);
   }
   /* highlighted word inside a display heading — colour, not gradient */
@@ -330,7 +380,7 @@
   .num { font-variant-numeric: tabular-nums; }
   .text-fg-3 kbd,
   kbd.key {
-    @apply px-1.5 py-0.5 rounded font-mono text-[11px];
+    @apply px-1.5 py-0.5 rounded text-[12px] font-medium num;
     background: var(--nx-elevated);
     border: 1px solid var(--nx-line-strong);
     border-bottom-width: 2px;
@@ -388,16 +438,10 @@
 
   /* editorial index number (01, 02 …) */
   .index {
-    @apply font-mono text-[11px] tracking-[0.2em];
+    @apply t-label num;
     color: var(--nx-accent);
   }
-  .stat-big {
-    font-family: 'Instrument Serif', Georgia, serif;
-    font-size: clamp(3.5rem, 2.4rem + 4.6vw, 6.5rem);
-    line-height: 0.88;
-    letter-spacing: -0.03em;
-    font-variant-numeric: tabular-nums;
-  }
+  .stat-big { @apply t-stat; }
   /* a rule with a label, used to open sections */
   .rule {
     @apply flex items-center gap-4;
@@ -405,9 +449,9 @@
   .rule::after { content: ''; flex: 1; height: 1px; background: var(--nx-line-strong); }
 
   /* editorial figure caption */
-  .figcap { @apply font-mono text-[11px] tracking-[0.18em] uppercase; color: var(--nx-text-3); }
+  .figcap { @apply t-label; color: var(--nx-text-3); }
   /* section opener: index + rule + optional right label */
-  .opener { @apply flex items-center gap-4 font-mono text-[11px] tracking-[0.2em] uppercase; color: var(--nx-text-3); }
+  .opener { @apply flex items-center gap-4 t-label; color: var(--nx-text-3); }
   .opener::before { content: ''; width: 2rem; height: 1px; background: var(--nx-accent); }
   /* numbered list row with hairline */
   .row { @apply grid items-baseline gap-4 py-4 border-b; border-color: var(--nx-line); }

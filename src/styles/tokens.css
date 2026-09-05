@@ -29,7 +29,7 @@
   /* text — warm ink, never pure black */
   --nx-text-rgb: 26 25 23;
   --nx-text-2-rgb: 84 82 77;
-  --nx-text-3-rgb: 110 106 98;
+  --nx-text-3-rgb: 104 100 92;         /* ≥4.5:1 on every paper surface incl. --nx-surface */
   --nx-text-inverse-rgb: 255 255 255;
 
   /* lines */

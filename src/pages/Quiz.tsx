@@ -127,7 +127,7 @@ export default function Quiz() {
         <div className="max-w-3xl mx-auto px-5 sm:px-6 py-3">
           <div className="flex items-center justify-between gap-4 mb-2.5">
             <div className="flex items-baseline gap-3 min-w-0">
-              <span className="font-display text-xl text-fg num whitespace-nowrap">
+              <span className="t-h3 text-fg num whitespace-nowrap">
                 <span className="text-accent">{String(index + 1).padStart(2, '0')}</span>
                 <span className="text-fg-3 text-base"> / {String(total).padStart(2, '0')}</span>
               </span>
@@ -195,7 +195,7 @@ export default function Quiz() {
                   <span className="chip">{isMCQ ? 'Multiple choice' : 'Typed answer'}</span>
                 </div>
 
-                <h1 className="font-display t-question text-fg text-pretty max-w-[26ch]">
+                <h1 className="t-question text-fg text-pretty max-w-[26ch]">
                   {repairText(current.question)}
                 </h1>
 
@@ -219,11 +219,11 @@ export default function Quiz() {
                             <span className="choice-key">
                               {selected ? <Check className="w-4 h-4" /> : key}
                             </span>
-                            <span className={`flex-1 text-[15px] sm:text-base leading-relaxed font-mono ${selected ? 'text-fg font-medium' : 'text-fg-2 group-hover:text-fg'}`}>
+                            <span className={`flex-1 t-answer ${selected ? 'text-fg font-medium' : 'text-fg-2 group-hover:text-fg'}`}>
                               {repairText(text)}
                             </span>
                             {/* state is also spoken as text, not colour alone */}
-                            <span className={`font-mono text-[10px] uppercase tracking-[0.18em] shrink-0 ${selected ? 'text-accent' : 'text-fg-3 opacity-0 group-hover:opacity-100'}`}>
+                            <span className={`t-label shrink-0 ${selected ? 'text-accent' : 'text-fg-3 opacity-0 group-hover:opacity-100'}`}>
                               {selected ? 'Selected' : key}
                             </span>
                           </motion.button>
@@ -240,9 +240,9 @@ export default function Quiz() {
                         placeholder="Type your answer…"
                         autoComplete="off"
                         spellCheck={false}
-                        className="field px-5 py-4 text-lg font-mono !rounded-xl"
+                        className="field px-5 py-4 t-answer !text-lg !rounded-xl num"
                       />
-                      <p className="text-xs text-fg-3 mt-3">
+                      <p className="t-caption text-fg-3 mt-3">
                         {current.difficulty === 'hard'
                           ? 'Hard tier: answers must match exactly, including spacing and case.'
                           : current.difficulty === 'medium'
@@ -263,7 +263,7 @@ export default function Quiz() {
               <span className="hidden sm:inline">Previous</span>
             </button>
 
-            <div className="hidden sm:flex items-center gap-1.5 text-xs text-fg-3">
+            <div className="hidden sm:flex items-center gap-1.5 t-caption text-fg-3">
               <kbd className="key">{isMCQ ? 'A–D' : 'Type'}</kbd>
               <span>then</span>
               <kbd className="key">Enter</kbd>
@@ -309,7 +309,7 @@ export default function Quiz() {
           </AnimatePresence>
 
           {isLast && answeredCount < total && (
-            <p className="mt-4 text-center text-xs text-warn">
+            <p className="mt-4 text-center t-caption text-warn">
               {total - answeredCount} question{total - answeredCount === 1 ? '' : 's'} still unanswered — they’ll be marked wrong.
             </p>
           )}

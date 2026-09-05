@@ -76,7 +76,7 @@ export default function History() {
           <div className="grid lg:grid-cols-12 gap-x-10 gap-y-8 items-end">
             <div className="lg:col-span-8">
               <span className="opener">Accumulated knowledge</span>
-              <h1 className="font-display t-title text-fg mt-5 text-balance">
+              <h1 className="t-title text-fg mt-5 text-balance">
                 {history && history.length ? (
                   <>
                     <span className="num">{history.length}</span> attempt{history.length === 1 ? '' : 's'}, <span className="t-italic">and the network remembers each one.</span>
@@ -127,7 +127,7 @@ export default function History() {
             <div className="mt-16 grid lg:grid-cols-12 gap-8 border-t border-line-strong pt-10">
               <p className="lg:col-span-2 index">Empty</p>
               <div className="lg:col-span-10">
-                <h2 className="font-display t-section text-fg">Nothing lit yet.</h2>
+                <h2 className="t-section text-fg">Nothing lit yet.</h2>
                 <p className="text-fg-2 mt-4 max-w-md text-pretty">Your first quiz will show up here, and the network will start remembering which regions you have practised.</p>
                 <Link to="/setup" className="btn-primary btn-lg mt-8">
                   Start your first quiz <ArrowRight className="arrow w-4 h-4" />
@@ -152,7 +152,7 @@ export default function History() {
               <div className="mt-16 grid lg:grid-cols-12 gap-x-10 gap-y-6">
                 <div className="lg:col-span-4">
                   <span className="index">01 — Regions</span>
-                  <h2 className="font-display t-section text-fg mt-3">Established knowledge</h2>
+                  <h2 className="t-section text-fg mt-3">Established knowledge</h2>
                   <p className="text-sm text-fg-2 mt-3 max-w-sm text-pretty">How settled each region of the network is — attempts there, weighted by accuracy. This is exactly what lights the scene behind you.</p>
                 </div>
                 <ul className="lg:col-span-8 border-t border-line">
@@ -162,7 +162,7 @@ export default function History() {
                     ['Mixed', weights[2], history.filter((h) => h.category === 'all' || h.category === 'mixed').length],
                   ].map(([name, w, n], i) => (
                     <li key={String(name)} className="grid grid-cols-[1fr_auto] sm:grid-cols-[10rem_1fr_auto] items-center gap-x-6 gap-y-2 py-5 border-b border-line">
-                      <span className="font-display text-2xl text-fg">{String(name)}</span>
+                      <span className="t-h3 text-fg">{String(name)}</span>
                       <div className="col-span-2 sm:col-span-1 h-px bg-line-strong relative">
                         <motion.span
                           initial={{ scaleX: 0 }}
@@ -176,7 +176,7 @@ export default function History() {
                           <span key={k} className="absolute top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-accent" style={{ left: `${((k + 1) / 13) * Number(w) * 100}%` }} />
                         ))}
                       </div>
-                      <span className="text-right text-xs text-fg-2 num sm:w-24">
+                      <span className="text-right t-caption text-fg-2 num sm:w-24">
                         {Number(n)} {Number(n) === 1 ? 'attempt' : 'attempts'}
                         <span className="block figcap mt-0.5">{Math.round(Number(w) * 100)}% set</span>
                       </span>
@@ -191,7 +191,7 @@ export default function History() {
               <div className="mt-16 grid lg:grid-cols-12 gap-x-10 gap-y-10">
                 <div className="lg:col-span-4">
                   <span className="index">02 — Trend</span>
-                  <h2 className="font-display t-section text-fg mt-3">Over time</h2>
+                  <h2 className="t-section text-fg mt-3">Over time</h2>
                 </div>
                 <div className="lg:col-span-8 grid md:grid-cols-5 gap-x-10 gap-y-10">
                   <div className="md:col-span-3 border-t border-line">
@@ -213,8 +213,8 @@ export default function History() {
             <div className="mt-20 grid lg:grid-cols-12 gap-x-10">
               <Reveal className="lg:col-span-4">
                 <span className="index">03 — Attempts</span>
-                <h2 className="font-display t-section text-fg mt-3">Every session</h2>
-                <p className="text-xs text-fg-3 mt-3 num">{newestFirst.length} shown · newest first</p>
+                <h2 className="t-section text-fg mt-3">Every session</h2>
+                <p className="t-caption text-fg-3 mt-3 num">{newestFirst.length} shown · newest first</p>
               </Reveal>
               <ol className="lg:col-span-8 border-t border-line-strong mt-6 lg:mt-0">
                 {newestFirst.map((h, i) => {
@@ -228,17 +228,17 @@ export default function History() {
                       transition={{ delay: Math.min(i * 0.03, 0.2), duration: 0.4, ease }}
                       className="grid grid-cols-[2.5rem_1fr_auto] sm:grid-cols-[3rem_1fr_7rem_7rem_6rem] items-center gap-x-4 gap-y-1 py-4 border-b border-line hover:bg-hover -mx-3 px-3 rounded-lg transition-colors"
                     >
-                      <span className="font-mono text-xs text-fg-3 num">{String(h.attempt).padStart(2, '0')}</span>
+                      <span className="t-caption text-fg-3 num">{String(h.attempt).padStart(2, '0')}</span>
                       <div className="min-w-0 flex items-center gap-3">
-                        <span className="font-display text-xl text-fg truncate">{labelCategory(h.category)}</span>
+                        <span className="t-h3 text-fg truncate">{labelCategory(h.category)}</span>
                         <Tier difficulty={h.difficulty} />
                       </div>
                       <span className="hidden sm:block text-sm text-fg-2 num">{h.correct_answers} / {h.total_questions} right</span>
                       <span className="hidden sm:block text-sm text-fg-2 num">{formatScore(h.score)} / {formatScore(h.total_marks)}</span>
                       <span className="text-right">
-                        <span className={`font-display text-2xl num ${toneText[tone]}`}>{formatPercent(h.percentage, 1)}</span>
+                        <span className={`t-h3 num ${toneText[tone]}`}>{formatPercent(h.percentage, 1)}</span>
                       </span>
-                      <span className="col-start-2 col-span-2 sm:hidden text-xs text-fg-2 num">
+                      <span className="col-start-2 col-span-2 sm:hidden t-caption text-fg-2 num">
                         {h.correct_answers} / {h.total_questions} right · {formatScore(h.score)} / {formatScore(h.total_marks)} marks
                       </span>
                     </motion.li>
@@ -257,8 +257,8 @@ function Big({ label, value, sub, tone }: { label: string; value: string; sub?: 
   return (
     <div className="py-6 pr-6 border-b border-line lg:border-b-0 lg:border-r last:border-r-0 last:pr-0 lg:pl-6 first:pl-0">
       <dt className="figcap">{label}</dt>
-      <dd className={`font-display text-5xl md:text-6xl mt-3 num ${tone ? toneText[tone] : 'text-fg'}`}>{value}</dd>
-      {sub && <dd className="text-xs text-fg-3 mt-2 num">{sub}</dd>}
+      <dd className={`t-stat mt-3 num ${tone ? toneText[tone] : 'text-fg'}`}>{value}</dd>
+      {sub && <dd className="t-caption text-fg-3 mt-2 num">{sub}</dd>}
     </div>
   )
 }

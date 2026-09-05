@@ -93,7 +93,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                     to={item.to}
                     end={item.to === '/'}
                     className={({ isActive }) =>
-                      `flex items-center gap-3 px-4 py-3 rounded-xl text-[15px] font-medium transition-colors ${
+                      `flex items-center gap-3 px-4 py-3 rounded-xl t-nav transition-colors ${
                         isActive ? 'bg-accent/10 text-fg' : 'text-fg-2 hover:bg-card hover:text-fg'
                       }`
                     }
@@ -126,7 +126,7 @@ export default function Layout({ children }: { children: ReactNode }) {
 
 function NavItem({ to, label }: { to: string; label: string }) {
   return (
-    <RouterNavLink to={to} end={to === '/'} className="relative px-3.5 py-1.5 rounded-full text-sm font-medium">
+    <RouterNavLink to={to} end={to === '/'} className="relative px-3.5 py-1.5 rounded-full t-nav">
       {({ isActive }) => (
         <>
           {isActive && (
@@ -153,10 +153,10 @@ function Footer() {
           <LogoMark size={24} />
           <Wordmark className="text-base" />
         </div>
-        <p className="sm:col-span-3 font-mono text-[11px] tracking-[0.18em] uppercase text-fg-3">
+        <p className="sm:col-span-3 t-label text-fg-3">
           Living knowledge network · build v2 paper
         </p>
-        <p className="sm:col-span-3 sm:text-right text-xs text-fg-3">
+        <p className="sm:col-span-3 sm:text-right t-caption text-fg-3">
           Built by <span className="text-fg-2 font-medium">Mayank Sarwal</span>
         </p>
       </div>

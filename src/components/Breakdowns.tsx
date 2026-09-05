@@ -20,14 +20,14 @@ export function CategoryBreakdown({ history }: Props) {
 
   return (
     <div className="pt-2 h-full">
-      <h3 className="font-display text-lg text-fg">By topic</h3>
-      <p className="text-xs text-fg-3 mt-0.5 mb-5">Attempts and average accuracy</p>
+      <h3 className="t-h3 text-fg">By topic</h3>
+      <p className="t-caption text-fg-3 mt-0.5 mb-5">Attempts and average accuracy</p>
       <div className="space-y-4">
         {rows.map((r, i) => (
           <div key={r.id}>
             <div className="flex items-center justify-between mb-1.5 text-sm">
               <span className="text-fg font-medium">{labelCategory(r.id)}</span>
-              <span className="text-fg-2 num text-xs">
+              <span className="text-fg-2 num t-caption">
                 {r.count} {r.count === 1 ? 'quiz' : 'quizzes'} · <span className={toneText[performanceTone(r.avg)]}>{formatPercent(r.avg, 0)}</span>
               </span>
             </div>
@@ -63,12 +63,12 @@ export function DifficultyBreakdown({ history }: Props) {
 
   return (
     <div className="pt-2 h-full">
-      <h3 className="font-display text-lg text-fg">By difficulty</h3>
-      <p className="text-xs text-fg-3 mt-0.5 mb-5">Where you spend your time</p>
+      <h3 className="t-h3 text-fg">By difficulty</h3>
+      <p className="t-caption text-fg-3 mt-0.5 mb-5">Where you spend your time</p>
       <div className="flex items-end gap-4 h-36">
         {data.map((d, i) => (
           <div key={d.t} className="flex-1 flex flex-col items-center gap-2 h-full">
-            <span className={`text-xs font-medium num ${toneText[performanceTone(d.avg)]}`}>{formatPercent(d.avg, 0)}</span>
+            <span className={`t-caption font-medium num ${toneText[performanceTone(d.avg)]}`}>{formatPercent(d.avg, 0)}</span>
             <div className="w-full flex-1 flex items-end">
               <motion.div
                 className={`w-full rounded-t-lg ${toneBg[performanceTone(d.avg)]} opacity-70`}
@@ -78,7 +78,7 @@ export function DifficultyBreakdown({ history }: Props) {
                 transition={{ duration: 0.8, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
               />
             </div>
-            <span className="text-[11px] text-fg-2 capitalize inline-flex items-center gap-1.5">
+            <span className="text-[13px] text-fg-2 capitalize inline-flex items-center gap-1.5">
               <span className="tier text-fg-2" data-level={difficultyLevel(d.t)} aria-hidden="true"><i /><i /><i /></span>
               {d.t} <span className="text-fg-3">· {d.count}</span>
             </span>

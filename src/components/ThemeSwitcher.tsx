@@ -34,7 +34,7 @@ export default function ThemeSwitcher({ className = '' }: { className?: string }
         />
         <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-accent" />
       </span>
-      <span className="text-xs font-medium text-fg-2 group-hover:text-fg transition-colors hidden sm:inline">
+      <span className="t-caption font-medium text-fg-2 group-hover:text-fg transition-colors hidden sm:inline">
         {dark ? 'Ink' : 'Paper'}
       </span>
     </button>

@@ -34,8 +34,8 @@ export default function TrendChart({ history }: TrendChartProps) {
     <div className="pt-2">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="font-display text-lg text-fg">Score trend</h3>
-          <p className="text-xs text-fg-3 mt-0.5">Last {data.length} attempt{data.length === 1 ? '' : 's'}</p>
+          <h3 className="t-h3 text-fg">Score trend</h3>
+          <p className="t-caption text-fg-3 mt-0.5">Last {data.length} attempt{data.length === 1 ? '' : 's'}</p>
         </div>
         <span className="chip num">avg <span className={toneText[performanceTone(avg)]}>{formatPercent(avg, 0)}</span></span>
       </div>
@@ -54,7 +54,7 @@ export default function TrendChart({ history }: TrendChartProps) {
             return (
               <g key={v}>
                 <line x1={pad.left} x2={W - pad.right} y1={y} y2={y} stroke="var(--nx-line)" />
-                <text x={pad.left - 8} y={y + 3.5} textAnchor="end" fontSize="10" fill="var(--nx-text-3)" fontFamily="JetBrains Mono, monospace">
+                <text x={pad.left - 8} y={y + 3.5} textAnchor="end" fontSize="12" fill="var(--nx-text-3)" fontFamily="IBM Plex Sans, system-ui, sans-serif">
                   {v}
                 </text>
               </g>
@@ -103,7 +103,7 @@ export default function TrendChart({ history }: TrendChartProps) {
                 transition={{ delay: 0.4 + i * 0.05, duration: 0.3 }}
               />
               {hover === i && <line x1={p.x} x2={p.x} y1={pad.top} y2={pad.top + ch} stroke="var(--nx-line-strong)" />}
-              <text x={p.x} y={H - 8} textAnchor="middle" fontSize="10" fill="var(--nx-text-3)" fontFamily="JetBrains Mono, monospace">
+              <text x={p.x} y={H - 8} textAnchor="middle" fontSize="12" fill="var(--nx-text-3)" fontFamily="IBM Plex Sans, system-ui, sans-serif">
                 #{p.e.attempt}
               </text>
             </g>
@@ -112,10 +112,10 @@ export default function TrendChart({ history }: TrendChartProps) {
 
         {hover !== null && pts[hover] && (
           <div
-            className="absolute pointer-events-none surface-strong rounded-xl px-3 py-2 text-xs -translate-x-1/2 -translate-y-full"
+            className="absolute pointer-events-none surface-strong rounded-xl px-3 py-2 t-caption -translate-x-1/2 -translate-y-full"
             style={{ left: `${(pts[hover].x / W) * 100}%`, top: `${(pts[hover].y / H) * 100}%`, marginTop: -12 }}
           >
-            <p className={`font-display text-base num ${toneText[performanceTone(pts[hover].e.percentage)]}`}>{formatPercent(pts[hover].e.percentage)}</p>
+            <p className={`text-base font-semibold num ${toneText[performanceTone(pts[hover].e.percentage)]}`}>{formatPercent(pts[hover].e.percentage)}</p>
             <p className="text-fg-2 whitespace-nowrap">
               {labelCategory(pts[hover].e.category)} · {pts[hover].e.difficulty}
             </p>

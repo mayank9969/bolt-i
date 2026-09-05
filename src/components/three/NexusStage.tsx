@@ -91,7 +91,7 @@ function HoverLabel() {
         >
           <div className="flex items-center gap-2">
             <span className="w-6 h-px bg-line-strong" />
-            <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-fg-2 bg-canvas/80 backdrop-blur-sm px-2 py-1 rounded">
+            <span className="t-label text-fg-2 bg-canvas/80 backdrop-blur-sm px-2 py-1 rounded">
               {labels[hover.cluster]} · {hover.tier === 1 ? 'topic' : 'question'}
             </span>
           </div>

@@ -112,7 +112,7 @@ export default function Setup() {
         <div className="lg:col-span-7 xl:col-span-6 max-w-2xl">
           <Reveal>
             <span className="opener">Choose your path</span>
-            <h1 className="font-display t-title text-fg mt-5 text-balance">
+            <h1 className="t-title text-fg mt-5 text-balance">
               Which part of the network <span className="t-italic">do you want to light?</span>
             </h1>
           </Reveal>
@@ -182,9 +182,9 @@ export default function Setup() {
                         <span className={`tier ${selected ? '' : 'text-fg-2'}`} data-level={difficultyLevel(d)} aria-hidden="true" style={selected ? { color: 'var(--nx-accent-on-ink)' } : undefined}>
                           <i /><i /><i />
                         </span>
-                        <p className="font-display text-2xl mt-4">{labelDifficulty(d)}</p>
-                        <p className={`text-xs mt-1 ${selected ? 'opacity-70' : 'text-fg-2'}`}>{meta.blurb}</p>
-                        <p className={`font-mono text-[10px] tracking-[0.18em] uppercase mt-4 ${selected ? 'opacity-80' : 'text-fg-3'}`}>{meta.marks}</p>
+                        <p className="t-h3 mt-4">{labelDifficulty(d)}</p>
+                        <p className={`t-caption mt-1 ${selected ? 'opacity-70' : 'text-fg-2'}`}>{meta.blurb}</p>
+                        <p className={`t-label mt-4 ${selected ? 'opacity-80' : 'text-fg-3'}`}>{meta.marks}</p>
                         {selected && <span className="sr-only">(selected)</span>}
                       </button>
                     )
@@ -212,7 +212,7 @@ export default function Setup() {
                           if (Number.isNaN(v)) return setCount(1)
                           setCount(Math.max(1, Math.min(v, maxCount)))
                         }}
-                        className="w-full bg-transparent text-center font-display text-6xl leading-none text-fg outline-none num focus-visible:text-accent transition-colors"
+                        className="w-full bg-transparent text-center t-stat leading-none text-fg outline-none num focus-visible:text-accent transition-colors"
                       />
                       <p className="figcap mt-1">of {maxCount}</p>
                     </div>
@@ -258,7 +258,7 @@ export default function Setup() {
               {/* ticket + go */}
               <Reveal>
                 <div className="border-t border-line-strong pt-8">
-                  <div className="flex flex-wrap items-baseline gap-x-3 gap-y-2 font-display text-2xl text-fg">
+                  <div className="flex flex-wrap items-baseline gap-x-3 gap-y-2 t-h3 text-fg">
                     <span className="text-fg-2 text-lg font-sans">You’ll get</span>
                     <span className="num">{count}</span>
                     <span className="text-fg-2">×</span>
@@ -310,11 +310,11 @@ function Movement({ index, title, hint, children }: { index: string; title: stri
     <Reveal>
       <section>
         <div className="flex items-baseline justify-between mb-5">
-          <h2 className="font-sans text-sm font-medium text-fg tracking-wide flex items-center gap-3">
+          <h2 className="t-h3 text-fg flex items-center gap-3">
             <span className="index">{index}</span>
             {title}
           </h2>
-          {hint && <span className="text-xs text-fg-3 num">{hint}</span>}
+          {hint && <span className="t-caption text-fg-3 num">{hint}</span>}
         </div>
         {children}
       </section>
@@ -335,12 +335,12 @@ function RegionRow({ selected, onSelect, icon, title, meta, detail }: { selected
         {selected ? <Check className="w-4 h-4" /> : icon}
       </span>
       <span className="min-w-0">
-        <span className={`font-display text-3xl leading-none block ${selected ? 'text-fg' : 'text-fg group-hover:text-fg'}`}>{title}</span>
-        <span className="block text-xs mt-1.5 text-fg-2">{detail}</span>
+        <span className={`t-h3 !text-2xl leading-none block ${selected ? 'text-fg' : 'text-fg group-hover:text-fg'}`}>{title}</span>
+        <span className="block t-caption mt-1.5 text-fg-2">{detail}</span>
       </span>
       <span className="text-right">
         <span className="block text-sm num text-fg-2">{meta}</span>
-        <span className={`block font-mono text-[10px] tracking-[0.18em] uppercase mt-1 ${selected ? 'text-accent' : 'text-transparent group-hover:text-fg-3'}`}>{selected ? 'Selected' : 'Select'}</span>
+        <span className={`block t-label mt-1 ${selected ? 'text-accent' : 'text-transparent group-hover:text-fg-3'}`}>{selected ? 'Selected' : 'Select'}</span>
       </span>
     </button>
   )
