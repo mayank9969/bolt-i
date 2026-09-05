@@ -154,7 +154,7 @@ function Footer() {
           <Wordmark className="text-base" />
         </div>
         <p className="sm:col-span-3 font-mono text-[11px] tracking-[0.18em] uppercase text-fg-3">
-          Living knowledge network
+          Living knowledge network · build v2 paper
         </p>
         <p className="sm:col-span-3 sm:text-right text-xs text-fg-3">
           Built by <span className="text-fg-2 font-medium">Mayank Sarwal</span>
