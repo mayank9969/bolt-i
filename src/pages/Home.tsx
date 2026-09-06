@@ -50,7 +50,7 @@ export default function Home() {
         <div className="relative z-10 flex-1 flex flex-col justify-end max-w-page mx-auto w-full px-5 sm:px-6 lg:px-8 pb-10 md:pb-14">
           <motion.div style={{ y: copyY, opacity: copyO }} className="grid lg:grid-cols-12 gap-x-10 gap-y-10 items-end">
             {/* headline: bottom-left, big serif */}
-            <div className="lg:col-span-8 xl:col-span-7">
+            <div className="lg:col-span-8 xl:col-span-7 hero-paper">
               <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={enter(0)} className="opener">
                 <span>Living knowledge network</span>
                 <span className="hidden sm:inline text-fg-3/70">·</span>
@@ -140,7 +140,7 @@ export default function Home() {
                         <span className="w-9 h-9 rounded-full border border-line-strong flex items-center justify-center text-fg shrink-0 group-hover:border-accent group-hover:text-accent transition-colors">
                           {c.id === 'python' ? <Code className="w-4 h-4" /> : <Sigma className="w-4 h-4" />}
                         </span>
-                        <span className="t-h3 !text-2xl md:!text-3xl text-fg truncate">{labelCategory(c.id)}</span>
+                        <span className="t-h3-lg text-fg truncate">{labelCategory(c.id)}</span>
                       </span>
                       <span className="hidden md:flex items-center gap-5">
                         {Object.entries(c.difficulties)
@@ -169,7 +169,7 @@ export default function Home() {
                 <span className="w-9 h-9 rounded-full bg-accent text-fg-inverse flex items-center justify-center shrink-0">
                   <span className="w-2 h-2 rounded-full bg-current" />
                 </span>
-                <span className="t-h3 !text-2xl md:!text-3xl text-fg">Mixed <span className="text-fg-2 font-normal">— cross the bridges</span></span>
+                <span className="t-h3-lg text-fg">Mixed <span className="text-fg-2 font-normal">— cross the bridges</span></span>
               </span>
               <span className="hidden md:block t-caption text-fg-2">Every region, every tier, one session</span>
               <span className="flex items-center gap-3 text-sm text-fg-2 num">

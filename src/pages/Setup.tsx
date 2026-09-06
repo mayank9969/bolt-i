@@ -335,7 +335,7 @@ function RegionRow({ selected, onSelect, icon, title, meta, detail }: { selected
         {selected ? <Check className="w-4 h-4" /> : icon}
       </span>
       <span className="min-w-0">
-        <span className={`t-h3 !text-2xl leading-none block ${selected ? 'text-fg' : 'text-fg group-hover:text-fg'}`}>{title}</span>
+        <span className="t-h3-lg block text-fg">{title}</span>
         <span className="block t-caption mt-1.5 text-fg-2">{detail}</span>
       </span>
       <span className="text-right">
