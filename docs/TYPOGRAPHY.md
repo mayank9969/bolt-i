@@ -47,6 +47,7 @@ weight/colour contrast.
 | H1 / page title | `.t-title`     | 32 → 52 px             | 600    | 1.08        | −0.022em |
 | H2 / section    | `.t-section`   | 24 → 32 px             | 600    | 1.18        | −0.016em |
 | H3 / row title  | `.t-h3`        | 19 px                  | 600    | 1.32        | −0.008em |
+| H3 large (region rows) | `.t-h3-lg` | 22 → 28 px          | 600    | 1.2         | −0.014em |
 | **Question**    | `.t-question`  | 22 → 28 px             | 500    | 1.38        | −0.01em  |
 | **Answer**      | `.t-answer`    | 17 px                  | 450    | 1.5         | 0        |
 | Lead            | `.t-lead`      | 18 px                  | 400    | 1.55        | 0        |
@@ -97,6 +98,10 @@ so the two emphasised words each close a line; on phones the `<br>`s are
 dropped and `text-balance` handles it. Green is used on one word. No
 gradient, glow, outline or letter-spacing tricks.
 
+The hero column carries a soft paper wash (`.hero-paper`, same device as the
+quiz column) so the headline sits in front of the network rather than being
+crossed by struts — checked at 390 / 820 / 1366 / 1920 px.
+
 ## Quiz
 
 Reading order is enforced by size and weight alone: question 28 px / 500 →
@@ -115,6 +120,7 @@ screenshot at every page. Only colour tokens differ.
 - `src/main.tsx` — Geist variable roman + italic imports; IBM Plex Sans imports removed.
 - `tailwind.config.js` — font family.
 - `src/styles/globals.css` — type tokens and roles (unlayered), `.figcap → .t-meta`, base heading defaults.
-- `src/pages/Home.tsx` — controlled hero breaks; two lower italic spans removed.
+- `src/pages/Home.tsx` — controlled hero breaks; hero paper wash; two lower italic spans removed; region-row titles use `.t-h3-lg` instead of inline `!text-2xl` overrides.
+- `src/pages/Setup.tsx` — region-row titles use `.t-h3-lg`.
 - `src/pages/Setup.tsx`, `Result.tsx`, `History.tsx`, `About.tsx` — italic spans removed.
 - `package.json` — `@fontsource-variable/geist` added; `@fontsource/ibm-plex-sans` removed. Inter was installed only for the comparison and is not a dependency.
