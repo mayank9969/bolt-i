@@ -237,7 +237,7 @@ export default function Home() {
                   ['Result', 'Activated', 'Your score lights the network from its cores outward.'],
                   ['History', 'Accumulated', 'Regions you have practised stay established, attempt after attempt.'],
                 ].map(([page, state, desc], i) => (
-                  <li key={page} className="py-5 border-b" style={{ borderColor: 'rgb(var(--nx-cta-text-rgb) / 0.14)' }}>
+                  <li key={page} className="py-5 border-b" style={{ borderColor: 'rgb(var(--nx-panel-text-rgb) / 0.14)' }}>
                     <div className="flex items-baseline justify-between gap-4">
                       <span className="t-h3">{page}</span>
                       <span className="index">0{i + 1} · {state}</span>

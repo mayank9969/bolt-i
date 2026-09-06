@@ -177,14 +177,14 @@ export default function Setup() {
                         aria-checked={selected}
                         disabled={!catalog}
                         onClick={() => setDifficulty(d)}
-                        className={`relative text-left p-4 sm:p-5 transition-colors duration-base focus-visible:z-10 ${selected ? 'bg-cta text-cta-text' : 'bg-canvas hover:bg-hover text-fg'}`}
+                        className={`relative text-left p-4 sm:p-5 transition-colors duration-base focus-visible:z-10 text-fg ${selected ? 'bg-selected/10 shadow-[inset_0_0_0_2px_var(--nx-selected)]' : 'bg-canvas hover:bg-hover'}`}
                       >
-                        <span className={`tier ${selected ? '' : 'text-fg-2'}`} data-level={difficultyLevel(d)} aria-hidden="true" style={selected ? { color: 'var(--nx-accent-on-ink)' } : undefined}>
+                        <span className={`tier ${selected ? 'text-accent' : 'text-fg-2'}`} data-level={difficultyLevel(d)} aria-hidden="true">
                           <i /><i /><i />
                         </span>
                         <p className="t-h3 mt-4">{labelDifficulty(d)}</p>
-                        <p className={`t-caption mt-1 ${selected ? 'opacity-70' : 'text-fg-2'}`}>{meta.blurb}</p>
-                        <p className={`t-label mt-4 ${selected ? 'opacity-80' : 'text-fg-3'}`}>{meta.marks}</p>
+                        <p className="t-caption mt-1 text-fg-2">{meta.blurb}</p>
+                        <p className={`t-label mt-4 ${selected ? 'text-accent-2' : 'text-fg-3'}`}>{meta.marks}</p>
                         {selected && <span className="sr-only">(selected)</span>}
                       </button>
                     )
@@ -243,7 +243,7 @@ export default function Setup() {
                             aria-pressed={on}
                             onClick={() => setCount(n)}
                             className={`h-9 min-w-[2.75rem] px-3 rounded-full border text-sm num transition-colors duration-fast ${
-                              on ? 'bg-cta text-cta-text border-cta' : 'border-line-strong text-fg-2 hover:text-fg hover:border-fg-3'
+                              on ? 'bg-selected/10 text-fg border-selected font-medium' : 'border-line-strong text-fg-2 hover:text-fg hover:border-fg-3'
                             } disabled:opacity-40 disabled:cursor-not-allowed`}
                           >
                             {n}

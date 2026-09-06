@@ -166,14 +166,14 @@
   }
   /* editorial panel: ink block on paper (or bone on ink) — used once per page at most */
   .panel-ink {
-    background: var(--nx-cta);
-    color: var(--nx-cta-text);
+    background: var(--nx-panel);
+    color: var(--nx-panel-text);
     border: 1px solid transparent;
   }
   .panel-ink .eyebrow, .panel-ink .index { color: var(--nx-accent-on-ink); }
   .panel-ink h2, .panel-ink h3 { color: inherit; }
-  .panel-ink .muted { color: rgb(var(--nx-cta-text-rgb) / 0.62); }
-  .panel-ink .hairline { background: linear-gradient(90deg, transparent, rgb(var(--nx-cta-text-rgb) / 0.3), transparent); }
+  .panel-ink .muted { color: rgb(var(--nx-panel-text-rgb) / 0.66); }
+  .panel-ink .hairline { background: linear-gradient(90deg, transparent, rgb(var(--nx-panel-text-rgb) / 0.3), transparent); }
 
   /* ── Buttons ─────────────────────────────────────────── */
   .btn {
@@ -541,7 +541,7 @@
     width: 18px;
     height: 18px;
     border-radius: 50%;
-    background: var(--nx-cta);
+    background: var(--nx-text);
     border: 2px solid var(--nx-canvas);
     box-shadow: 0 0 0 1px var(--nx-line-strong), 0 4px 12px rgb(var(--nx-shadow-ink) / 0.25);
     cursor: pointer;
@@ -553,7 +553,7 @@
     width: 18px;
     height: 18px;
     border-radius: 50%;
-    background: var(--nx-cta);
+    background: var(--nx-text);
     border: 2px solid var(--nx-canvas);
     cursor: pointer;
   }

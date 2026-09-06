@@ -51,7 +51,7 @@ function readPalette(): Palette {
     core: new THREE.Color(readToken('--nx-3d-core') || '#1a1917'),
     line: new THREE.Color(readToken('--nx-3d-strut') || '#8d8880'),
     key: readToken('--nx-3d-key') || '#fff4e6',
-    fill: readToken('--nx-3d-fill') || '#b9c6dd',
+    fill: readToken('--nx-3d-fill') || '#d9d4c8',
     ground: readToken('--nx-3d-ground') || (dark ? '#1a1a1e' : '#cdc4b4'),
     dark,
   }
@@ -706,9 +706,9 @@ function Studio({ quality }: { quality: Quality }) {
   if (quality === 'low') return null
   return (
     <Environment resolution={quality === 'high' ? 128 : 64} frames={1}>
-      <Lightformer intensity={1.6} position={[0, 5, -6]} scale={[10, 4, 1]} color="#ffffff" />
-      <Lightformer intensity={1} position={[-6, 1, 2]} scale={[3, 6, 1]} rotation-y={Math.PI / 3} color="#fff1e2" />
-      <Lightformer intensity={0.5} position={[6, -1, 1]} scale={[3, 5, 1]} rotation-y={-Math.PI / 3} color="#c9d5ea" />
+      <Lightformer intensity={1.6} position={[0, 5, -6]} scale={[10, 4, 1]} color="#fffdf8" />
+      <Lightformer intensity={1} position={[-6, 1, 2]} scale={[3, 6, 1]} rotation-y={Math.PI / 3} color="#fff4e6" />
+      <Lightformer intensity={0.5} position={[6, -1, 1]} scale={[3, 5, 1]} rotation-y={-Math.PI / 3} color="#e6e2d8" />
     </Environment>
   )
 }

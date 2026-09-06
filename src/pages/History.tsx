@@ -96,9 +96,9 @@ export default function History() {
                       role="tab"
                       aria-selected={filter === f}
                       onClick={() => setFilter(f)}
-                      className={`relative px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${filter === f ? 'text-cta-text' : 'text-fg-2 hover:text-fg'}`}
+                      className={`relative px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${filter === f ? 'text-fg' : 'text-fg-2 hover:text-fg'}`}
                     >
-                      {filter === f && <motion.span layoutId="history-filter" className="absolute inset-0 rounded-full bg-cta" transition={{ type: 'spring', stiffness: 400, damping: 32 }} />}
+                      {filter === f && <motion.span layoutId="history-filter" className="absolute inset-0 rounded-full bg-selected/10 border border-selected" transition={{ type: 'spring', stiffness: 400, damping: 32 }} />}
                       <span className="relative z-10">{f === 'all' ? 'All' : labelCategory(f)}</span>
                     </button>
                   ))}

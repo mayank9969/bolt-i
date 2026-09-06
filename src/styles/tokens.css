@@ -1,173 +1,220 @@
 /* ═══════════════════════════════════════════════════════════════════
-   NEXUSQuiz design tokens
+   NEXUSQuiz design tokens — Paper · Ink · one green
    ───────────────────────────────────────────────────────────────────
-   Two complete systems that share one brand:
+   One brand, two polarities:
 
-     PAPER (default)  warm ivory · deep ink · vermilion signal
-     INK              deep charcoal · bone · ember signal
+     PAPER (default)  warm paper · deep ink · forest green
+     INK              deep ink · warm bone · the same green, lifted
 
-   Default is light because NEXUSQuiz is a reading product: the
-   positive-polarity advantage (Piepenbrock et al. 2013, summarised by
-   NN/g) grows as text gets smaller — questions, options, review rows.
+   Palette rule: exactly ONE chromatic colour — green. Everything else
+   is a warm neutral derived from paper or ink. Success is green;
+   warning and error are neutral ink (paired with a word or icon),
+   so green stays valuable because it is scarce.
 
-   Every colour in the UI resolves to one of these variables.
+   Layer 1  --color-*   public semantic tokens (the contract)
+   Layer 2  --nx-*      implementation aliases used by Tailwind / CSS
+                        (kept so no component has to change)
+
    *-rgb tokens are space-separated triplets so Tailwind can apply
    opacity modifiers:  rgb(var(--nx-accent-rgb) / 0.12)
    ═══════════════════════════════════════════════════════════════════ */
 
+/* ───────────────────────── PAPER ───────────────────────── */
 :root,
 [data-theme='paper'] {
   color-scheme: light;
 
-  /* ── Paper: canvas & surfaces. Three visible tones do the layering:
-        surface (recessed)  <  canvas (page)  <  card (lifted)  <  card-strong.
-        Nothing here is #FFFFFF. ─────────────────────────────────────── */
-  --nx-canvas-rgb: 244 241 234;        /* #F4F1EA warm parchment */
-  --nx-surface-rgb: 235 230 220;       /* #EBE6DC recessed warm gray — rails, quiet bands */
-  --nx-elevated-rgb: 248 246 240;      /* #F8F6F0 inputs / keys */
-  --nx-card-rgb: 250 248 243;          /* #FAF8F3 lifted paper */
-  --nx-card-strong-rgb: 253 252 249;   /* #FDFCF9 popovers, focused field */
+  /* Layer 1 — semantic contract */
+  --color-bg-rgb: 247 244 236;              /* #F7F4EC paper */
+  --color-surface-rgb: 239 235 225;         /* #EFEBE1 recessed band / rail */
+  --color-surface-raised-rgb: 251 249 244;  /* #FBF9F4 card */
+  --color-text-rgb: 24 32 28;               /* #18201C ink */
+  --color-text-muted-rgb: 74 82 77;         /* #4A524D */
+  --color-border: rgb(var(--color-text-rgb) / 0.10);
+  --color-accent-rgb: 45 106 79;            /* #2D6A4F forest green */
+  --color-accent-hover-rgb: 36 87 64;       /* #245740 */
+  --color-accent-active-rgb: 28 69 50;      /* #1C4532 */
+  --color-on-accent-rgb: 247 244 236;       /* paper on green  5.8:1 */
+  --color-focus: rgb(var(--color-accent-rgb) / 0.9);
 
-  /* ── Ink: warm charcoal, never pure black ─────────────────────────── */
-  --nx-text-rgb: 28 27 24;             /* #1C1B18  15.3:1 on canvas */
-  --nx-text-2-rgb: 79 76 69;           /* #4F4C45   7.6:1 */
-  --nx-text-3-rgb: 104 100 92;         /* #68645C   5.1:1 on canvas, 4.6:1 on surface */
-  --nx-text-inverse-rgb: 246 243 236;
+  /* Layer 2 — surfaces: surface < bg < elevated < card < card-strong. No #FFFFFF. */
+  --nx-canvas-rgb: var(--color-bg-rgb);
+  --nx-surface-rgb: var(--color-surface-rgb);
+  --nx-elevated-rgb: 250 248 242;           /* #FAF8F2 inputs / keys */
+  --nx-card-rgb: var(--color-surface-raised-rgb);
+  --nx-card-strong-rgb: 253 251 246;        /* #FDFBF6 popovers, focused field */
 
-  /* ── Lines: ink at low alpha so they warm with the surface beneath ── */
-  --nx-line: rgb(var(--nx-text-rgb) / 0.10);
+  /* text */
+  --nx-text-rgb: var(--color-text-rgb);
+  --nx-text-2-rgb: var(--color-text-muted-rgb);
+  --nx-text-3-rgb: 99 107 101;              /* #636B65  5.0:1 on paper, 4.6:1 on surface */
+  --nx-text-inverse-rgb: 247 244 236;
+
+  /* lines: ink at low alpha, so they warm with the surface beneath */
+  --nx-line: var(--color-border);
   --nx-line-subtle: rgb(var(--nx-text-rgb) / 0.06);
   --nx-line-strong: rgb(var(--nx-text-rgb) / 0.22);
 
-  /* ── Signature accent: vermilion. One hue, three strengths. ───────── */
-  --nx-accent-rgb: 186 58 22;          /* #BA3A16  5.0:1 canvas, 4.6:1 surface — passes AA at every size */
-  --nx-accent-2-rgb: 163 52 18;        /* #A33412  6.1:1 — small accent text */
-  --nx-accent-dark-rgb: 126 42 15;     /* #7E2A0F  pressed */
-  --nx-accent-on-ink-rgb: 255 138 92;  /* #FF8A5C  7.4:1 on an ink panel */
+  /* the one colour */
+  --nx-accent-rgb: var(--color-accent-rgb);
+  --nx-accent-2-rgb: 37 89 63;              /* #25593F small green text 7.4:1 */
+  --nx-accent-dark-rgb: var(--color-accent-active-rgb);
+  --nx-accent-on-ink-rgb: 99 184 141;       /* #63B88D green on an ink panel 7.8:1 */
   --nx-accent-soft: rgb(var(--nx-accent-rgb) / 0.10);
   --nx-accent-glow: rgb(var(--nx-accent-rgb) / 0.22);
+  /* "accent-b" is kept as a name for the 3D secondary tint, but it is a NEUTRAL now */
+  --nx-accent-b-rgb: 124 132 126;           /* #7C847E warm grey */
 
-  /* secondary tone — slate. Not a UI accent: 3D fill light + chart mean line only */
-  --nx-accent-b-rgb: 58 76 110;
+  /* primary action = green */
+  --nx-cta-rgb: var(--color-accent-rgb);
+  --nx-cta-hover-rgb: var(--color-accent-hover-rgb);
+  --nx-cta-text-rgb: var(--color-on-accent-rgb);
 
-  /* ── Primary action: ink on paper ─────────────────────────────────── */
-  --nx-cta-rgb: 28 27 24;
-  --nx-cta-hover-rgb: 0 0 0;
-  --nx-cta-text-rgb: 246 243 236;      /* 15.5:1 */
+  /* editorial ink panel (one per page at most): ink block on paper */
+  --nx-panel-rgb: var(--color-text-rgb);
+  --nx-panel-text-rgb: 247 244 236;
 
-  /* ── Semantics — always paired with an icon or a word ─────────────── */
-  --nx-success-rgb: 31 111 74;         /* #1F6F4A 5.4:1 */
-  --nx-warning-rgb: 143 90 10;         /* #8F5A0A 5.1:1 */
-  --nx-error-rgb: 179 38 30;           /* #B3261E 5.8:1 */
+  /* semantics — success is the brand green; warning/error are neutral ink + a word/icon */
+  --nx-success-rgb: var(--color-accent-rgb);
+  --nx-warning-rgb: var(--color-text-muted-rgb);
+  --nx-error-rgb: var(--color-text-rgb);
 
-  /* ── States ───────────────────────────────────────────────────────── */
+  /* states */
   --nx-selected-rgb: var(--nx-accent-rgb);
   --nx-hover: rgb(var(--nx-text-rgb) / 0.04);
-  --nx-focus: rgb(var(--nx-accent-rgb) / 0.9);
+  --nx-focus: var(--color-focus);
   --nx-progress-rgb: var(--nx-accent-rgb);
   --nx-track: rgb(var(--nx-text-rgb) / 0.10);
   --nx-score-rgb: var(--nx-text-rgb);
   --nx-disabled: rgb(var(--nx-text-rgb) / 0.06);
-  --nx-disabled-text-rgb: 138 133 122; /* #8A857A decorative / disabled only (3.3:1) */
+  --nx-disabled-text-rgb: 139 146 140;      /* #8B928C decorative / disabled only */
 
-  /* ── Atmosphere ───────────────────────────────────────────────────── */
-  --nx-deco-1: rgb(var(--nx-accent-rgb) / 0.07);     /* warm light, top-right */
-  --nx-deco-2: rgb(var(--nx-accent-b-rgb) / 0.08);   /* cool field, bottom-left */
+  /* atmosphere: one faint green wash top-right, nothing else */
+  --nx-deco-1: rgb(var(--nx-accent-rgb) / 0.06);
+  --nx-deco-2: transparent;
   --nx-grid: rgb(var(--nx-text-rgb) / 0.05);
   --nx-noise-opacity: 0.06;
 
-  /* ── Shadows: tinted with warm ink-brown, diffuse, low alpha.
-        The inset top hairline is what makes a card read as paper stock. */
-  --nx-shadow-ink: 60 48 30;
+  /* shadows: ink-tinted, diffuse, low alpha; inset top edge makes a card read as paper */
+  --nx-shadow-ink: 40 48 40;
   --nx-shadow-1: 0 1px 0 0 rgb(255 255 255 / 0.6) inset, 0 1px 2px rgb(var(--nx-shadow-ink) / 0.05), 0 14px 36px -18px rgb(var(--nx-shadow-ink) / 0.18);
   --nx-shadow-2: 0 1px 0 0 rgb(255 255 255 / 0.8) inset, 0 2px 4px rgb(var(--nx-shadow-ink) / 0.05), 0 30px 64px -26px rgb(var(--nx-shadow-ink) / 0.26);
   --nx-shadow-inset: 0 0 0 1px rgb(var(--nx-shadow-ink) / 0.03) inset, 0 1px 6px rgb(var(--nx-shadow-ink) / 0.07) inset;
-  --nx-shadow-cta: 0 1px 0 0 rgb(255 255 255 / 0.18) inset, 0 12px 28px -14px rgb(var(--nx-cta-rgb) / 0.45);
-  --nx-shadow-cta-hover: 0 1px 0 0 rgb(255 255 255 / 0.22) inset, 0 18px 36px -14px rgb(var(--nx-cta-rgb) / 0.5);
-  --nx-highlight: rgb(255 255 255 / 0.5);           /* inner top edge on lifted surfaces */
+  --nx-shadow-cta: 0 1px 0 0 rgb(255 255 255 / 0.14) inset, 0 12px 28px -14px rgb(var(--nx-cta-rgb) / 0.45);
+  --nx-shadow-cta-hover: 0 1px 0 0 rgb(255 255 255 / 0.18) inset, 0 18px 36px -14px rgb(var(--nx-cta-rgb) / 0.5);
+  --nx-highlight: rgb(255 255 255 / 0.5);
 
-  /* ── 3D material palette (read by NexusScene) ─────────────────────── */
-  --nx-3d-core: #1c1a17;
-  --nx-3d-strut: #7d766b;
-  --nx-3d-node: #fbf7ee;
-  --nx-3d-shadow: #1a1917;
+  /* 3D material palette (read by NexusScene) — ink/paper neutrals + the green */
+  --nx-3d-core: #18201c;
+  --nx-3d-strut: #7f867f;
+  --nx-3d-node: #fbf8f0;
+  --nx-3d-shadow: #18201c;
   --nx-3d-shadow-opacity: 0.32;
-  --nx-3d-key: #fff4e6;      /* warm key — paper sunlight */
-  --nx-3d-fill: #b9c6dd;     /* cool fill for form separation */
-  --nx-3d-ground: #cdc4b4;   /* hemisphere ground bounce */
+  --nx-3d-key: #fff7ea;      /* warm key — paper sunlight */
+  --nx-3d-fill: #d9d4c8;     /* neutral fill for form separation (no blue) */
+  --nx-3d-ground: #cfc9bc;   /* hemisphere ground bounce */
 }
 
+/* ────────────────────────── INK ────────────────────────── */
 [data-theme='ink'] {
   color-scheme: dark;
 
-  /* canvas & surfaces — luminance stacking: deeper = darker */
-  --nx-canvas-rgb: 17 17 19;
-  --nx-surface-rgb: 22 22 25;
-  --nx-elevated-rgb: 24 24 28;
-  --nx-card-rgb: 31 31 36;
-  --nx-card-strong-rgb: 40 40 46;
+  /* Layer 1 — semantic contract */
+  --color-bg-rgb: 13 20 17;                 /* #0D1411 ink */
+  --color-surface-rgb: 16 23 19;            /* #101713 */
+  --color-surface-raised-rgb: 24 32 25;     /* #182019 card */
+  --color-text-rgb: 244 240 231;            /* #F4F0E7 bone */
+  --color-text-muted-rgb: 179 181 173;      /* #B3B5AD */
+  --color-border: rgb(var(--color-text-rgb) / 0.08);
+  --color-accent-rgb: 99 184 141;           /* #63B88D the same green, lifted for dark */
+  --color-accent-hover-rgb: 121 198 158;    /* #79C69E */
+  --color-accent-active-rgb: 79 168 123;    /* #4FA87B */
+  --color-on-accent-rgb: 13 20 17;          /* ink on green  7.8:1 */
+  --color-focus: rgb(var(--color-accent-rgb) / 0.85);
 
-  --nx-text-rgb: 240 236 228;          /* bone */
-  --nx-text-2-rgb: 170 166 158;
-  --nx-text-3-rgb: 134 131 123;
-  --nx-text-inverse-rgb: 17 17 19;
+  /* Layer 2 — surfaces: deeper = darker */
+  --nx-canvas-rgb: var(--color-bg-rgb);
+  --nx-surface-rgb: var(--color-surface-rgb);
+  --nx-elevated-rgb: 19 27 23;              /* #131B17 */
+  --nx-card-rgb: var(--color-surface-raised-rgb);
+  --nx-card-strong-rgb: 30 40 34;           /* #1E2822 */
 
-  --nx-line: rgb(var(--nx-text-rgb) / 0.08);
+  --nx-text-rgb: var(--color-text-rgb);
+  --nx-text-2-rgb: var(--color-text-muted-rgb);
+  --nx-text-3-rgb: 143 147 140;             /* #8F938C  6.0:1 */
+  --nx-text-inverse-rgb: 13 20 17;
+
+  --nx-line: var(--color-border);
   --nx-line-subtle: rgb(var(--nx-text-rgb) / 0.05);
   --nx-line-strong: rgb(var(--nx-text-rgb) / 0.16);
 
-  --nx-accent-rgb: 255 106 60;         /* ember — same family as vermilion */
-  --nx-accent-2-rgb: 255 176 143;
-  --nx-accent-dark-rgb: 204 72 32;
-  --nx-accent-on-ink-rgb: 178 56 20;   /* on a bone panel (inverse) */
+  --nx-accent-rgb: var(--color-accent-rgb);
+  --nx-accent-2-rgb: 121 198 158;           /* #79C69E small green text 9.2:1 */
+  --nx-accent-dark-rgb: var(--color-accent-active-rgb);
+  --nx-accent-on-ink-rgb: 45 106 79;        /* forest green on a bone panel (inverse) */
   --nx-accent-soft: rgb(var(--nx-accent-rgb) / 0.12);
-  --nx-accent-glow: rgb(var(--nx-accent-rgb) / 0.30);
+  --nx-accent-glow: rgb(var(--nx-accent-rgb) / 0.28);
+  --nx-accent-b-rgb: 110 122 114;           /* #6E7A72 neutral */
 
-  --nx-accent-b-rgb: 128 150 194;
+  --nx-cta-rgb: var(--color-accent-rgb);
+  --nx-cta-hover-rgb: var(--color-accent-hover-rgb);
+  --nx-cta-text-rgb: var(--color-on-accent-rgb);
 
-  --nx-cta-rgb: 240 236 228;
-  --nx-cta-hover-rgb: 255 255 255;
-  --nx-cta-text-rgb: 17 17 19;
+  /* editorial panel flips: bone block on ink */
+  --nx-panel-rgb: var(--color-text-rgb);
+  --nx-panel-text-rgb: 13 20 17;
 
-  --nx-success-rgb: 90 209 154;
-  --nx-warning-rgb: 242 181 68;
-  --nx-error-rgb: 255 92 92;
+  --nx-success-rgb: var(--color-accent-rgb);
+  --nx-warning-rgb: var(--color-text-muted-rgb);
+  --nx-error-rgb: var(--color-text-rgb);
 
   --nx-selected-rgb: var(--nx-accent-rgb);
   --nx-hover: rgb(var(--nx-text-rgb) / 0.05);
-  --nx-focus: rgb(var(--nx-accent-rgb) / 0.85);
+  --nx-focus: var(--color-focus);
   --nx-progress-rgb: var(--nx-accent-rgb);
   --nx-track: rgb(var(--nx-text-rgb) / 0.08);
   --nx-score-rgb: var(--nx-text-rgb);
   --nx-disabled: rgb(var(--nx-text-rgb) / 0.06);
-  --nx-disabled-text-rgb: 100 98 92;
+  --nx-disabled-text-rgb: 94 102 96;
 
-  --nx-deco-1: rgb(var(--nx-accent-rgb) / 0.12);
-  --nx-deco-2: rgb(var(--nx-accent-b-rgb) / 0.10);
+  --nx-deco-1: rgb(var(--nx-accent-rgb) / 0.08);
+  --nx-deco-2: transparent;
   --nx-grid: rgb(var(--nx-text-rgb) / 0.035);
   --nx-noise-opacity: 0.035;
 
-  --nx-3d-core: #2b2a2f;
-  --nx-3d-strut: #8a867e;
-  --nx-3d-node: #efe9dc;
+  --nx-3d-core: #222b26;
+  --nx-3d-strut: #7e857f;
+  --nx-3d-node: #ede9df;
   --nx-3d-shadow: #000000;
   --nx-3d-shadow-opacity: 0.5;
-  --nx-3d-key: #fff1e0;
-  --nx-3d-fill: #8aa0c8;
-  --nx-3d-ground: #1a1a1e;
+  --nx-3d-key: #fff4e4;
+  --nx-3d-fill: #6e7a72;
+  --nx-3d-ground: #141b17;
 
   --nx-shadow-ink: 0 0 0;
   --nx-shadow-1: 0 1px 0 0 rgb(255 255 255 / 0.04) inset, 0 12px 32px -14px rgb(0 0 0 / 0.55);
   --nx-shadow-2: 0 1px 0 0 rgb(255 255 255 / 0.06) inset, 0 28px 60px -20px rgb(0 0 0 / 0.65);
   --nx-shadow-inset: 0 0 12px rgb(0 0 0 / 0.25) inset;
-  --nx-shadow-cta: 0 1px 0 0 rgb(255 255 255 / 0.5) inset, 0 12px 28px -14px rgb(0 0 0 / 0.6);
-  --nx-shadow-cta-hover: 0 1px 0 0 rgb(255 255 255 / 0.6) inset, 0 18px 36px -14px rgb(0 0 0 / 0.7);
+  --nx-shadow-cta: 0 1px 0 0 rgb(255 255 255 / 0.18) inset, 0 12px 28px -14px rgb(0 0 0 / 0.6);
+  --nx-shadow-cta-hover: 0 1px 0 0 rgb(255 255 255 / 0.24) inset, 0 18px 36px -14px rgb(0 0 0 / 0.7);
   --nx-highlight: rgb(255 255 255 / 0.05);
 }
 
 /* ── Resolved aliases + motion system ─────────────────────────────── */
 :root,
 [data-theme] {
+  /* Layer 1 resolved */
+  --color-bg: rgb(var(--color-bg-rgb));
+  --color-surface: rgb(var(--color-surface-rgb));
+  --color-surface-raised: rgb(var(--color-surface-raised-rgb));
+  --color-text: rgb(var(--color-text-rgb));
+  --color-text-muted: rgb(var(--color-text-muted-rgb));
+  --color-accent: rgb(var(--color-accent-rgb));
+  --color-accent-hover: rgb(var(--color-accent-hover-rgb));
+  --color-accent-active: rgb(var(--color-accent-active-rgb));
+  --color-on-accent: rgb(var(--color-on-accent-rgb));
+
+  /* Layer 2 resolved */
   --nx-canvas: rgb(var(--nx-canvas-rgb));
   --nx-surface: rgb(var(--nx-surface-rgb));
   --nx-elevated: rgb(var(--nx-elevated-rgb));
@@ -185,12 +232,14 @@
   --nx-cta: rgb(var(--nx-cta-rgb));
   --nx-cta-hover: rgb(var(--nx-cta-hover-rgb));
   --nx-cta-text: rgb(var(--nx-cta-text-rgb));
+  --nx-panel: rgb(var(--nx-panel-rgb));
+  --nx-panel-text: rgb(var(--nx-panel-text-rgb));
   --nx-success: rgb(var(--nx-success-rgb));
   --nx-success-soft: rgb(var(--nx-success-rgb) / 0.12);
   --nx-warning: rgb(var(--nx-warning-rgb));
-  --nx-warning-soft: rgb(var(--nx-warning-rgb) / 0.12);
+  --nx-warning-soft: rgb(var(--nx-warning-rgb) / 0.10);
   --nx-error: rgb(var(--nx-error-rgb));
-  --nx-error-soft: rgb(var(--nx-error-rgb) / 0.12);
+  --nx-error-soft: rgb(var(--nx-error-rgb) / 0.07);
   --nx-selected: rgb(var(--nx-selected-rgb));
   --nx-selected-soft: rgb(var(--nx-selected-rgb) / 0.10);
   --nx-progress: rgb(var(--nx-progress-rgb));
@@ -198,10 +247,8 @@
   --nx-disabled-text: rgb(var(--nx-disabled-text-rgb));
 
   /* motion language — one easing family, three durations */
-  --nx-ease: cubic-bezier(0.22, 1, 0.36, 1);      /* out-expo-ish: UI */
-  --nx-ease-in: cubic-bezier(0.4, 0, 1, 1);
-  --nx-dur-fast: 150ms;                            /* hover, colour */
-  --nx-dur: 320ms;                                 /* state change, transform */
-  --nx-dur-slow: 640ms;                            /* reveals, page */
-  --nx-nav-h: 4rem;
+  --nx-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --nx-dur-fast: 150ms;
+  --nx-dur: 320ms;
+  --nx-dur-slow: 640ms;
 }
