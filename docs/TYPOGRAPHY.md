@@ -1,69 +1,120 @@
-# NEXUSQuiz — Typography System
+# NEXUSQuiz typography — Geist Sans, two registers
 
-_One typeface. Eleven roles. Three weights._ Applied 2026-09-05; source of truth is `src/styles/globals.css` (`:root` type variables + `.t-*` classes).
+Scope: typography only. Palette, themes, layout, components, 3D, content,
+routing and backend untouched. The only markup edits are removing italic
+spans on product pages and adding two responsive `<br>`s in the hero.
 
-## 1. Typeface decision
+## Typeface: Geist Sans (variable) — over Inter
 
-Compared (all open-source, all designed for screens):
+Both were rendered side-by-side with real NEXUSQuiz content (hero, a long
+question, code-like answers, body, nav, button, a 55.9 % statistic) at the
+exact sizes the system uses. Geist was chosen because:
 
-| Typeface | Facts (researched) | Verdict for NEXUSQuiz |
-| --- | --- | --- |
-| **IBM Plex Sans** | Designed by Mike Abbink with Bold Monday for IBM (released 2017/2018), 7 weights + true italics, SIL OFL, grotesque with open counters and a distinctive but neutral voice; built to "read cleanly at every scale without imposing its own voice". Sources: [Wikipedia](https://en.wikipedia.org/wiki/IBM_Plex), [Type Barn](https://typebarn.com/font/ibm-plex-sans) | **Chosen.** Clear at 13–17 px, excellent numerals (open 3/6/9, distinguishable 0/O and 1/l/I — important for maths answers like `[[2,0],[0,3]]`), real italics for emphasis, and a slightly warmer, more "printed" character than Inter that suits the paper theme. Tabular figures available. |
-| Inter | Rasmus Andersson, designed for UI, tall x-height, tabular numbers, contextual alternates; the most common product-UI face on the web. Sources: [featuredtype](https://www.featuredtype.com/typefaces/inter) | Excellent, but extremely generic ("every SaaS dashboard") and its italics are slanted romans. Rejected for identity reasons, not readability. |
-| Geist | Vercel/basement.studio, Swiss-influenced, variable 100–900, on Google Fonts since Oct 2024. Source: [FontAlternatives](https://fontalternatives.com/fonts/geist/) | Cool, technical, very close to Inter in feel; reads as "developer tool". Rejected. |
+- **The hero reads as a product brand, not a portfolio.** Geist's italic is a
+  true slanted italic with a slightly narrower set; "node." and "connection."
+  stay in the same voice as the roman rather than turning into a second font.
+  Inter's italic is wider and softer and the emphasised words start to float.
+- **Answers and code.** `len([10,20,30])`, `x^2 − 9`, `Il1 O0`, `{1,2,3} ∩
+  {3,4,5}` — Geist's brackets, braces, operators and digits are more open at
+  17 px and the `1 / l / I` trio is distinguishable without enabling
+  stylistic sets. Inter needs `cv11`/`ss01` to get close.
+- **Restraint.** Geist has a slightly tighter default fit and a calmer
+  lowercase, which suits a paper/ink system where nothing else is loud.
+- **Integration.** Self-hosted from `@fontsource-variable/geist` (SIL OFL);
+  one roman + one italic variable file for latin, so 400/450/500/600/700 all
+  come from two requests. IBM Plex Sans removed; no Google Fonts.
 
-Decorative faces removed: **Instrument Serif** (display) and **JetBrains Mono** (labels) are gone. Every role below is IBM Plex Sans. The font is **self-hosted** via `@fontsource/ibm-plex-sans` (latin 400 / 400 italic / 500 / 600 / 600 italic, ~24 kB each) — no Google Fonts request, no flash of fallback type, works offline.
+Inter remains a fine fallback but did not produce a stronger result, so the
+brief's rule ("Geist if clearly better") applies.
 
-## 2. Roles (tokens)
+## Two registers
 
-| Role | Class | Size | Line-height | Tracking | Weight | Used for |
-| --- | --- | --- | --- | --- | --- | --- |
-| Display / Hero | `.t-hero` | 44 → 88 px (fluid) | 1.02 | −0.03em | 600 | Home headline only |
-| H1 | `.t-title` | 34 → 56 px | 1.08 | −0.025em | 600 | Page titles (Setup, History, About, Home CTA) |
-| H2 | `.t-section` | 26 → 36 px | 1.15 | −0.02em | 600 | Section headings |
-| H3 | `.t-h3` | 20 px | 1.3 | −0.01em | 600 | Row / card titles, step numbers |
-| **Question** | `.t-question` | **22 → 30 px** | **1.35** | −0.012em | **500** | Quiz question — the priority role |
-| **Answer** | `.t-answer` | **17 px** | **1.5** | 0 | 400 (500 when selected) | MCQ options, typed-answer field |
-| Lead | `.t-lead` | 18 px | 1.55 | 0 | 400 | Intro paragraphs |
-| Body | `.t-body` / default | 16 px | 1.6 | 0 | 400 | Everything else |
-| Navigation | `.t-nav` | 15 px | 1.2 | 0 | 500 | Header + mobile menu links |
-| Label | `.t-label` | **13 px** (floor) | 1.3 | +0.04em | 500 | Eyebrows, figure captions, indices, "Selected" states (uppercase) |
-| Caption | `.t-caption` | 13 px | 1.45 | 0 | 400 | Helper text, hints, meta |
-| Button | `.t-button` | 15 px (17 px in `.btn-lg`) | 1 | 0 | 500 | All buttons |
-| Stat | `.t-stat` / `.t-stat-sm` | 40 → 72 px / 36 px | 1 | −0.03em | 600, tabular | History summary, Result ledger, marks |
-| Score | `.t-score` | 64 → 128 px | 0.95 | −0.04em | 600, tabular | Result percentage |
-| Emphasis | `.t-italic` | inherits | — | — | inherits, italic | One emphasised phrase per heading (true italics) |
+| Register    | Where                 | Roles                          | Italic | Weight |
+| ----------- | --------------------- | ------------------------------ | ------ | ------ |
+| Expressive  | Home hero, logo mark  | `.t-hero`, `.t-italic`         | yes    | 700    |
+| Product     | everything else       | all other roles                | never  | 400–600 |
 
-Rules enforced by the system:
-- **Minimum text size 13 px** (was 10–11 px mono labels). Nothing that must be read is smaller.
-- **Letter-spacing** ≤ +0.04em on uppercase labels (was +0.18–0.22em); negative tracking only on ≥ 26 px headings.
-- **Weights: 400 / 500 / 600 only.** No thin, no bold-900.
-- Headings use `text-wrap: balance`; question text uses `text-pretty`, max ~26ch line length.
-- Numbers use `font-variant-numeric: tabular-nums` (`.num`) wherever they align (scores, attempts, timers).
+The italic device is now used in exactly two places: the hero's "node." and
+"connection.", and the *Quiz* in the wordmark. Setup, Result, History, About
+and the lower Home sections had their italic spans removed and now use plain
+weight/colour contrast.
 
-## 3. Contrast (WCAG 2.2 AA, measured on the actual token pairs, Paper theme)
+## Role scale (measured in the built app)
 
-| Pair | Ratio | Requirement |
-| --- | --- | --- |
-| Question text `#1A1917` on canvas `#F2EEE5` | 15.2:1 | 4.5 ✓ |
-| Answer text `#54524D` on card `#F9F6F0` | 7.2:1 | 4.5 ✓ |
-| Selected answer `#1A1917` on card | 16.3:1 | 4.5 ✓ |
-| Body `#54524D` on canvas | 6.7:1 | 4.5 ✓ |
-| Caption 13 px `#68645C` on canvas | 5.1:1 | 4.5 ✓ |
-| Caption 13 px on darker surface `#E9E4D9` | 4.6:1 | 4.5 ✓ (text-3 darkened from `#6E6A62` for this) |
-| Label accent `#A83410` on canvas | 5.7:1 | 4.5 ✓ |
-| Accent `#CC3C18` (≥ 24 px / graphics only) | 4.3:1 | 3 ✓ |
-| Button text `#F4F1EA` on ink | 15.6:1 | 4.5 ✓ |
-| Success / warning / error stats | 4.9 / 4.6 / 5.2:1 | 4.5 ✓ |
+| Role            | Class          | Size (mobile → laptop) | Weight | Line-height | Tracking |
+| --------------- | -------------- | ---------------------- | -----: | ----------: | -------: |
+| Display / hero  | `.t-hero`      | 42 → 84 px             | 700    | 1.04        | −0.028em |
+| H1 / page title | `.t-title`     | 32 → 52 px             | 600    | 1.08        | −0.022em |
+| H2 / section    | `.t-section`   | 24 → 32 px             | 600    | 1.18        | −0.016em |
+| H3 / row title  | `.t-h3`        | 19 px                  | 600    | 1.32        | −0.008em |
+| **Question**    | `.t-question`  | 22 → 28 px             | 500    | 1.38        | −0.01em  |
+| **Answer**      | `.t-answer`    | 17 px                  | 450    | 1.5         | 0        |
+| Lead            | `.t-lead`      | 18 px                  | 400    | 1.55        | 0        |
+| Body            | `.t-body`      | 16 px                  | 400    | 1.6         | 0        |
+| Navigation      | `.t-nav`       | 15 px                  | 500    | 1.2         | 0        |
+| Button          | `.t-button`    | 15 px                  | 600    | 1           | 0        |
+| Metadata        | `.t-meta`      | 14 px                  | 500    | 1.4         | 0        |
+| Label (eyebrow) | `.t-label`     | 13 px                  | 500    | 1.3         | +0.03em, uppercase |
+| Caption         | `.t-caption`   | 13 px                  | 400    | 1.45        | 0        |
+| Statistic       | `.t-stat`      | 37 → 64 px             | 600    | 1           | −0.025em |
+| Statistic small | `.t-stat-sm`   | 34 px                  | 600    | 1           | −0.02em  |
+| Score           | `.t-score`     | 60 → 120 px            | 600    | 0.95        | −0.035em |
 
-Ink (dark) theme uses the same roles; its pairs were audited earlier (text-3 ≈ 4.9:1, accent 6.6:1).
+Measured at 390 / 820 / 1366 / 1920 px: fluid roles scale smoothly, fixed
+roles (answer, nav, button, label, caption) do not drift. 13 px is the floor
+for anything that must be read. Weights used: 400 / 450 / 500 / 600 / 700 —
+no 300.
 
-## 4. What changed in code
-- `index.html`: Google Fonts links removed.
-- `src/main.tsx`: five `@fontsource/ibm-plex-sans` imports.
-- `tailwind.config.js`: `sans`, `display`, `mono` all alias IBM Plex Sans (legacy class names can't reintroduce a second family).
-- `src/styles/globals.css`: type variables + `.t-*` roles; `.eyebrow`, `.index`, `.figcap`, `.opener`, `.chip`, `.choice-key`, `kbd.key`, `.stat-big`, buttons now compose the roles.
-- All pages/components: `font-display` / `font-mono` / `text-[10px]` / `text-[11px]` / wide tracking removed and mapped to roles. Trend chart axis labels 10 → 12 px.
-- `tokens.css`: `--nx-text-3` darkened one step for AA on every surface.
+Roles are emitted **unlayered** in `globals.css` so every class always ships,
+including the ones only reached through `@apply` (`.t-button` in buttons,
+`.t-meta` in `.figcap`).
 
-Not touched: 3D scene, theme colours (other than text-3), layouts, backend, API, quiz logic.
+## Metadata and labels
+
+Two roles instead of one, so small text stops being decorative noise:
+
+- `.t-meta` (14 px, 500, sentence case, no tracking) — figure captions
+  ("Fig. 01 — three regions of knowledge, 96 nodes"), quiz context lines
+  ("Python · Easy · Choose one"), ledger heads, "48 questions", "Scroll to move
+  through it". `.figcap` now maps here.
+- `.t-label` (13 px, 500, uppercase, +0.03em) — short eyebrows and index
+  marks only ("01 — Regions", "Living knowledge network"). Tracking reduced
+  from 0.04em.
+
+## Hero
+
+`t-hero` at 700 (the only 700 in the product), −0.028em, line-height 1.04.
+Line breaks are controlled: on ≥ 640 px it always sets as
+
+```
+Every question
+is a node.
+Every answer,
+a connection.
+```
+
+so the two emphasised words each close a line; on phones the `<br>`s are
+dropped and `text-balance` handles it. Green is used on one word. No
+gradient, glow, outline or letter-spacing tricks.
+
+## Quiz
+
+Reading order is enforced by size and weight alone: question 28 px / 500 →
+answers 17 px / 450 (a hair above body so options read as choices, not
+prose) → progress in `t-meta` 14 px → action in `t-button` 15 px / 600.
+Answer rows keep 14 px horizontal padding and 56 px minimum height; long
+options wrap with `overflow-wrap: anywhere`.
+
+## Both themes
+
+Identical roles, sizes, weights and spacing on Paper and Ink — verified by
+screenshot at every page. Only colour tokens differ.
+
+## Files touched
+
+- `src/main.tsx` — Geist variable roman + italic imports; IBM Plex Sans imports removed.
+- `tailwind.config.js` — font family.
+- `src/styles/globals.css` — type tokens and roles (unlayered), `.figcap → .t-meta`, base heading defaults.
+- `src/pages/Home.tsx` — controlled hero breaks; two lower italic spans removed.
+- `src/pages/Setup.tsx`, `Result.tsx`, `History.tsx`, `About.tsx` — italic spans removed.
+- `package.json` — `@fontsource-variable/geist` added; `@fontsource/ibm-plex-sans` removed. Inter was installed only for the comparison and is not a dependency.
