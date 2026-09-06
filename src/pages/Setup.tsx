@@ -113,7 +113,7 @@ export default function Setup() {
           <Reveal>
             <span className="opener">Choose your path</span>
             <h1 className="t-title text-fg mt-5 text-balance">
-              Which part of the network <span className="t-italic">do you want to light?</span>
+              Which part of the network do you want to light?
             </h1>
           </Reveal>
 

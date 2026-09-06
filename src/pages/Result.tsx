@@ -74,7 +74,7 @@ export default function Result() {
 
             <motion.h1 initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.45, ease }} className="t-title text-fg mt-4">
               {headline.replace('.', '')}
-              <span className="t-italic text-fg-2">.</span>
+              <span className="text-fg-2">.</span>
             </motion.h1>
             <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.7, delay: 0.7 }} className="text-fg-2 mt-4 max-w-md text-pretty">
               {sub}
@@ -164,7 +164,7 @@ export default function Result() {
         <Reveal>
           <div className="grid lg:grid-cols-12 gap-8 items-baseline border-t border-line-strong pt-10 mb-8">
             <span className="lg:col-span-2 index">Review</span>
-            <h2 className="lg:col-span-10 t-section text-fg">Every answer, <span className="t-italic">explained.</span></h2>
+            <h2 className="lg:col-span-10 t-section text-fg">Every answer, explained.</h2>
           </div>
         </Reveal>
 

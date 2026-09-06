@@ -107,7 +107,7 @@ export default function Home() {
           <div className="grid lg:grid-cols-12 gap-8 items-start">
             <span className="lg:col-span-2 index">01 — Idea</span>
             <h2 className="lg:col-span-10 t-section text-fg max-w-[24ch] text-balance">
-              Knowledge isn’t a list you finish. It’s a <span className="t-italic">structure</span> you build — and it should look like one.
+              Knowledge isn’t a list you finish. It’s a structure you build — and it should look like one.
             </h2>
           </div>
         </Reveal>
@@ -256,7 +256,7 @@ export default function Home() {
         <Reveal>
           <div className="grid lg:grid-cols-12 gap-8 items-end border-t border-line-strong pt-10">
             <h2 className="lg:col-span-8 t-title text-fg text-balance">
-              Start with a region. <span className="t-italic text-fg-2">Watch it light up.</span>
+              Start with a region. <span className="text-fg-2">Watch it light up.</span>
             </h2>
             <div className="lg:col-span-4 flex lg:justify-end">
               <MagneticLink to="/setup" className="btn-primary btn-lg">

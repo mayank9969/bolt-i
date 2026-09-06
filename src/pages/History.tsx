@@ -79,7 +79,7 @@ export default function History() {
               <h1 className="t-title text-fg mt-5 text-balance">
                 {history && history.length ? (
                   <>
-                    <span className="num">{history.length}</span> attempt{history.length === 1 ? '' : 's'}, <span className="t-italic">and the network remembers each one.</span>
+                    <span className="num">{history.length}</span> attempt{history.length === 1 ? '' : 's'}, <span className="text-fg-2">and the network remembers each one.</span>
                   </>
                 ) : (
                   <>Your history</>

@@ -98,5 +98,15 @@
         "score": 7.0,
         "total_marks": 9.0,
         "percentage": 77.77777777777779
+    },
+    {
+        "category": "all",
+        "difficulty": "easy",
+        "total_questions": 10,
+        "correct_answers": 0,
+        "wrong_answers": 10,
+        "score": 0,
+        "total_marks": 16.0,
+        "percentage": 0.0
     }
 ]

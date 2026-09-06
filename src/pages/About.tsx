@@ -18,7 +18,7 @@ export default function About() {
             <div>
               <span className="opener">About</span>
               <h1 className="t-title text-fg mt-5 text-balance">
-                A quiz platform built around one idea: <span className="t-italic text-accent">progression.</span>
+                A quiz platform built around one idea: <span className="text-accent">progression.</span>
               </h1>
               <p className="text-fg-2 mt-6 text-lg leading-relaxed text-pretty max-w-2xl">
                 NEXUSQuiz is a focused place to test what you know in Maths and Python. No clutter, no gimmicks —
