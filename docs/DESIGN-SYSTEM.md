@@ -216,3 +216,16 @@ With the stage, gradients, noise, shadows and animation disabled the page still
 reads: CTA (inverted neutral) → question (display type, `--nx-text`) → choices
 (card surfaces; selected = accent + label) → progress → score → feedback →
 metadata (`--nx-text-2/3`). That order is what the tokens enforce.
+
+## Final polish pass (v2 close-out)
+
+Small, cross-page consistency fixes — no redesign.
+
+- **Page shells**: every page uses `max-w-page` + `px-5 sm:px-6 lg:px-8` and the same top rhythm (`py-10 md:py-16`; Home/Result heroes `pt-20 md:pt-28`).
+- **Radius scale**: containers `rounded-2xl` (Home ink panel `2xl → 3xl` on md), controls `rounded-xl`, list rows `rounded-lg`, pills `rounded-full`. The one `4xl` outlier was removed.
+- **Buttons**: `.btn-primary / .btn-secondary / .btn-ghost` with `.btn-lg` and a new `.btn-sm` (nav CTA) — no per-instance `!important` overrides.
+- **Selected state**: one treatment everywhere — 10 % green tint + 1 px green edge — Setup tier cells now paint it over opaque paper (`.tier-cell-selected`) so it matches the region rows, presets and quiz options.
+- **Paper washes**: reading columns sit on paper while the network stays as atmosphere: `.hero-paper` (Home, History header), `.column-paper` (About, Setup form), `.quiz-paper`, `.result-paper` (path strip + actions), `.stats-paper` (History ledger).
+- **Error/empty states**: same `surface-strong rounded-2xl p-8 mt-12 text-center` + `role="alert"` on Setup, History and Quiz.
+- **Touch targets**: presets, History filter tabs, theme switch and the range slider all have ≥ 40 px hit areas.
+- **Motion**: `MotionConfig reducedMotion="user"` at the app root, so Framer Motion enters/reveals/page transitions respect `prefers-reduced-motion` alongside the existing CSS and 3D fallbacks.
