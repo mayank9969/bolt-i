@@ -1,4 +1,5 @@
 import type { Difficulty } from '@/types/quiz'
+import { categoryLabel } from '@/lib/categories'
 
 export function formatPercent(p: number, decimals = 1): string {
   const rounded = Math.round(p * 10 ** decimals) / 10 ** decimals
@@ -10,13 +11,7 @@ export function formatScore(n: number): string {
 }
 
 export function labelCategory(id: string): string {
-  const map: Record<string, string> = {
-    all: 'All Topics',
-    maths: 'Maths',
-    math: 'Maths',
-    python: 'Python',
-  }
-  return map[id] ?? id.charAt(0).toUpperCase() + id.slice(1)
+  return categoryLabel(id)
 }
 
 export function labelDifficulty(d: string): string {

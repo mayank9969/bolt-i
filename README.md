@@ -2,7 +2,7 @@
 
 **Test your knowledge. Build your mastery.**
 
-A premium quiz platform for Maths and Python, powered by the original Python quiz engine.
+A premium quiz platform across 15 regions of knowledge (Mathematics, Science, Technology, Python Programming, Computer Science, Physics, Chemistry, Biology, Astronomy & Space, Geography, History, Economics & Business, Logic & Reasoning, English & Language, General Knowledge), powered by the original Python quiz engine.
 
 ```
 quiz.app/        ← Python quiz engine (UNCHANGED — source of truth)
@@ -72,7 +72,7 @@ the research, the 3D reference review, the token contract and the motion system.
 ### The Living Knowledge Network (3D identity)
 
 One persistent WebGL scene lives in a single canvas under every page. Three regions of knowledge
-(Maths · Python · Mixed) sit at different depths, each with a dark core, a ring of topic nodes and a
+(Sciences · Humanities · Mixed) sit at different depths, each with a dark core, a ring of topic nodes and a
 cloud of question nodes joined by hairline links. Signals travel outward from the cores; optional
 links relink slowly so the network rearranges instead of spinning; depth fog dissolves the far
 regions into the paper. The page decides how it behaves:

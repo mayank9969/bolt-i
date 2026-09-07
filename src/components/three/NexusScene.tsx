@@ -10,7 +10,7 @@ import { onThemeChange, readToken, tokenHex } from '@/lib/theme'
  * THE LIVING KNOWLEDGE NETWORK
  *
  * One persistent WebGL scene under every page. Three regions of knowledge
- * (Maths · Python · Mixed) sit at different depths; each has a dark core,
+ * (Sciences · Humanities · Mixed) sit at different depths; each has a dark core,
  * a ring of secondary nodes and a cloud of leaves. Hairline links carry
  * signals that travel *along the graph* from a core outward (shortest-path
  * distance, not a sphere), so the network visibly thinks rather than

@@ -240,3 +240,7 @@ Optimisation only — same product, same tokens, same network. Verified at 320 /
 - **Touch.** Quiz Previous/Next span the row (`flex-1 sm:flex-none`, ≥ 44 px); progress segments 24 px hit height; `.link-rule` gets an invisible 44 px hit area; Setup region rows collapse to two columns below the new `xs` (400 px) breakpoint.
 - **Network on phones.** Presence ×0.72 (×0.6 when quiet), liveliness ×0.7, hero camera raised so the network sits above the headline; `detectQuality()` returns `low` under 768 px (22 nodes, no dust, dpr 1, low-poly, no env map).
 - **History / Result.** Trend + breakdowns and the Result headline sit on `column-paper` / `hero-paper` (hidden on `lg`); difficulty bars capped at `max-w-xs`, `h-28` on phones.
+
+## Category registry (15 regions)
+
+The UI never hardcodes categories. `/api/categories` returns whatever ids exist in `quiz.app/questions.json`; `src/lib/categories.ts` maps a known id to its display label, line icon and network family (0 · Sciences, 1 · Humanities, 2 · Mixed). Unknown ids still render (humanised label, default icon). Counts everywhere are summed from the live catalogue. To swap the bank: replace `quiz.app/questions.json` (same `category → easy/medium/hard → [{question, answer, question_type, options}]` shape) and restart.

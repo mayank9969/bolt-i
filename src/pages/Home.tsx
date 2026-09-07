@@ -4,7 +4,8 @@ import { useEffect, useRef, useState } from 'react'
 import Reveal from '@/components/Reveal'
 import MagneticLink from '@/components/ui/MagneticLink'
 import CountUp from '@/components/ui/CountUp'
-import { ArrowRight, Code, Shield, Sigma } from '@/components/ui/Icons'
+import { ArrowRight, Shield } from '@/components/ui/Icons'
+import { FAMILY_LABELS, categoryIcon } from '@/lib/categories'
 import { getCategories } from '@/api/quizApi'
 import type { CategoriesResponse } from '@/types/quiz'
 import { difficultyLevel, labelCategory } from '@/lib/format'
@@ -36,7 +37,7 @@ export default function Home() {
       density: 0.65,
       activation: 0.16,
       hoverable: true,
-      clusterLabels: [labelCategory(cats[0]?.id ?? 'maths'), labelCategory(cats[1]?.id ?? 'python'), 'Mixed'],
+      clusterLabels: FAMILY_LABELS,
     },
     [cats.length],
   )
@@ -54,7 +55,7 @@ export default function Home() {
               <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={enter(0)} className="opener">
                 <span>Living knowledge network</span>
                 <span className="hidden sm:inline text-fg-3/70">·</span>
-                <span className="hidden sm:inline">{catalog ? `${questionCount} questions` : 'Maths · Python'}</span>
+                <span className="hidden sm:inline">{catalog ? `${categoryCount} regions · ${questionCount} questions` : 'Loading the bank…'}</span>
               </motion.p>
 
               <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={enter(1)} className="t-hero text-fg mt-6 max-w-[15ch] text-balance">
@@ -67,7 +68,7 @@ export default function Home() {
             {/* lede + actions: bottom-right column */}
             <div className="lg:col-span-4 xl:col-span-5 lg:pl-8 xl:pl-16 lg:border-l lg:border-line">
               <motion.p initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={enter(2)} className="t-lead text-fg-2 max-w-md text-pretty">
-                NEXUSQuiz maps what you know in Maths and Python as a network you can watch grow. Pick a region, set the tier, and light it up — one honest, server-scored answer at a time.
+                NEXUSQuiz maps what you know — from Mathematics and Python to History and Language — as a network you can watch grow. Pick a region, set the tier, and light it up — one honest, server-scored answer at a time.
               </motion.p>
 
               <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={enter(3)} className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
@@ -92,7 +93,7 @@ export default function Home() {
         >
           <span className="hidden md:inline-flex items-center gap-3">
             <span className="w-8 h-px bg-line-strong" />
-            Fig. 01 — three regions of knowledge, {catalog ? `${questionCount} nodes` : 'live'}
+            Fig. 01 — {catalog ? `${categoryCount} regions of knowledge, ${questionCount} nodes` : 'regions of knowledge, live'}
           </span>
           <span className="inline-flex items-center gap-3">
             Scroll to move through it
@@ -119,7 +120,7 @@ export default function Home() {
           <div className="grid lg:grid-cols-12 gap-8 items-baseline mb-6">
             <span className="lg:col-span-2 index">02 — Regions</span>
             <p className="lg:col-span-6 text-fg-2 max-w-prose text-pretty">
-              Two disciplines, three tiers each, two answer formats. Each region below is a live cluster in the network — the numbers come straight from the question bank.
+              {catalog ? `${categoryCount} regions` : 'Many regions'}, three tiers each, two answer formats. Each region below is a live cluster in the network — the numbers come straight from the question bank.
             </p>
           </div>
         </Reveal>
@@ -133,14 +134,14 @@ export default function Home() {
                     <Link
                       to="/setup"
                       state={{ category: c.id }}
-                      className="group row grid-cols-[2.5rem_1fr_auto] md:grid-cols-[4rem_minmax(0,1.2fr)_minmax(0,1fr)_auto] hover:bg-hover transition-colors -mx-4 px-4 rounded-lg"
+                      className="group row items-center grid-cols-[2.5rem_1fr_auto] md:grid-cols-[4rem_minmax(0,1.2fr)_minmax(0,1fr)_auto] hover:bg-hover transition-colors -mx-4 px-4 rounded-lg"
                     >
-                      <span className="t-caption text-fg-3 num">0{i + 1}</span>
+                      <span className="t-caption text-fg-3 num">{String(i + 1).padStart(2, '0')}</span>
                       <span className="flex items-center gap-4 min-w-0">
                         <span className="w-9 h-9 rounded-full border border-line-strong flex items-center justify-center text-fg shrink-0 group-hover:border-accent group-hover:text-accent transition-colors">
-                          {c.id === 'python' ? <Code className="w-4 h-4" /> : <Sigma className="w-4 h-4" />}
+                          <RegionIcon id={c.id} className="w-4 h-4" />
                         </span>
-                        <span className="t-h3-lg text-fg truncate">{labelCategory(c.id)}</span>
+                        <span className="t-h3-lg text-fg text-balance leading-tight">{labelCategory(c.id)}</span>
                       </span>
                       <span className="hidden md:flex items-center gap-5">
                         {Object.entries(c.difficulties)
@@ -161,10 +162,10 @@ export default function Home() {
                   </Reveal>
                 )
               })
-            : [0, 1].map((i) => <div key={i} className="h-[73px] border-b border-line skeleton" />)}
+            : [0, 1, 2, 3, 4, 5].map((i) => <div key={i} className="h-[73px] border-b border-line skeleton" />)}
           <Reveal delay={0.14} y={12}>
-            <Link to="/setup" state={{ category: 'all' }} className="group row grid-cols-[2.5rem_1fr_auto] md:grid-cols-[4rem_minmax(0,1.2fr)_minmax(0,1fr)_auto] hover:bg-hover transition-colors -mx-4 px-4 rounded-lg">
-              <span className="t-caption text-fg-3 num">0{categoryCount + 1}</span>
+            <Link to="/setup" state={{ category: 'all' }} className="group row items-center grid-cols-[2.5rem_1fr_auto] md:grid-cols-[4rem_minmax(0,1.2fr)_minmax(0,1fr)_auto] hover:bg-hover transition-colors -mx-4 px-4 rounded-lg">
+              <span className="t-caption text-fg-3 num">{String(categoryCount + 1).padStart(2, '0')}</span>
               <span className="flex items-center gap-4">
                 <span className="w-9 h-9 rounded-full bg-accent text-fg-inverse flex items-center justify-center shrink-0">
                   <span className="w-2 h-2 rounded-full bg-current" />
@@ -269,4 +270,9 @@ export default function Home() {
       </section>
     </div>
   )
+}
+
+function RegionIcon({ id, className }: { id: string; className?: string }) {
+  const Icon = categoryIcon(id)
+  return <Icon className={className} />
 }

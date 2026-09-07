@@ -10,6 +10,7 @@ import { ArrowRight, Check, Cross, Refresh } from '@/components/ui/Icons'
 import Tier from '@/components/ui/Tier'
 import { formatScore, labelCategory, performanceTone, toneText, toneVar } from '@/lib/format'
 import { repairText } from '@/lib/text'
+import { categoryCluster } from '@/lib/categories'
 
 const ease = [0.22, 1, 0.36, 1] as const
 
@@ -27,7 +28,7 @@ export default function Result() {
   // The region the quiz was taken in lights its knowledge path question by question (real review data);
   // the rest of the network takes the overall score. Nothing here is the only place a fact is shown —
   // the same outcomes are printed in the summary and the review list below.
-  const region = category === 'python' ? 1 : category === 'maths' ? 0 : 2
+  const region = categoryCluster(category)
   const pathMask = result?.review.map((r) => !!r.is_correct) ?? []
   useNetwork(
     {

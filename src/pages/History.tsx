@@ -10,6 +10,7 @@ import Tier from '@/components/ui/Tier'
 import { ArrowRight, Cross } from '@/components/ui/Icons'
 import { useNetwork } from '@/components/three/store'
 import { formatPercent, formatScore, labelCategory, performanceTone, toneText } from '@/lib/format'
+import { FAMILY_LABELS, categoryCluster, normaliseCategoryId } from '@/lib/categories'
 
 type Filter = 'all' | string
 const ease = [0.22, 1, 0.36, 1] as const
@@ -26,7 +27,7 @@ export default function History() {
   }, [])
 
   // The engine has stored both 'math' and 'maths' over time — group them under one label for filtering/display.
-  const norm = (c: string) => (c === 'math' ? 'maths' : c)
+  const norm = normaliseCategoryId
   const categories = useMemo(() => Array.from(new Set((history ?? []).map((h) => norm(h.category)).filter((c) => c !== 'all'))), [history])
   const visible = useMemo(() => (history ?? []).filter((h) => filter === 'all' || norm(h.category) === filter), [history, filter])
   const newestFirst = useMemo(() => [...visible].reverse(), [visible])
@@ -42,18 +43,30 @@ export default function History() {
 
   // HISTORY — accumulated: each region is "established" in proportion to real practice there.
   // weight = attempts in that region (saturating) × mean accuracy; 'all'/mixed attempts feed the bridge region.
+  const establish = (items: HistoryEntry[]) => {
+    if (!items.length) return 0
+    const acc = items.reduce((s, h) => s + h.percentage, 0) / items.length / 100
+    const sat = 1 - Math.exp(-items.length / 4)
+    return Math.min(1, 0.15 + sat * 0.55 + acc * 0.3)
+  }
+  // per-region establishment, most practised first (drives the list below)
+  const regions = useMemo(
+    () =>
+      categories
+        .map((id) => {
+          const items = (history ?? []).filter((h) => norm(h.category) === id)
+          return { id, n: items.length, w: establish(items) }
+        })
+        .sort((a, b) => b.n - a.n || b.w - a.w),
+    [history, categories],
+  )
+  const mixedItems = useMemo(() => (history ?? []).filter((h) => h.category === 'all' || h.category === 'mixed'), [history])
+  // the network has three clusters: regions roll up into their family, mixed attempts feed the bridge
   const weights = useMemo<[number, number, number]>(() => {
     if (!history || history.length === 0) return [0, 0, 0]
-    const ids = [categories[0], categories[1]]
-    const w = (pred: (h: HistoryEntry) => boolean) => {
-      const items = history.filter(pred)
-      if (!items.length) return 0
-      const acc = items.reduce((s, h) => s + h.percentage, 0) / items.length / 100
-      const sat = 1 - Math.exp(-items.length / 4)
-      return Math.min(1, 0.15 + sat * 0.55 + acc * 0.3)
-    }
-    return [ids[0] ? w((h) => norm(h.category) === ids[0]) : 0, ids[1] ? w((h) => norm(h.category) === ids[1]) : 0, w((h) => h.category === 'all' || h.category === 'mixed')]
-  }, [history, categories])
+    const fam = (f: 0 | 1) => history.filter((h) => h.category !== 'all' && h.category !== 'mixed' && categoryCluster(norm(h.category)) === f)
+    return [establish(fam(0)), establish(fam(1)), establish(mixedItems)]
+  }, [history, mixedItems])
 
   useNetwork(
     {
@@ -62,8 +75,8 @@ export default function History() {
       density: 0.5 + Math.min(1, (history?.length ?? 0) / 20) * 0.5,
       activation: stats.avg / 100,
       clusterWeights: history && history.length ? weights : null,
-      focusCluster: filter === 'all' ? -1 : Math.min(1, categories.indexOf(filter)),
-      clusterLabels: [labelCategory(categories[0] ?? 'maths'), labelCategory(categories[1] ?? 'python'), 'Mixed'],
+      focusCluster: filter === 'all' ? -1 : categoryCluster(filter),
+      clusterLabels: FAMILY_LABELS,
     },
     [history, weights, filter, categories],
   )
@@ -88,7 +101,7 @@ export default function History() {
             </div>
             {categories.length > 0 && (
               <div className="lg:col-span-4 flex lg:justify-end">
-                <div role="tablist" aria-label="Filter by region" className="flex items-center gap-1 border border-line-strong rounded-full p-1 bg-canvas/80 backdrop-blur-sm shadow-card">
+                <div role="tablist" aria-label="Filter by region" className="flex flex-wrap items-center gap-1 lg:justify-end">
                   {(['all', ...categories] as Filter[]).map((f) => (
                     <button
                       key={f}
@@ -96,7 +109,7 @@ export default function History() {
                       role="tab"
                       aria-selected={filter === f}
                       onClick={() => setFilter(f)}
-                      className={`relative h-10 px-4 rounded-full text-sm font-medium transition-colors ${filter === f ? 'text-fg' : 'text-fg-2 hover:text-fg'}`}
+                      className={`relative h-10 px-4 rounded-full text-sm font-medium border transition-colors ${filter === f ? 'text-fg border-transparent' : 'text-fg-2 border-line-strong bg-canvas/80 hover:text-fg hover:border-fg-3'}`}
                     >
                       {filter === f && <motion.span layoutId="history-filter" className="absolute inset-0 rounded-full bg-selected/10 border border-selected" transition={{ type: 'spring', stiffness: 400, damping: 32 }} />}
                       <span className="relative z-10">{f === 'all' ? 'All' : labelCategory(f)}</span>
@@ -157,9 +170,8 @@ export default function History() {
                 </div>
                 <ul className="lg:col-span-8 border-t border-line">
                   {[
-                    [labelCategory(categories[0] ?? 'maths'), weights[0], history.filter((h) => norm(h.category) === categories[0]).length],
-                    [labelCategory(categories[1] ?? 'python'), weights[1], history.filter((h) => norm(h.category) === categories[1]).length],
-                    ['Mixed', weights[2], history.filter((h) => h.category === 'all' || h.category === 'mixed').length],
+                    ...regions.map((r) => [labelCategory(r.id), r.w, r.n] as const),
+                    ['Mixed', weights[2], mixedItems.length] as const,
                   ].map(([name, w, n], i) => (
                     <li key={String(name)} className="grid grid-cols-[1fr_auto] sm:grid-cols-[10rem_1fr_auto] items-center gap-x-6 gap-y-2 py-5 border-b border-line">
                       <span className="t-h3 text-fg">{String(name)}</span>

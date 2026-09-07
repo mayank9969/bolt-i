@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom'
 import Reveal from '@/components/Reveal'
 import { useNetwork } from '@/components/three/store'
 import Tier from '@/components/ui/Tier'
-import { ArrowRight, Code, Sigma } from '@/components/ui/Icons'
+import { ArrowRight } from '@/components/ui/Icons'
+import { categoryIcon } from '@/lib/categories'
 import { getCategories } from '@/api/quizApi'
 import type { CategoryInfo } from '@/types/quiz'
 import { DIFFICULTY_ORDER, labelCategory } from '@/lib/format'
@@ -31,8 +32,13 @@ export default function About() {
       .catch(() => setCatalog([]))
   }, [])
 
-  const regionNames = catalog && catalog.length ? catalog.map((c) => labelCategory(c.id)) : ['Maths', 'Python']
-  const regionList = regionNames.length > 1 ? `${regionNames.slice(0, -1).join(', ')} and ${regionNames[regionNames.length - 1]}` : regionNames[0]
+  const regionNames = catalog && catalog.length ? catalog.map((c) => labelCategory(c.id)) : []
+  const regionList =
+    regionNames.length === 0
+      ? 'many regions of knowledge'
+      : regionNames.length <= 3
+        ? `${regionNames.slice(0, -1).join(', ')} and ${regionNames[regionNames.length - 1]}`
+        : `${regionNames.length} regions of knowledge, from ${regionNames[0]} to ${regionNames[regionNames.length - 1]}`
 
   return (
     <div className="relative flex-1">
@@ -56,7 +62,7 @@ export default function About() {
         <Reveal delay={0.06}>
           <dl className="mt-12 grid grid-cols-2 md:grid-cols-4 border-y border-line-strong divide-x divide-line">
             <Fact label="Questions" value={total === null ? '—' : String(total)} />
-            <Fact label="Regions" value={catalog === null ? '—' : String(Math.max(2, catalog.length))} note={regionNames.join(' · ')} />
+            <Fact label="Regions" value={catalog === null ? '—' : String(catalog.length)} note={regionNames.length ? `${regionNames.slice(0, 3).join(' · ')}${regionNames.length > 3 ? ' · …' : ''}` : '—'} />
             <Fact label="Tiers" value="3" note="Easy · Medium · Hard" />
             <Fact label="Formats" value="2" note="Multiple choice · Typed" />
           </dl>
@@ -81,7 +87,7 @@ export default function About() {
             {/* 01 · What it tests */}
             <Section id="tests" n="01" title="What it tests">
               <p className="t-body text-fg-2 text-pretty">
-                Two regions of knowledge, each with three tiers. Easy checks recall, Medium checks understanding, Hard
+                {catalog && catalog.length ? `${catalog.length} regions of knowledge` : 'Regions of knowledge'}, each with three tiers. Easy checks recall, Medium checks understanding, Hard
                 checks precision. A <em className="not-italic text-fg">Mixed</em> region draws from every region, and a Mixed tier
                 draws from every tier — so you can practise one narrow thing or the whole map at once.
               </p>
@@ -104,7 +110,7 @@ export default function About() {
                       <tr key={c.id} className="border-t border-line">
                         <th scope="row" className="py-3.5 pr-4 text-left font-medium text-fg flex items-center gap-3">
                           <span className="w-7 h-7 rounded-full border border-line-strong flex items-center justify-center text-fg-2">
-                            {c.id === 'python' ? <Code className="w-3.5 h-3.5" /> : <Sigma className="w-3.5 h-3.5" />}
+                            <RegionIcon id={c.id} />
                           </span>
                           {labelCategory(c.id)}
                         </th>
@@ -278,6 +284,7 @@ const SECTIONS = [
 const PLACEHOLDER: CategoryInfo[] = [
   { id: 'maths', difficulties: {} },
   { id: 'python', difficulties: {} },
+  { id: 'general_knowledge', difficulties: {} },
 ]
 
 // quiz.py → get_marks(): easy 2 · medium 4 · hard 6, halved for mcq
@@ -301,3 +308,8 @@ const FLOW: [string, string][] = [
   ['You answer', 'Choose an option or type a response. You can move back and change anything until you finish.'],
   ['The server scores', 'Every answer is checked by the rules above, marks are added up, and the attempt is saved to your history.'],
 ]
+
+function RegionIcon({ id }: { id: string }) {
+  const Icon = categoryIcon(id)
+  return <Icon className="w-3.5 h-3.5" />
+}

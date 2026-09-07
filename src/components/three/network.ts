@@ -2,7 +2,7 @@
  * THE LIVING KNOWLEDGE NETWORK — data model.
  *
  * Knowledge is modelled as regions ("clusters") of nodes in a deep volume:
- *   cluster 0 · Maths     cluster 1 · Python     cluster 2 · Mixed / bridge
+ *   cluster 0 · Sciences   cluster 1 · Humanities   cluster 2 · Mixed / bridge
  * Each cluster has a hierarchy: one hub → a few secondaries → many leaves.
  * Edges: hub–secondary "trunks", leaf links, and a handful of long bridges
  * between clusters. A pool of optional links switches on/off slowly so the

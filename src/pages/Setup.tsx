@@ -6,7 +6,8 @@ import { useQuiz } from '@/context/QuizContext'
 import type { CategoryInfo, DifficultyChoice } from '@/types/quiz'
 import Reveal from '@/components/Reveal'
 import { pulseNetwork, useNetwork } from '@/components/three/store'
-import { ArrowRight, Check, Code, Cross, Minus, Plus, Sigma } from '@/components/ui/Icons'
+import { ArrowRight, Check, Cross, Minus, Plus } from '@/components/ui/Icons'
+import { FAMILY_LABELS, categoryCluster, categoryIcon } from '@/lib/categories'
 import Tier from '@/components/ui/Tier'
 import { DIFFICULTY_ORDER, difficultyLevel, labelCategory, labelDifficulty } from '@/lib/format'
 
@@ -67,11 +68,7 @@ export default function Setup() {
   }, [maxCount, count])
 
   // SETUP — responsive: the chosen region comes forward, the tier sets density, the size sets activation.
-  const clusterIndex = useMemo(() => {
-    if (category === 'all') return 2
-    const idx = (catalog ?? []).findIndex((c) => c.id === category)
-    return idx >= 0 ? Math.min(idx, 1) : 2
-  }, [category, catalog])
+  const clusterIndex = useMemo(() => categoryCluster(category), [category])
   useNetwork(
     {
       mode: 'responsive',
@@ -79,7 +76,7 @@ export default function Setup() {
       focusCluster: clusterIndex,
       density: difficulty === 'easy' ? 0.3 : difficulty === 'medium' ? 0.6 : difficulty === 'hard' ? 1 : 0.8,
       activation: 0.1 + (count / MAX_COUNT) * 0.6,
-      clusterLabels: [labelCategory(catalog?.[0]?.id ?? 'maths'), labelCategory(catalog?.[1]?.id ?? 'python'), 'Mixed'],
+      clusterLabels: FAMILY_LABELS,
     },
     [clusterIndex, difficulty, count, catalog],
   )
@@ -139,7 +136,7 @@ export default function Setup() {
                           key={c.id}
                           selected={category === c.id}
                           onSelect={() => setCategory(c.id)}
-                          icon={c.id === 'python' ? <Code className="w-4 h-4" /> : <Sigma className="w-4 h-4" />}
+                          icon={<RegionIcon id={c.id} />}
                           title={labelCategory(c.id)}
                           meta={`${totalOf(c)} questions`}
                           detail={Object.entries(c.difficulties)
@@ -158,7 +155,7 @@ export default function Setup() {
                       />
                     </>
                   ) : (
-                    [0, 1, 2].map((i) => <div key={i} className="h-[76px] border-b border-line skeleton" />)
+                    [0, 1, 2, 3, 4, 5].map((i) => <div key={i} className="h-[76px] border-b border-line skeleton" />)
                   )}
                 </div>
               </Movement>
@@ -358,4 +355,9 @@ function Stepper({ children, onClick, disabled, label }: { children: React.React
       {children}
     </button>
   )
+}
+
+function RegionIcon({ id }: { id: string }) {
+  const Icon = categoryIcon(id)
+  return <Icon className="w-4 h-4" />
 }

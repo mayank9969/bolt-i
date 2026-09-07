@@ -62,7 +62,7 @@ const state: SceneState = {
   clusterWeights: null,
   pulse: 0,
   hoverable: false,
-  clusterLabels: ['Maths', 'Python', 'Mixed'],
+  clusterLabels: ['Sciences', 'Humanities', 'Mixed'],
   scroll: 0,
   px: 0,
   py: 0,
