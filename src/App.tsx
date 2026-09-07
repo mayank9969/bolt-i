@@ -1,4 +1,4 @@
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence, MotionConfig } from 'framer-motion'
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom'
 import { useEffect } from 'react'
 import Layout from './components/Layout'
@@ -19,7 +19,7 @@ export default function App() {
   }, [location.pathname])
 
   return (
-    <>
+    <MotionConfig reducedMotion="user">
       <CustomCursor />
       <Layout>
         <AnimatePresence mode="wait" initial={false}>
@@ -36,6 +36,6 @@ export default function App() {
           </PageTransition>
         </AnimatePresence>
       </Layout>
-    </>
+    </MotionConfig>
   )
 }

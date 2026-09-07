@@ -67,7 +67,7 @@ export default function Result() {
   return (
     <div className="relative flex-1">
       {/* ── The number ──────────────────────────────────────────── */}
-      <section className="relative z-10 max-w-page mx-auto px-5 sm:px-6 lg:px-8 pt-24 md:pt-32 pb-16 md:pb-24">
+      <section className="relative z-10 max-w-page mx-auto px-5 sm:px-6 lg:px-8 pt-20 md:pt-28 pb-16 md:pb-24">
         <div className="grid lg:grid-cols-12 gap-x-10 gap-y-10 items-end">
           <div className="lg:col-span-7">
             <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, ease }} className="opener">
@@ -122,7 +122,7 @@ export default function Result() {
         </div>
 
         {/* path strip: every question as a node, in order */}
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 1.1 }} className="mt-14">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 1.1 }} className="mt-14 result-paper">
           <div className="flex items-center justify-between figcap mb-3">
             <span>Your path through the network</span>
             <span>
@@ -159,7 +159,7 @@ export default function Result() {
         </motion.div>
 
         {/* actions */}
-        <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 1.3, ease }} className="mt-12 flex flex-wrap items-center gap-x-8 gap-y-4">
+        <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 1.3, ease }} className="mt-12 flex flex-wrap items-center gap-x-6 gap-y-4">
           <MagneticLink to="/setup" className="btn-primary btn-lg">
             <Refresh className="w-5 h-5" />
             Play again

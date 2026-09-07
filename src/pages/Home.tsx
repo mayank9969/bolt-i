@@ -222,7 +222,7 @@ export default function Home() {
       {/* ── Ink band: the journey through the pages ────────────────── */}
       <section className="relative max-w-page mx-auto px-5 sm:px-6 lg:px-8 pb-24 md:pb-36">
         <Reveal>
-          <div className="panel-ink rounded-3xl md:rounded-4xl p-7 sm:p-10 md:p-14 relative overflow-hidden">
+          <div className="panel-ink rounded-2xl md:rounded-3xl p-7 sm:p-10 md:p-14 relative overflow-hidden">
             <div className="grid lg:grid-cols-12 gap-10">
               <div className="lg:col-span-4">
                 <span className="eyebrow">The path</span>

@@ -36,7 +36,7 @@ export default function About() {
 
   return (
     <div className="relative flex-1">
-      <div className="relative z-10 max-w-page mx-auto px-5 sm:px-6 lg:px-8 py-12 md:py-20">
+      <div className="relative z-10 max-w-page mx-auto px-5 sm:px-6 lg:px-8 py-10 md:py-16">
         {/* ── Intro ─────────────────────────────────────────────────── */}
         <Reveal>
           <header className="max-w-3xl about-paper">

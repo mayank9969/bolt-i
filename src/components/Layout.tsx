@@ -54,7 +54,7 @@ export default function Layout({ children }: { children: ReactNode }) {
           <div className="hidden md:flex items-center gap-3">
             <ThemeSwitcher />
             {!inQuiz && (
-              <Link to="/setup" className="btn-primary !px-4 !py-2 !text-sm">
+              <Link to="/setup" className="btn-primary btn-sm">
                 Start Quiz
               </Link>
             )}

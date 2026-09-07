@@ -177,7 +177,7 @@ export default function Setup() {
                         aria-checked={selected}
                         disabled={!catalog}
                         onClick={() => setDifficulty(d)}
-                        className={`relative text-left p-4 sm:p-5 transition-colors duration-base focus-visible:z-10 text-fg ${selected ? 'bg-selected/10 shadow-[inset_0_0_0_2px_var(--nx-selected)]' : 'bg-canvas hover:bg-hover'}`}
+                        className={`relative text-left p-4 sm:p-5 transition-colors duration-base focus-visible:z-10 text-fg ${selected ? 'tier-cell-selected' : 'bg-canvas hover:bg-hover'}`}
                       >
                         <span className={`tier ${selected ? 'text-accent' : 'text-fg-2'}`} data-level={difficultyLevel(d)} aria-hidden="true">
                           <i /><i /><i />
