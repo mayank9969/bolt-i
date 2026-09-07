@@ -229,3 +229,14 @@ Small, cross-page consistency fixes — no redesign.
 - **Error/empty states**: same `surface-strong rounded-2xl p-8 mt-12 text-center` + `role="alert"` on Setup, History and Quiz.
 - **Touch targets**: presets, History filter tabs, theme switch and the range slider all have ≥ 40 px hit areas.
 - **Motion**: `MotionConfig reducedMotion="user"` at the app root, so Framer Motion enters/reveals/page transitions respect `prefers-reduced-motion` alongside the existing CSS and 3D fallbacks.
+
+## Mobile pass (Task 13)
+
+Optimisation only — same product, same tokens, same network. Verified at 320 / 375 / 390 / 430 px.
+
+- **No horizontal scroll.** `<main>` is `overflow-x-clip`; the paper washes (`.hero-paper`, `.column-paper`, `.result-paper`, `.stats-paper`, `.quiz-paper`) clamp their negative insets to `-1.25rem` under 640 px; the Result wash is `-inset-x-4 sm:-inset-x-10`.
+- **Type floors.** `--nx-fs-display` ≥ 2.25 rem, `--nx-fs-h1` 1.75 → 3.25 rem, `--nx-fs-score` ≥ 3.5 rem. Desktop values unchanged. Hero keeps its four-line break on phones.
+- **Navigation.** Mobile menu is opaque canvas, items and Start Quiz are ≥ 48 px tall, Escape closes it.
+- **Touch.** Quiz Previous/Next span the row (`flex-1 sm:flex-none`, ≥ 44 px); progress segments 24 px hit height; `.link-rule` gets an invisible 44 px hit area; Setup region rows collapse to two columns below the new `xs` (400 px) breakpoint.
+- **Network on phones.** Presence ×0.72 (×0.6 when quiet), liveliness ×0.7, hero camera raised so the network sits above the headline; `detectQuality()` returns `low` under 768 px (22 nodes, no dust, dpr 1, low-poly, no env map).
+- **History / Result.** Trend + breakdowns and the Result headline sit on `column-paper` / `hero-paper` (hidden on `lg`); difficulty bars capped at `max-w-xs`, `h-28` on phones.

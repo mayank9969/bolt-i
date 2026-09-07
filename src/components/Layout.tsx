@@ -27,6 +27,12 @@ export default function Layout({ children }: { children: ReactNode }) {
   }, [])
 
   useEffect(() => setOpen(false), [location.pathname])
+  useEffect(() => {
+    if (!open) return
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false)
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [open])
 
   return (
     <div className="min-h-screen flex flex-col relative">
@@ -84,7 +90,7 @@ export default function Layout({ children }: { children: ReactNode }) {
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-              className="md:hidden overflow-hidden border-t border-line"
+              className="md:hidden overflow-hidden border-t border-line bg-canvas"
             >
               <div className="px-5 py-4 flex flex-col gap-1">
                 {NAV.map((item) => (
@@ -93,7 +99,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                     to={item.to}
                     end={item.to === '/'}
                     className={({ isActive }) =>
-                      `flex items-center gap-3 px-4 py-3 rounded-xl t-nav transition-colors ${
+                      `flex items-center gap-3 px-4 min-h-[3rem] rounded-xl t-nav transition-colors ${
                         isActive ? 'bg-accent/10 text-fg' : 'text-fg-2 hover:bg-card hover:text-fg'
                       }`
                     }
@@ -107,7 +113,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                   </RouterNavLink>
                 ))}
                 {!inQuiz && (
-                  <Link to="/setup" className="btn-primary mt-3">
+                  <Link to="/setup" className="btn-primary mt-3 min-h-[3rem]">
                     Start Quiz
                   </Link>
                 )}
@@ -117,7 +123,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         </AnimatePresence>
       </header>
 
-      <main className="flex-1 relative z-10 flex flex-col">{children}</main>
+      <main className="flex-1 relative z-10 flex flex-col overflow-x-clip">{children}</main>
 
       {!inQuiz && <Footer />}
     </div>

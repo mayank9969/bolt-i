@@ -193,7 +193,7 @@ export default function History() {
                   <span className="index">02 — Trend</span>
                   <h2 className="t-section text-fg mt-3">Over time</h2>
                 </div>
-                <div className="lg:col-span-8 grid md:grid-cols-5 gap-x-10 gap-y-10">
+                <div className="lg:col-span-8 grid md:grid-cols-5 gap-x-10 gap-y-10 column-paper lg:before:hidden">
                   <div className="md:col-span-3 border-t border-line">
                     <TrendChart history={visible} />
                   </div>

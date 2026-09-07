@@ -55,9 +55,9 @@
     --nx-font: 'Geist Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
 
     /* expressive */
-    --nx-fs-display:  clamp(2.625rem, 1.6rem + 4.2vw, 5.25rem);  /* 42 → 84px  hero only */
+    --nx-fs-display:  clamp(2.25rem, 1.6rem + 4.2vw, 5.25rem);   /* 36 → 84px  hero only (36 only below ~390px) */
     /* headings */
-    --nx-fs-h1:       clamp(2rem, 1.5rem + 2vw, 3.25rem);        /* 32 → 52px  page titles */
+    --nx-fs-h1:       clamp(1.75rem, 1.2rem + 2.6vw, 3.25rem);   /* 28 → 52px  page titles */
     --nx-fs-h2:       clamp(1.5rem, 1.3rem + 0.9vw, 2rem);       /* 24 → 32px  sections */
     --nx-fs-h3:       1.1875rem;                                  /* 19px       row / card titles */
     /* quiz */
@@ -74,7 +74,7 @@
     --nx-fs-caption:  0.8125rem;                                  /* 13px */
     /* numbers */
     --nx-fs-stat:     clamp(2.25rem, 1.7rem + 2.6vw, 4rem);       /* 36 → 64px */
-    --nx-fs-score:    clamp(3.75rem, 2.4rem + 5.6vw, 7.5rem);     /* 60 → 120px */
+    --nx-fs-score:    clamp(3.5rem, 2.4rem + 5.6vw, 7.5rem);      /* 56 → 120px */
 
     --nx-lh-body: 1.6;
     --nx-lh-tight: 1.1;
@@ -281,6 +281,8 @@
     transition: transform var(--nx-dur) var(--nx-ease);
   }
   .link-rule:hover::after { transform: scaleX(1); }
+  /* invisible 44px-tall hit area for touch without moving the rule */
+  .link-rule::before { content: ''; position: absolute; left: -0.5rem; right: -0.5rem; top: 50%; height: 2.75rem; transform: translateY(-50%); }
 
   /* ── Answer choices — a radio row, not a card ────────────
         Anatomy: [key] text ............................ [✓]
@@ -376,7 +378,7 @@
   /* ── Quiz progress strip — one segment per question ──── */
   .progress-seg {
     @apply relative flex-1 rounded-full;
-    height: 1.25rem;              /* generous hit area, thin visual */
+    height: 1.5rem;               /* generous hit area, thin visual */
     min-width: 0.375rem;
     background: transparent;
   }
@@ -412,6 +414,12 @@
   /* Reading column (About, Setup form): sits on paper; the network stays as atmosphere to the right */
   .column-paper::before { content: ''; position: absolute; inset: -2rem -10rem -2rem -6rem; pointer-events: none; z-index: -1; background: linear-gradient(90deg, rgb(var(--nx-canvas-rgb) / 0.97) 0, rgb(var(--nx-canvas-rgb) / 0.97) calc(100% - 10rem), rgb(var(--nx-canvas-rgb) / 0.6) calc(100% - 5rem), rgb(var(--nx-canvas-rgb) / 0) 100%); }
   .hero-paper::before { content: ''; position: absolute; inset: -3rem -3rem -2rem -4rem; pointer-events: none; z-index: -1; background: radial-gradient(ellipse at 35% 55%, rgb(var(--nx-canvas-rgb) / 0.9) 34%, rgb(var(--nx-canvas-rgb) / 0) 74%); }
+  /* phones: washes never reach past the page padding (keeps documentElement.scrollWidth honest) */
+  @media (max-width: 639px) {
+    .hero-paper::before, .column-paper::before, .result-paper::before, .stats-paper::before { left: -1.25rem; right: -1.25rem; }
+    .column-paper::before { background: rgb(var(--nx-canvas-rgb) / 0.94); }
+    .quiz-paper::before { inset: -2rem -1.25rem; }
+  }
   .quiz-paper::before {
     content: '';
     position: absolute;
@@ -425,6 +433,7 @@
     padding-top: 1.25rem;
     border-top: 1px solid var(--nx-line);
   }
+  .quiz-controls .btn-primary, .quiz-controls .btn-secondary { min-height: 2.75rem; }
 
   /* ── Text field ──────────────────────────────────────── */
   .field {

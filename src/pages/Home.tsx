@@ -60,7 +60,7 @@ export default function Home() {
               <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={enter(1)} className="t-hero text-fg mt-6 max-w-[15ch] text-balance">
                 Every question<br className="hidden sm:inline" /> is a <span className="t-italic text-accent">node.</span>
                 <br />
-                Every answer,<br className="hidden sm:inline" /> a <span className="t-italic">connection.</span>
+                Every answer,<br /> a <span className="t-italic">connection.</span>
               </motion.h1>
             </div>
 

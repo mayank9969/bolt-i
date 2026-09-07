@@ -325,7 +325,7 @@ export default function Quiz() {
               {status}
             </p>
             <div className="flex items-center justify-between gap-3 mt-3">
-              <button type="button" onClick={() => go(index - 1)} disabled={index === 0 || submitting} className="btn-secondary">
+              <button type="button" onClick={() => go(index - 1)} disabled={index === 0 || submitting} className="btn-secondary flex-1 sm:flex-none">
                 <ArrowLeft className="w-4 h-4" />
                 Previous
               </button>
@@ -341,7 +341,7 @@ export default function Quiz() {
                 onClick={advance}
                 disabled={submitting}
                 aria-busy={submitting || undefined}
-                className={hasAnswer || isLast ? 'btn-primary min-w-[8.5rem]' : 'btn-secondary min-w-[8.5rem]'}
+                className={`flex-1 sm:flex-none sm:min-w-[8.5rem] ${hasAnswer || isLast ? 'btn-primary' : 'btn-secondary'}`}
               >
                 {submitting && <span className="w-4 h-4 rounded-full border-2 border-current/30 border-t-current animate-spin" />}
                 {primaryLabel}

@@ -69,7 +69,7 @@ export default function Result() {
       {/* ── The number ──────────────────────────────────────────── */}
       <section className="relative z-10 max-w-page mx-auto px-5 sm:px-6 lg:px-8 pt-20 md:pt-28 pb-16 md:pb-24">
         <div className="grid lg:grid-cols-12 gap-x-10 gap-y-10 items-end">
-          <div className="lg:col-span-7">
+          <div className="lg:col-span-7 hero-paper lg:before:hidden">
             <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, ease }} className="opener">
               <span>Quiz complete</span>
               <span className="text-fg-3/70">·</span>
@@ -77,7 +77,7 @@ export default function Result() {
             </motion.p>
 
             <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.15, ease }} className="relative mt-6">
-              <div className="wash absolute -inset-x-10 -inset-y-6 pointer-events-none" aria-hidden="true" />
+              <div className="wash absolute -inset-x-4 sm:-inset-x-10 -inset-y-6 pointer-events-none" aria-hidden="true" />
               <p className="relative t-score text-fg num" aria-label={`${pct} percent accuracy`}>
                 <CountUp value={pct} decimals={pct % 1 === 0 ? 0 : 1} delay={0.4} duration={1.6} />
                 <span className="text-[0.4em] align-top ml-1 text-fg-2">%</span>

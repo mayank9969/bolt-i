@@ -329,7 +329,7 @@ function RegionRow({ selected, onSelect, icon, title, meta, detail }: { selected
       role="radio"
       aria-checked={selected}
       onClick={onSelect}
-      className={`group w-full text-left grid grid-cols-[2.5rem_1fr_auto] items-center gap-4 py-4 border-b border-line -mx-3 px-3 rounded-lg transition-colors duration-fast hover:bg-hover ${selected ? 'text-fg' : 'text-fg-2'}`}
+      className={`group w-full text-left grid grid-cols-[2.5rem_1fr] xs:grid-cols-[2.5rem_1fr_auto] items-center gap-x-4 gap-y-1 py-4 border-b border-line -mx-3 px-3 rounded-lg transition-colors duration-fast hover:bg-hover ${selected ? 'text-fg' : 'text-fg-2'}`}
     >
       <span className={`w-9 h-9 rounded-full border flex items-center justify-center transition-colors duration-base ${selected ? 'bg-accent border-accent text-fg-inverse' : 'border-line-strong text-fg group-hover:border-fg-3'}`}>
         {selected ? <Check className="w-4 h-4" /> : icon}
@@ -338,9 +338,9 @@ function RegionRow({ selected, onSelect, icon, title, meta, detail }: { selected
         <span className="t-h3-lg block text-fg">{title}</span>
         <span className="block t-caption mt-1.5 text-fg-2">{detail}</span>
       </span>
-      <span className="text-right">
+      <span className="col-start-2 xs:col-start-auto flex xs:block items-center gap-3 xs:text-right">
         <span className="block text-sm num text-fg-2">{meta}</span>
-        <span className={`block t-label mt-1 ${selected ? 'text-accent' : 'text-transparent group-hover:text-fg-3'}`}>{selected ? 'Selected' : 'Select'}</span>
+        <span className={`block t-label xs:mt-1 ${selected ? 'text-accent' : 'text-transparent group-hover:text-fg-3'}`}>{selected ? 'Selected' : 'Select'}</span>
       </span>
     </button>
   )

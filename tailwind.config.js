@@ -6,6 +6,7 @@ const t = (name) => `rgb(var(--nx-${name}-rgb) / <alpha-value>)`
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
+    screens: { xs: '400px', sm: '640px', md: '768px', lg: '1024px', xl: '1280px', '2xl': '1536px' },
     extend: {
       fontFamily: {
         /* ONE typeface for the whole product. `display` and `mono` are kept as aliases so

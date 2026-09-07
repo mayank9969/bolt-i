@@ -73,7 +73,7 @@ interface CamPreset {
   phone: { pos: [number, number, number]; look: [number, number, number]; fov: number }
 }
 const CAMERAS: Record<CameraPreset, CamPreset> = {
-  hero: { pos: [3.4, 0.9, 6.6], look: [1.1, -0.35, -2.2], fov: 38, phone: { pos: [0.5, 0.5, 10], look: [0.5, -2.5, -5], fov: 44 } },
+  hero: { pos: [3.4, 0.9, 6.6], look: [1.1, -0.35, -2.2], fov: 38, phone: { pos: [0.5, 0.2, 10.5], look: [0.5, -3.4, -5], fov: 44 } },
   side: { pos: [-1, 0, 7.5], look: [-2, -0.5, -5], fov: 36, phone: { pos: [-0.5, 1, 13.5], look: [-0.5, -3, -1], fov: 44 } },
   far: { pos: [1.5, 3.5, 10], look: [-6, -2.5, -4.5], fov: 40, phone: { pos: [-0.5, 1, 13.5], look: [-0.5, -3, -1], fov: 44 } },
   reveal: { pos: [-0.8, 0.6, 8.8], look: [-2, -0.5, -5], fov: 38, phone: { pos: [0.5, 0.5, 11], look: [0.5, -2.5, -5], fov: 44 } },
@@ -460,9 +460,11 @@ function NetworkObject({ palette, quality, degraded }: { palette: Palette; quali
     // Home: once the reader scrolls past the hero the network recedes so section copy stays legible.
     const sk = s.camera === 'hero' ? Math.min(1, Math.max(0, (s.scroll - 0.22) / 0.6)) : 0
     const scrollFade = 1 - sk * sk * (3 - 2 * sk) * 0.55
-    S.presence = damp(S.presence, B.presence * (narrow && quiet ? 0.7 : 1) * scrollFade, 2.5, dt)
+    // phones: the whole network steps back (0.72×) so it frames the copy instead of crossing it; quiz quieter still
+    const phoneMul = narrow ? (quiet ? 0.6 : 0.72) : 1
+    S.presence = damp(S.presence, B.presence * phoneMul * scrollFade, 2.5, dt)
     S.dust = damp(S.dust, B.dust, 2, dt)
-    S.liveliness = damp(S.liveliness, B.liveliness, 2, dt)
+    S.liveliness = damp(S.liveliness, B.liveliness * (narrow ? 0.7 : 1), 2, dt)
     S.cursor = damp(S.cursor, B.cursor * (s.pointerIn ? 1 : 0), 3, dt)
     if (s.focusCluster >= 0) S.focus = s.focusCluster
     S.focusMix = damp(S.focusMix, s.focusCluster >= 0 ? 1 : 0, 3, dt)

@@ -65,7 +65,7 @@ export function DifficultyBreakdown({ history }: Props) {
     <div className="pt-2 h-full">
       <h3 className="t-h3 text-fg">By difficulty</h3>
       <p className="t-caption text-fg-3 mt-0.5 mb-5">Where you spend your time</p>
-      <div className="flex items-end gap-4 h-36">
+      <div className="flex items-end gap-4 h-28 sm:h-36 max-w-xs">
         {data.map((d, i) => (
           <div key={d.t} className="flex-1 flex flex-col items-center gap-2 h-full">
             <span className={`t-caption font-medium num ${toneText[performanceTone(d.avg)]}`}>{formatPercent(d.avg, 0)}</span>
