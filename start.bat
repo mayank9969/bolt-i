@@ -35,5 +35,8 @@ echo  ================================================
 echo.
 echo  [4/4] Starting server (keep this window open; close it to stop)...
 start "" "http://localhost:5000/?fresh=%RANDOM%"
+rem Question bank is UTF-8 (contains symbols like pi, squared, curly quotes).
+rem Windows Python defaults to cp1252, so force UTF-8 for this process only.
+set PYTHONUTF8=1
 python api\server.py
 pause
