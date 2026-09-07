@@ -395,7 +395,9 @@
   .progress-seg:focus-visible { outline-offset: 0; }
 
   /* ── Quiz column: a soft paper wash so the network never sits under the words ── */
-  .quiz-paper, .hero-paper { position: relative; }
+  .quiz-paper, .hero-paper, .about-paper { position: relative; }
+  /* About: the reading column sits on paper; the network stays as atmosphere in the margins */
+  .about-paper::before { content: ''; position: absolute; inset: -2rem -10rem -2rem -6rem; pointer-events: none; z-index: -1; background: linear-gradient(90deg, rgb(var(--nx-canvas-rgb) / 0.97) 0, rgb(var(--nx-canvas-rgb) / 0.97) calc(100% - 10rem), rgb(var(--nx-canvas-rgb) / 0.6) calc(100% - 5rem), rgb(var(--nx-canvas-rgb) / 0) 100%); }
   .hero-paper::before { content: ''; position: absolute; inset: -2rem -3rem -2rem -4rem; pointer-events: none; z-index: -1; background: radial-gradient(ellipse at 35% 60%, rgb(var(--nx-canvas-rgb) / 0.9) 30%, rgb(var(--nx-canvas-rgb) / 0) 72%); }
   .quiz-paper::before {
     content: '';
