@@ -343,7 +343,7 @@ export interface Behaviour {
 export const BEHAVIOUR: Record<NetworkMode, Behaviour> = {
   alive: { liveliness: 1, pulseRate: 0.9, dust: 1, presence: 1, cursor: 1, relinkEvery: 5, orbit: [0.09, 0.05], fps: 60 },
   responsive: { liveliness: 0.6, pulseRate: 0.35, dust: 0.35, presence: 0.95, cursor: 0.5, relinkEvery: 8, orbit: [0.04, 0.04], fps: 60 },
-  quiet: { liveliness: 0.2, pulseRate: 0, dust: 0, presence: 0.4, cursor: 0, relinkEvery: 0, orbit: [0.015, 0.03], fps: 30 },
+  quiet: { liveliness: 0.2, pulseRate: 0, dust: 0, presence: 0.34, cursor: 0, relinkEvery: 0, orbit: [0.015, 0.03], fps: 30 },
   activated: { liveliness: 0.65, pulseRate: 0.5, dust: 0.4, presence: 1, cursor: 0.35, relinkEvery: 0, orbit: [0.05, 0.045], fps: 60 },
   accumulated: { liveliness: 0.4, pulseRate: 0.4, dust: 0.25, presence: 0.9, cursor: 0.35, relinkEvery: 10, orbit: [0.03, 0.035], fps: 60 },
   atmospheric: { liveliness: 0.3, pulseRate: 0.12, dust: 0.5, presence: 0.7, cursor: 0.2, relinkEvery: 0, orbit: [0.07, 0.025], fps: 30 },
