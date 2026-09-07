@@ -12,9 +12,14 @@ import { onThemeChange, readToken, tokenHex } from '@/lib/theme'
  * One persistent WebGL scene under every page. Three regions of knowledge
  * (Maths · Python · Mixed) sit at different depths; each has a dark core,
  * a ring of secondary nodes and a cloud of leaves. Hairline links carry
- * signals from the cores outward; optional links relink slowly so the
- * network rearranges instead of spinning. Fog dissolves the far regions
- * into the paper.
+ * signals that travel *along the graph* from a core outward (shortest-path
+ * distance, not a sphere), so the network visibly thinks rather than
+ * ripples. Optional links relink slowly so the network rearranges instead
+ * of spinning. Fog dissolves the far regions into the paper.
+ *
+ * Green means knowledge that is active/meaningful: activated nodes, the
+ * travelling signal, the hovered neighbourhood, the answered path on
+ * Result. Everything neutral stays bone and graphite.
  *
  * The page decides the *behaviour* (alive / responsive / quiet / activated /
  * accumulated / atmospheric), the camera preset, the focused region and how
@@ -86,15 +91,17 @@ const lineVert = /* glsl */ `
   attribute float aCluster;
   attribute float aLit;
   attribute float aHover;
+  attribute float aPath;
   varying float vKind;
   varying float vHash;
   varying float vCluster;
   varying float vLit;
   varying float vHover;
+  varying float vPath;
   varying vec3 vWorld;
   varying float vDepth;
   void main() {
-    vKind = aKind; vHash = aHash; vCluster = aCluster; vLit = aLit; vHover = aHover;
+    vKind = aKind; vHash = aHash; vCluster = aCluster; vLit = aLit; vHover = aHover; vPath = aPath;
     vWorld = position;
     vec4 mv = modelViewMatrix * vec4(position, 1.0);
     vDepth = -mv.z;
@@ -120,11 +127,12 @@ const lineFrag = /* glsl */ `
   varying float vCluster;
   varying float vLit;
   varying float vHover;
+  varying float vPath;
   varying vec3 vWorld;
   varying float vDepth;
   void main() {
-    // base alpha by kind: trunk, link, bridge, optional
-    float a = vKind < 0.5 ? 0.62 : vKind < 1.5 ? 0.34 : vKind < 2.5 ? 0.30 : 0.26;
+    // base alpha by kind: trunk, link, bridge, optional — neutral links stay understated
+    float a = vKind < 0.5 ? 0.54 : vKind < 1.5 ? 0.30 : vKind < 2.5 ? 0.28 : 0.22;
     // optional links breathe in and out (relink) and thin out with density
     if (vKind > 2.5) {
       float breathe = uRelink > 0.0 ? smoothstep(0.15, 0.55, 0.5 + 0.5 * sin(uTime / uRelink * 6.2831 + vHash * 6.2831)) : 1.0;
@@ -133,17 +141,19 @@ const lineFrag = /* glsl */ `
     } else if (vKind > 1.5 && vKind < 2.5) {
       a *= 0.6 + 0.4 * uDensity;
     }
-    // travelling signal: expanding shells from a core
+    // travelling signal: a front that moves outward along the graph from one core.
+    // uPulses[i] = (cluster, start time, strength, unused). Bridges carry every region's signal.
     float sig = 0.0;
     for (int i = 0; i < ${MAX_PULSES}; i++) {
       vec4 p = uPulses[i];
-      if (p.w <= 0.0) continue;
-      float age = uTime - p.w;
-      if (age < 0.0 || age > 3.2) continue;
-      float d = distance(vWorld, p.xyz);
-      float front = age * 1.9;
-      float band = exp(-pow((d - front) * 2.2, 2.0));
-      sig += band * (1.0 - age / 3.2);
+      if (p.z <= 0.0) continue;
+      float age = uTime - p.y;
+      if (age < 0.0 || age > 2.8) continue;
+      bool bridge = vKind > 1.5 && vKind < 2.5;
+      if (!bridge && abs(vCluster - p.x) > 0.5) continue;
+      float front = age * 1.7;
+      float band = exp(-pow((vPath - front) * 2.6, 2.0));
+      sig += band * p.z * (1.0 - age / 2.8);
     }
     sig = min(sig, 1.0);
     float lit = max(vLit, vHover);
@@ -208,9 +218,16 @@ const _m = new THREE.Matrix4()
 const _q = new THREE.Quaternion()
 const _s = new THREE.Vector3()
 const _c = new THREE.Color()
+const UP = new THREE.Vector3(0, 1, 0)
 
-function NetworkObject({ palette, quality }: { palette: Palette; quality: Quality }) {
+function NetworkObject({ palette, quality, degraded }: { palette: Palette; quality: Quality; degraded: boolean }) {
   const net = useMemo<Network>(() => buildNetwork({ leaves: quality === 'low' ? 22 : 38 }), [quality])
+  // index of each node within its own region's activation order (0 = core) — the knowledge path on Result
+  const pathIndex = useMemo(() => {
+    const out = new Int16Array(net.count)
+    net.clusterOrder.forEach((list) => list.forEach((n, k) => (out[n] = k)))
+    return out
+  }, [net])
   const { size } = useThree()
 
   // ── live buffers ──
@@ -218,6 +235,7 @@ function NetworkObject({ palette, quality }: { palette: Palette; quality: Qualit
   const off = useMemo(() => new Float32Array(net.count * 3), [net]) // cursor repulsion offsets (damped)
   const litSm = useMemo(() => new Float32Array(net.count), [net]) // smoothed activation per node
   const hoverSm = useMemo(() => new Float32Array(net.count), [net])
+  const hoverTarget = useMemo(() => new Float32Array(net.count), [net]) // 1 hovered · 0.4 neighbours
   const ndc = useMemo(() => new Float32Array(net.count * 2), [net])
 
   const nodesRef = useRef<THREE.InstancedMesh>(null)
@@ -248,6 +266,12 @@ function NetworkObject({ palette, quality }: { palette: Palette; quality: Qualit
     g.setAttribute('aCluster', new THREE.BufferAttribute(cl, 1))
     g.setAttribute('aLit', new THREE.BufferAttribute(new Float32Array(n), 1))
     g.setAttribute('aHover', new THREE.BufferAttribute(new Float32Array(n), 1))
+    const path = new Float32Array(n)
+    for (let e = 0; e < net.edgeCount; e++) {
+      path[e * 2] = net.pathLen[net.edges[e * 2]]
+      path[e * 2 + 1] = net.pathLen[net.edges[e * 2 + 1]]
+    }
+    g.setAttribute('aPath', new THREE.BufferAttribute(path, 1))
     return g
   }, [net])
 
@@ -279,7 +303,8 @@ function NetworkObject({ palette, quality }: { palette: Palette; quality: Qualit
   )
 
   // ── dust ──
-  const dustCount = quality === 'high' ? 240 : quality === 'medium' ? 140 : 0
+  const dustCount = quality === 'high' ? 150 : quality === 'medium' ? 90 : 0
+  const dustShown = degraded ? Math.floor(dustCount / 2) : dustCount
   const dustGeo = useMemo(() => {
     const g = new THREE.BufferGeometry()
     const p = new Float32Array(dustCount * 3)
@@ -367,6 +392,10 @@ function NetworkObject({ palette, quality }: { palette: Palette; quality: Qualit
     hoverNode: -1,
     hoverEdges: [] as number[],
     frame: 0,
+    orbAmp: 0.09,
+    orbSpd: 0.05,
+    revealStart: -1,
+    lastPath: null as SceneState['path'],
   })
   const weights = useRef<[number, number, number] | null>(null)
   const modeRef = useRef<NetworkMode>('alive')
@@ -384,10 +413,14 @@ function NetworkObject({ palette, quality }: { palette: Palette; quality: Qualit
         }
         S.lastPreset = s.camera
       }
+      if (s.path !== S.lastPath) {
+        S.lastPath = s.path
+        S.revealStart = s.path ? clockRef.current + 0.7 : -1
+      }
       if (s.pulse !== S.lastPulse) {
         S.lastPulse = s.pulse
         const strength = (s.pulse % 1000) / 100
-        firePulse(s.focusCluster >= 0 ? s.focusCluster : Math.floor(Math.random() * 3), strength)
+        firePulse(s.path ? s.path.cluster : s.focusCluster >= 0 ? s.focusCluster : Math.floor(Math.random() * 3), strength)
       }
     }
     apply(getScene())
@@ -399,11 +432,11 @@ function NetworkObject({ palette, quality }: { palette: Palette; quality: Qualit
   function firePulse(cluster: number, strength = 1) {
     const S = sm.current
     const u = lineMat.uniforms.uPulses.value as THREE.Vector4[]
-    const h = net.hubs[Math.max(0, Math.min(2, cluster))]
+    const c = Math.max(0, Math.min(2, cluster))
     const shots = Math.max(1, Math.min(3, Math.round(strength)))
     for (let k = 0; k < shots; k++) {
       const slot = S.pulseSlot++ % MAX_PULSES
-      u[slot].set(pos[h * 3], pos[h * 3 + 1], pos[h * 3 + 2], clockRef.current + k * 0.35)
+      u[slot].set(c, clockRef.current + k * 0.45, Math.min(1, 0.55 + strength * 0.25), 0)
     }
   }
 
@@ -436,7 +469,7 @@ function NetworkObject({ palette, quality }: { palette: Palette; quality: Qualit
 
     // ── ambient signals from the cores ──
     if (B.pulseRate > 0 && t > S.nextAmbient) {
-      firePulse(s.focusCluster >= 0 ? s.focusCluster : Math.floor(Math.random() * 3), 1)
+      firePulse(s.path ? s.path.cluster : s.focusCluster >= 0 ? s.focusCluster : Math.floor(Math.random() * 3), 1)
       S.nextAmbient = t + (1 / B.pulseRate) * (0.6 + Math.random() * 0.8)
     }
 
@@ -461,14 +494,17 @@ function NetworkObject({ palette, quality }: { palette: Palette; quality: Qualit
       _v.x += (c[0] - preset.look[0]) * 0.3 * S.focusMix
       _v.z += (c[2] - preset.look[2]) * 0.35 * S.focusMix
     }
-    // cursor parallax (camera, not object)
-    _v.x += s.px * 0.32 * S.cursor
-    _v.y += s.py * 0.18 * S.cursor
-    // slow cinematic drift so nothing is ever perfectly still
-    const drift = S.liveliness * 0.12
-    _v.x += Math.sin(t * 0.09) * drift
-    _v.y += Math.cos(t * 0.07) * drift * 0.6
-    const camLambda = s.camera === 'reveal' ? 0.65 : 1.6
+    // cursor parallax (camera, not object) — gentle, depth-true
+    _v.x += s.px * 0.3 * S.cursor
+    _v.y += s.py * 0.16 * S.cursor
+    // slow orbital arc around the look target — atmospheric, never a spin, never a flash
+    S.orbAmp = damp(S.orbAmp, B.orbit[0], 1.5, dt)
+    S.orbSpd = damp(S.orbSpd, B.orbit[1], 1.5, dt)
+    const ang = Math.sin(t * S.orbSpd) * S.orbAmp
+    _v3.subVectors(_v, _v2).applyAxisAngle(UP, ang)
+    _v.addVectors(_v2, _v3)
+    _v.y += Math.sin(t * S.orbSpd * 0.71 + 1.3) * S.orbAmp * 1.4
+    const camLambda = s.camera === 'reveal' ? 0.65 : 1.3
     S.camPos.lerp(_v, 1 - Math.exp(-camLambda * dt))
     S.camLook.lerp(_v2, 1 - Math.exp(-2 * dt))
     cam.position.copy(S.camPos)
@@ -482,7 +518,7 @@ function NetworkObject({ palette, quality }: { palette: Palette; quality: Qualit
 
     // ── node positions: home + organic drift + cursor repulsion ──
     const live = S.liveliness
-    const heavy = !quiet || S.frame % 2 === 0 // quiz: update positions at half rate
+    const heavy = true // the quiz budget is enforced by the 30 fps demand loop, not by skipping frames
     let nearest = -1
     let nearestD = 0.045 * 0.045
     if (heavy) {
@@ -510,7 +546,7 @@ function NetworkObject({ palette, quality }: { palette: Palette; quality: Qualit
           const R = 0.22
           if (d2 < R * R) {
             const d = Math.sqrt(d2) || 1e-4
-            const f = (1 - d / R) * 0.28 * S.cursor * (tier === 0 ? 0.15 : 1)
+            const f = (1 - d / R) * 0.22 * S.cursor * (tier === 0 ? 0.12 : 1)
             ox = (dx / d) * f
             oy = (dy / d) * f * 0.7
           }
@@ -537,11 +573,15 @@ function NetworkObject({ palette, quality }: { palette: Palette; quality: Qualit
           hov.setX(e * 2, 0)
           hov.setX(e * 2 + 1, 0)
         })
+        hoverTarget.fill(0)
         S.hoverEdges = nearest >= 0 ? net.adjacency[nearest] : []
         S.hoverEdges.forEach((e) => {
           hov.setX(e * 2, 1)
           hov.setX(e * 2 + 1, 1)
+          hoverTarget[net.edges[e * 2]] = 0.4
+          hoverTarget[net.edges[e * 2 + 1]] = 0.4
         })
+        if (nearest >= 0) hoverTarget[nearest] = 1
         hov.needsUpdate = true
         S.hoverNode = nearest
         if (nearest >= 0) {
@@ -565,6 +605,7 @@ function NetworkObject({ palette, quality }: { palette: Palette; quality: Qualit
         hov.setX(e * 2 + 1, 0)
       })
       hov.needsUpdate = true
+      hoverTarget.fill(0)
       S.hoverEdges = []
       S.hoverNode = -1
       setScene({ hover: null })
@@ -579,14 +620,24 @@ function NetworkObject({ palette, quality }: { palette: Palette; quality: Qualit
         const tier = net.tier[i]
         const cl = net.cluster[i]
         const isHub = tier === 0
-        const litTarget = w ? (net.clusterRank[i] <= w[cl] ? 1 : 0) : net.activationRank[i] <= S.activation ? 1 : 0
-        litSm[i] = damp(litSm[i], litTarget, 3.5, dt)
-        hoverSm[i] = damp(hoverSm[i], i === S.hoverNode ? 1 : 0, 10, dt)
+        let litTarget = w ? (net.clusterRank[i] <= w[cl] ? 1 : 0) : net.activationRank[i] <= S.activation ? 1 : 0
+        // Result: this region's knowledge path lights node by node in question order —
+        // a correct answer activates its node, a wrong one leaves a visible gap.
+        const P = S.lastPath
+        if (P && cl === P.cluster && S.revealStart >= 0) {
+          const k = pathIndex[i]
+          const n = P.mask.length
+          if (k === 0) litTarget = 1
+          else if (k <= n) litTarget = t >= S.revealStart + k * Math.min(0.16, 2.6 / n) && P.mask[k - 1] ? 1 : 0
+          else if (t < S.revealStart + n * Math.min(0.16, 2.6 / n) + 0.5) litTarget = 0
+        }
+        litSm[i] = damp(litSm[i], litTarget, P ? 6 : 3.5, dt)
+        hoverSm[i] = damp(hoverSm[i], hoverTarget[i], 10, dt)
         const lit = litSm[i]
         const focusDim = S.focusMix > 0 && cl !== S.focus ? 1 - S.focusMix * 0.6 : 1
         const breathe = 1 + Math.sin(t * 0.8 + net.phase[i]) * 0.04 * live
         const densityScale = tier === 2 ? 0.55 + S.density * 0.45 : 1
-        const r = isHub ? 0 : net.radius[i] * breathe * densityScale * (1 + lit * 0.4) * (1 + hoverSm[i] * 0.9) * (0.6 + focusDim * 0.4) * (0.7 + S.presence * 0.3)
+        const r = isHub ? 0 : net.radius[i] * breathe * densityScale * (1 + lit * 0.4) * (1 + hoverSm[i] * 0.8) * (0.6 + focusDim * 0.4) * (0.7 + S.presence * 0.3)
         _m.compose(_v.set(pos[i * 3], pos[i * 3 + 1], pos[i * 3 + 2]), _q.identity(), _s.setScalar(r))
         nodes.setMatrixAt(i, _m)
         // colour: bone → accent when activated; hover → accent; dim toward canvas for focus/presence
@@ -662,7 +713,8 @@ function NetworkObject({ palette, quality }: { palette: Palette; quality: Qualit
 
     // ── dust ──
     dustMat.uniforms.uTime.value = t
-    dustMat.uniforms.uOpacity.value = (palette.dark ? 0.5 : 0.34) * S.dust * S.presence
+    dustMat.uniforms.uOpacity.value = (palette.dark ? 0.45 : 0.3) * S.dust * S.presence
+    if (dustRef.current) dustRef.current.geometry.setDrawRange(0, dustShown)
     dustMat.uniforms.uPixel.value = Math.min(2, (size.height / 900) * aspectFix + 0.6)
   })
 
@@ -745,35 +797,66 @@ export function webglAvailable(): boolean {
 }
 
 /** Fixed, full-viewport canvas rendered once by the Layout shell. */
+/** Half-rate demand loop for low-budget pages (Quiz, About): ~30 renders/s instead of 60. */
+function Ticker({ active }: { active: boolean }) {
+  const invalidate = useThree((st) => st.invalidate)
+  useEffect(() => {
+    if (!active) return
+    const id = window.setInterval(() => invalidate(), 1000 / 30)
+    return () => window.clearInterval(id)
+  }, [active, invalidate])
+  return null
+}
+
 export default function NexusScene() {
   const [palette, setPalette] = useState<Palette>(() => readPalette())
   const [quality] = useState<Quality>(() => detectQuality())
   const [visible, setVisible] = useState(true)
+  const [halfRate, setHalfRate] = useState(() => BEHAVIOUR[getScene().mode].fps === 30)
+  const [degraded, setDegraded] = useState(false)
   const maxDpr = quality === 'high' ? 1.75 : quality === 'medium' ? 1.4 : 1
   const [dpr, setDpr] = useState(() => Math.min(maxDpr, window.devicePixelRatio || 1))
 
   useEffect(() => onThemeChange(() => setPalette(readPalette())), [])
+  // pause completely when the tab is hidden
   useEffect(() => {
     const on = () => setVisible(document.visibilityState === 'visible')
     document.addEventListener('visibilitychange', on)
     return () => document.removeEventListener('visibilitychange', on)
   }, [])
+  // per-page frame budget from the behaviour preset
+  useEffect(() => subscribeScene((s) => setHalfRate(BEHAVIOUR[s.mode].fps === 30)), [])
+
+  const frameloop = !visible ? 'never' : halfRate ? 'demand' : 'always'
 
   return (
     <Canvas
       camera={{ position: CAMERAS.hero.pos, fov: CAMERAS.hero.fov, near: 0.1, far: 40 }}
       dpr={dpr}
       gl={{ antialias: quality !== 'low', alpha: true, powerPreference: 'high-performance', toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.05 }}
-      frameloop={visible ? 'always' : 'never'}
+      frameloop={frameloop}
       style={{ width: '100%', height: '100%' }}
       eventSource={undefined}
     >
-      {/* step the resolution down if the frame rate drops, never up past the tier cap */}
-      <PerformanceMonitor onDecline={() => setDpr((d) => Math.max(0.75, d - 0.25))} onIncline={() => setDpr((d) => Math.min(maxDpr, d + 0.25))} flipflops={3} />
+      <Ticker active={visible && halfRate} />
+      {/* adaptive quality: step resolution down if the frame rate drops (never above the tier cap);
+          a second decline also halves the dust field. Not measured during the half-rate loop. */}
+      {!halfRate && (
+        <PerformanceMonitor
+          onDecline={() => {
+            setDpr((d) => {
+              if (d <= 1) setDegraded(true)
+              return Math.max(0.75, d - 0.25)
+            })
+          }}
+          onIncline={() => setDpr((d) => Math.min(maxDpr, d + 0.25))}
+          flipflops={3}
+        />
+      )}
       <FogSync palette={palette} />
       <Lights palette={palette} />
       <Studio quality={quality} />
-      <NetworkObject palette={palette} quality={quality} />
+      <NetworkObject palette={palette} quality={quality} degraded={degraded || quality === 'low'} />
     </Canvas>
   )
 }

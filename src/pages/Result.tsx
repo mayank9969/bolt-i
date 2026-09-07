@@ -24,14 +24,26 @@ export default function Result() {
   const pct = result?.percentage ?? 0
   const category = result?.category ?? 'all'
   // RESULT — activated: the camera starts near a core and pulls back while the score lights the network.
+  // The region the quiz was taken in lights its knowledge path question by question (real review data);
+  // the rest of the network takes the overall score. Nothing here is the only place a fact is shown —
+  // the same outcomes are printed in the summary and the review list below.
+  const region = category === 'python' ? 1 : category === 'maths' ? 0 : 2
+  const pathMask = result?.review.map((r) => !!r.is_correct) ?? []
   useNetwork(
-    { mode: 'activated', camera: 'reveal', density: 0.85, activation: Math.max(0.05, pct / 100), focusCluster: -1 },
-    [pct],
+    {
+      mode: 'activated',
+      camera: 'reveal',
+      density: 0.85,
+      activation: Math.max(0.05, pct / 100),
+      focusCluster: -1,
+      path: result ? { mask: pathMask, cluster: region } : null,
+    },
+    [pct, result],
   )
   useEffect(() => {
     if (!result) return
-    const t1 = setTimeout(() => pulseNetwork(3), 400)
-    const t2 = setTimeout(() => pulseNetwork(2), 1600)
+    const t1 = setTimeout(() => pulseNetwork(2), 400)
+    const t2 = setTimeout(() => pulseNetwork(1), 2400)
     return () => {
       clearTimeout(t1)
       clearTimeout(t2)

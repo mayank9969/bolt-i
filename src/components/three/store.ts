@@ -45,6 +45,12 @@ export interface SceneState {
   pointerIn: boolean
   /** set by the scene: what the cursor is over */
   hover: HoverInfo | null
+  /**
+   * Result only: the real per-question outcome, in order, plus the region the
+   * quiz was taken in. The scene lights that region's knowledge path node by
+   * node — correct answers light up, wrong ones leave a gap. Null elsewhere.
+   */
+  path: { mask: boolean[]; cluster: number } | null
 }
 
 const state: SceneState = {
@@ -62,6 +68,7 @@ const state: SceneState = {
   py: 0,
   pointerIn: false,
   hover: null,
+  path: null,
 }
 
 const listeners = new Set<(s: SceneState) => void>()
@@ -92,12 +99,24 @@ type PageParams = Partial<Omit<SceneState, 'scroll' | 'px' | 'py' | 'pointerIn' 
 /** Declarative hook for pages: describe how the network should behave here. */
 export function useNetwork(params: PageParams, deps: unknown[] = []) {
   useEffect(() => {
-    setScene({ hoverable: false, clusterWeights: null, focusCluster: -1, ...params })
+    setScene({ hoverable: false, clusterWeights: null, focusCluster: -1, path: null, ...params })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps)
 }
 
 /** Subscribe to hover changes only (Home label). */
+/** True when the visitor has opted out of 3D (query `?3d=off` or localStorage `nx-3d=off`), or the platform can't do it. */
+export function threeDisabled(): boolean {
+  try {
+    const q = new URLSearchParams(window.location.search).get('3d')
+    if (q === 'off') localStorage.setItem('nx-3d', 'off')
+    if (q === 'on') localStorage.removeItem('nx-3d')
+    return localStorage.getItem('nx-3d') === 'off'
+  } catch {
+    return false
+  }
+}
+
 export function useHover(cb: (h: HoverInfo | null) => void) {
   useEffect(() => {
     let last: HoverInfo | null = state.hover

@@ -1,7 +1,7 @@
 import { Suspense, lazy, useCallback, useEffect, useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { buildNetwork } from './network'
-import { getScene, setScene, useHover, type HoverInfo } from './store'
+import { getScene, setScene, subscribeScene, threeDisabled, useHover, type HoverInfo } from './store'
 
 const NexusScene = lazy(() => import('./NexusScene'))
 
@@ -17,15 +17,21 @@ export default function NexusStage() {
   const [mode, setMode] = useState<'webgl' | 'static' | 'pending'>('pending')
 
   useEffect(() => {
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    let ok = false
-    try {
-      const c = document.createElement('canvas')
-      ok = !!(c.getContext('webgl2') || c.getContext('webgl'))
-    } catch {
-      ok = false
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const decide = () => {
+      let ok = false
+      try {
+        const c = document.createElement('canvas')
+        ok = !!(c.getContext('webgl2') || c.getContext('webgl'))
+      } catch {
+        ok = false
+      }
+      setMode(!ok || mq.matches || threeDisabled() ? 'static' : 'webgl')
     }
-    setMode(!ok || reduce ? 'static' : 'webgl')
+    decide()
+    // if the OS setting flips while the app is open, swap to the still network live
+    mq.addEventListener?.('change', decide)
+    return () => mq.removeEventListener?.('change', decide)
   }, [])
 
   useEffect(() => {
@@ -101,9 +107,24 @@ function HoverLabel() {
   )
 }
 
-/** Non-WebGL / reduced-motion fallback: the same network drawn once as SVG. */
+/**
+ * Non-WebGL / reduced-motion / opted-out fallback: the same network drawn once
+ * as SVG. It still follows the page (presence + activation from the store) so
+ * the product keeps its identity — it just never moves.
+ */
 function StaticNetwork() {
   const net = useMemo(() => buildNetwork({ leaves: 20 }), [])
+  const [page, setPage] = useState(() => ({ presence: 1, activation: getScene().activation, quiet: false }))
+  useEffect(() => {
+    const read = () => {
+      const s = getScene()
+      const presence = s.mode === 'quiet' ? 0.3 : s.mode === 'atmospheric' ? 0.6 : s.mode === 'responsive' ? 0.75 : 0.85
+      const activation = s.clusterWeights ? 1 : s.activation
+      setPage((p) => (p.presence === presence && p.activation === activation ? p : { presence, activation, quiet: s.mode === 'quiet' }))
+    }
+    read()
+    return subscribeScene(read)
+  }, [])
   // simple orthographic-ish projection with depth scaling
   const pts = useMemo(() => {
     const out: { x: number; y: number; d: number; tier: number; cluster: number }[] = []
@@ -117,7 +138,12 @@ function StaticNetwork() {
     return out
   }, [net])
   return (
-    <svg className="absolute inset-0 w-full h-full opacity-80" viewBox="-360 -260 720 520" preserveAspectRatio="xMidYMid slice">
+    <svg
+      className="absolute inset-0 w-full h-full transition-opacity duration-500"
+      style={{ opacity: page.presence }}
+      viewBox="-360 -260 720 520"
+      preserveAspectRatio="xMidYMid slice"
+    >
       <g>
         {Array.from({ length: net.edgeCount }, (_, e) => {
           if (net.edgeKind[e] === 3) return null
@@ -133,7 +159,7 @@ function StaticNetwork() {
           cx={p.x}
           cy={p.y}
           r={(p.tier === 0 ? 16 : p.tier === 1 ? 6 : 3) * p.d}
-          fill={p.tier === 0 ? 'var(--nx-3d-core)' : p.tier === 1 && i % 3 === 0 ? 'var(--nx-accent)' : 'var(--nx-3d-node)'}
+          fill={p.tier === 0 ? 'var(--nx-3d-core)' : net.activationRank[i] <= page.activation ? 'var(--nx-accent)' : 'var(--nx-3d-node)'}
           fillOpacity={0.35 + p.d * 0.65}
           stroke={p.tier === 0 ? 'none' : 'var(--nx-line-strong)'}
         />
