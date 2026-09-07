@@ -74,7 +74,7 @@ export default function History() {
         {/* ── Header ──────────────────────────────────────── */}
         <Reveal>
           <div className="grid lg:grid-cols-12 gap-x-10 gap-y-8 items-end">
-            <div className="lg:col-span-8">
+            <div className="lg:col-span-8 hero-paper">
               <span className="opener">Accumulated knowledge</span>
               <h1 className="t-title text-fg mt-5 text-balance">
                 {history && history.length ? (
@@ -96,7 +96,7 @@ export default function History() {
                       role="tab"
                       aria-selected={filter === f}
                       onClick={() => setFilter(f)}
-                      className={`relative px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${filter === f ? 'text-fg' : 'text-fg-2 hover:text-fg'}`}
+                      className={`relative h-10 px-4 rounded-full text-sm font-medium transition-colors ${filter === f ? 'text-fg' : 'text-fg-2 hover:text-fg'}`}
                     >
                       {filter === f && <motion.span layoutId="history-filter" className="absolute inset-0 rounded-full bg-selected/10 border border-selected" transition={{ type: 'spring', stiffness: 400, damping: 32 }} />}
                       <span className="relative z-10">{f === 'all' ? 'All' : labelCategory(f)}</span>
@@ -109,7 +109,7 @@ export default function History() {
         </Reveal>
 
         {error ? (
-          <div className="surface-strong rounded-2xl p-10 mt-12 text-center" role="alert">
+          <div className="surface-strong rounded-2xl p-8 mt-12 text-center" role="alert">
             <div className="w-12 h-12 rounded-full mx-auto mb-5 flex items-center justify-center bg-err/10 text-err">
               <Cross className="w-5 h-5" />
             </div>
@@ -139,7 +139,7 @@ export default function History() {
           <>
             {/* ── Ledger of big numbers ─────────────────────── */}
             <Reveal delay={0.05}>
-              <dl className="mt-14 grid grid-cols-2 lg:grid-cols-4 border-t border-line-strong">
+              <dl className="mt-14 grid grid-cols-2 lg:grid-cols-4 border-t border-line-strong stats-paper">
                 <Big label="Quizzes taken" value={String(stats.n)} />
                 <Big label="Average score" value={formatPercent(stats.avg, 1)} tone={performanceTone(stats.avg)} />
                 <Big label="Overall accuracy" value={formatPercent(stats.accuracy, 0)} sub={`${stats.c} / ${stats.q} correct`} />

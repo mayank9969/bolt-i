@@ -39,7 +39,7 @@ export default function About() {
       <div className="relative z-10 max-w-page mx-auto px-5 sm:px-6 lg:px-8 py-10 md:py-16">
         {/* ── Intro ─────────────────────────────────────────────────── */}
         <Reveal>
-          <header className="max-w-3xl about-paper">
+          <header className="max-w-3xl column-paper">
             <span className="opener">About</span>
             <h1 className="t-title text-fg mt-5 text-balance">
               A quiet place to find out what you actually know.
@@ -77,7 +77,7 @@ export default function About() {
             </ol>
           </nav>
 
-          <div className="max-w-3xl space-y-16 md:space-y-20 about-paper">
+          <div className="max-w-3xl space-y-16 md:space-y-20 column-paper">
             {/* 01 · What it tests */}
             <Section id="tests" n="01" title="What it tests">
               <p className="t-body text-fg-2 text-pretty">

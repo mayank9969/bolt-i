@@ -109,7 +109,7 @@ export default function Setup() {
     <div className="relative flex-1">
       <div className="relative z-10 max-w-page mx-auto px-5 sm:px-6 lg:px-8 py-10 md:py-16 grid lg:grid-cols-12 gap-10">
         {/* left: the form, as three numbered movements */}
-        <div className="lg:col-span-7 xl:col-span-6 max-w-2xl">
+        <div className="lg:col-span-7 xl:col-span-6 max-w-2xl column-paper">
           <Reveal>
             <span className="opener">Choose your path</span>
             <h1 className="t-title text-fg mt-5 text-balance">
@@ -119,7 +119,7 @@ export default function Setup() {
 
           {loadError ? (
             <Reveal>
-              <div className="surface-strong rounded-2xl p-8 mt-10 text-center">
+              <div className="surface-strong rounded-2xl p-8 mt-12 text-center" role="alert">
                 <div className="w-12 h-12 rounded-full mx-auto mb-5 flex items-center justify-center bg-err/10 text-err">
                   <Cross className="w-5 h-5" />
                 </div>
@@ -242,7 +242,7 @@ export default function Setup() {
                             disabled={disabled}
                             aria-pressed={on}
                             onClick={() => setCount(n)}
-                            className={`h-9 min-w-[2.75rem] px-3 rounded-full border text-sm num transition-colors duration-fast ${
+                            className={`h-10 min-w-[3rem] px-3.5 rounded-full border text-sm num transition-colors duration-fast ${
                               on ? 'bg-selected/10 text-fg border-selected font-medium' : 'border-line-strong text-fg-2 hover:text-fg hover:border-fg-3'
                             } disabled:opacity-40 disabled:cursor-not-allowed`}
                           >

@@ -404,12 +404,14 @@
       rgb(var(--nx-canvas-rgb));
     box-shadow: inset 0 0 0 1px var(--nx-selected);
   }
-  .quiz-paper, .hero-paper, .about-paper, .result-paper { position: relative; }
+  .quiz-paper, .hero-paper, .column-paper, .result-paper, .stats-paper { position: relative; }
+  /* History: the ledger of numbers reads on paper; the network keeps the header corner */
+  .stats-paper::before { content: ''; position: absolute; inset: -1.5rem -3rem -2rem -3rem; pointer-events: none; z-index: -1; background: linear-gradient(180deg, rgb(var(--nx-canvas-rgb) / 0) 0%, rgb(var(--nx-canvas-rgb) / 0.9) 22%, rgb(var(--nx-canvas-rgb) / 0.9) 100%); }
   /* Result: the path strip and actions read on paper; the lit network stays above and to the right */
-  .result-paper::before { content: ''; position: absolute; inset: -2.5rem -3rem -6rem -3rem; pointer-events: none; z-index: -1; background: radial-gradient(ellipse at 40% 50%, rgb(var(--nx-canvas-rgb) / 0.92) 45%, rgb(var(--nx-canvas-rgb) / 0) 80%); }
-  /* About: the reading column sits on paper; the network stays as atmosphere in the margins */
-  .about-paper::before { content: ''; position: absolute; inset: -2rem -10rem -2rem -6rem; pointer-events: none; z-index: -1; background: linear-gradient(90deg, rgb(var(--nx-canvas-rgb) / 0.97) 0, rgb(var(--nx-canvas-rgb) / 0.97) calc(100% - 10rem), rgb(var(--nx-canvas-rgb) / 0.6) calc(100% - 5rem), rgb(var(--nx-canvas-rgb) / 0) 100%); }
-  .hero-paper::before { content: ''; position: absolute; inset: -2rem -3rem -2rem -4rem; pointer-events: none; z-index: -1; background: radial-gradient(ellipse at 35% 60%, rgb(var(--nx-canvas-rgb) / 0.9) 30%, rgb(var(--nx-canvas-rgb) / 0) 72%); }
+  .result-paper::before { content: ''; position: absolute; inset: -2.5rem -3rem -6rem -3rem; pointer-events: none; z-index: -1; background: linear-gradient(180deg, rgb(var(--nx-canvas-rgb) / 0) 0%, rgb(var(--nx-canvas-rgb) / 0.9) 30%, rgb(var(--nx-canvas-rgb) / 0.9) 100%); }
+  /* Reading column (About, Setup form): sits on paper; the network stays as atmosphere to the right */
+  .column-paper::before { content: ''; position: absolute; inset: -2rem -10rem -2rem -6rem; pointer-events: none; z-index: -1; background: linear-gradient(90deg, rgb(var(--nx-canvas-rgb) / 0.97) 0, rgb(var(--nx-canvas-rgb) / 0.97) calc(100% - 10rem), rgb(var(--nx-canvas-rgb) / 0.6) calc(100% - 5rem), rgb(var(--nx-canvas-rgb) / 0) 100%); }
+  .hero-paper::before { content: ''; position: absolute; inset: -3rem -3rem -2rem -4rem; pointer-events: none; z-index: -1; background: radial-gradient(ellipse at 35% 55%, rgb(var(--nx-canvas-rgb) / 0.9) 34%, rgb(var(--nx-canvas-rgb) / 0) 74%); }
   .quiz-paper::before {
     content: '';
     position: absolute;
@@ -563,6 +565,11 @@
     height: 4px;
     border-radius: 999px;
     background: linear-gradient(90deg, var(--nx-progress) var(--p), var(--nx-track) var(--p));
+    background-clip: content-box;
+    /* 4px track, 40px hit area */
+    padding: 18px 0;
+    box-sizing: content-box;
+    margin: -18px 0;
     outline: none;
   }
   .nx-range::-webkit-slider-thumb {

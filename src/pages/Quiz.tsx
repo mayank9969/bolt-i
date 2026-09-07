@@ -159,7 +159,7 @@ export default function Quiz() {
   if (!current) {
     return (
       <div className="flex-1 flex items-center justify-center px-5 py-16">
-        <div className="surface rounded-2xl p-8 max-w-md text-center" role="alert">
+        <div className="surface-strong rounded-2xl p-8 max-w-md text-center" role="alert">
           <p className="t-h3 text-fg">No questions came back for this selection.</p>
           <p className="t-body text-fg-2 mt-2">Try a different region or tier.</p>
           <Link to="/setup" className="btn-primary mt-6">Back to setup</Link>

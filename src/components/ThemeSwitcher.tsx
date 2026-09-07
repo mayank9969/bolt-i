@@ -19,7 +19,7 @@ export default function ThemeSwitcher({ className = '' }: { className?: string }
       aria-label={dark ? 'Switch to Paper (light) theme' : 'Switch to Ink (dark) theme'}
       title={dark ? 'Paper theme' : 'Ink theme'}
       onClick={() => applyTheme(dark ? 'paper' : 'ink')}
-      className={`group relative inline-flex items-center h-9 pl-1 pr-2.5 gap-2 rounded-full border border-line bg-card hover:border-line-strong transition-colors ${className}`}
+      className={`group relative inline-flex items-center h-10 pl-1.5 pr-3 gap-2 rounded-full border border-line bg-card hover:border-line-strong transition-colors ${className}`}
     >
       <span className="relative w-7 h-7 rounded-full overflow-hidden border border-line-strong shrink-0" aria-hidden="true">
         {/* two halves: paper and ink — the knob shows which one is active */}
