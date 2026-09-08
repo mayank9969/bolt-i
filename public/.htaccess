@@ -1,0 +1,10 @@
+# VEYRA — single-page app on Apache (InfinityFree).
+# Serve real files/assets directly; send every other path to index.html so
+# client-side routes (/setup, /quiz, /history, /about) survive a refresh.
+Options -MultiViews
+RewriteEngine On
+RewriteBase /
+RewriteRule ^index\.html$ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.html [L]

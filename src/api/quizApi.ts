@@ -9,14 +9,13 @@ import type {
 // ══════════════════════════════════════════════════════════════
 //  API CLIENT
 //  Single connection point between the UI and the Python engine
-//  (exposed by api/server.py or backend/app.py). Relative `/api/*`
+//  (exposed by api/server.py or backend/app.py). Relative `/api`
 //  by default — the dev server / local adapter route it to Flask.
-//  Set VITE_API_BASE_URL at build time (e.g. the Render URL) when the
-//  frontend is hosted on a different domain from the API.
+//  In production VITE_API_BASE_URL (see .env.production) points at
+//  the hosted API, e.g. https://backend-fc24.onrender.com/api
 // ══════════════════════════════════════════════════════════════
 
-const API_ORIGIN = (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/+$/, '')
-const API_BASE = `${API_ORIGIN}/api`
+const API_BASE = (import.meta.env.VITE_API_BASE_URL || '/api').replace(/\/+$/, '')
 
 export class ApiError extends Error {
   status: number

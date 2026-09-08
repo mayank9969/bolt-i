@@ -327,9 +327,9 @@ frontend with the API base URL set:
 ```bash
 # in the frontend project (repository root), before `npm run build`
 # Windows PowerShell
-$env:VITE_API_BASE_URL="https://veyra-api.onrender.com"; npm run build
+$env:VITE_API_BASE_URL="https://backend-fc24.onrender.com/api"; npm run build
 # macOS / Linux
-VITE_API_BASE_URL=https://veyra-api.onrender.com npm run build
+VITE_API_BASE_URL=https://backend-fc24.onrender.com/api npm run build
 ```
 
 Then upload the generated `dist/` folder to `veyra.rf.gd` as before. With the
@@ -339,7 +339,7 @@ local `start.bat` flow is unchanged.
 Quick verification from the browser console on `https://veyra.rf.gd`:
 
 ```js
-fetch('https://veyra-api.onrender.com/api/health').then(r => r.json()).then(console.log)
+fetch('https://backend-fc24.onrender.com/api/health').then(r => r.json()).then(console.log)
 ```
 
 ---
