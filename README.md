@@ -89,3 +89,10 @@ regions into the paper. The page decides how it behaves:
 Quality tiers (high / medium / low) come from device signals and a frame-rate monitor steps the
 resolution down under load; devices without WebGL or with `prefers-reduced-motion` get a static
 SVG network instead. The canvas is `pointer-events: none`, so it can never block a tap.
+
+## Deploying the API separately (Render)
+
+`backend/` is a standalone, Render-ready copy of the API (same engine, same
+contract, gunicorn, restricted CORS). See `backend/README.md` for the build and
+start commands, environment variables and how to point the hosted frontend at it
+(`VITE_API_BASE_URL` at build time).
