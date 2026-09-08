@@ -1,4 +1,4 @@
-# NEXUSQuiz typography — Geist Sans, two registers
+# VEYRA typography — Geist Sans, two registers
 
 Scope: typography only. Palette, themes, layout, components, 3D, content,
 routing and backend untouched. The only markup edits are removing italic
@@ -6,7 +6,7 @@ spans on product pages and adding two responsive `<br>`s in the hero.
 
 ## Typeface: Geist Sans (variable) — over Inter
 
-Both were rendered side-by-side with real NEXUSQuiz content (hero, a long
+Both were rendered side-by-side with real VEYRA content (hero, a long
 question, code-like answers, body, nav, button, a 55.9 % statistic) at the
 exact sizes the system uses. Geist was chosen because:
 

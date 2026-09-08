@@ -31,7 +31,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
       ...init,
     })
   } catch {
-    throw new ApiError('Could not reach the NEXUSQuiz server.', 0)
+    throw new ApiError('Could not reach the VEYRA server.', 0)
   }
 
   let data: unknown = null

@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════
-   NEXUSQuiz design tokens — Paper · Ink · one green
+   VEYRA design tokens — Paper · Ink · one green
    ───────────────────────────────────────────────────────────────────
    One brand, two polarities:
 
@@ -104,7 +104,7 @@
   --nx-shadow-cta-hover: 0 1px 0 0 rgb(255 255 255 / 0.18) inset, 0 18px 36px -14px rgb(var(--nx-cta-rgb) / 0.5);
   --nx-highlight: rgb(255 255 255 / 0.5);
 
-  /* 3D material palette (read by NexusScene) — ink/paper neutrals + the green */
+  /* 3D material palette (read by NetworkScene) — ink/paper neutrals + the green */
   --nx-3d-core: #18201c;
   --nx-3d-strut: #7f867f;
   --nx-3d-node: #fbf8f0;

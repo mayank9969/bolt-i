@@ -1,4 +1,4 @@
-# NEXUSQuiz — Light Theme Art Direction (research + recommendation)
+# VEYRA — Light Theme Art Direction (research + recommendation)
 
 _Date: 2026-09-05. Facts are marked **[Researched]** with a source. Everything else is marked **[Recommendation]** and is my design judgement._
 
@@ -25,7 +25,7 @@ Why this beats "generic light SaaS": SaaS light themes are cool (blue-tinted gra
 
 **[Researched]** WCAG 2.2 AA thresholds: normal text ≥ 4.5:1; large text (≥ 24 px regular or ≥ 19 px bold) ≥ 3:1; UI components / graphical objects (borders of inputs, focus rings, icons) ≥ 3:1 (SC 1.4.3, 1.4.11). Sources: https://getwcag.com/en/contrast-checker · https://testparty.ai/blog/color-contrast-requirements
 
-**Recommendation:** **Light is the default** for a quiz product (long stretches of reading, 15–18 px question text). Dark stays as a first-class alternative for low-vision users and preference. Emotional reading: light = open, calm, "study"; dark = "gaming console / terminal" — the wrong association for NEXUSQuiz.
+**Recommendation:** **Light is the default** for a quiz product (long stretches of reading, 15–18 px question text). Dark stays as a first-class alternative for low-vision users and preference. Emotional reading: light = open, calm, "study"; dark = "gaming console / terminal" — the wrong association for VEYRA.
 
 ---
 
@@ -166,7 +166,7 @@ Light **Paper** default (evidence above). Dark **Ink** kept as a full theme with
 
 ## 9. Implementation brief (paste-ready for a frontend agent)
 
-> Implement the **Paper** light theme as the default for NEXUSQuiz using these tokens: canvas #F4F1EA, surface #EBE6DC, card #FAF8F3, card-strong #FDFCF9; ink #1C1B18, ink-2 #4F4C45, ink-3 #6B675E, muted #8A857A (decorative only); lines = ink @ 6/10/22%; accent #C8401A, accent-text #A33412, accent-deep #7E2A0F, accent-soft = accent @ 10%, accent-on-ink #FF8A5C; success #1F6F4A, warning #8F5A0A, error #B3261E; primary button ink→#000 on hover with #F6F3EC text; focus ring 3px accent @ 90%. Shadows warm (rgb 60 48 30) and diffuse; no surface gradients; one radial accent wash per page max. Typography: serif display with one italic word, Inter body ≥ 16 px, mono uppercase labels. Layering by tone (surface < canvas < card), not by shadow. Layout: ruled rows over card grids; one dark ink panel per page. Every state must be readable without colour (icon + word). Meet WCAG 2.2 AA: text ≥ 4.5:1, large ≥ 3:1, UI ≥ 3:1. Keep the existing dark Ink theme with identical token roles. Do not change backend/API.
+> Implement the **Paper** light theme as the default for VEYRA using these tokens: canvas #F4F1EA, surface #EBE6DC, card #FAF8F3, card-strong #FDFCF9; ink #1C1B18, ink-2 #4F4C45, ink-3 #6B675E, muted #8A857A (decorative only); lines = ink @ 6/10/22%; accent #C8401A, accent-text #A33412, accent-deep #7E2A0F, accent-soft = accent @ 10%, accent-on-ink #FF8A5C; success #1F6F4A, warning #8F5A0A, error #B3261E; primary button ink→#000 on hover with #F6F3EC text; focus ring 3px accent @ 90%. Shadows warm (rgb 60 48 30) and diffuse; no surface gradients; one radial accent wash per page max. Typography: serif display with one italic word, Inter body ≥ 16 px, mono uppercase labels. Layering by tone (surface < canvas < card), not by shadow. Layout: ruled rows over card grids; one dark ink panel per page. Every state must be readable without colour (icon + word). Meet WCAG 2.2 AA: text ≥ 4.5:1, large ≥ 3:1, UI ≥ 3:1. Keep the existing dark Ink theme with identical token roles. Do not change backend/API.
 
 ---
 

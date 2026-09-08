@@ -121,7 +121,7 @@ export default function Setup() {
                   <Cross className="w-5 h-5" />
                 </div>
                 <p className="text-fg font-medium">{loadError}</p>
-                <p className="text-fg-2 text-sm mt-2">Make sure the NEXUSQuiz server is running, then reload.</p>
+                <p className="text-fg-2 text-sm mt-2">Make sure the VEYRA server is running, then reload.</p>
               </div>
             </Reveal>
           ) : (

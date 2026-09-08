@@ -127,7 +127,7 @@ export default function History() {
               <Cross className="w-5 h-5" />
             </div>
             <p className="text-fg font-medium">{error}</p>
-            <p className="text-fg-2 text-sm mt-2">Make sure the NEXUSQuiz server is running, then reload.</p>
+            <p className="text-fg-2 text-sm mt-2">Make sure the VEYRA server is running, then reload.</p>
           </div>
         ) : history === null ? (
           <div className="grid sm:grid-cols-4 gap-px mt-12 border-t border-line">

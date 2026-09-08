@@ -1,4 +1,4 @@
-# NEXUSQuiz — Quiz answering UX
+# VEYRA — Quiz answering UX
 
 Scope: the question-answering screen (`src/pages/Quiz.tsx`), its styles
 (`.choice*`, `.progress-seg*`, `.quiz-paper`, `.quiz-controls` in

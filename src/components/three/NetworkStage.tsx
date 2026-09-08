@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { buildNetwork } from './network'
 import { getScene, setScene, subscribeScene, threeDisabled, useHover, type HoverInfo } from './store'
 
-const NexusScene = lazy(() => import('./NexusScene'))
+const NetworkScene = lazy(() => import('./NetworkScene'))
 
 /**
  * The one persistent stage. Lives in Layout, fixed behind the UI.
@@ -13,7 +13,7 @@ const NexusScene = lazy(() => import('./NexusScene'))
  * - feeds cursor + scroll into the scene store (no React re-renders)
  * - renders the accessible hover label for Home (plain DOM, not WebGL)
  */
-export default function NexusStage() {
+export default function NetworkStage() {
   const [mode, setMode] = useState<'webgl' | 'static' | 'pending'>('pending')
 
   useEffect(() => {
@@ -62,10 +62,10 @@ export default function NexusStage() {
 
   return (
     <>
-      <div className="nexus-stage fixed inset-0 z-0 pointer-events-none" aria-hidden="true">
+      <div className="network-stage fixed inset-0 z-0 pointer-events-none" aria-hidden="true">
         {mode === 'webgl' ? (
           <Suspense fallback={null}>
-            <NexusScene />
+            <NetworkScene />
           </Suspense>
         ) : (
           <StaticNetwork />

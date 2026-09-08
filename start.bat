@@ -1,17 +1,17 @@
 @echo off
 setlocal
-REM ── NEXUSQuiz one-click start (Windows) ─────────────────────────
+REM ── VEYRA one-click start (Windows) ─────────────────────────
 cd /d "%~dp0"
-title NEXUSQuiz
+title VEYRA
 echo.
-echo  NEXUSQuiz  -  starting from: %CD%
+echo  VEYRA  -  starting from: %CD%
 echo.
 
 where python >nul 2>nul || (echo [X] Python not found. Install Python 3.10+ from python.org and tick "Add to PATH". & pause & exit /b 1)
 where npm    >nul 2>nul || (echo [X] Node.js not found. Install Node.js LTS from nodejs.org. & pause & exit /b 1)
 
-REM 1) Stop any OLD copy of NEXUSQuiz still holding port 5000 (a previous window left open).
-echo  [1/4] Closing any old NEXUSQuiz server on port 5000...
+REM 1) Stop any OLD copy of VEYRA still holding port 5000 (a previous window left open).
+echo  [1/4] Closing any old VEYRA server on port 5000...
 powershell -NoProfile -Command "Get-NetTCPConnection -LocalPort 5000 -State Listen -ErrorAction SilentlyContinue | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }" >nul 2>nul
 
 REM 2) Dependencies
@@ -29,7 +29,7 @@ if not exist dist\index.html (echo. & echo [X] Build failed - the new design was
 REM 4) Serve
 echo.
 echo  ================================================
-echo   NEXUSQuiz v2 (Paper) is live at:  http://localhost:5000
+echo   VEYRA v2 (Paper) is live at:  http://localhost:5000
 echo   If the page looks dark blue, press Ctrl+F5 in the browser.
 echo  ================================================
 echo.

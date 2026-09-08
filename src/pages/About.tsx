@@ -51,7 +51,7 @@ export default function About() {
               A quiet place to find out what you actually know.
             </h1>
             <p className="t-lead text-fg-2 mt-6 text-pretty">
-              NEXUSQuiz is a small, honest quiz product for {regionList}. You choose a region, a tier and a size; the
+              VEYRA is a small, honest quiz product for {regionList}. You choose a region, a tier and a size; the
               server picks the questions, checks every answer and keeps the record. There is nothing to configure and
               nothing to unlock — just questions, a score you can trust, and a history that shows how it moves.
             </p>
@@ -201,7 +201,7 @@ export default function About() {
             </Section>
 
             {/* 05 · The name */}
-            <Section id="name" n="05" title="Why “Nexus”">
+            <Section id="name" n="05" title="Why “VEYRA”">
               <p className="t-body text-fg-2 text-pretty">
                 Knowledge isn’t a list you finish; it’s a network you build. Every question is a node, every correct answer a
                 connection, and the Living Knowledge Network behind these pages is that idea made visible: quiet while
@@ -278,7 +278,7 @@ const SECTIONS = [
   { id: 'scoring', n: '02', title: 'Scoring' },
   { id: 'validation', n: '03', title: 'Validation' },
   { id: 'server', n: '04', title: 'Where scoring happens' },
-  { id: 'name', n: '05', title: 'Why “Nexus”' },
+  { id: 'name', n: '05', title: 'Why “VEYRA”' },
 ]
 
 const PLACEHOLDER: CategoryInfo[] = [

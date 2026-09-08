@@ -1,4 +1,4 @@
-# NEXUSQuiz colour system — Paper · Ink · one green
+# VEYRA colour system — Paper · Ink · one green
 
 Scope of this pass: colour tokens and theme architecture only. Layout,
 components, typography, 3D geometry/motion, content, routing and backend are
@@ -22,7 +22,7 @@ Reference principles (not copied): a single disciplined brand green against
 neutral surfaces (Nextdoor's 2025 return to a darker green); forest green on
 warm cream (Arva); cream + ink + one saturated green with a polarity-flipped
 dark theme (Agent Smith); neutral editorial canvas with restrained colour
-(Airtable). NEXUSQuiz keeps its own logo, layout, typography and network.
+(Airtable). VEYRA keeps its own logo, layout, typography and network.
 
 ## Token architecture
 
@@ -101,5 +101,5 @@ Checked surfaces: body, question, answer options (rest + selected), navigation, 
 - `src/pages/Setup.tsx` — selected tier tile and size pill: green tint + border instead of a solid filled block.
 - `src/pages/History.tsx` — selected filter: green tint + border instead of a solid block.
 - `src/pages/Home.tsx` — ink-panel divider uses `--nx-panel-text`.
-- `src/components/three/NexusScene.tsx` — the three studio light formers are neutral warm whites (the last hard-coded blue); fallback fill colour neutral. No geometry, motion or material logic changed.
+- `src/components/three/NetworkScene.tsx` — the three studio light formers are neutral warm whites (the last hard-coded blue); fallback fill colour neutral. No geometry, motion or material logic changed.
 - `index.html`, `public/favicon.svg` — theme-colour and favicon on the new paper / ink / green.

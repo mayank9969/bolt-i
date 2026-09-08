@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# ── NEXUSQuiz one-command start (macOS / Linux) ─────────────────────
+# ── VEYRA one-command start (macOS / Linux) ─────────────────────
 set -e
 cd "$(dirname "$0")"
 command -v python3 >/dev/null || { echo "Python 3 not found."; exit 1; }
@@ -9,7 +9,7 @@ python3 -m pip install -q -r requirements.txt
 npm run build
 echo
 echo "  ================================================"
-echo "   NEXUSQuiz is live at:  http://localhost:5000"
+echo "   VEYRA is live at:  http://localhost:5000"
 echo "  ================================================"
 echo
 python3 api/server.py

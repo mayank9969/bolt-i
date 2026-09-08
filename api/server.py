@@ -1,5 +1,5 @@
 """
-NEXUSQuiz API adapter
+VEYRA API adapter
 =====================
 
 A thin HTTP layer that exposes the EXISTING Python quiz engine
@@ -323,7 +323,7 @@ def spa(path: str):
         abort(404)
     if not DIST_DIR.exists():
         return (
-            "NEXUSQuiz API is running. Build the frontend with `npm run build` "
+            "VEYRA API is running. Build the frontend with `npm run build` "
             "to serve it from here, or run `npm run dev` for development.",
             200,
         )

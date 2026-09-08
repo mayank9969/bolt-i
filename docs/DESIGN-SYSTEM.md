@@ -1,4 +1,4 @@
-# NEXUSQuiz — Design System (UI · colour · 3D)
+# VEYRA — Design System (UI · colour · 3D)
 
 This document records the research, the principles derived from it, the candidate
 directions, the chosen direction and the token / motion / 3D contracts the frontend
@@ -12,7 +12,7 @@ directly confirmed; **unverified** = could not be confirmed and is not relied up
 
 ## 1. Light vs. dark — evidence, not taste
 
-NEXUSQuiz is a reading-heavy product: a question, four answers, a review list.
+VEYRA is a reading-heavy product: a question, four answers, a review list.
 The decision was made on that use case.
 
 | Finding | Source | Strength |
@@ -60,9 +60,9 @@ the 3D object, and the inverted primary button. Dark = emphasis, light = reading
 | **Obys Agency** | Studio of the Year (CSS Design Awards 2020/21/23, Awwwards 2019). Work is typography-led, grid-based, minimal, with motion and per-project palettes ("minimalism, typography, grid, interaction"). | Typography and layout carry the identity; colour is art-directed per context, not sprayed everywhere. |
 | **Obys Experiment Space** | Obys' educational/experimental side projects (e.g. *Colors Combinations*, *Grids*). | Unusual pairings are chosen deliberately and taught as combinations, not as random neon. |
 | **Active Theory** | Deep navy-to-black field, bioluminescent particles, iridescent ring, **monospaced uppercase type** contrasting organic particle chaos with rigid geometry. | Tension = organic depth vs. strict type. Atmosphere lives in the background layer, UI stays strict. |
-| **Bruno Simon** | Interactive 3D portfolio driven as a game (WebGL/Three.js). | Interaction itself is identity; 3D is the content, not decoration. For NEXUSQuiz: 3D stays in the hero/ambient layer and never competes with a question. |
+| **Bruno Simon** | Interactive 3D portfolio driven as a game (WebGL/Three.js). | Interaction itself is identity; 3D is the content, not decoration. For VEYRA: 3D stays in the hero/ambient layer and never competes with a question. |
 | **The FWA** | Current FWA-of-the-day winners (Sept 2026) are real-time 3D worlds and immersive storytelling. | Immersion is the current bar; but usability scores are weighted (Awwwards: usability 30 %). |
-| **HubTown** (Unseen Studio, Awwwards SOTD Jun 2026) | Awwwards lists its palette as **one colour: `#020A19`** (near-black navy). Immersive 3D map, zoom transitions, storytelling. | An immersive site can be effectively **monochrome**; scale, depth and motion do the work. This also validates NEXUSQuiz's existing near-black-navy canvas. |
+| **HubTown** (Unseen Studio, Awwwards SOTD Jun 2026) | Awwwards lists its palette as **one colour: `#020A19`** (near-black navy). Immersive 3D map, zoom transitions, storytelling. | An immersive site can be effectively **monochrome**; scale, depth and motion do the work. This also validates VEYRA's existing near-black-navy canvas. |
 
 ### 3D / immersive references (2025–2026)
 
@@ -104,7 +104,7 @@ neutral plus one accent.
 | B | Obsidian Archive | ink-navy | a library of illuminated slabs | Strong, but dark-first contradicts the reading evidence for a text-heavy product; kept as the *Ink* theme's mood. |
 | C | Question Constellation | deep charcoal | point cloud that rearranges per topic | Reads as "particles" quickly; hard to make feel *heavy* and premium. |
 | D | Knowledge Core | bone | single machined sphere with an inner glow | The "glowing sphere" cliché the brief warns against. |
-| E | Nexus Grid | paper | flat isometric grid that extrudes with progress | Elegant but feels like a dashboard; weak first-5-seconds. |
+| E | Knowledge Grid | paper | flat isometric grid that extrudes with progress | Elegant but feels like a dashboard; weak first-5-seconds. |
 
 ### The chosen set-piece — *The Living Knowledge Network*
 
@@ -134,10 +134,10 @@ Camera framings were checked numerically (projected core positions for 16:9 and
 
 Implementation: `src/components/three/` — `network.ts` (deterministic graph
 builder, BFS activation order, behaviour presets; pure TS, unit-tested in Node),
-`store.ts` (pub/sub + `useNetwork()` / `pulseNetwork()`), `NexusScene.tsx`
+`store.ts` (pub/sub + `useNetwork()` / `pulseNetwork()`), `NetworkScene.tsx`
 (R3F: one instanced mesh for all nodes, one `LineSegments` for all links, one
 `Points` for dust, three cores + halos → 9 draw calls; two small GLSL shaders;
-`PerformanceMonitor` steps DPR down under load), `NexusStage.tsx` (fixed stage,
+`PerformanceMonitor` steps DPR down under load), `NetworkStage.tsx` (fixed stage,
 WebGL / reduced-motion detection, static SVG fallback, hover label).
 
 ---

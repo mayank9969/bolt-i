@@ -4,7 +4,7 @@ import { Link, NavLink as RouterNavLink, useLocation } from 'react-router-dom'
 import { LogoMark, Wordmark } from './Logo'
 import Background from './Background'
 import ThemeSwitcher from './ThemeSwitcher'
-import NexusStage from './three/NexusStage'
+import NetworkStage from './three/NetworkStage'
 
 const NAV = [
   { to: '/', label: 'Home' },
@@ -37,7 +37,7 @@ export default function Layout({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen flex flex-col relative">
       <Background />
-      <NexusStage />
+      <NetworkStage />
 
       <header
         className={`sticky top-0 z-50 transition-colors duration-300 border-b ${
@@ -45,7 +45,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         }`}
       >
         <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
-          <Link to="/" className="flex items-center gap-2.5 group shrink-0 rounded-lg" aria-label="NEXUSQuiz home">
+          <Link to="/" className="flex items-center gap-2.5 group shrink-0 rounded-lg" aria-label="VEYRA home">
             <LogoMark size={32} className="transition-transform duration-300 group-hover:scale-105 group-hover:rotate-[-3deg]" />
             <Wordmark className="text-[17px]" />
           </Link>

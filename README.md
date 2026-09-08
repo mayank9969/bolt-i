@@ -1,4 +1,4 @@
-# NEXUSQuiz
+# VEYRA
 
 **Test your knowledge. Build your mastery.**
 

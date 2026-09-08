@@ -4,7 +4,7 @@ interface LogoProps {
 }
 
 /**
- * NEXUS mark — two nodes joined by a path: connection + progression.
+ * VEYRA mark — two nodes joined by a path: connection + progression.
  * Colours come from tokens via currentColor / CSS variables so the
  * mark adapts to every theme without a rebuild.
  */
@@ -36,7 +36,7 @@ export function LogoMark({ size = 36, className = '' }: LogoProps) {
 export function Wordmark({ className = '' }: { className?: string }) {
   return (
     <span className={`font-semibold tracking-tight text-fg ${className}`}>
-      NEXUS<span className="t-italic text-accent">Quiz</span>
+      VEYRA
     </span>
   )
 }

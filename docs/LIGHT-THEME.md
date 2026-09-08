@@ -1,4 +1,4 @@
-# NEXUSQuiz — Warm light theme (Paper)
+# VEYRA — Warm light theme (Paper)
 
 Scope of this pass: colours, surfaces, borders and shadows only. Typography,
 layout, 3D, quiz logic, API and backend are untouched. Every colour in the UI
@@ -85,7 +85,7 @@ was verified then); it only gained the new shadow / highlight / ground tokens.
 - `src/pages/Result.tsx` — the score ledger sits on a `.surface` card so the
   numbers no longer read directly against the 3D network (one class change,
   no layout or logic change).
-- `src/components/three/NexusScene.tsx` — the hemisphere light reads
+- `src/components/three/NetworkScene.tsx` — the hemisphere light reads
   `--nx-3d-ground`, so the network's under-side bounce matches the paper.
 - `index.html`, `public/favicon.svg` — browser chrome colour and favicon
   updated to the new canvas / ink / accent values.

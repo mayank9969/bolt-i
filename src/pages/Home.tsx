@@ -68,7 +68,7 @@ export default function Home() {
             {/* lede + actions: bottom-right column */}
             <div className="lg:col-span-4 xl:col-span-5 lg:pl-8 xl:pl-16 lg:border-l lg:border-line">
               <motion.p initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={enter(2)} className="t-lead text-fg-2 max-w-md text-pretty">
-                NEXUSQuiz maps what you know — from Mathematics and Python to History and Language — as a network you can watch grow. Pick a region, set the tier, and light it up — one honest, server-scored answer at a time.
+                VEYRA maps what you know — from Mathematics and Python to History and Language — as a network you can watch grow. Pick a region, set the tier, and light it up — one honest, server-scored answer at a time.
               </motion.p>
 
               <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={enter(3)} className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">

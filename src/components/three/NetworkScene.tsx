@@ -810,7 +810,7 @@ function Ticker({ active }: { active: boolean }) {
   return null
 }
 
-export default function NexusScene() {
+export default function NetworkScene() {
   const [palette, setPalette] = useState<Palette>(() => readPalette())
   const [quality] = useState<Quality>(() => detectQuality())
   const [visible, setVisible] = useState(true)

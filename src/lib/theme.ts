@@ -13,7 +13,7 @@ export type ThemeId = (typeof THEMES)[number]['id']
 
 export const DEFAULT_THEME: ThemeId = 'paper'
 // v3: key bumped with the Paper/Ink system so nobody is pinned to an older dark default.
-const STORAGE_KEY = 'nexusquiz.theme.v3'
+const STORAGE_KEY = 'veyra.theme'
 const EVENT = 'nx-theme'
 
 export function isTheme(v: unknown): v is ThemeId {

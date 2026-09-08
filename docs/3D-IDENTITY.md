@@ -1,4 +1,4 @@
-# NEXUSQuiz — 3D identity: the Living Knowledge Network
+# VEYRA — 3D identity: the Living Knowledge Network
 
 One WebGL scene, mounted once in `Layout`, fixed behind every page. Pages
 never render 3D themselves; they *describe* how the network should behave
@@ -53,7 +53,7 @@ other regions — the network visibly *thinks* instead of rippling.
 
 Hover (Home only): the nearest topic/question node lifts, its neighbours
 lift less, and its links turn green. The label that follows it is plain
-DOM (`NexusStage → HoverLabel`), not WebGL.
+DOM (`NetworkStage → HoverLabel`), not WebGL.
 
 ## Performance budget
 
@@ -93,9 +93,9 @@ DOM (`NexusStage → HoverLabel`), not WebGL.
   path lengths, parents, per-region orders, behaviour presets.
 - `src/components/three/store.ts` — tiny pub/sub store; `useNetwork`,
   `pulseNetwork`, `threeDisabled`.
-- `src/components/three/NexusScene.tsx` — the WebGL scene (shaders,
+- `src/components/three/NetworkScene.tsx` — the WebGL scene (shaders,
   camera, instancing, hover, knowledge path, frame governor).
-- `src/components/three/NexusStage.tsx` — mount, WebGL/reduced-motion
+- `src/components/three/NetworkStage.tsx` — mount, WebGL/reduced-motion
   detection, SVG fallback, hover label.
 - `src/pages/Result.tsx` — passes the real per-question `is_correct` mask
   and region so the network can light the path.
