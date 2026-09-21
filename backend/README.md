@@ -63,9 +63,9 @@ pip install -r requirements.txt
 
 ```bash
 # Windows PowerShell
-$env:ALLOWED_ORIGINS="https://veyra.rf.gd,http://localhost:5173"; python app.py
+$env:ALLOWED_ORIGINS="https://veyra.ct.ws,http://localhost:5173"; python app.py
 # macOS / Linux
-ALLOWED_ORIGINS=https://veyra.rf.gd,http://localhost:5173 python app.py
+ALLOWED_ORIGINS=https://veyra.ct.ws,http://localhost:5173 python app.py
 ```
 
 → `http://localhost:5000/api/health`
@@ -207,7 +207,7 @@ is ignored — scoring is server-side only.
 | Variable | Default | Used for |
 |---|---|---|
 | `PORT` | `10000` (gunicorn) / `5000` (`python app.py`) | Port to listen on. **Render sets this automatically — do not set it there.** Read in `gunicorn.conf.py` and `app.py`. |
-| `ALLOWED_ORIGINS` | `https://veyra.rf.gd` | Comma-separated browser origins allowed by CORS for `/api/*`. Read in `app.py`. |
+| `ALLOWED_ORIGINS` | `https://veyra.ct.ws` | Comma-separated browser origins allowed by CORS for `/api/*`. Read in `app.py`. |
 | `HISTORY_DIR` | the `backend/` folder | Directory where `history.json` is written (a copy of `questions.json` is placed there too). Set to a persistent-disk mount on Render (see §7). Read in `app.py`. |
 | `SESSION_TTL_SECONDS` | `7200` | Lifetime of an unfinished quiz session. Read in `app.py`. |
 | `WEB_THREADS` | `8` | Threads in the single gunicorn worker. Read in `gunicorn.conf.py`. |
@@ -227,14 +227,14 @@ headers `Content-Type, Accept`, and **only** the origins in `ALLOWED_ORIGINS`.
 The production default is the VEYRA site:
 
 ```
-ALLOWED_ORIGINS=https://veyra.rf.gd
+ALLOWED_ORIGINS=https://veyra.ct.ws
 ```
 
 For local frontend development add the Vite dev origin **on your machine
 only**:
 
 ```
-ALLOWED_ORIGINS=https://veyra.rf.gd,http://localhost:5173
+ALLOWED_ORIGINS=https://veyra.ct.ws,http://localhost:5173
 ```
 
 Never use `*` in production. Requests from any other origin receive no
@@ -267,7 +267,7 @@ Additional response headers on every reply: `X-Content-Type-Options: nosniff`,
    | Key | Value |
    |---|---|
    | `PYTHON_VERSION` | `3.11.11` |
-   | `ALLOWED_ORIGINS` | `https://veyra.rf.gd` |
+   | `ALLOWED_ORIGINS` | `https://veyra.ct.ws` |
 
    (Optional: `WEB_THREADS` = `8`, `HISTORY_DIR` = `/var/data` if you attach a disk — see §7.)
 
@@ -321,7 +321,7 @@ database would change that contract.
 ## 8. Connect the VEYRA frontend to this backend
 
 The frontend calls **relative** `/api/*` URLs by default (it expects the API on
-the same host). To use the Render backend from `https://veyra.rf.gd`, build the
+the same host). To use the Render backend from `https://veyra.ct.ws`, build the
 frontend with the API base URL set:
 
 ```bash
@@ -332,11 +332,11 @@ $env:VITE_API_BASE_URL="https://backend-fc24.onrender.com/api"; npm run build
 VITE_API_BASE_URL=https://backend-fc24.onrender.com/api npm run build
 ```
 
-Then upload the generated `dist/` folder to `veyra.rf.gd` as before. With the
+Then upload the generated `dist/` folder to `veyra.ct.ws` as before. With the
 variable unset the frontend keeps calling `/api` on its own origin, so the
 local `start.bat` flow is unchanged.
 
-Quick verification from the browser console on `https://veyra.rf.gd`:
+Quick verification from the browser console on `https://veyra.ct.ws`:
 
 ```js
 fetch('https://backend-fc24.onrender.com/api/health').then(r => r.json()).then(console.log)

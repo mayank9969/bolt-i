@@ -71,7 +71,7 @@ SESSION_TTL = int(os.environ.get("SESSION_TTL_SECONDS", str(2 * 60 * 60)))  # 2 
 MAX_QUESTIONS_PER_QUIZ = 50
 MAX_SESSIONS = 5000  # hard cap on concurrent unfinished quizzes
 MAX_BODY_BYTES = 64 * 1024
-DEFAULT_ORIGINS = "https://veyra.rf.gd"
+DEFAULT_ORIGINS = "https://veyra.ct.ws"
 
 logging.basicConfig(level=os.environ.get("LOG_LEVEL", "INFO"))
 log = logging.getLogger("veyra")

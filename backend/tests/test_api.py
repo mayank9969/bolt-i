@@ -19,7 +19,7 @@ sys.path.insert(0, str(BACKEND))
 
 _TMP = tempfile.mkdtemp(prefix="veyra-test-")
 os.environ["HISTORY_DIR"] = _TMP
-os.environ["ALLOWED_ORIGINS"] = "https://veyra.rf.gd"
+os.environ["ALLOWED_ORIGINS"] = "https://veyra.ct.ws"
 
 import app as veyra  # noqa: E402  (import after env is set)
 
@@ -174,14 +174,14 @@ class ApiContractTests(unittest.TestCase):
 
     # ── CORS / headers ───────────────────────────────────────────────────────
     def test_cors_allows_frontend_only(self):
-        ok = self.client.get("/api/categories", headers={"Origin": "https://veyra.rf.gd"})
-        self.assertEqual(ok.headers.get("Access-Control-Allow-Origin"), "https://veyra.rf.gd")
+        ok = self.client.get("/api/categories", headers={"Origin": "https://veyra.ct.ws"})
+        self.assertEqual(ok.headers.get("Access-Control-Allow-Origin"), "https://veyra.ct.ws")
         other = self.client.get("/api/categories", headers={"Origin": "https://evil.example"})
         self.assertIsNone(other.headers.get("Access-Control-Allow-Origin"))
         pre = self.client.options(
             "/api/quiz/start",
             headers={
-                "Origin": "https://veyra.rf.gd",
+                "Origin": "https://veyra.ct.ws",
                 "Access-Control-Request-Method": "POST",
                 "Access-Control-Request-Headers": "Content-Type",
             },
