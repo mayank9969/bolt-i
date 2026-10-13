@@ -7,6 +7,8 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const css = () => getComputedStyle(document.documentElement);
 const tok = n => new THREE.Color(css().getPropertyValue(n).trim());
 const scenes = [];
+const status = (t) => { const el = document.getElementById('glstatus'); if (el) el.textContent = t; };
+status('3D: module loaded');
 const mats = []; // {mat, token}
 const M = (token, extra={}) => { const m = new THREE.MeshStandardMaterial({ color: tok(token), roughness: .92, metalness: 0, ...extra }); mats.push({ m, token }); return m; };
 const retheme = () => mats.forEach(({ m, token }) => m.color.copy(tok(token)));
@@ -27,7 +29,7 @@ function lights(scene, shadowSize = 10) {
 
 function mount(host, build) {
   const canvas = document.createElement('canvas'); canvas.className = 'gl'; host.prepend(canvas);
-  let renderer; try { renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true }); } catch (e) { canvas.remove(); return; }
+  let renderer; try { renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true }); } catch (e) { canvas.remove(); status('3D: off — WebGL unavailable (' + e.message + ') — showing flat fallback'); return; }
   renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap; renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
   host.classList.add('has-gl');
   const scene = new THREE.Scene(); const cam = new THREE.PerspectiveCamera(30, 1, .1, 100);
@@ -36,14 +38,16 @@ function mount(host, build) {
   const fit = () => { const w = host.clientWidth, h = host.clientHeight; renderer.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix(); };
   new ResizeObserver(fit).observe(host); fit();
   scenes.push({ api, renderer, visible: () => host.offsetParent !== null });
+  status('3D: on — ' + scenes.length + ' scene(s), ' + (renderer.capabilities.isWebGL2 ? 'WebGL2' : 'WebGL1'));
 }
 
 function tick(now) {
   for (const s of scenes) {
+    if (s.dead) continue;
     if (!s.visible()) { s.api.shown = 0; continue; }
     if (!s.api.shown) s.api.shown = now;
-    s.api.update(now, (now - s.api.shown) / 1000);
-    s.renderer.render(s.api.scene, s.api.cam);
+    try { s.api.update(now, (now - s.api.shown) / 1000); s.renderer.render(s.api.scene, s.api.cam); }
+    catch (e) { s.api.host.classList.remove('has-gl'); s.api.canvas.remove(); s.dead = true; status('3D ERROR: ' + e.message); }
   }
   requestAnimationFrame(tick);
 }

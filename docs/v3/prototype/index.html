@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>VEYRA v3 · Almanac — design prototype</title>
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles.css?v=3">
 </head>
 <body>
 
@@ -21,6 +21,7 @@
     <button data-go="learn">7 Learn</button>
     <button data-go="take">8 Take</button>
     <button id="theme" style="margin-left:10px">Ink ◐</button>
+    <span id="glstatus" style="opacity:.8">3D: starting…</span>
   </span>
 </div>
 
@@ -357,7 +358,12 @@
 <footer class="wrap" style="padding-left:0;padding-right:0">VEYRA · scored by a real Python engine · nothing you see here is guessed &nbsp;·&nbsp; Prototype: layout data is illustrative; the built site shows only what the engine returns.</footer>
 </div>
 
-<script src="proto.js"></script>
-<script type="module" src="boot3d.js"></script>
+<script>
+// prototype diagnostics: show any script error in the top bar so it can be reported
+window.addEventListener('error',e=>{const el=document.getElementById('glstatus');if(el)el.textContent='ERROR: '+(e.message||e.type)+' @'+(e.filename||'').split('/').pop()+':'+e.lineno;});
+window.addEventListener('unhandledrejection',e=>{const el=document.getElementById('glstatus');if(el)el.textContent='ERROR: '+(e.reason&&e.reason.message||e.reason);});
+</script>
+<script src="proto.js?v=3"></script>
+<script type="module" src="boot3d.js?v=3"></script>
 </body>
 </html>
