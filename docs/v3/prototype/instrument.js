@@ -3,22 +3,22 @@
 // Enhancement, never dependency: if WebGL is missing the SVG/CSS fallbacks stay visible.
 import * as THREE from './vendor/three.module.min.js';
 
-const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+export const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const css = () => getComputedStyle(document.documentElement);
 const tok = n => new THREE.Color(css().getPropertyValue(n).trim());
 const scenes = [];
 const status = (t) => { const el = document.getElementById('glstatus'); if (el) el.textContent = t; };
 status('3D: module loaded');
 const mats = []; // {mat, token}
-const M = (token, extra={}) => { const m = new THREE.MeshStandardMaterial({ color: tok(token), roughness: .92, metalness: 0, ...extra }); mats.push({ m, token }); return m; };
+export const M = (token, extra={}) => { const m = new THREE.MeshStandardMaterial({ color: tok(token), roughness: .92, metalness: 0, ...extra }); mats.push({ m, token }); return m; };
 const retheme = () => mats.forEach(({ m, token }) => m.color.copy(tok(token)));
 new MutationObserver(retheme).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-const fitW = (cam, halfW, dist, minFov) => { const f = 2 * Math.atan((halfW / cam.aspect) / dist) * 180 / Math.PI; const v = Math.max(minFov, f); if (Math.abs(v - cam.fov) > .1) { cam.fov = v; cam.updateProjectionMatrix(); } };
-const ease = x => 1 - Math.pow(1 - x, 3);
-const mouse = { x: 0, y: 0 };
+export const fitW = (cam, halfW, dist, minFov) => { const f = 2 * Math.atan((halfW / cam.aspect) / dist) * 180 / Math.PI; const v = Math.max(minFov, f); if (Math.abs(v - cam.fov) > .1) { cam.fov = v; cam.updateProjectionMatrix(); } };
+export const ease = x => 1 - Math.pow(1 - x, 3);
+export const mouse = { x: 0, y: 0 };
 addEventListener('pointermove', e => { mouse.x = (e.clientX / innerWidth - .5) * 2; mouse.y = (e.clientY / innerHeight - .5) * 2; }, { passive: true });
 
-function lights(scene, shadowSize = 10) {
+export function lights(scene, shadowSize = 10) {
   scene.add(new THREE.HemisphereLight(0xffffff, 0xd8cfbf, 2.3));
   const d = new THREE.DirectionalLight(0xfff4e6, 2.7); d.position.set(-5, 8, 4); d.castShadow = true;
   d.shadow.mapSize.set(1024, 1024); d.shadow.camera.left = d.shadow.camera.bottom = -shadowSize; d.shadow.camera.right = d.shadow.camera.top = shadowSize;
@@ -27,7 +27,7 @@ function lights(scene, shadowSize = 10) {
   ground.rotation.x = -Math.PI / 2; ground.position.y = -0.001; ground.receiveShadow = true; scene.add(ground);
 }
 
-function mount(host, build) {
+export function mount(host, build) {
   const canvas = document.createElement('canvas'); canvas.className = 'gl'; host.prepend(canvas);
   let renderer; try { renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true }); } catch (e) { canvas.remove(); status('3D: off — WebGL unavailable (' + e.message + ') — showing flat fallback'); return; }
   renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap; renderer.setPixelRatio(Math.min(devicePixelRatio, 2));

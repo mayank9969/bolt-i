@@ -142,3 +142,10 @@ footer{border-top:1px solid var(--line);padding:18px 0 40px;color:var(--t3);font
 .relief-host{height:150px}.relief-host .strip{height:70px;margin-top:80px}
 .balance-host{height:240px;max-width:560px}.balance-host.has-gl > svg{visibility:hidden}
 .timer-host .gl-overlay{display:flex!important}
+
+/* folded atlas hero */
+.atlas-col{min-width:0}
+.atlas-host{width:100%;aspect-ratio:5/4;overflow:hidden;border-radius:var(--r-xl)}
+.atlas-host .atlas-labels{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.atlas-label{position:absolute;left:0;top:0;white-space:nowrap;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px 9px;font:500 11px var(--fm);color:var(--text);opacity:0;transition:opacity .4s;box-shadow:0 1px 0 var(--line)}
+@media (max-width:900px){.atlas-host{aspect-ratio:4/3;max-height:360px}}

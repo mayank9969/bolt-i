@@ -52,11 +52,19 @@
       <a class="btn dark" href="#quiz" data-go="quiz">Review 12 due →</a>
       <a class="link" style="margin-left:16px" href="#setup" data-go="setup">or start a fresh quiz</a>
     </div>
-    <div><div class="gl-host dial-host" id="dialHost">
-      <svg class="dial" viewBox="0 0 420 420" id="dial" aria-label="Review calendar: 12 due today, 58 in the next 30 days"></svg>
-      <div class="gl-overlay"><b class="acc" style="font:700 56px/1 var(--fd)">12</b><span style="font:500 13px var(--fu);color:var(--t2)">due today</span><span class="mono">58 in next 30 days</span></div>
+    <div class="atlas-col">
+      <div class="gl-host atlas-host" id="atlasHost" aria-label="Your knowledge map: 15 regions, 3 with questions due today">
+        <svg viewBox="0 0 500 400" style="width:100%;height:100%;display:block">
+          <rect x="40" y="60" width="420" height="270" rx="6" fill="var(--card)" stroke="var(--line)"/>
+          <line x1="180" y1="60" x2="180" y2="330" stroke="var(--line)"/><line x1="320" y1="60" x2="320" y2="330" stroke="var(--line)"/><line x1="40" y1="195" x2="460" y2="195" stroke="var(--line)"/>
+          <path d="M70 250 C 60 160, 220 110, 260 170 S 190 300, 70 250Z" fill="var(--surface)"/><path d="M300 240 C 300 180, 420 170, 430 220 S 360 300, 300 240Z" fill="var(--surface)"/>
+          <path d="M120 230 Q 320 120 390 215" fill="none" stroke="var(--retained)" stroke-width="2"/><path d="M120 230 Q 200 290 300 250" fill="none" stroke="var(--retained)" stroke-width="2"/>
+          <circle cx="120" cy="230" r="9" fill="var(--accent)"/><circle cx="390" cy="215" r="7" fill="var(--accent)"/><circle cx="300" cy="250" r="8" fill="var(--accent)"/>
+          <circle cx="230" cy="150" r="4" fill="var(--retained)"/><circle cx="410" cy="290" r="4" fill="var(--retained)"/><circle cx="90" cy="120" r="3" fill="var(--line2)"/><circle cx="350" cy="110" r="3" fill="var(--line2)"/>
+        </svg>
+      </div>
+      <p class="mono" style="text-align:center;margin:8px 0 0">paper = your 15 regions · terracotta = due today · teal paths = regions studied together</p>
     </div>
-    <p class="mono" style="text-align:center;margin:0">ring = next 30 days · height = questions due · brick = today</p></div>
   </div>
 
   <hr class="rule">

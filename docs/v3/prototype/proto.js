@@ -34,6 +34,7 @@
   // ── Almanac dial: 30 ticks, tick length = due count, today in brick
   const due=[12,9,0,2,6,0,0,14,3,0,1,5,0,0,8,2,0,0,4,0,0,6,0,1,0,0,3,0,0,2]; // illustrative
   const svg=document.getElementById('dial'); const cx=210,cy=210,R=185;
+  if(svg){
   let s='<circle class="ring" cx="210" cy="210" r="185"/><circle class="ring" cx="210" cy="210" r="128"/>';
   due.forEach((n,i)=>{
     const a=(-90+i*12)*Math.PI/180, len=10+Math.min(n,14)*3.2;
@@ -43,6 +44,7 @@
   });
   s+=`<text x="210" y="200" text-anchor="middle" class="big">12</text><text x="210" y="226" text-anchor="middle" class="mid">due today</text><text x="210" y="250" text-anchor="middle">58 in next 30 days</text>`;
   svg.innerHTML=s;
+  }
 
   // ── Today: retention rows
   const ret=[['Physics',58,41],['Logic',81,120],['Mathematics',77,96],['Chemistry',62,30],['Biology',88,54],['History',71,22]];
