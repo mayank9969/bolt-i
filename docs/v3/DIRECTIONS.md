@@ -62,3 +62,19 @@ Type: Bricolage Grotesque 600/700 (display) · Manrope 400–700 (UI) · JetBrai
 Key screens: `screen-1-today.png`, `screen-2-quiz.png` (answering + after-a-miss states),
 `screen-3-result.png`, `screen-4-progress.png`. Remaining screens to draw: Setup (modes),
 History (dated + per-attempt review), Learn (Concept Studio), Take (Today's Take).
+
+## 3D system: "the Instrument" (added after review — user asked for strong, non-static 3D)
+
+One physical object language, rendered with three.js, used in five places. Each is the *same* object seen in a different role, so 3D is a system, not decoration:
+
+| Where | What the object is | What moves |
+|---|---|---|
+| Today (hero) | **Almanac dial** — vellum disc, 30 extruded ticks (height = questions due that day), today in brick | ticks grow in on load; outer hand sweeps slowly; whole dial tilts with the pointer |
+| Quiz | **Timer ring** — the dial's outer ring, now a 30 s clock | brick arc drains second by second |
+| Result | **Score ring** — same ring filling to the percentage, 10 blocks around it (teal right / grey partial / brick wrong) | arc fills, blocks rise one by one |
+| Progress | **30-day relief** — the dial's ticks unrolled into a strip | bars grow in; parallax with pointer |
+| Learn | **Balance** — the lesson's own diagram (3x + 5 = 20) as a real scale | boxes/units disappear step by step; beam breathes |
+
+Rules: WebGL is an enhancement — every host keeps an SVG/CSS fallback underneath; `prefers-reduced-motion` stops idle motion; materials read the CSS tokens so Paper/Ink themes retheme the 3D instantly; only visible scenes render.
+
+Prototype: `docs/v3/prototype/` (`instrument.js` = the system, `boot3d.js` = wiring, three r169 vendored for the preview only; the real build uses the repo's existing three/R3F).
