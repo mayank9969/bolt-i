@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="en" data-theme="paper">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VEYRA v3 · Almanac — design prototype</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- prototype controls (not part of the design) -->
+<div class="proto">
+  <b>PROTOTYPE · VEYRA v3 “Almanac” · illustrative data</b>
+  <span style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap">
+    <button data-go="today" aria-pressed="true">1 Today</button>
+    <button data-go="setup">2 Setup</button>
+    <button data-go="quiz">3 Quiz</button>
+    <button data-go="result">4 Result</button>
+    <button data-go="progress">5 Progress</button>
+    <button data-go="history">6 History</button>
+    <button data-go="learn">7 Learn</button>
+    <button data-go="take">8 Take</button>
+    <button id="theme" style="margin-left:10px">Ink ◐</button>
+  </span>
+</div>
+
+<div class="wrap">
+<nav class="site">
+  <a class="brand" href="#today" data-go="today">
+    <span class="vmark"><svg width="18" height="18" viewBox="0 0 100 100"><path d="M30 30L50 70L70 30" fill="none" stroke="currentColor" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/><circle cx="30" cy="30" r="9" fill="#A3432B"/><circle cx="70" cy="30" r="9" fill="#A3432B"/></svg></span>
+    VEYRA
+  </a>
+  <ul id="mainnav">
+    <li><a href="#today" data-go="today" aria-current="page">Today</a></li>
+    <li><a href="#setup" data-go="setup">Quiz</a></li>
+    <li><a href="#progress" data-go="progress">Progress</a></li>
+    <li><a href="#learn" data-go="learn">Learn</a></li>
+    <li><a href="#take" data-go="take">Take</a></li>
+    <li><a href="#history" data-go="history">History</a></li>
+  </ul>
+  <a class="btn dark" href="#setup" data-go="setup">Start quiz</a>
+</nav>
+
+<!-- ───────────── 1 TODAY ───────────── -->
+<section class="page" id="today">
+  <div class="hero">
+    <div>
+      <div class="mono eyebrow">Monday 13 October · streak 6</div>
+      <h1 class="display">What you’ll<br><span class="acc">remember</span><br>tomorrow.</h1>
+      <p class="lead">Twelve questions are due today. Three are Physics you nearly had last week; the rest are first reviews from Tuesday’s Logic set.</p>
+      <a class="btn dark" href="#quiz" data-go="quiz">Review 12 due →</a>
+      <a class="link" style="margin-left:16px" href="#setup" data-go="setup">or start a fresh quiz</a>
+    </div>
+    <svg class="dial" viewBox="0 0 420 420" id="dial" aria-label="Review calendar: 12 due today, 58 in the next 30 days"></svg>
+  </div>
+
+  <hr class="rule">
+  <div class="mono eyebrow">Today</div>
+  <div class="grid3">
+    <div class="card">
+      <div class="mono">Daily challenge</div>
+      <h3 style="font-size:22px;margin:8px 0 6px">5 questions, fixed for today</h3>
+      <p class="t2" style="margin:0 0 18px;font-size:14px">Everyone gets the same five. 30 seconds each.</p>
+      <div class="row"><a class="btn acc sm" href="#quiz" data-go="quiz">Start →</a><span class="mono">6-day streak</span></div>
+    </div>
+    <div class="card">
+      <div class="mono">Smart review</div>
+      <h3 style="font-size:22px;margin:8px 0 6px">12 due · Physics 3, Logic 5, Maths 4</h3>
+      <p class="t2" style="margin:0 0 18px;font-size:14px">Spaced so you see them just before you forget.</p>
+      <div class="row"><a class="btn dark sm" href="#quiz" data-go="quiz">Review →</a><span class="mono">next: 20 Oct</span></div>
+    </div>
+    <div class="card">
+      <div class="mono">Missed questions</div>
+      <h3 style="font-size:22px;margin:8px 0 6px">27 unique misses to clear</h3>
+      <p class="t2" style="margin:0 0 18px;font-size:14px">Weighted toward the ones you keep getting wrong.</p>
+      <div class="row"><a class="btn dark sm" href="#quiz" data-go="quiz">Practise →</a><span class="mono">last: 11 Oct</span></div>
+    </div>
+  </div>
+
+  <hr class="rule">
+  <div class="row"><div class="mono">Retention by region</div><a class="link" href="#progress" data-go="progress">All 15 regions →</a></div>
+  <div class="grid2" style="margin-top:14px" id="retention"></div>
+</section>
+
+<!-- ───────────── 2 SETUP ───────────── -->
+<section class="page hidden" id="setup">
+  <div class="mono eyebrow">Set up a quiz</div>
+  <h1 class="display" style="font-size:clamp(34px,4.6vw,56px)">Choose how you want<br>to be asked.</h1>
+  <p class="lead">Five modes share one engine. Standard draws from a region; the others draw from what you’ve already answered.</p>
+
+  <div class="mono eyebrow">Mode</div>
+  <div class="modes" id="modes">
+    <button class="mode" aria-pressed="true"><div class="mono">Standard</div><b>Pick a region and tier</b><p class="t2" style="margin:6px 0 0;font-size:13px">Adaptive: recent misses come back more often.</p></button>
+    <button class="mode"><div class="mono">Daily</div><b>Today’s five</b><p class="t2" style="margin:6px 0 0;font-size:13px">Fixed set, 30 s each, builds your streak.</p></button>
+    <button class="mode"><div class="mono">Smart review</div><b>12 due</b><p class="t2" style="margin:6px 0 0;font-size:13px">Spaced repetition on your past answers.</p></button>
+    <button class="mode"><div class="mono">Missed</div><b>27 to clear</b><p class="t2" style="margin:6px 0 0;font-size:13px">Only questions you have got wrong.</p></button>
+    <button class="mode"><div class="mono">Focus skill</div><b>Kinematics</b><p class="t2" style="margin:6px 0 0;font-size:13px">Your weakest skill right now.</p></button>
+  </div>
+
+  <hr class="rule">
+  <div class="row"><div class="mono">Region</div><span class="mono">1,500 questions · from the bank</span></div>
+  <div class="regions" id="regions" style="margin-top:14px"></div>
+
+  <hr class="rule">
+  <div class="grid2">
+    <div>
+      <div class="mono eyebrow">Tier</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="chip dark" aria-pressed="false">Easy · 2 marks</button>
+        <button class="chip dark" aria-pressed="true">Medium · 4 marks</button>
+        <button class="chip dark" aria-pressed="false">Hard · 6 marks</button>
+        <button class="chip dark" aria-pressed="false">Mixed</button>
+      </div>
+      <p class="t3" style="font-size:13px;margin:10px 0 0">Multiple-choice questions score half marks.</p>
+    </div>
+    <div>
+      <div class="mono eyebrow">Length</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="chip dark" aria-pressed="false">5</button>
+        <button class="chip dark" aria-pressed="true">10</button>
+        <button class="chip dark" aria-pressed="false">15</button>
+        <button class="chip dark" aria-pressed="false">20</button>
+        <button class="chip dark" aria-pressed="false">30</button>
+      </div>
+      <p class="t3" style="font-size:13px;margin:10px 0 0">About 17 s per question on your recent average → roughly 3 minutes.</p>
+    </div>
+  </div>
+  <div style="margin-top:34px;display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+    <a class="btn dark" href="#quiz" data-go="quiz" style="height:48px;padding:0 24px;font-size:15px">Begin · Physics · Medium · 10 →</a>
+    <span class="mono">Timer 30 s · retry once · confidence asked</span>
+  </div>
+</section>
+
+<!-- ───────────── 3 QUIZ ───────────── -->
+<section class="page hidden" id="quiz">
+  <div class="segs"><i class="done"></i><i class="done"></i><i class="done"></i><i class="now"></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="row"><div class="mono">Physics · medium · question 4 of 10 · 2 marks</div>
+    <div style="display:flex;gap:10px"><button class="chip" id="stateA" aria-pressed="true">Answering</button><button class="chip" id="stateB" aria-pressed="false">After a miss</button></div></div>
+
+  <div class="card" id="answering" style="margin-top:18px;position:relative">
+    <svg class="timer" viewBox="0 0 60 60" style="position:absolute;right:26px;top:22px"><circle class="tr" cx="30" cy="30" r="25"/><circle class="fg" id="tfg" cx="30" cy="30" r="25" stroke-dasharray="157" stroke-dashoffset="58"/><text x="30" y="31" id="tnum">19</text></svg>
+    <div class="q" style="max-width:34ch">A 5 kg object accelerates at 4 m/s².<br>What is the net force?</div>
+    <div class="opts" id="opts">
+      <button class="opt"><small>A</small>9 N</button>
+      <button class="opt"><small>B</small>20 N</button>
+      <button class="opt"><small>C</small>1.25 N</button>
+      <button class="opt" aria-pressed="true"><small>D</small>25 N</button>
+    </div>
+    <div class="row" style="align-items:flex-end;flex-wrap:wrap;gap:16px">
+      <div><div class="t2" style="font-size:14px;font-weight:500;margin-bottom:8px">How sure are you?</div>
+        <div style="display:flex;gap:8px" id="conf"><button class="chip" aria-pressed="false">Guess</button><button class="chip" aria-pressed="true">Somewhat</button><button class="chip" aria-pressed="false">Sure</button></div></div>
+      <button class="btn dark" id="submit">Submit →</button>
+    </div>
+  </div>
+
+  <div class="card miss hidden" id="aftermiss" style="margin-top:18px">
+    <h2 class="acc" style="font-size:32px">Not quite.</h2>
+    <p style="margin:10px 0 18px;font-weight:500">You answered <span class="mono" style="text-transform:none;font-size:14px;color:var(--text)">D · 25 N</span> &nbsp;&nbsp; Correct <span class="mono" style="text-transform:none;font-size:14px;color:var(--text)">B · 20 N</span></p>
+    <div class="mono">Your value is too high</div>
+    <p class="t2" style="margin:4px 0 20px">First check for an extra addition or multiplication, or a subtraction that was too small.</p>
+    <div class="mono">What went wrong?</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 20px" id="patterns">
+      <button class="chip dark" aria-pressed="false">Concept not clear</button><button class="chip dark" aria-pressed="true">Working slip</button><button class="chip dark" aria-pressed="false">Misread</button><button class="chip dark" aria-pressed="false">Guessed</button><button class="chip dark" aria-pressed="false">Answer format</button><button class="chip dark" aria-pressed="false">Not sure</button>
+    </div>
+    <div class="mono">One line of reasoning (optional)</div>
+    <textarea style="min-height:48px;margin:8px 0 22px" placeholder="I multiplied 5 × 5 instead of 5 × 4"></textarea>
+    <div class="row" style="flex-wrap:wrap;gap:16px;align-items:center">
+      <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+        <button class="btn acc">Try once more →</button>
+        <span class="t3" style="font-size:13px">Correct on retry counts, but the review date resets to tomorrow.</span>
+      </div>
+      <div class="panel" style="background:var(--tint2);min-width:220px"><div class="mono ret">Next review</div><b style="font:700 22px var(--fd);color:var(--retained)">Tue 14 Oct</b><div class="mono" style="margin-top:4px">streak on this question: 0</div></div>
+    </div>
+    <p style="margin:22px 0 0"><a class="link" href="#result" data-go="result">Continue without retrying</a></p>
+  </div>
+</section>
+
+<!-- ───────────── 4 RESULT ───────────── -->
+<section class="page hidden" id="result">
+  <div class="mono eyebrow">Result · Physics · medium · 13 Oct 2026</div>
+  <div class="hero" style="grid-template-columns:320px 1fr;align-items:center">
+    <svg viewBox="0 0 320 320" style="width:100%;max-width:320px">
+      <circle cx="160" cy="160" r="140" fill="none" stroke="var(--surface)" stroke-width="14"/>
+      <circle cx="160" cy="160" r="140" fill="none" stroke="var(--retained)" stroke-width="14" stroke-linecap="round" stroke-dasharray="880" stroke-dashoffset="264" transform="rotate(-90 160 160)"/>
+      <text x="160" y="172" text-anchor="middle" style="font:700 92px var(--fd);fill:var(--text)">70</text>
+      <text x="160" y="212" text-anchor="middle" style="font:500 14px var(--fu);fill:var(--t3)">percent</text>
+    </svg>
+    <div>
+      <h1 style="font-size:clamp(30px,3.6vw,44px)">Fourteen of twenty marks.</h1>
+      <p class="lead" style="margin:10px 0 22px">Seven right, one of them on the retry. Two partial credits on the written answers.</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:14px">
+        <div class="stat"><div class="mono">Score</div><b>14 / 20</b></div><div class="stat"><div class="mono">Correct</div><b>7</b></div><div class="stat"><div class="mono">On retry</div><b>1</b></div><div class="stat"><div class="mono">Partial</div><b>2</b></div><div class="stat"><div class="mono">Wrong</div><b>3</b></div><div class="stat"><div class="mono">Avg time</div><b>17 s</b></div>
+      </div>
+      <p class="mono" style="margin:20px 0 4px">Sure 5/5 · somewhat 2/3 · guess 0/2</p>
+      <p class="t2" style="margin:0 0 20px">Your confidence is well calibrated: every “sure” was right.</p>
+      <a class="btn dark" href="#quiz" data-go="quiz">Retry the 3 misses →</a> <a class="btn" href="#setup" data-go="setup" style="margin-left:8px">New quiz</a>
+    </div>
+  </div>
+
+  <hr class="rule">
+  <div class="mono eyebrow">When you’ll see these again</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px">
+    <div class="card" style="padding:16px 20px;display:flex;gap:14px;align-items:baseline"><b class="acc" style="font:700 30px var(--fd)">3</b><span style="font-weight:600">Tomorrow</span></div>
+    <div class="card" style="padding:16px 20px;display:flex;gap:14px;align-items:baseline"><b class="t2" style="font:700 30px var(--fd)">2</b><span style="font-weight:600">In 3 days</span></div>
+    <div class="card" style="padding:16px 20px;display:flex;gap:14px;align-items:baseline"><b class="ret" style="font:700 30px var(--fd)">4</b><span style="font-weight:600">In 7 days</span></div>
+    <div class="card" style="padding:16px 20px;display:flex;gap:14px;align-items:baseline"><b class="ret" style="font:700 30px var(--fd)">1</b><span style="font-weight:600">In 14 days</span></div>
+  </div>
+
+  <hr class="rule">
+  <div class="mono eyebrow">Review</div>
+  <div class="list">
+    <div class="review-item"><span class="mono">1</span><div><b>What is the SI unit of energy?</b><div class="t2" style="font-size:13px;margin-top:4px">you: B · Joule &nbsp;·&nbsp; answer: B · Joule</div></div><div style="text-align:right"><div class="mono ret">7 d</div><a class="link" style="font-size:12px">explain →</a></div></div>
+    <div class="review-item"><span class="mono">2</span><div><b>A 5 kg object accelerates at 4 m/s². Net force?</b><div class="t2" style="font-size:13px;margin-top:4px">you: D · 25 N → B · 20 N &nbsp;·&nbsp; answer: B · 20 N &nbsp;·&nbsp; <span class="mono acc" style="text-transform:none">retry · working slip</span></div></div><div style="text-align:right"><div class="mono ret">1 d</div><a class="link" style="font-size:12px">explain →</a></div></div>
+    <div class="review-item"><span class="mono">3</span><div><b>If speed doubles, kinetic energy becomes…</b><div class="t2" style="font-size:13px;margin-top:4px">you: C · four times &nbsp;·&nbsp; answer: C · four times</div></div><div style="text-align:right"><div class="mono ret">14 d</div><a class="link" style="font-size:12px">explain →</a></div></div>
+    <div class="review-item wrong"><span class="mono">4</span><div><b>Explain why the sky is blue (key ideas).</b><div class="t2" style="font-size:13px;margin-top:4px">scattering ✓ &nbsp; wavelength ✓ &nbsp; shorter ✗ &nbsp;·&nbsp; <span class="mono acc" style="text-transform:none">partial 2/3</span></div></div><div style="text-align:right"><div class="mono acc">1 d</div><a class="link" style="font-size:12px">explain →</a></div></div>
+    <div class="review-item wrong"><span class="mono">5</span><div><b>What is Earth’s escape speed?</b><div class="t2" style="font-size:13px;margin-top:4px">you: A · 1.12 km/s &nbsp;·&nbsp; answer: B · 11.2 km/s &nbsp;·&nbsp; <span class="mono acc" style="text-transform:none">concept not clear</span></div></div><div style="text-align:right"><div class="mono acc">1 d</div><a class="link" style="font-size:12px">explain →</a></div></div>
+  </div>
+</section>
+
+<!-- ───────────── 5 PROGRESS ───────────── -->
+<section class="page hidden" id="progress">
+  <div class="hero" style="align-items:start">
+    <div>
+      <div class="mono eyebrow">Progress · 42 attempts · since 2 Sep 2026</div>
+      <h1 class="display" style="font-size:clamp(34px,4.6vw,56px)">You keep 74% of<br>what you learn.</h1>
+      <p class="lead">Up from 61% a month ago. Physics and Chemistry are where most of the leaks are.</p>
+    </div>
+    <div>
+      <div class="mono eyebrow">Last 30 days</div>
+      <div class="strip" id="strip"></div>
+      <div class="row mono" style="margin-top:6px"><span>13 Sep</span><span>today</span></div>
+      <div style="display:flex;gap:40px;margin-top:22px">
+        <div class="stat"><div class="mono">Daily streak</div><b style="font-size:38px">6</b></div>
+        <div class="stat"><div class="mono">Best</div><b style="font-size:38px;color:var(--t2)">11</b></div>
+        <div class="stat"><div class="mono">Due tomorrow</div><b style="font-size:38px;color:var(--accent)">9</b></div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="rule">
+  <div class="grid2">
+    <div class="card"><div class="mono" style="margin-bottom:14px">By region (accuracy · answers)</div><div id="byregion"></div></div>
+    <div class="card"><div class="mono" style="margin-bottom:14px">By skill (weakest first)</div><div id="byskill"></div><p class="t3" style="font-size:12px;margin:14px 0 0">Needs skill tags in the question bank; falls back to region × tier until then.</p></div>
+    <div class="card"><div class="mono" style="margin-bottom:14px">By confidence</div><div id="byconf"></div></div>
+    <div class="card"><div class="mono" style="margin-bottom:14px">Mistake patterns (share of misses)</div><div id="bymistake"></div></div>
+  </div>
+  <div style="margin-top:28px;display:flex;gap:12px;flex-wrap:wrap">
+    <a class="btn acc" href="#quiz" data-go="quiz">Practise weakest skill: Kinematics →</a>
+    <a class="btn dark" href="#learn" data-go="learn">Open Learn: Physics →</a>
+  </div>
+  <p class="t2" style="font-size:14px;margin-top:22px">By difficulty · Easy 86% · Medium 72% · Hard 55% &nbsp;&nbsp; Average time per question 17 s &nbsp;&nbsp; Correct on retry 23%</p>
+</section>
+
+<!-- ───────────── 6 HISTORY ───────────── -->
+<section class="page hidden" id="history">
+  <div class="mono eyebrow">History · 42 attempts</div>
+  <h1 class="display" style="font-size:clamp(34px,4.6vw,56px)">Every attempt, dated.</h1>
+  <p class="lead">Filter by mode, open any attempt to see its full review.</p>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px">
+    <button class="chip dark" aria-pressed="true">All</button><button class="chip dark">Standard</button><button class="chip dark">Daily</button><button class="chip dark">Smart review</button><button class="chip dark">Missed</button><button class="chip dark">Focus skill</button>
+  </div>
+  <div class="list" id="histlist"></div>
+  <div class="card" style="margin-top:22px">
+    <div class="row"><div><div class="mono">Attempt 42 · 13 Oct · standard</div><h3 style="font-size:22px;margin-top:6px">Physics · medium · 10 questions · 70%</h3></div><a class="btn sm" href="#result" data-go="result">Open full review →</a></div>
+    <div class="grid3" style="margin-top:18px">
+      <div class="panel"><div class="mono">Confidence</div><b>Sure 5/5 · Somewhat 2/3 · Guess 0/2</b></div>
+      <div class="panel"><div class="mono">Mistakes</div><b>Working slip 2 · Concept 1</b></div>
+      <div class="panel"><div class="mono">Next reviews</div><b>3 tomorrow · 7 later</b></div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────── 7 LEARN ───────────── -->
+<section class="page hidden" id="learn">
+  <div class="mono eyebrow">Learn · Concept Studio</div>
+  <h1 class="display" style="font-size:clamp(34px,4.6vw,56px)">One idea, four steps.</h1>
+  <p class="lead">Analogy, idea, example, then a one-question check. Progress is saved per lesson. Lessons exist for Maths and Python today; any region can have them.</p>
+  <div class="lesson">
+    <div class="lesson-nav">
+      <div class="mono" style="padding:0 14px 8px">Mathematics</div>
+      <a aria-current="page">Equations as a balance <span class="mono ret" style="float:right;text-transform:none">done</span></a>
+      <a>A derivative is a changing slope</a>
+      <a>Functions as input-output machines</a>
+      <div class="mono" style="padding:16px 14px 8px">Python</div>
+      <a>Variables are named boxes <span class="mono ret" style="float:right;text-transform:none">done</span></a>
+      <a>A loop repeats a small instruction</a>
+      <a>Two names can point to one list</a>
+      <div class="mono" style="padding:16px 14px 8px">Physics</div>
+      <a class="t3">No lessons yet — admin can add</a>
+    </div>
+    <div class="card">
+      <div class="mono">Maths · lesson 1 of 3 · suggested today</div>
+      <h2 style="font-size:30px;margin:8px 0 18px">Equations as a balance</h2>
+      <div class="step"><div class="mono">Analogy</div>Think of an equation as a balanced scale. Whatever you do to one side, do to the other so it stays level.</div>
+      <div class="step"><div class="mono">Idea</div>In 3x + 5 = 20, undo the +5 first, then undo the multiplication by 3. That gives 3x = 15 and x = 5.</div>
+      <div class="step"><div class="mono">Example</div>A box holds x pencils. Three boxes and five loose pencils make 20. Removing the five loose pencils leaves 15, so each box holds 5.</div>
+      <div class="step">
+        <div class="mono">Visual · balance</div>
+        <svg viewBox="0 0 520 120" style="width:100%;max-width:520px;display:block;margin:6px 0 4px">
+          <line x1="40" y1="100" x2="480" y2="100" stroke="var(--line)"/>
+          <line x1="260" y1="100" x2="260" y2="40" stroke="var(--text)" stroke-width="3"/>
+          <line x1="110" y1="40" x2="410" y2="40" stroke="var(--text)" stroke-width="3" stroke-linecap="round"/>
+          <rect x="70" y="56" width="80" height="30" rx="6" fill="var(--surface)" stroke="var(--line2)"/><text x="110" y="76" text-anchor="middle" style="font:600 14px var(--fd);fill:var(--text)">3x + 5</text>
+          <rect x="370" y="56" width="80" height="30" rx="6" fill="var(--surface)" stroke="var(--line2)"/><text x="410" y="76" text-anchor="middle" style="font:600 14px var(--fd);fill:var(--text)">20</text>
+          <circle cx="110" cy="40" r="5" fill="var(--accent)"/><circle cx="410" cy="40" r="5" fill="var(--accent)"/>
+        </svg>
+        <span class="t3" style="font-size:13px">Step 1 of 3 · remove 5 from both pans</span>
+      </div>
+      <div class="step">
+        <div class="mono">Check</div>
+        <b>Solve 2x + 4 = 14.</b>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 14px"><button class="chip dark" aria-pressed="true">x = 5</button><button class="chip dark">x = 9</button><button class="chip dark">x = 18</button></div>
+        <div class="panel" style="background:var(--tint2)"><span class="mono ret">Correct</span> — Subtract 4 from both sides to get 2x = 10, then divide by 2.</div>
+      </div>
+      <div style="display:flex;gap:12px;margin-top:20px"><a class="btn dark">Next lesson →</a><a class="btn" href="#quiz" data-go="quiz">Quiz me on this</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────── 8 TAKE ───────────── -->
+<section class="page hidden" id="take">
+  <div class="mono eyebrow">Today’s Take · 13 October</div>
+  <h1 class="display" style="font-size:clamp(34px,4.6vw,56px)">Make a case in<br>a few sentences.</h1>
+  <p class="lead">One prompt a day. You write a short position; the engine scores it on clarity, evidence, and whether you considered the other side. Past takes stay on record.</p>
+  <div class="grid2" style="grid-template-columns:1.2fr .8fr">
+    <div class="card">
+      <div class="mono">Prompt</div>
+      <h2 style="font-size:26px;margin:8px 0 18px">Should schools replace timed exams with open-book projects?</h2>
+      <textarea placeholder="Take a position, give one reason, and name the strongest objection…">Timed exams measure recall under pressure, which matters less than it used to. Projects show whether someone can find, judge and apply information. The strongest objection is fairness: projects are easier to get help on. A mix, with short timed checks, answers that.</textarea>
+      <div class="row" style="margin-top:12px"><span class="mono">62 words · 1 revision allowed</span><div style="display:flex;gap:8px"><button class="btn">What influenced you?</button><button class="btn acc">Submit take →</button></div></div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="mono">Feedback</div>
+        <div class="score-bars" style="margin:14px 0 18px">
+          <div><div class="mono">Position</div><div class="bar"><i style="width:90%"></i></div></div>
+          <div><div class="mono">Evidence</div><div class="bar low"><i style="width:45%"></i></div></div>
+          <div><div class="mono">Other side</div><div class="bar"><i style="width:80%"></i></div></div>
+        </div>
+        <p class="t2" style="margin:0;font-size:14px">Clear stance and a real objection. Add one concrete example — a subject or a study — and the evidence score rises. You can revise once.</p>
+      </div>
+      <div class="card" style="margin-top:14px">
+        <div class="mono">Past takes</div>
+        <div style="margin-top:10px;font-size:14px">
+          <div class="row" style="padding:8px 0;border-top:1px solid var(--line)"><span>12 Oct · Is homework worth it?</span><span class="mono ret">8/10</span></div>
+          <div class="row" style="padding:8px 0;border-top:1px solid var(--line)"><span>11 Oct · Four-day school week?</span><span class="mono ret">7/10</span></div>
+          <div class="row" style="padding:8px 0;border-top:1px solid var(--line)"><span>9 Oct · Should maths be optional at 16?</span><span class="mono acc">5/10</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="wrap" style="padding-left:0;padding-right:0">VEYRA · scored by a real Python engine · nothing you see here is guessed &nbsp;·&nbsp; Prototype: layout data is illustrative; the built site shows only what the engine returns.</footer>
+</div>
+
+<script src="proto.js"></script>
+</body>
+</html>
