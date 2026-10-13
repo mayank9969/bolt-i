@@ -128,3 +128,17 @@ textarea{width:100%;min-height:150px;border:1px solid var(--line);border-radius:
 
 footer{border-top:1px solid var(--line);padding:18px 0 40px;color:var(--t3);font-size:12px}
 .hidden{display:none}
+
+/* 3D hosts — SVG/CSS fallback underneath, WebGL canvas on top when available */
+.gl-host{position:relative}
+.gl-host .gl{position:absolute;inset:0;width:100%;height:100%;display:block}
+.gl-host .gl-overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;pointer-events:none}
+.gl-host:not(.has-gl) .gl-overlay{display:none}
+.gl-host.has-gl > svg,.gl-host.has-gl > .strip{visibility:hidden}
+.dial-host{width:min(100%,460px);aspect-ratio:1;margin:0 auto}
+.dial-host.has-gl{transform:translateY(-6%)}
+.timer-host{position:absolute;right:18px;top:14px;width:84px;height:84px}
+.score-host{width:100%;max-width:320px;aspect-ratio:1}
+.relief-host{height:150px}.relief-host .strip{height:70px;margin-top:80px}
+.balance-host{height:240px;max-width:560px}.balance-host.has-gl > svg{visibility:hidden}
+.timer-host .gl-overlay{display:flex!important}
