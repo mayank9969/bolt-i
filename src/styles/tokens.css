@@ -31,9 +31,9 @@
   --color-text-rgb: 27 34 48;               /* #1B2230 deep ink */
   --color-text-muted-rgb: 74 82 98;         /* #4A5262 */
   --color-border: rgb(var(--color-text-rgb) / 0.12);
-  --color-accent-rgb: 30 107 106;           /* #1E6B6A deep teal */
-  --color-accent-hover-rgb: 24 90 89;       /* #185A59 */
-  --color-accent-active-rgb: 18 72 71;      /* #124847 */
+  --color-accent-rgb: 22 130 126;           /* #16827E brighter teal, still ≥4.5:1 on pearl */
+  --color-accent-hover-rgb: 18 112 109;     /* #12706D */
+  --color-accent-active-rgb: 14 94 91;      /* #0E5E5B */
   --color-on-accent-rgb: 255 254 250;       /* pearl on teal */
   --color-warm-rgb: 176 78 51;              /* #B04E33 terracotta — review only */
   --color-warm-text-rgb: 158 69 48;         /* #9E4530 */
@@ -96,9 +96,9 @@
   --nx-disabled-text-rgb: 139 145 152;      /* #8B9198 decorative / disabled only */
 
   /* atmosphere: one faint teal wash top-right, nothing else */
-  --nx-deco-1: rgb(var(--nx-accent-rgb) / 0.045);       /* soft teal haze, horizon */
-  --nx-deco-2: rgb(255 248 232 / 0.9);                   /* warm sunlight haze (atmosphere, not UI blur) */
-  --nx-deco-3: rgb(var(--nx-warm-rgb) / 0.04);
+  --nx-deco-1: rgb(var(--nx-accent-rgb) / 0.12);
+  --nx-deco-2: rgb(255 236 200 / 0.85);
+  --nx-deco-3: rgb(var(--nx-warm-rgb) / 0.10);
   --nx-grid: rgb(var(--nx-text-rgb) / 0.045);
   --nx-noise-opacity: 0.035;
 
@@ -119,7 +119,7 @@
   --nx-3d-land-1: #c5c8c6;   /* lit platform (sampled ~#B1B5B4, lifted) */
   --nx-3d-land-2: #d8dbd8;   /* mid terrace */
   --nx-3d-land-3: #e8eae7;   /* summit — pearl, still off the canvas */
-  --nx-3d-bridge: #1e6b6a;
+  --nx-3d-bridge: #16827e;
   --nx-3d-cloud: #ffffff;
   --nx-3d-key: #fff4e4;      /* sunlight */
   --nx-3d-sky: #e2e7e0;      /* sampled horizon haze */
@@ -137,9 +137,9 @@
   --color-text-rgb: 242 237 228;            /* #F2EDE4 brighter ivory */
   --color-text-muted-rgb: 196 194 184;      /* #C4C2B8 */
   --color-border: rgb(var(--color-text-rgb) / 0.12);
-  --color-accent-rgb: 126 207 200;          /* #7ECFC8 teal, easier to pick out on ink */
-  --color-accent-hover-rgb: 155 221 214;    /* #9BDDD6 */
-  --color-accent-active-rgb: 106 186 179;   /* #6ABAB3 */
+  --color-accent-rgb: 140 224 216;          /* #8CE0D8 brighter teal on ink */
+  --color-accent-hover-rgb: 168 236 230;    /* #A8ECE6 */
+  --color-accent-active-rgb: 110 200 192;   /* #6EC8C0 */
   --color-on-accent-rgb: 15 20 30;          /* ink on teal */
   --color-warm-rgb: 235 160 127;            /* #EBA07F terracotta */
   --color-warm-text-rgb: 235 160 127;
@@ -193,9 +193,9 @@
   --nx-disabled: rgb(var(--nx-text-rgb) / 0.06);
   --nx-disabled-text-rgb: 96 103 116;
 
-  --nx-deco-1: rgb(var(--nx-accent-rgb) / 0.16);
-  --nx-deco-2: rgb(72 92 128 / 0.5);                     /* moonlight, top */
-  --nx-deco-3: rgb(var(--nx-warm-rgb) / 0.08);
+  --nx-deco-1: rgb(var(--nx-accent-rgb) / 0.22);
+  --nx-deco-2: rgb(90 120 170 / 0.45);
+  --nx-deco-3: rgb(var(--nx-warm-rgb) / 0.12);
   --nx-grid: rgb(var(--nx-text-rgb) / 0.04);
   --nx-noise-opacity: 0.04;
 
@@ -203,7 +203,7 @@
   --nx-3d-land-1: #556274;   /* lifted slate vs #0F141E */
   --nx-3d-land-2: #6a788c;
   --nx-3d-land-3: #8896a8;   /* summit catches the key light */
-  --nx-3d-bridge: #9ee0da;
+  --nx-3d-bridge: #8ce0d8;
   --nx-3d-cloud: #a8b4c6;
   --nx-3d-key: #ffd9b0;
   --nx-3d-sky: #18202c;

@@ -194,6 +194,22 @@ export default function Home() {
         </Reveal>
       </section>
 
+      {/* ── Quote: open air, no body copy behind — haze lives here, type stays sharp ── */}
+      <section className="relative py-28 md:py-40 overflow-hidden" aria-label="Epigraph">
+        <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+          <div
+            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(80vw,52rem)] h-[min(50vw,28rem)] rounded-full blur-[90px]"
+            style={{ background: 'radial-gradient(circle, var(--nx-deco-2) 0%, var(--nx-deco-1) 45%, transparent 70%)' }}
+          />
+        </div>
+        <blockquote className="relative z-10 mx-auto max-w-page px-6 text-center">
+          <p className="font-sans italic font-normal text-[1.65rem] sm:text-3xl md:text-4xl text-fg max-w-[18ch] mx-auto text-balance leading-snug tracking-tight">
+            “Everyone forgets that Icarus also flew.”
+          </p>
+          <footer className="mt-6 t-caption text-fg-3">Jack Gilbert · Failing and Flying</footer>
+        </blockquote>
+      </section>
+
       {/* ── Regions: real catalogue, ruled rows not cards ──────────── */}
       <section className="relative max-w-page mx-auto px-5 sm:px-6 lg:px-8 pb-24 md:pb-36">
         <Reveal>
