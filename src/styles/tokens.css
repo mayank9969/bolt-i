@@ -25,16 +25,16 @@
   color-scheme: light;
 
   /* Layer 1 — semantic contract */
-  --color-bg-rgb: 246 250 247;              /* #F6FAF7 mint-white — quote-band field, site-wide */
-  --color-surface-rgb: 231 240 234;         /* #E7F0EA recessed mint rail */
-  --color-surface-raised-rgb: 251 253 252;  /* #FBFDFC card */
-  --color-text-rgb: 26 34 48;               /* #1A2230 */
-  --color-text-muted-rgb: 90 102 108;       /* #5A666C caption grey from the quote band */
+  --color-bg-rgb: 250 251 250;              /* #FAFBFA luminous white of the original quote band */
+  --color-surface-rgb: 238 242 240;         /* #EEF2F0 */
+  --color-surface-raised-rgb: 253 254 253;  /* #FDFEFD card */
+  --color-text-rgb: 27 34 48;               /* #1B2230 original quote ink */
+  --color-text-muted-rgb: 74 82 98;         /* #4A5262 original caption */
   --color-border: rgb(var(--color-text-rgb) / 0.10);
-  --color-accent-rgb: 18 118 114;           /* #127672 — mint teal, ≥4.5:1 on #F6FAF7 */
+  --color-accent-rgb: 22 130 126;           /* #16827E “02 — Islands” teal */
   --color-accent-hover-rgb: 18 112 109;
   --color-accent-active-rgb: 14 94 91;
-  --color-on-accent-rgb: 246 250 247;
+  --color-on-accent-rgb: 250 251 250;
   --color-warm-rgb: 176 78 51;
   --color-warm-text-rgb: 158 69 48;
   --color-focus: rgb(var(--color-accent-rgb) / 0.9);
@@ -42,14 +42,14 @@
   /* Layer 2 — surfaces: surface < bg < elevated < card < card-strong. No #FFFFFF. */
   --nx-canvas-rgb: var(--color-bg-rgb);
   --nx-surface-rgb: var(--color-surface-rgb);
-  --nx-elevated-rgb: 240 247 243;           /* #F0F7F3 */
+  --nx-elevated-rgb: 245 248 246;
   --nx-card-rgb: var(--color-surface-raised-rgb);
   --nx-card-strong-rgb: 254 255 254;
 
   --nx-text-rgb: var(--color-text-rgb);
   --nx-text-2-rgb: var(--color-text-muted-rgb);
-  --nx-text-3-rgb: 90 102 108;              /* #5A666C */
-  --nx-text-inverse-rgb: 246 250 247;
+  --nx-text-3-rgb: 99 106 119;              /* #636A77 */
+  --nx-text-inverse-rgb: 250 251 250;
 
   /* lines: ink at low alpha, so they warm with the surface beneath */
   --nx-line: var(--color-border);
@@ -95,13 +95,13 @@
   --nx-disabled-text-rgb: 139 145 152;      /* #8B9198 decorative / disabled only */
 
   /* atmosphere: one faint teal wash top-right, nothing else */
-  --nx-deco-1: rgb(22 130 126 / 0.16);      /* mint-teal wash */
-  --nx-deco-2: rgb(210 240 220 / 0.95);     /* luminous mint haze (the quote-band glow) */
-  --nx-deco-3: rgb(22 130 126 / 0.08);
+  --nx-deco-1: rgb(22 130 126 / 0.07);
+  --nx-deco-2: rgb(236 248 240 / 0.7);      /* original quote glow — pale, not a green slab */
+  --nx-deco-3: rgb(22 130 126 / 0.04);
   --nx-grid: rgb(var(--nx-text-rgb) / 0.04);
-  --nx-noise-opacity: 0.025;
+  --nx-noise-opacity: 0.02;
 
-  --nx-shadow-ink: 120 140 132;             /* cool sage shadow */
+  --nx-shadow-ink: 130 140 136;
   --nx-shadow-1: 0 1px 0 0 rgb(255 255 255 / 0.6) inset, 0 1px 2px rgb(var(--nx-shadow-ink) / 0.05), 0 14px 36px -18px rgb(var(--nx-shadow-ink) / 0.18);
   --nx-shadow-2: 0 1px 0 0 rgb(255 255 255 / 0.8) inset, 0 2px 4px rgb(var(--nx-shadow-ink) / 0.05), 0 30px 64px -26px rgb(var(--nx-shadow-ink) / 0.26);
   --nx-shadow-inset: 0 0 0 1px rgb(var(--nx-shadow-ink) / 0.03) inset, 0 1px 6px rgb(var(--nx-shadow-ink) / 0.07) inset;
@@ -113,15 +113,15 @@
   /* Archipelago (three.js reads these; same names in Ink) */
   /* Rose Island (public case-study frames) sampled: lit structure #B1B5B4, shaded #A8AEAC / #A09694,
      horizon haze #E2E7E0 — i.e. warm-grey shadow on a bright, barely-tinted field. */
-  --nx-3d-rock: #8a9a92;
-  --nx-3d-land-1: #c5d4cc;
-  --nx-3d-land-2: #d5e4dc;
-  --nx-3d-land-3: #e8f2ec;
-  --nx-3d-bridge: #127672;
+  --nx-3d-rock: #9aa39e;
+  --nx-3d-land-1: #cfd6d2;
+  --nx-3d-land-2: #dde4e0;
+  --nx-3d-land-3: #eef2ef;
+  --nx-3d-bridge: #16827e;
   --nx-3d-cloud: #ffffff;
-  --nx-3d-key: #f3ffe8;
-  --nx-3d-sky: #eaf5ee;
-  --nx-3d-ground: #c5d4cc;
+  --nx-3d-key: #f7fff4;
+  --nx-3d-sky: #f3f7f4;
+  --nx-3d-ground: #cfd6d2;
 }
 
 /* ────────────────────────── INK ────────────────────────── */

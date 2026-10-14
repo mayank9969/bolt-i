@@ -199,7 +199,7 @@ export default function Home() {
         <div className="pointer-events-none absolute inset-0" aria-hidden="true">
           <div
             className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(80vw,52rem)] h-[min(50vw,28rem)] rounded-full blur-[90px]"
-            style={{ background: 'radial-gradient(circle, var(--nx-deco-2) 0%, var(--nx-deco-1) 45%, transparent 70%)' }}
+            style={{ background: 'radial-gradient(circle, var(--nx-deco-2) 0%, transparent 68%)' }}
           />
         </div>
         <blockquote className="relative z-10 mx-auto max-w-page px-6 text-center">
