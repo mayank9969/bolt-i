@@ -113,15 +113,15 @@
   /* Archipelago (three.js reads these; same names in Ink) */
   /* Rose Island (public case-study frames) sampled: lit structure #B1B5B4, shaded #A8AEAC / #A09694,
      horizon haze #E2E7E0 — i.e. warm-grey shadow on a bright, barely-tinted field. */
-  --nx-3d-rock: #9aa39e;
-  --nx-3d-land-1: #cfd6d2;
-  --nx-3d-land-2: #dde4e0;
-  --nx-3d-land-3: #eef2ef;
+  --nx-3d-rock: #1a1a1a;
+  --nx-3d-land-1: #242424;   /* black islands on the white field */
+  --nx-3d-land-2: #2e2e2e;
+  --nx-3d-land-3: #3a3a3a;
   --nx-3d-bridge: #16827e;
   --nx-3d-cloud: #ffffff;
-  --nx-3d-key: #f7fff4;
-  --nx-3d-sky: #f3f7f4;
-  --nx-3d-ground: #cfd6d2;
+  --nx-3d-key: #ffffff;
+  --nx-3d-sky: #fafbfa;
+  --nx-3d-ground: #e8ebe9;
 }
 
 /* ────────────────────────── INK ────────────────────────── */

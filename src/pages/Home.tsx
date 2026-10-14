@@ -198,7 +198,7 @@ export default function Home() {
       <section className="relative py-28 md:py-40 overflow-hidden" aria-label="Epigraph">
         <div className="pointer-events-none absolute inset-0" aria-hidden="true">
           <div
-            className="quote-veil absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(80vw,52rem)] h-[min(50vw,28rem)] rounded-full blur-[100px]"
+            className="quote-veil absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
           />
         </div>
         <blockquote className="relative z-10 mx-auto max-w-page px-6 text-center">
