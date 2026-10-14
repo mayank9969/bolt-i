@@ -104,6 +104,7 @@ export function buildIslands(categories: CategoryInfo[]): { islands: Island[]; b
     const rad = n === 1 ? 0 : 1.15 + 1.05 * Math.sqrt(i)
     const share = questions / total
     const r = 0.55 + Math.min(0.45, Math.sqrt(share * Math.max(1, n)) * 0.5)
+    const exhibitIsle = id === 'maths' || id === 'python'
     const layerCount = 2 + (seed > 0.45 ? 1 : 0)
     const layers: [number, number][] = []
     for (let k = 0; k < layerCount; k++) layers.push([1 - k * (0.26 + hash01(id, k + 7) * 0.12), 0.1 + hash01(id, k + 20) * 0.06])
@@ -116,11 +117,15 @@ export function buildIslands(categories: CategoryInfo[]): { islands: Island[]; b
       x: Math.cos(ang) * rad,
       y: (hash01(id, 3) - 0.5) * 0.5,
       z: Math.sin(ang) * rad * 0.78,
-      r,
+      r: exhibitIsle ? r * 1.18 : r,
       seed,
-      sides: 6 + Math.floor(hash01(id, 5) * 4),
-      layers,
-      peak: hash01(id, 9) > 0.55,
+      sides: exhibitIsle && id === 'maths' ? 8 : exhibitIsle && id === 'python' ? 5 : 6 + Math.floor(hash01(id, 5) * 4),
+      layers: exhibitIsle && id === 'maths'
+        ? ([[1, 0.11], [0.78, 0.1], [0.52, 0.09], [0.28, 0.08]] as [number, number][])
+        : exhibitIsle && id === 'python'
+          ? ([[1, 0.1], [0.82, 0.09], [0.58, 0.09], [0.36, 0.1]] as [number, number][])
+          : layers,
+      peak: exhibitIsle ? false : hash01(id, 9) > 0.55,
       prop: PROPS[id] ?? 'beacon',
     }
   })

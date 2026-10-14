@@ -45,7 +45,7 @@ export default function Layout({ children }: { children: ReactNode }) {
 
       <header
         className={`sticky top-0 z-50 transition-colors duration-300 border-b ${
-          scrolled || open ? 'bg-canvas/85 backdrop-blur-md border-line' : 'bg-transparent border-transparent'
+          scrolled || open ? 'bg-canvas border-line' : 'bg-transparent border-transparent'
         }`}
       >
         <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
@@ -157,7 +157,7 @@ function NavItem({ to, label }: { to: string; label: string }) {
 
 function Footer() {
   return (
-    <footer className="relative z-10 mt-auto border-t border-line-strong bg-canvas/70 backdrop-blur-sm">
+    <footer className="relative z-10 mt-auto border-t border-line-strong bg-canvas">
       <div className="max-w-page mx-auto px-5 sm:px-6 lg:px-8 py-10 grid sm:grid-cols-12 gap-6 items-end">
         <div className="sm:col-span-6 flex items-center gap-3">
           <LogoMark size={24} />

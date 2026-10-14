@@ -25,9 +25,9 @@
   color-scheme: light;
 
   /* Layer 1 — semantic contract */
-  --color-bg-rgb: 242 244 243;              /* #F2F4F3 luminous near-white — cool, not beige (Rose Island field) */
-  --color-surface-rgb: 232 235 234;         /* #E8EBEA recessed band / rail (soft neutral grey) */
-  --color-surface-raised-rgb: 251 252 252;  /* #FBFCFC card */
+  --color-bg-rgb: 246 247 245;              /* #F6F7F5 pearl-white field (Rose Island atmosphere, not beige) */
+  --color-surface-rgb: 234 236 234;         /* #EAECEA recessed band */
+  --color-surface-raised-rgb: 252 252 251;  /* #FCFCFB card */
   --color-text-rgb: 27 34 48;               /* #1B2230 deep ink (blue-black) 14.8:1 */
   --color-text-muted-rgb: 74 82 98;         /* #4A5262 7.3:1 */
   --color-border: rgb(var(--color-text-rgb) / 0.10);
@@ -96,8 +96,8 @@
   --nx-disabled-text-rgb: 139 145 152;      /* #8B9198 decorative / disabled only */
 
   /* atmosphere: one faint teal wash top-right, nothing else */
-  --nx-deco-1: rgb(var(--nx-accent-rgb) / 0.07);        /* teal haze, horizon */
-  --nx-deco-2: rgb(255 252 248 / 0.9);                   /* pale sunlight, top */
+  --nx-deco-1: rgb(var(--nx-accent-rgb) / 0.055);       /* soft teal haze, horizon */
+  --nx-deco-2: rgb(255 253 248 / 0.95);                  /* pale sunlight, top */
   --nx-deco-3: rgb(var(--nx-warm-rgb) / 0.05);           /* faint terracotta, low left */
   --nx-grid: rgb(var(--nx-text-rgb) / 0.05);
   --nx-noise-opacity: 0.06;

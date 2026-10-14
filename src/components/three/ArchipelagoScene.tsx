@@ -188,19 +188,27 @@ function IslandMesh({
       <mesh position={[0, -rockH / 2, 0]} rotation={[0, island.seed * Math.PI, 0]} material={rockMat} castShadow receiveShadow>
         <cylinderGeometry args={[r * 0.98, r * 0.16, rockH, seg, 1]} />
       </mesh>
-      {/* plateaus */}
-      {stack.map((l, i) => (
-        <mesh key={i} position={[l.dx, l.y, l.dz]} rotation={[0, l.rot, 0]} material={landMats[Math.min(2, i)]} castShadow receiveShadow>
-          <cylinderGeometry args={[l.radius, l.radius * 1.04, l.h, seg + 2, 1]} />
-        </mesh>
-      ))}
-      {island.peak && (
+      {/* plateaus — Mathematics and Python get a designed miniature; others stay data-driven cylinders */}
+      {island.id === 'maths' ? (
+        <MathsLand r={r} stack={stack} land={landMats} teal={tealMat} ink={propMat} seg={seg} />
+      ) : island.id === 'python' ? (
+        <PythonLand r={r} stack={stack} land={landMats} teal={tealMat} ink={propMat} />
+      ) : (
+        stack.map((l, i) => (
+          <mesh key={i} position={[l.dx, l.y, l.dz]} rotation={[0, l.rot, 0]} material={landMats[Math.min(2, i)]} castShadow receiveShadow>
+            <cylinderGeometry args={[l.radius, l.radius * 1.04, l.h, seg + 2, 1]} />
+          </mesh>
+        ))
+      )}
+      {island.peak && island.id !== 'maths' && island.id !== 'python' && (
         <mesh position={[-topLayer.radius * 0.45, topY + r * 0.22, topLayer.radius * 0.3]} material={landMats[2]} castShadow>
           <coneGeometry args={[r * 0.26, r * 0.46, 5]} />
         </mesh>
       )}
       <group ref={propGroup}>
-        <Prop kind={island.prop} r={r} y={topY} ink={propMat} teal={tealMat} land={landMats[0]} />
+        {island.id !== 'maths' && island.id !== 'python' && (
+          <Prop kind={island.prop} r={r} y={topY} ink={propMat} teal={tealMat} land={landMats[0]} />
+        )}
       </group>
       {hasExhibit(island.id) && !exhibitOpen && (
         <mesh position={[0, topY + 0.02, 0]} rotation={[-Math.PI / 2, 0, 0]} material={tealMat}>
@@ -226,6 +234,61 @@ function IslandMesh({
           </span>
         </Html>
       )}
+    </group>
+  )
+}
+
+type LandLayer = { radius: number; h: number; y: number; dx: number; dz: number; rot: number }
+
+/** Mathematics — concentric octagonal terraces (place-value board) and a standing zero. */
+function MathsLand({ r, stack, land, teal, ink, seg }: { r: number; stack: LandLayer[]; land: THREE.Material[]; teal: THREE.Material; ink: THREE.Material; seg: number }) {
+  const top = stack.reduce((s, l) => s + l.h, 0)
+  return (
+    <group>
+      {stack.map((l, i) => (
+        <mesh key={i} position={[0, l.y, 0]} material={land[Math.min(2, i)]} castShadow receiveShadow>
+          <cylinderGeometry args={[l.radius, l.radius * 1.06, l.h, Math.max(8, seg), 1]} />
+        </mesh>
+      ))}
+      {/* rim counters — empty place in the middle of one arc */}
+      {Array.from({ length: 10 }, (_, i) => {
+        if (i === 4 || i === 5) return null
+        const a = (i / 10) * Math.PI * 2
+        return (
+          <mesh key={i} position={[Math.cos(a) * r * 0.72, top + 0.04, Math.sin(a) * r * 0.72]} material={ink} castShadow>
+            <cylinderGeometry args={[0.045, 0.045, 0.05, 10]} />
+          </mesh>
+        )
+      })}
+      <mesh position={[0, top + r * 0.28, 0]} rotation={[Math.PI / 2, 0, 0]} material={teal} castShadow>
+        <torusGeometry args={[r * 0.16, r * 0.035, 10, 32]} />
+      </mesh>
+    </group>
+  )
+}
+
+/** Python — indented slabs like nested blocks, a teal “cursor”. */
+function PythonLand({ r, stack, land, teal, ink }: { r: number; stack: LandLayer[]; land: THREE.Material[]; teal: THREE.Material; ink: THREE.Material }) {
+  const indents = [0, 0.12, 0.28, 0.16]
+  return (
+    <group>
+      {stack.map((l, i) => {
+        const w = r * (1.7 - i * 0.32)
+        const d = r * (1.15 - i * 0.12)
+        return (
+          <mesh key={i} position={[indents[i] * r - r * 0.08, l.y, 0]} material={land[Math.min(2, i)]} castShadow receiveShadow>
+            <boxGeometry args={[w, l.h, d]} />
+          </mesh>
+        )
+      })}
+      {stack.map((l, i) => (
+        <mesh key={`line-${i}`} position={[indents[i] * r + r * 0.05, l.y + l.h * 0.55, r * 0.42]} material={i === 2 ? teal : ink} castShadow>
+          <boxGeometry args={[r * (0.7 - i * 0.12), 0.03, 0.05]} />
+        </mesh>
+      ))}
+      <mesh position={[r * 0.42, stack[stack.length - 1].y + 0.14, 0]} material={teal} castShadow>
+        <boxGeometry args={[0.08, 0.16, 0.08]} />
+      </mesh>
     </group>
   )
 }
@@ -613,7 +676,7 @@ function Director({ islands, worldRef }: { islands: Island[]; worldRef: React.Re
       _v.x += s.px * 0.35 * pin
       _v.y += s.py * 0.2 * pin
     }
-    const l = 1 - Math.exp(-2.2 * dt)
+    const l = 1 - Math.exp(-(exhibit ? 1.15 : 2.2) * dt)
     st.pos.lerp(_v, l)
     st.look.lerp(_v2, l)
     st.off.lerp(off, l)
@@ -648,7 +711,7 @@ function Director({ islands, worldRef }: { islands: Island[]; worldRef: React.Re
 function Lights({ palette, quality }: { palette: Palette; quality: Quality }) {
   return (
     <>
-      <hemisphereLight args={[palette.sky, palette.ground, palette.dark ? 1.1 : 1.6]} />
+      <hemisphereLight args={[palette.sky, palette.ground, palette.dark ? 1.15 : 1.85]} />
       <directionalLight
         position={[-6, 9, 5]}
         intensity={palette.dark ? 1.5 : 1.8}
