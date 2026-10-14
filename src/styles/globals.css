@@ -651,7 +651,7 @@
     min-height: 240px;
     border-radius: 1.25rem;
     border: 1px solid var(--nx-line-strong);
-    background: rgb(var(--nx-surface-rgb));
+    background: var(--nx-3d-sky, rgb(var(--nx-surface-rgb)));
     box-shadow: var(--nx-shadow-1);
     overflow: hidden;
   }

@@ -662,7 +662,11 @@ function Director({ islands, worldRef }: { islands: Island[]; worldRef: React.Re
       fov = narrow ? 42 : 30
       off.set(s.framed ? 0 : narrow ? 0 : -2.3, s.framed ? 0 : narrow ? 1.15 : 0, 0)
     } else if (s.mode === 'hero') {
-      // scroll: a restrained guided reveal — orbit a little and come closer
+      if (s.framed) {
+        _v.set(narrow ? 0.3 : 3.6, narrow ? 4.0 : 3.2, narrow ? 6.8 : 6.0)
+        _v2.set(0, 0.2, 0)
+        fov = narrow ? 40 : 32
+      }
       const k = s.scroll
       const ang = k * 0.5
       const dx = _v.x - _v2.x

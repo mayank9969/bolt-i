@@ -115,15 +115,15 @@
   /* Archipelago (three.js reads these; same names in Ink) */
   /* Rose Island (public case-study frames) sampled: lit structure #B1B5B4, shaded #A8AEAC / #A09694,
      horizon haze #E2E7E0 — i.e. warm-grey shadow on a bright, barely-tinted field. */
-  --nx-3d-rock: #9aa19e;     /* island underside — cool grey stone, darker than the field */
-  --nx-3d-land-1: #c5cbc8;   /* lowest plateau — reads against #F2F4F3 */
-  --nx-3d-land-2: #d5dbd8;   /* middle plateau */
-  --nx-3d-land-3: #e4e9e6;   /* summit — still off the canvas */
+  --nx-3d-rock: #6f7673;     /* island underside — clearly darker than pearl field */
+  --nx-3d-land-1: #a8b0ac;   /* lowest plateau */
+  --nx-3d-land-2: #bec6c2;   /* middle plateau */
+  --nx-3d-land-3: #d2dad6;   /* summit — still a step off the canvas */
   --nx-3d-bridge: #1e6b6a;   /* deep-teal bridges */
   --nx-3d-cloud: #ffffff;
   --nx-3d-key: #fff8f0;      /* pale sunlight */
-  --nx-3d-sky: #e4eae8;      /* hemisphere sky — horizon haze */
-  --nx-3d-ground: #b7bdb9;   /* hemisphere ground bounce */
+  --nx-3d-sky: #eef1ef;
+  --nx-3d-ground: #9aa19e;
 }
 
 /* ────────────────────────── INK ────────────────────────── */
