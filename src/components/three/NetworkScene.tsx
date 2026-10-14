@@ -8,7 +8,12 @@ import { onThemeChange, readToken, tokenHex } from '@/lib/theme'
 import { categoryCluster } from '@/lib/categories'
 
 /**
- * THE LIVING KNOWLEDGE NETWORK
+ * THE MEMORY LOOM (v4) — formerly the Living Knowledge Network
+ *
+ * Same persistent scene, re-art-directed: edges are woven bows instead of
+ * straight spokes, each region hangs inside two thin elliptical loom frames,
+ * long warp threads span the volume, and topic nodes whose latest real attempt
+ * had wrong answers turn terracotta (store.reviewCategories — never invented).
  *
  * One persistent WebGL scene under every page. Three regions of knowledge
  * (Sciences · Humanities · Mixed) sit at different depths; each has a dark core,
@@ -18,7 +23,7 @@ import { categoryCluster } from '@/lib/categories'
  * ripples. Optional links relink slowly so the network rearranges instead
  * of spinning. Fog dissolves the far regions into the paper.
  *
- * Green means knowledge that is active/meaningful: activated nodes, the
+ * Teal means knowledge that is active/meaningful: activated nodes, the
  * travelling signal, the hovered neighbourhood, the answered path on
  * Result. Everything neutral stays bone and graphite.
  *

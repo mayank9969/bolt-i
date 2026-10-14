@@ -203,9 +203,10 @@ export default function About() {
             {/* 05 · The name */}
             <Section id="name" n="05" title="Why “VEYRA”">
               <p className="t-body text-fg-2 text-pretty">
-                Knowledge isn’t a list you finish; it’s a network you build. Every question is a node, every correct answer a
-                connection, and the Living Knowledge Network behind these pages is that idea made visible: quiet while
-                you answer, lit where you’ve been.
+                Knowledge isn’t a list you finish; it’s a structure you weave. Every question is a node, every correct answer a
+                thread, and the Memory Loom behind these pages is that idea made visible: teal strands where ideas connect,
+                quiet while you answer, lit where you’ve been — and a terracotta node on any region your last attempt
+                left unfinished.
               </p>
               <dl className="mt-6 grid sm:grid-cols-3 gap-x-8 gap-y-6 border-t border-line-strong pt-6">
                 {[
@@ -232,7 +233,7 @@ export default function About() {
                 Built by <span className="font-medium">Mayank Sarwal</span> as a personal product: a Python quiz engine first, then this interface
                 on top of it, unchanged.
               </p>
-              <p className="t-caption text-fg-3 mt-2">Paper and Ink themes · one green · Geist · the Living Knowledge Network.</p>
+              <p className="t-caption text-fg-3 mt-2">Paper and Ink themes · teal and terracotta · Geist · the Memory Loom.</p>
             </div>
             <Link to="/setup" className="btn-primary btn-lg group shrink-0">
               Start a quiz
