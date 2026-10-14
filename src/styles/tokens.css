@@ -129,9 +129,9 @@
   color-scheme: dark;
 
   /* Layer 1 — semantic contract */
-  --color-bg-rgb: 10 18 20;                 /* #0A1214 deep teal-ink, not inverted mint */
-  --color-surface-rgb: 8 14 16;
-  --color-surface-raised-rgb: 28 44 46;     /* #1C2C2E mint-slate card */
+  --color-bg-rgb: 8 8 8;                    /* #080808 black — matches the map void */
+  --color-surface-rgb: 12 12 12;
+  --color-surface-raised-rgb: 28 28 28;
   --color-text-rgb: 247 247 244;            /* #F7F7F4 white, same role as navy on Paper */
   --color-text-muted-rgb: 176 196 188;
   --color-border: rgb(var(--color-text-rgb) / 0.12);
@@ -146,9 +146,9 @@
   /* Layer 2 — surfaces: deeper = darker */
   --nx-canvas-rgb: var(--color-bg-rgb);
   --nx-surface-rgb: var(--color-surface-rgb);
-  --nx-elevated-rgb: 22 36 38;
+  --nx-elevated-rgb: 22 22 22;
   --nx-card-rgb: var(--color-surface-raised-rgb);
-  --nx-card-strong-rgb: 36 56 58;
+  --nx-card-strong-rgb: 36 36 36;
 
   --nx-text-rgb: var(--color-text-rgb);
   --nx-text-2-rgb: var(--color-text-muted-rgb);
@@ -197,15 +197,15 @@
   --nx-grid: rgb(var(--nx-text-rgb) / 0.04);
   --nx-noise-opacity: 0.04;
 
-  --nx-3d-rock: #1c1c1c;     /* black, brighter than the void so the silhouette reads */
-  --nx-3d-land-1: #2a2a2a;
-  --nx-3d-land-2: #343434;
-  --nx-3d-land-3: #404040;
+  --nx-3d-rock: #2a2a2a;     /* underside, still darker than the white plateau */
+  --nx-3d-land-1: #d8d8d8;   /* white islands on black void */
+  --nx-3d-land-2: #ececec;
+  --nx-3d-land-3: #f7f7f7;
   --nx-3d-bridge: #8ce0d8;
   --nx-3d-cloud: #3a3a3a;
-  --nx-3d-key: #f0f0f0;      /* white key — no mint wash on every island */
-  --nx-3d-sky: #080808;
-  --nx-3d-ground: #050505;
+  --nx-3d-key: #ffffff;
+  --nx-3d-sky: #050505;
+  --nx-3d-ground: #000000;
 
   --nx-shadow-ink: 0 0 0;
   --nx-shadow-1: 0 1px 0 0 rgb(255 255 255 / 0.04) inset, 0 12px 32px -14px rgb(0 0 0 / 0.55);

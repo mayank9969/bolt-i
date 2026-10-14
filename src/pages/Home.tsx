@@ -105,7 +105,7 @@ export default function Home() {
           className="relative z-10 max-w-page mx-auto w-full px-5 sm:px-6 lg:px-8 mt-6"
           aria-label="Categories"
         >
-          <div className="category-dock ink-sheet">
+          <div className="category-dock">
             <div className="flex items-center justify-between gap-6 figcap mb-3">
               <span className="inline-flex items-center gap-3 min-w-0">
                 <span className="w-8 h-px bg-line-strong shrink-0" />
@@ -211,7 +211,7 @@ export default function Home() {
       </section>
 
       {/* ── Regions: real catalogue, ruled rows not cards ──────────── */}
-      <section className="ink-sheet relative max-w-page mx-auto px-5 sm:px-6 lg:px-8 py-16 md:py-24 rounded-2xl mb-24 md:mb-36">
+      <section className="relative max-w-page mx-auto px-5 sm:px-6 lg:px-8 pb-24 md:pb-36">
         <Reveal>
           <div className="grid lg:grid-cols-12 gap-8 items-baseline mb-6">
             <span className="lg:col-span-2 index">02 — Islands</span>
