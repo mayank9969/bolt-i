@@ -45,3 +45,26 @@ Python 1991, Turing 1936, Principia 1687, Mendeleev 1869, Darwin 1859, Hubble 19
 Eratosthenes, Herodotus, Wealth of Nations 1776, Boole 1854, Johnson 1755, Encyclopédie).
 The Wikipedia links were written from memory; they could not be re-opened from the build
 sandbox and should be spot-checked once.
+
+## v5.1 — Exhibits (first two: Mathematics, Python)
+Islands whose API id has an entry in `src/lib/exhibits.ts` (`maths`, `python` — read from
+`/api/categories`, not assumed by position) open an **exhibit** instead of the field guide:
+- the camera steps into the island (close, low; a different side for each beat) and the
+  island's own prop steps aside for a **diorama** (`Diorama` in `ArchipelagoScene.tsx`) that
+  shows one beat at a time — before / breakthrough / after;
+- the **exhibit card** (`src/components/Exhibit.tsx`) carries the whole story in text: three
+  beats (stepper, ← → and 1 2 3 keys), why it matters, source links, the question counts for
+  the category from the API, "Start the … quiz" (→ `/setup` with `{ state: { category } }`,
+  the existing flow) and "Back to the islands" (Esc);
+- when the live scene is not running (no WebGL, reduced motion, `?3d=off`) the card shows a
+  flat SVG **plate** of the same beat, so the exhibit reads identically without 3D.
+Stories are taken only from MacTutor ("A history of Zero", Brahmagupta) and the official
+Python FAQ, read on 2026-10-14; the cards repeat the sources' own caution (no single
+inventor of zero; "probably millions" of Python users, no figure given).
+Adding an exhibit later = one entry in `exhibits.ts` (+ optionally a diorama kind).
+
+## Paper colour, revisited
+Sampled from Rose Island's public case-study frames (rhumb.co): page field `#DEDEDE`, lit
+structure `#B1B5B4`, shaded `#A8AEAC` / `#A09694`, horizon haze `#E2E7E0`. Read as "bright
+field, warm-grey shadow": canvas `#FAF9F6`, card `#FEFDFB`, rail `#F1EFEA`, shadow ink
+`rgb(84 76 70)`, islands `#E3DFD8 → #F7F5F0` on `#B9B1A7` stone, sky `#EEF1EE`.

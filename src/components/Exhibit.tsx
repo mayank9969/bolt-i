@@ -84,7 +84,7 @@ export default function Exhibit() {
             role="dialog"
             aria-modal="true"
             aria-labelledby="ex-title"
-            className="exhibit fixed z-[61] inset-x-0 bottom-0 md:inset-y-0 md:right-0 md:left-auto md:w-[min(34rem,94vw)] max-h-[82svh] md:max-h-none overflow-y-auto"
+            className="exhibit fixed z-[61] inset-x-0 bottom-0 md:inset-y-0 md:right-0 md:left-auto md:w-[min(34rem,94vw)] max-h-[64svh] md:max-h-none overflow-y-auto"
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 24 }}
