@@ -47,7 +47,6 @@ export default function Quiz() {
     if (!session && !finishedRef.current) navigate('/setup', { replace: true })
   }, [session, navigate])
 
-  // QUIZ — focus mode: the network recedes into the paper; activation tracks answered count.
   const answeredCount = answers.filter((a) => a.trim() !== '').length
   // the world is switched off while answering — the question owns the page
   useWorld({ mode: 'off' })

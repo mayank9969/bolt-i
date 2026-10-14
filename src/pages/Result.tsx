@@ -98,12 +98,12 @@ export default function Result() {
           </motion.dl>
         </div>
 
-        {/* path strip: every question as a node, in order */}
+        {/* answer strip: every question in order */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 1.1 }} className="mt-14 result-paper">
           <div className="flex items-center justify-between figcap mb-3">
-            <span>Your path through the network</span>
+            <span>Your answers, in order</span>
             <span>
-              <span className={toneText[tone]}>{result.correct_answers}</span> of {n} activated
+              <span className={toneText[tone]}>{result.correct_answers}</span> of {n} correct
             </span>
           </div>
           <ol className="flex items-center gap-1.5 sm:gap-2" aria-label="Answers in order">

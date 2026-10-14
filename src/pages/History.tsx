@@ -83,7 +83,7 @@ export default function History() {
               <h1 className="t-title text-fg mt-5 text-balance">
                 {history && history.length ? (
                   <>
-                    <span className="num">{history.length}</span> attempt{history.length === 1 ? '' : 's'}, <span className="text-fg-2">and the network remembers each one.</span>
+                    <span className="num">{history.length}</span> attempt{history.length === 1 ? '' : 's'}, <span className="text-fg-2">and the map remembers each one.</span>
                   </>
                 ) : (
                   <>Your history</>
@@ -132,7 +132,7 @@ export default function History() {
               <p className="lg:col-span-2 index">Empty</p>
               <div className="lg:col-span-10">
                 <h2 className="t-section text-fg">Nothing lit yet.</h2>
-                <p className="text-fg-2 mt-4 max-w-md text-pretty">Your first quiz will show up here, and the network will start remembering which regions you have practised.</p>
+                <p className="text-fg-2 mt-4 max-w-md text-pretty">Your first quiz will show up here, and the map will start remembering which islands you have visited.</p>
                 <Link to="/setup" className="btn-primary btn-lg mt-8">
                   Start your first quiz <ArrowRight className="arrow w-4 h-4" />
                 </Link>
@@ -151,13 +151,13 @@ export default function History() {
               </dl>
             </Reveal>
 
-            {/* ── Regions established (drives the network) ─── */}
+            {/* ── Islands established ─── */}
             <Reveal delay={0.08}>
               <div className="mt-16 grid lg:grid-cols-12 gap-x-10 gap-y-6">
                 <div className="lg:col-span-4">
-                  <span className="index">01 — Regions</span>
+                  <span className="index">01 — Islands</span>
                   <h2 className="t-section text-fg mt-3">Established knowledge</h2>
-                  <p className="text-sm text-fg-2 mt-3 max-w-sm text-pretty">How settled each region of the network is — attempts there, weighted by accuracy. This is exactly what lights the scene behind you.</p>
+                  <p className="text-sm text-fg-2 mt-3 max-w-sm text-pretty">How settled each island is — attempts there, weighted by accuracy. An island whose latest attempt left wrong answers carries a terracotta marker on the map.</p>
                 </div>
                 <ul className="lg:col-span-8 border-t border-line">
                   {[

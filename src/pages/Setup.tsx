@@ -35,7 +35,7 @@ export default function Setup() {
   const [count, setCount] = useState(10)
   const [error, setError] = useState('')
   const [starting, setStarting] = useState(false)
-  // real history → regions whose latest attempt still had wrong answers (terracotta on the loom + "revisit" in the list)
+  // real history → islands whose latest attempt still had wrong answers (terracotta marker on the map + "revisit" in the list)
   const [review, setReview] = useState<ReviewTopic[]>([])
 
   useEffect(() => {
@@ -102,7 +102,7 @@ export default function Setup() {
           <Reveal>
             <span className="opener">Choose your path</span>
             <h1 className="t-title text-fg mt-5 text-balance">
-              Which part of the network do you want to light?
+              Which island are you going ashore on?
             </h1>
           </Reveal>
 
@@ -284,10 +284,10 @@ export default function Setup() {
           )}
         </div>
 
-        {/* right: the network lives here; only a caption in the DOM */}
+        {/* right: the island is framed here; only a caption in the DOM */}
         <div className="hidden lg:flex lg:col-span-5 xl:col-span-6 items-end justify-end pb-4 pointer-events-none">
           <motion.p key={category + difficulty} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease }} className="figcap text-right">
-            Fig. 02 — {labelCategory(category)} region · {labelDifficulty(difficulty)} density
+            Fig. 02 — {category === 'all' ? 'the whole archipelago' : `${labelCategory(category)} island`} · {labelDifficulty(difficulty)} tier
           </motion.p>
         </div>
       </div>

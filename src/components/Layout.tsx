@@ -162,7 +162,7 @@ function Footer() {
           <Wordmark className="text-base" />
         </div>
         <p className="sm:col-span-3 t-label text-fg-3">
-          Living knowledge network · build v2 paper
+          Knowledge Archipelago · build v5
         </p>
         <p className="sm:col-span-3 sm:text-right t-caption text-fg-3">
           Built by <span className="text-fg-2 font-medium">Mayank Sarwal</span>
