@@ -576,8 +576,8 @@ function Director({ islands, worldRef }: { islands: Island[]; worldRef: React.Re
     _v.set(preset.pos[0], preset.pos[1], preset.pos[2])
     _v2.set(preset.look[0], preset.look[1], preset.look[2])
     let fov: number = preset.fov
-    // the world sits right of the copy on desktop, below it on phones
-    const off = narrow ? _off.set(0, -1.6, 0) : _off.set(1.9, 0, 0)
+    // framed canvas (Home stage) is already the map's box — centre the world. Full-bleed pages keep the old offset.
+    const off = s.framed ? _off.set(0, 0, 0) : narrow ? _off.set(0, -1.6, 0) : _off.set(1.9, 0, 0)
     if (s.mode === 'focus' && s.focus) {
       const isl = islands.find((i) => i.id === s.focus)
       if (isl) {
@@ -597,8 +597,7 @@ function Director({ islands, worldRef }: { islands: Island[]; worldRef: React.Re
       _v2.set(exhibit.x, top + rr * 0.22, exhibit.z)
       _v.set(exhibit.x + Math.sin(ang) * dist, top + rr * 1.05 + 0.25, exhibit.z + Math.cos(ang) * dist)
       fov = narrow ? 42 : 30
-      // the panel takes the right (desktop) or bottom (phone): keep the island in the open half
-      off.set(narrow ? 0 : -2.3, narrow ? 1.15 : 0, 0)
+      off.set(s.framed ? 0 : narrow ? 0 : -2.3, s.framed ? 0 : narrow ? 1.15 : 0, 0)
     } else if (s.mode === 'hero') {
       // scroll: a restrained guided reveal — orbit a little and come closer
       const k = s.scroll

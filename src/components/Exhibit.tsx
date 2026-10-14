@@ -37,7 +37,10 @@ export default function Exhibit() {
     setStaticMode(!el || el.getAttribute('data-kind') !== 'webgl')
   }, [open])
 
-  const close = () => setWorld({ selected: null, hover: null, beat: 0 })
+  const close = () => {
+    const id = getWorld().selected
+    setWorld({ selected: null, hover: id, beat: 0 })
+  }
   const go = (b: number) => setWorld({ beat: Math.max(0, Math.min(2, b)) as 0 | 1 | 2 })
 
   useEffect(() => {
@@ -84,24 +87,23 @@ export default function Exhibit() {
             role="dialog"
             aria-modal="true"
             aria-labelledby="ex-title"
-            className="exhibit fixed z-[61] inset-x-0 bottom-0 md:inset-y-0 md:right-0 md:left-auto md:w-[min(34rem,94vw)] max-h-[64svh] md:max-h-none overflow-y-auto"
+            className="exhibit fixed z-[61] inset-x-0 bottom-0 md:inset-y-0 md:right-0 md:left-auto md:w-[min(34rem,94vw)] max-h-[78svh] md:max-h-none flex flex-col"
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 24 }}
             transition={{ duration: 0.5, ease }}
           >
-            <div className="ex-inner">
-              {/* plaque */}
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex items-center gap-3 min-w-0">
-                  <span className="w-10 h-10 rounded-full border border-line-strong bg-card flex items-center justify-center text-fg shrink-0">{Icon && <Icon className="w-4 h-4" />}</span>
-                  <span className="eyebrow truncate">Exhibit · {categoryLabel(data.id)}</span>
-                </div>
-                <button ref={closeRef} type="button" onClick={close} className="w-10 h-10 -mr-2 -mt-2 rounded-full flex items-center justify-center text-fg-2 hover:text-fg hover:bg-hover focus-visible:shadow-focus shrink-0" aria-label="Back to the islands">
-                  <Cross className="w-4 h-4" />
-                </button>
+            <div className="ex-head">
+              <div className="flex items-center gap-3 min-w-0">
+                <span className="w-10 h-10 rounded-full border border-line-strong bg-elevated flex items-center justify-center text-fg shrink-0">{Icon && <Icon className="w-4 h-4" />}</span>
+                <span className="eyebrow truncate">Exhibit · {categoryLabel(data.id)}</span>
               </div>
-              <h2 id="ex-title" className="t-title text-fg mt-5 text-balance">
+              <button ref={closeRef} type="button" onClick={close} className="w-10 h-10 rounded-full flex items-center justify-center text-fg-2 hover:text-fg hover:bg-hover focus-visible:shadow-focus shrink-0" aria-label="Back to the islands">
+                <Cross className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="ex-inner">
+              <h2 id="ex-title" className="t-title text-fg text-balance">
                 {data.title}
               </h2>
               <p className="text-fg-2 mt-2 text-pretty">{data.subtitle}</p>

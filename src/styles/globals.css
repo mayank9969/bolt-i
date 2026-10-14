@@ -413,7 +413,7 @@
   .result-paper::before { content: ''; position: absolute; inset: -2.5rem -3rem -6rem -3rem; pointer-events: none; z-index: -1; background: linear-gradient(180deg, rgb(var(--nx-canvas-rgb) / 0) 0%, rgb(var(--nx-canvas-rgb) / 0.9) 30%, rgb(var(--nx-canvas-rgb) / 0.9) 100%); }
   /* Reading column (About, Setup form): sits on paper; the network stays as atmosphere to the right */
   .column-paper::before { content: ''; position: absolute; inset: -2rem -10rem -2rem -6rem; pointer-events: none; z-index: -1; background: linear-gradient(90deg, rgb(var(--nx-canvas-rgb) / 0.97) 0, rgb(var(--nx-canvas-rgb) / 0.97) calc(100% - 10rem), rgb(var(--nx-canvas-rgb) / 0.6) calc(100% - 5rem), rgb(var(--nx-canvas-rgb) / 0) 100%); }
-  .hero-paper::before { content: ''; position: absolute; inset: -3rem -3rem -2rem -4rem; pointer-events: none; z-index: -1; background: radial-gradient(ellipse at 35% 55%, rgb(var(--nx-canvas-rgb) / 0.9) 34%, rgb(var(--nx-canvas-rgb) / 0) 74%); }
+  .hero-paper::before { content: none; }
   /* phones: washes never reach past the page padding (keeps documentElement.scrollWidth honest) */
   @media (max-width: 639px) {
     .hero-paper::before, .column-paper::before, .result-paper::before, .stats-paper::before { left: -1.25rem; right: -1.25rem; }
@@ -644,30 +644,42 @@
   .island-label-warm { border-color: rgb(var(--nx-warm-rgb) / 0.5); }
   .island-label-warm::before { content: ''; display: inline-block; width: 0.4rem; height: 0.4rem; border-radius: 999px; background: var(--nx-warm); margin-right: 0.45rem; vertical-align: middle; }
 
-  /* on the home hero the page shell lets pointer events through to the map; content blocks re-enable them */
-  /* Pass clicks through the hero copy stack to the map behind it.
-     Only real controls (links, buttons, the paper column, the island nav) catch the pointer. */
-  html[data-world='hero'] main { pointer-events: none; }
-  html[data-world='hero'] header,
-  html[data-world='hero'] footer,
-  html[data-world='hero'] .hero-paper,
-  html[data-world='hero'] nav,
-  html[data-world='hero'] main a,
-  html[data-world='hero'] main button,
-  html[data-world='hero'] .pointer-events-auto { pointer-events: auto; }
+  .island-frame {
+    position: relative;
+    width: 100%;
+    height: min(58vh, 560px);
+    min-height: 240px;
+    border-radius: 1.25rem;
+    border: 1px solid var(--nx-line-strong);
+    background: rgb(var(--nx-surface-rgb));
+    box-shadow: var(--nx-shadow-1);
+    overflow: hidden;
+  }
+  @media (min-width: 1024px) {
+    .island-frame { height: min(68vh, 640px); min-height: 420px; }
+  }
+  .category-dock {
+    padding: 1rem 1.1rem 1.15rem;
+    border-radius: 1.25rem;
+    border: 1px solid var(--nx-line);
+    background: rgb(var(--nx-card-rgb));
+    box-shadow: var(--nx-shadow-1);
+  }
 
-  /* the island index (keyboard / no-3D route to every field guide) */
   .island-chip {
     @apply inline-flex items-center gap-2 h-8 px-3 rounded-full text-[13px] font-medium transition-colors duration-fast ease-out;
     color: var(--nx-text-2);
-    background: rgb(var(--nx-card-rgb) / 0.85);
+    background: rgb(var(--nx-elevated-rgb));
     border: 1px solid var(--nx-line);
   }
-  .island-chip:hover, .island-chip:focus-visible { color: var(--nx-text); border-color: var(--nx-accent); background: rgb(var(--nx-card-rgb) / 1); }
+  .island-chip:hover, .island-chip:focus-visible, .island-chip[aria-pressed='true'] {
+    color: var(--nx-text);
+    border-color: var(--nx-accent);
+    background: rgb(var(--nx-card-strong-rgb));
+  }
   .island-chip:focus-visible { outline: 2px solid var(--nx-focus); outline-offset: 2px; }
 
-  /* the field guide panel: a sheet of card paper */
-  .field-guide { background: rgb(var(--nx-card-rgb) / 0.98); border-left: 1px solid var(--nx-line); box-shadow: var(--nx-shadow-2); }
+  .field-guide { background: rgb(var(--nx-card-rgb)); border-left: 1px solid var(--nx-line-strong); box-shadow: var(--nx-shadow-2); }
   .field-guide { border-top-left-radius: 1.25rem; border-top-right-radius: 1.25rem; }
   @media (min-width: 768px) { .field-guide { border-radius: 0; } }
   .fg-inner { padding: 1.5rem 1.25rem 2rem; }
@@ -676,11 +688,30 @@
 
 /* ── Exhibits ───────────────────────────────────────────────────────────── */
 @layer components {
-  .exhibit-scrim { background: linear-gradient(to right, rgb(var(--nx-canvas-rgb) / 0.1), rgb(var(--nx-canvas-rgb) / 0.35)); }
-  .exhibit { background: rgb(var(--nx-card-rgb) / 0.985); border-left: 1px solid var(--nx-line); box-shadow: var(--nx-shadow-2); border-top-left-radius: 1.25rem; border-top-right-radius: 1.25rem; }
+  .exhibit-scrim { background: rgb(var(--nx-canvas-rgb) / 0.72); }
+  .exhibit {
+    background: rgb(var(--nx-card-rgb));
+    border-left: 1px solid var(--nx-line-strong);
+    box-shadow: var(--nx-shadow-2);
+    border-top-left-radius: 1.25rem;
+    border-top-right-radius: 1.25rem;
+  }
   @media (min-width: 768px) { .exhibit { border-radius: 0; } }
-  .ex-inner { padding: 1.5rem 1.25rem 2rem; }
-  @media (min-width: 640px) { .ex-inner { padding: 2rem 2.25rem 2.5rem; } }
+  .ex-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--nx-line);
+    background: rgb(var(--nx-card-rgb));
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+  @media (min-width: 640px) { .ex-head { padding: 1.15rem 2.25rem; } }
+  .ex-inner { padding: 1.25rem 1.25rem 2rem; overflow-y: auto; -webkit-overflow-scrolling: touch; flex: 1 1 auto; min-height: 0; }
+  @media (min-width: 640px) { .ex-inner { padding: 1.5rem 2.25rem 2.5rem; } }
   .beat-tab { @apply w-full flex flex-col items-start gap-1 px-3 py-2.5 rounded-xl border text-left transition-colors duration-fast ease-out; color: var(--nx-text-2); border-color: var(--nx-line); background: rgb(var(--nx-elevated-rgb) / 0.8); }
   .beat-tab:hover { color: var(--nx-text); border-color: var(--nx-line-strong); }
   .beat-tab[aria-current='step'] { color: var(--nx-text); border-color: var(--nx-accent); background: var(--nx-card); box-shadow: inset 0 0 0 1px var(--nx-accent); }

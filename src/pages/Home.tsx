@@ -10,7 +10,7 @@ import { getCategories, getHistory } from '@/api/quizApi'
 import type { CategoriesResponse, HistoryEntry } from '@/types/quiz'
 import { reviewTopics } from '@/lib/review'
 import { difficultyLevel, labelCategory } from '@/lib/format'
-import { setWorld, useWorld } from '@/components/three/world'
+import { setWorld, useWorld, useWorldSlice } from '@/components/three/world'
 import { exhibitFor, exhibitIds, hasExhibit } from '@/lib/exhibits'
 
 const ease = [0.22, 1, 0.36, 1] as const
@@ -34,17 +34,21 @@ export default function Home() {
   const cats = catalog?.categories ?? []
   const categoryCount = cats.length
   const questionCount = catalog?.total_questions ?? 0
+  const [hover, setHover] = useState<string | null>(null)
+  const [selected, setSelected] = useState<string | null>(null)
+  useWorldSlice((s) => s.hover, setHover)
+  useWorldSlice((s) => s.selected, setSelected)
 
   // HOME — the archipelago is the hero: full presence, interactive, scroll-guided reveal.
   useWorld({ mode: 'hero' })
 
   return (
     <div className="relative">
-      {/* ── Hero: copy on the left, the world on the right (below on phones) ── */}
-      <section ref={heroRef} className="relative min-h-[100svh] -mt-16 pt-16 flex flex-col !pointer-events-none">
-        <div className="relative z-10 flex-1 flex flex-col justify-center max-w-page mx-auto w-full px-5 sm:px-6 lg:px-8 pt-10 pb-6 md:pb-10">
-          <motion.div style={{ y: copyY, opacity: copyO }} className="grid lg:grid-cols-12 gap-x-10 items-center">
-            <div className="lg:col-span-5 xl:col-span-5 hero-paper pointer-events-auto">
+      {/* ── Hero: copy on the left, framed map on the right (stacked on phones) ── */}
+      <section ref={heroRef} className="relative pt-6 md:pt-10 pb-4">
+        <div className="relative z-10 max-w-page mx-auto w-full px-5 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-12 gap-x-10 gap-y-8 items-start">
+            <motion.div style={{ y: copyY, opacity: copyO }} className="lg:col-span-5 xl:col-span-5 min-w-0">
               <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={enter(0)} className="opener">
                 <span>The Knowledge Archipelago</span>
               </motion.p>
@@ -54,7 +58,7 @@ export default function Home() {
               </motion.h1>
 
               <motion.p initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={enter(2)} className="t-lead text-fg-2 mt-7 max-w-md text-pretty">
-                {catalog ? `${categoryCount} islands, ${questionCount} questions.` : 'A small world of islands.'} Two of them have a museum exhibit this version — Mathematics and Python. Open either from the posters below; the 3D map is not required.
+                {catalog ? `${categoryCount} islands, ${questionCount} questions.` : 'A small world of islands.'} Explore the map, open a field guide, and start a quiz — every answer scored on the server, never in your browser. Mathematics and Python have a short exhibit this version; every other island still starts its quiz the usual way.
               </motion.p>
 
               <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={enter(3)} className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
@@ -77,54 +81,65 @@ export default function Home() {
                   </span>
                 </motion.p>
               )}
+            </motion.div>
+
+            <div className="lg:col-span-7 min-w-0">
+              <div
+                id="island-stage"
+                className="island-frame"
+                role="img"
+                aria-label="Knowledge archipelago — one island per subject. Choose a category below to focus one."
+              />
             </div>
-            {/* the right column is left open for the map; on phones the map sits in this reserved space */}
-            <div className="lg:col-span-7 min-h-[46svh] lg:min-h-0 pointer-events-none" aria-hidden="true" />
-          </motion.div>
+          </div>
         </div>
 
-        {/* island index: the keyboard / no-3D way to reach every field guide */}
+        {/* category selector: its own dock, never overlapping the map */}
         <motion.nav
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 1, duration: 0.8 }}
-          className="relative z-10 max-w-page mx-auto w-full px-5 sm:px-6 lg:px-8 pb-6 pointer-events-auto"
-          aria-label="Islands"
+          transition={{ delay: 0.6, duration: 0.8 }}
+          className="relative z-10 max-w-page mx-auto w-full px-5 sm:px-6 lg:px-8 mt-6"
+          aria-label="Categories"
         >
-          <div className="flex items-center justify-between gap-6 figcap mb-3">
-            <span className="inline-flex items-center gap-3">
-              <span className="w-8 h-px bg-line-strong" />
-              Fig. 01 — {catalog ? `${categoryCount} islands · ${cats.filter((c) => hasExhibit(c.id)).length} exhibits open · tap an island` : 'the archipelago, live'}
-            </span>
-            <span className="hidden md:inline-flex items-center gap-3">
-              Scroll to move in
-              <motion.span animate={{ y: [0, 5, 0] }} transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }} className="block w-px h-6 bg-line-strong origin-top" />
-            </span>
+          <div className="category-dock">
+            <div className="flex items-center justify-between gap-6 figcap mb-3">
+              <span className="inline-flex items-center gap-3 min-w-0">
+                <span className="w-8 h-px bg-line-strong shrink-0" />
+                <span className="truncate">
+                  {catalog
+                    ? `${categoryCount} categories · ${cats.filter((c) => hasExhibit(c.id)).length} exhibits (Mathematics, Python)`
+                    : 'Categories'}
+                </span>
+              </span>
+            </div>
+            <ul className="flex flex-wrap gap-2">
+              {cats.map((c) => {
+                const rv = review.find((r) => r.id === c.id || (c.id === 'math' && r.id === 'maths'))
+                const on = hover === c.id || selected === c.id
+                return (
+                  <li key={c.id}>
+                    <button
+                      type="button"
+                      className="island-chip"
+                      aria-pressed={on}
+                      aria-haspopup="dialog"
+                      onMouseEnter={() => setWorld({ hover: c.id })}
+                      onMouseLeave={() => setWorld({ hover: selected })}
+                      onFocus={() => setWorld({ hover: c.id })}
+                      onBlur={() => setWorld({ hover: selected })}
+                      onClick={() => setWorld({ selected: c.id, hover: c.id, beat: 0 })}
+                    >
+                      <RegionIcon id={c.id} className="w-3.5 h-3.5" />
+                      {labelCategory(c.id)}
+                      {hasExhibit(c.id) && <span className="island-chip-tag">Exhibit</span>}
+                      {rv && <span className="w-1.5 h-1.5 rounded-full bg-warm" aria-label="worth revisiting" />}
+                    </button>
+                  </li>
+                )
+              })}
+            </ul>
           </div>
-          <ul className="flex flex-wrap gap-2">
-            {cats.map((c) => {
-              const rv = review.find((r) => r.id === c.id || (c.id === 'math' && r.id === 'maths'))
-              return (
-                <li key={c.id}>
-                  <button
-                    type="button"
-                    className="island-chip"
-                    onMouseEnter={() => setWorld({ hover: c.id })}
-                    onMouseLeave={() => setWorld({ hover: null })}
-                    onFocus={() => setWorld({ hover: c.id })}
-                    onBlur={() => setWorld({ hover: null })}
-                    onClick={() => setWorld({ selected: c.id, hover: c.id, beat: 0 })}
-                    aria-haspopup="dialog"
-                  >
-                    <RegionIcon id={c.id} className="w-3.5 h-3.5" />
-                    {labelCategory(c.id)}
-                    {hasExhibit(c.id) && <span className="island-chip-tag">Exhibit</span>}
-                    {rv && <span className="w-1.5 h-1.5 rounded-full bg-warm" aria-label="worth revisiting" />}
-                  </button>
-                </li>
-              )
-            })}
-          </ul>
         </motion.nav>
       </section>
 

@@ -30,7 +30,10 @@ export default function FieldGuide() {
   const closeRef = useRef<HTMLButtonElement>(null)
   const returnTo = useRef<Element | null>(null)
 
-  const close = () => setWorld({ selected: null, hover: null })
+  const close = () => {
+    const id = getWorld().selected
+    setWorld({ selected: null, hover: id })
+  }
 
   useEffect(() => {
     if (!selected) {
@@ -74,7 +77,7 @@ export default function FieldGuide() {
             role="dialog"
             aria-modal="true"
             aria-labelledby="fg-title"
-            className="field-guide fixed z-[61] inset-x-0 bottom-0 md:inset-y-0 md:right-0 md:left-auto md:w-[min(32rem,92vw)] max-h-[88svh] md:max-h-none overflow-y-auto"
+            className="field-guide fixed z-[61] inset-x-0 bottom-0 md:inset-y-0 md:right-0 md:left-auto md:w-[min(32rem,92vw)] max-h-[78svh] md:max-h-none overflow-y-auto"
             initial={{ opacity: 0, y: 40, x: 0 }}
             animate={{ opacity: 1, y: 0, x: 0 }}
             exit={{ opacity: 0, y: 24 }}

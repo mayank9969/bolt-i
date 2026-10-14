@@ -37,6 +37,8 @@ export interface WorldState {
   hoverXY: { x: number; y: number } | null
   /** bumped by the stage whenever something that needs a redraw changed (on-demand rendering) */
   tick: number
+  /** canvas is clipped to #island-stage rather than the full viewport */
+  framed: boolean
 }
 
 const state: WorldState = {
@@ -53,6 +55,7 @@ const state: WorldState = {
   pointerIn: false,
   hoverXY: null,
   tick: 0,
+  framed: false,
 }
 
 const listeners = new Set<(s: WorldState) => void>()

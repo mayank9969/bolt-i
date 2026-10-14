@@ -25,9 +25,9 @@
   color-scheme: light;
 
   /* Layer 1 — semantic contract */
-  --color-bg-rgb: 250 249 246;              /* #FAF9F6 luminous near-white (Rose Island field: bright, barely warm) */
-  --color-surface-rgb: 241 239 234;         /* #F1EFEA recessed band / rail (soft warm grey) */
-  --color-surface-raised-rgb: 254 253 251;  /* #FEFDFB card — a half-step brighter than the canvas */
+  --color-bg-rgb: 242 244 243;              /* #F2F4F3 luminous near-white — cool, not beige (Rose Island field) */
+  --color-surface-rgb: 232 235 234;         /* #E8EBEA recessed band / rail (soft neutral grey) */
+  --color-surface-raised-rgb: 251 252 252;  /* #FBFCFC card */
   --color-text-rgb: 27 34 48;               /* #1B2230 deep ink (blue-black) 14.8:1 */
   --color-text-muted-rgb: 74 82 98;         /* #4A5262 7.3:1 */
   --color-border: rgb(var(--color-text-rgb) / 0.10);
@@ -42,7 +42,7 @@
   /* Layer 2 — surfaces: surface < bg < elevated < card < card-strong. No #FFFFFF. */
   --nx-canvas-rgb: var(--color-bg-rgb);
   --nx-surface-rgb: var(--color-surface-rgb);
-  --nx-elevated-rgb: 252 251 248;           /* #FCFBF8 inputs / keys */
+  --nx-elevated-rgb: 246 247 247;           /* #F6F7F7 inputs / keys */
   --nx-card-rgb: var(--color-surface-raised-rgb);
   --nx-card-strong-rgb: 254 254 253;        /* #FEFEFD popovers, focused field (never pure white) */
 
@@ -50,7 +50,7 @@
   --nx-text-rgb: var(--color-text-rgb);
   --nx-text-2-rgb: var(--color-text-muted-rgb);
   --nx-text-3-rgb: 99 106 119;              /* #636A77  5.1:1 on paper, 4.7:1 on surface */
-  --nx-text-inverse-rgb: 250 249 246;
+  --nx-text-inverse-rgb: 242 244 243;
 
   /* lines: ink at low alpha, so they warm with the surface beneath */
   --nx-line: var(--color-border);
@@ -97,13 +97,13 @@
 
   /* atmosphere: one faint teal wash top-right, nothing else */
   --nx-deco-1: rgb(var(--nx-accent-rgb) / 0.07);        /* teal haze, horizon */
-  --nx-deco-2: rgb(255 249 240 / 0.95);                  /* warm sunlight, top */
+  --nx-deco-2: rgb(255 252 248 / 0.9);                   /* pale sunlight, top */
   --nx-deco-3: rgb(var(--nx-warm-rgb) / 0.05);           /* faint terracotta, low left */
   --nx-grid: rgb(var(--nx-text-rgb) / 0.05);
   --nx-noise-opacity: 0.06;
 
   /* shadows: ink-tinted, diffuse, low alpha; inset top edge makes a card read as paper */
-  --nx-shadow-ink: 84 76 70;               /* warm-grey shadow ink — sampled from Rose Island's shaded structure (#A09694), deepened */
+  --nx-shadow-ink: 90 92 90;               /* neutral grey shadow — Rose Island shaded structure, not umber */
   --nx-shadow-1: 0 1px 0 0 rgb(255 255 255 / 0.6) inset, 0 1px 2px rgb(var(--nx-shadow-ink) / 0.05), 0 14px 36px -18px rgb(var(--nx-shadow-ink) / 0.18);
   --nx-shadow-2: 0 1px 0 0 rgb(255 255 255 / 0.8) inset, 0 2px 4px rgb(var(--nx-shadow-ink) / 0.05), 0 30px 64px -26px rgb(var(--nx-shadow-ink) / 0.26);
   --nx-shadow-inset: 0 0 0 1px rgb(var(--nx-shadow-ink) / 0.03) inset, 0 1px 6px rgb(var(--nx-shadow-ink) / 0.07) inset;
@@ -115,15 +115,15 @@
   /* Archipelago (three.js reads these; same names in Ink) */
   /* Rose Island (public case-study frames) sampled: lit structure #B1B5B4, shaded #A8AEAC / #A09694,
      horizon haze #E2E7E0 — i.e. warm-grey shadow on a bright, barely-tinted field. */
-  --nx-3d-rock: #b9b1a7;     /* island underside — warm grey stone */
-  --nx-3d-land-1: #e3dfd8;   /* lowest plateau */
-  --nx-3d-land-2: #eeebe5;   /* middle plateau */
-  --nx-3d-land-3: #f7f5f0;   /* summit — nearly paper */
+  --nx-3d-rock: #9aa19e;     /* island underside — cool grey stone, darker than the field */
+  --nx-3d-land-1: #c5cbc8;   /* lowest plateau — reads against #F2F4F3 */
+  --nx-3d-land-2: #d5dbd8;   /* middle plateau */
+  --nx-3d-land-3: #e4e9e6;   /* summit — still off the canvas */
   --nx-3d-bridge: #1e6b6a;   /* deep-teal bridges */
   --nx-3d-cloud: #ffffff;
-  --nx-3d-key: #fff6ea;      /* warm key light — sunlight */
-  --nx-3d-sky: #eef1ee;      /* hemisphere sky — the horizon haze */
-  --nx-3d-ground: #cfc9c0;   /* hemisphere ground bounce — warm grey */
+  --nx-3d-key: #fff8f0;      /* pale sunlight */
+  --nx-3d-sky: #e4eae8;      /* hemisphere sky — horizon haze */
+  --nx-3d-ground: #b7bdb9;   /* hemisphere ground bounce */
 }
 
 /* ────────────────────────── INK ────────────────────────── */
@@ -199,15 +199,15 @@
   --nx-grid: rgb(var(--nx-text-rgb) / 0.035);
   --nx-noise-opacity: 0.035;
 
-  --nx-3d-rock: #262f40;     /* island underside — deep blue-charcoal */
-  --nx-3d-land-1: #3a4557;   /* lowest plateau — visibly lifted from the canvas */
-  --nx-3d-land-2: #4a5669;
-  --nx-3d-land-3: #5c687a;   /* summit — soft slate, never ivory (not an inversion) */
-  --nx-3d-bridge: #6fbfba;   /* teal lifted for dark */
-  --nx-3d-cloud: #8a95a8;
-  --nx-3d-key: #ffe9cf;      /* warm lamp key */
-  --nx-3d-sky: #2a3446;
-  --nx-3d-ground: #0d1118;
+  --nx-3d-rock: #2a3446;     /* island underside */
+  --nx-3d-land-1: #4a5669;   /* lowest plateau — lifted from #141A24 */
+  --nx-3d-land-2: #5c6a7e;
+  --nx-3d-land-3: #748296;   /* summit — readable slate, edge-lit */
+  --nx-3d-bridge: #8ad4ce;   /* brighter teal paths on dark */
+  --nx-3d-cloud: #9aa5b8;
+  --nx-3d-key: #ffe3c4;      /* warm lamp, not neon */
+  --nx-3d-sky: #1c2432;
+  --nx-3d-ground: #0b0f16;
 
   --nx-shadow-ink: 0 0 0;
   --nx-shadow-1: 0 1px 0 0 rgb(255 255 255 / 0.04) inset, 0 12px 32px -14px rgb(0 0 0 / 0.55);

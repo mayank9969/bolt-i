@@ -1,4 +1,4 @@
-import { Suspense, lazy, useEffect, useMemo, useState } from 'react'
+import { Suspense, lazy, useEffect, useMemo, useRef, useState } from 'react'
 import { getCategories, getHistory } from '@/api/quizApi'
 import { reviewTopics, type ReviewTopic } from '@/lib/review'
 import { buildIslands, type Island } from './islands'
@@ -19,14 +19,62 @@ const ArchipelagoScene = lazy(() => import('./ArchipelagoScene'))
 export default function ArchipelagoStage() {
   const [kind, setKind] = useState<'webgl' | 'static' | 'pending'>('pending')
   const [mode, setMode] = useState<WorldMode>(getWorld().mode)
+  const [selected, setSelected] = useState<string | null>(getWorld().selected)
+  const stageRef = useRef<HTMLDivElement>(null)
   useWorldSlice((s) => s.mode, setMode)
-  // lets CSS open a pointer path through <main> to the map on the home hero
+  useWorldSlice((s) => s.selected, setSelected)
   useEffect(() => {
     document.documentElement.dataset.world = mode
     return () => {
       delete document.documentElement.dataset.world
     }
   }, [mode])
+
+  // pin the canvas to #island-stage when the page provides a frame; otherwise full-bleed (quiet/focus)
+  useEffect(() => {
+    const el = stageRef.current
+    if (!el) return
+    const apply = () => {
+      const slot = document.getElementById('island-stage')
+      if (slot) {
+        const r = slot.getBoundingClientRect()
+        const radius = getComputedStyle(slot).borderRadius
+        el.style.position = 'fixed'
+        el.style.top = `${Math.round(r.top)}px`
+        el.style.left = `${Math.round(r.left)}px`
+        el.style.width = `${Math.round(r.width)}px`
+        el.style.height = `${Math.round(r.height)}px`
+        el.style.right = 'auto'
+        el.style.bottom = 'auto'
+        el.style.borderRadius = radius
+        el.style.overflow = 'hidden'
+        el.style.zIndex = '20'
+        if (!getWorld().framed) setWorld({ framed: true })
+      } else {
+        el.style.position = 'fixed'
+        el.style.inset = '0'
+        el.style.width = ''
+        el.style.height = ''
+        el.style.borderRadius = '0'
+        el.style.overflow = 'hidden'
+        el.style.zIndex = '1'
+        if (getWorld().framed) setWorld({ framed: false })
+      }
+    }
+    apply()
+    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(apply) : null
+    const slot = document.getElementById('island-stage')
+    if (slot) ro?.observe(slot)
+    window.addEventListener('resize', apply)
+    window.addEventListener('scroll', apply, { passive: true })
+    const id = window.setInterval(apply, 500)
+    return () => {
+      ro?.disconnect()
+      window.removeEventListener('resize', apply)
+      window.removeEventListener('scroll', apply)
+      window.clearInterval(id)
+    }
+  }, [mode, kind])
 
   // real data → store (one fetch each; pages fetch their own copies as before)
   useEffect(() => {
@@ -87,12 +135,14 @@ export default function ArchipelagoStage() {
   }, [kind])
 
   if (kind === 'pending') return null
-  const presence = mode === 'hero' ? 1 : mode === 'focus' ? 0.9 : mode === 'quiet' ? 0.34 : 0
+  const presence = (mode === 'hero' ? 1 : mode === 'focus' ? 0.9 : mode === 'quiet' ? 0.34 : 0) * (selected ? 0.38 : 1)
+  const live = (mode === 'hero' || mode === 'focus') && !selected
   return (
     <div
-      className="archipelago-stage fixed inset-0 z-0 transition-opacity duration-700 ease-out"
+      ref={stageRef}
+      className="archipelago-stage fixed inset-0 z-[1] transition-opacity duration-700 ease-out"
       data-kind={kind}
-      style={{ opacity: presence, pointerEvents: 'none' }}
+      style={{ opacity: presence, pointerEvents: live ? 'auto' : 'none' }}
       aria-hidden={mode === 'hero' || mode === 'focus' ? undefined : true}
     >
       {kind === 'webgl' ? (
