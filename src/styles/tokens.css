@@ -31,7 +31,7 @@
   --color-text-rgb: 26 34 48;               /* #1A2230 */
   --color-text-muted-rgb: 90 102 108;       /* #5A666C caption grey from the quote band */
   --color-border: rgb(var(--color-text-rgb) / 0.10);
-  --color-accent-rgb: 22 130 126;           /* #16827E — same teal as “02 — Islands” */
+  --color-accent-rgb: 18 118 114;           /* #127672 — mint teal, ≥4.5:1 on #F6FAF7 */
   --color-accent-hover-rgb: 18 112 109;
   --color-accent-active-rgb: 14 94 91;
   --color-on-accent-rgb: 246 250 247;
@@ -48,7 +48,7 @@
 
   --nx-text-rgb: var(--color-text-rgb);
   --nx-text-2-rgb: var(--color-text-muted-rgb);
-  --nx-text-3-rgb: 122 132 138;             /* #7A848A quote attribution */
+  --nx-text-3-rgb: 90 102 108;              /* #5A666C */
   --nx-text-inverse-rgb: 246 250 247;
 
   /* lines: ink at low alpha, so they warm with the surface beneath */
@@ -117,7 +117,7 @@
   --nx-3d-land-1: #c5d4cc;
   --nx-3d-land-2: #d5e4dc;
   --nx-3d-land-3: #e8f2ec;
-  --nx-3d-bridge: #16827e;
+  --nx-3d-bridge: #127672;
   --nx-3d-cloud: #ffffff;
   --nx-3d-key: #f3ffe8;
   --nx-3d-sky: #eaf5ee;
