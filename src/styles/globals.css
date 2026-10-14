@@ -648,8 +648,8 @@
     position: relative;
     isolation: isolate;
     width: 100%;
-    height: min(58vh, 560px);
-    min-height: 240px;
+    height: min(62vh, 640px);
+    min-height: 320px;
     border-radius: 1.25rem;
     border: 1px solid var(--nx-line-strong);
     background: var(--nx-3d-sky, rgb(var(--nx-surface-rgb)));

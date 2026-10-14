@@ -92,7 +92,8 @@ export default function ArchipelagoStage() {
     }
   }, [kind])
 
-  if (kind === 'pending' || mode === 'off') return null
+  if (mode === 'off') return null
+  if (kind === 'pending') return <div className="absolute inset-0" aria-hidden="true" />
   const presence = (mode === 'hero' ? 1 : mode === 'focus' ? 0.9 : mode === 'quiet' ? 0.34 : 0) * (selected ? 0.38 : 1)
   const live = (mode === 'hero' || mode === 'focus') && !selected
   return (

@@ -43,53 +43,56 @@ export default function Home() {
   return (
     <div className="relative">
       {/* ── Hero: copy on the left, framed map on the right (stacked on phones) ── */}
-      <section ref={heroRef} className="relative pt-6 md:pt-10 pb-4">
+      <section ref={heroRef} className="relative pt-4 pb-4">
         <div className="relative z-10 max-w-page mx-auto w-full px-5 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-12 gap-x-10 gap-y-8 items-start">
-            <motion.div className="lg:col-span-5 xl:col-span-5 min-w-0 relative z-20 bg-canvas rounded-2xl">
-              <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={enter(0)} className="opener">
-                <span>The Knowledge Archipelago</span>
-              </motion.p>
+          <div className="max-w-xl">
+            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={enter(0)} className="opener">
+              <span>The Knowledge Archipelago</span>
+            </motion.p>
 
-              <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={enter(1)} className="t-hero text-fg mt-6 max-w-[12ch] text-balance">
-                Every subject<br /> is an <span className="t-italic text-accent">island.</span>
-              </motion.h1>
+            <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={enter(1)} className="t-hero text-fg mt-6 max-w-[12ch] text-balance">
+              Every subject<br /> is an <span className="t-italic text-accent">island.</span>
+            </motion.h1>
 
-              <motion.p initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={enter(2)} className="t-lead text-fg-2 mt-7 max-w-md text-pretty">
-                {catalog ? `${categoryCount} islands, ${questionCount} questions.` : 'A small world of islands.'} Explore the map, open a field guide, and start a quiz — every answer scored on the server, never in your browser. Mathematics and Python have a short exhibit this version; every other island still starts its quiz the usual way.
-              </motion.p>
+            <motion.p initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={enter(2)} className="t-lead text-fg-2 mt-7 max-w-md text-pretty">
+              {catalog ? `${categoryCount} islands, ${questionCount} questions.` : 'A small world of islands.'} Explore the map, open a field guide, and start a quiz — every answer scored on the server, never in your browser. Mathematics and Python have a short exhibit this version; every other island still starts its quiz the usual way.
+            </motion.p>
 
-              <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={enter(3)} className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
-                <MagneticLink to="/setup" className="btn-primary btn-lg">
-                  Start a quiz
-                  <ArrowRight className="arrow w-5 h-5" />
-                </MagneticLink>
-                <Link to="/about" className="link-rule text-sm">
-                  How it works
-                </Link>
-              </motion.div>
-
-              {review.length > 0 && (
-                <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={enter(4)} className="mt-7 flex items-start gap-2.5 text-sm text-fg-2 max-w-md">
-                  <span className="mt-1.5 w-2 h-2 rounded-full bg-warm shrink-0" aria-hidden="true" />
-                  <span>
-                    <span className="text-warm-text font-medium">Terracotta markers</span> stand on {review.length === 1 ? 'the island' : `${review.length} islands`} where your latest attempt left wrong answers:{' '}
-                    {review.slice(0, 3).map((r) => categoryLabel(r.id)).join(', ')}
-                    {review.length > 3 ? ` and ${review.length - 3} more` : ''}.
-                  </span>
-                </motion.p>
-              )}
+            <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={enter(3)} className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
+              <MagneticLink to="/setup" className="btn-primary btn-lg">
+                Start a quiz
+                <ArrowRight className="arrow w-5 h-5" />
+              </MagneticLink>
+              <Link to="/about" className="link-rule text-sm">
+                How it works
+              </Link>
             </motion.div>
 
-            <div className="lg:col-span-7 min-w-0">
-              <div
-                id="island-stage"
-                className="island-frame relative z-10"
-                role="img"
-                aria-label="Knowledge archipelago — one island per subject. Choose a category below to focus one."
-              >
-                <ArchipelagoStage />
-              </div>
+            {review.length > 0 && (
+              <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={enter(4)} className="mt-7 flex items-start gap-2.5 text-sm text-fg-2 max-w-md">
+                <span className="mt-1.5 w-2 h-2 rounded-full bg-warm shrink-0" aria-hidden="true" />
+                <span>
+                  <span className="text-warm-text font-medium">Terracotta markers</span> stand on {review.length === 1 ? 'the island' : `${review.length} islands`} where your latest attempt left wrong answers:{' '}
+                  {review.slice(0, 3).map((r) => categoryLabel(r.id)).join(', ')}
+                  {review.length > 3 ? ` and ${review.length - 3} more` : ''}.
+                </span>
+              </motion.p>
+            )}
+          </div>
+
+          {/* own section: the map never shares space with the headline */}
+          <div className="mt-10">
+            <p className="figcap mb-3 inline-flex items-center gap-3">
+              <span className="w-8 h-px bg-line-strong" />
+              The archipelago
+            </p>
+            <div
+              id="island-stage"
+              className="island-frame"
+              role="img"
+              aria-label="Knowledge archipelago — one island per subject. Choose a category below to focus one."
+            >
+              <ArchipelagoStage />
             </div>
           </div>
         </div>
