@@ -25,32 +25,31 @@
   color-scheme: light;
 
   /* Layer 1 — semantic contract */
-  --color-bg-rgb: 255 254 250;              /* #FFFEFA luminous pearl-white (Rose Island field, not grey) */
-  --color-surface-rgb: 241 238 232;         /* #F1EEE8 recessed — warm-grey, distinct from canvas */
-  --color-surface-raised-rgb: 255 254 252;  /* #FFFEFC card */
-  --color-text-rgb: 27 34 48;               /* #1B2230 deep ink */
-  --color-text-muted-rgb: 74 82 98;         /* #4A5262 */
-  --color-border: rgb(var(--color-text-rgb) / 0.12);
-  --color-accent-rgb: 22 130 126;           /* #16827E brighter teal, still ≥4.5:1 on pearl */
-  --color-accent-hover-rgb: 18 112 109;     /* #12706D */
-  --color-accent-active-rgb: 14 94 91;      /* #0E5E5B */
-  --color-on-accent-rgb: 255 254 250;       /* pearl on teal */
-  --color-warm-rgb: 176 78 51;              /* #B04E33 terracotta — review only */
-  --color-warm-text-rgb: 158 69 48;         /* #9E4530 */
+  --color-bg-rgb: 246 250 247;              /* #F6FAF7 mint-white — quote-band field, site-wide */
+  --color-surface-rgb: 231 240 234;         /* #E7F0EA recessed mint rail */
+  --color-surface-raised-rgb: 251 253 252;  /* #FBFDFC card */
+  --color-text-rgb: 26 34 48;               /* #1A2230 */
+  --color-text-muted-rgb: 90 102 108;       /* #5A666C caption grey from the quote band */
+  --color-border: rgb(var(--color-text-rgb) / 0.10);
+  --color-accent-rgb: 22 130 126;           /* #16827E — same teal as “02 — Islands” */
+  --color-accent-hover-rgb: 18 112 109;
+  --color-accent-active-rgb: 14 94 91;
+  --color-on-accent-rgb: 246 250 247;
+  --color-warm-rgb: 176 78 51;
+  --color-warm-text-rgb: 158 69 48;
   --color-focus: rgb(var(--color-accent-rgb) / 0.9);
 
   /* Layer 2 — surfaces: surface < bg < elevated < card < card-strong. No #FFFFFF. */
   --nx-canvas-rgb: var(--color-bg-rgb);
   --nx-surface-rgb: var(--color-surface-rgb);
-  --nx-elevated-rgb: 248 246 241;           /* #F8F6F1 inputs / keys */
+  --nx-elevated-rgb: 240 247 243;           /* #F0F7F3 */
   --nx-card-rgb: var(--color-surface-raised-rgb);
-  --nx-card-strong-rgb: 255 254 253;        /* #FFFEFD popovers (never #FFFFFF) */
+  --nx-card-strong-rgb: 254 255 254;
 
-  /* text */
   --nx-text-rgb: var(--color-text-rgb);
   --nx-text-2-rgb: var(--color-text-muted-rgb);
-  --nx-text-3-rgb: 99 106 119;              /* #636A77  5.1:1 on paper, 4.7:1 on surface */
-  --nx-text-inverse-rgb: 255 254 250;
+  --nx-text-3-rgb: 122 132 138;             /* #7A848A quote attribution */
+  --nx-text-inverse-rgb: 246 250 247;
 
   /* lines: ink at low alpha, so they warm with the surface beneath */
   --nx-line: var(--color-border);
@@ -96,14 +95,13 @@
   --nx-disabled-text-rgb: 139 145 152;      /* #8B9198 decorative / disabled only */
 
   /* atmosphere: one faint teal wash top-right, nothing else */
-  --nx-deco-1: rgb(var(--nx-accent-rgb) / 0.12);
-  --nx-deco-2: rgb(255 236 200 / 0.85);
-  --nx-deco-3: rgb(var(--nx-warm-rgb) / 0.10);
-  --nx-grid: rgb(var(--nx-text-rgb) / 0.045);
-  --nx-noise-opacity: 0.035;
+  --nx-deco-1: rgb(22 130 126 / 0.16);      /* mint-teal wash */
+  --nx-deco-2: rgb(210 240 220 / 0.95);     /* luminous mint haze (the quote-band glow) */
+  --nx-deco-3: rgb(22 130 126 / 0.08);
+  --nx-grid: rgb(var(--nx-text-rgb) / 0.04);
+  --nx-noise-opacity: 0.025;
 
-  /* shadows: ink-tinted, diffuse, low alpha; inset top edge makes a card read as paper */
-  --nx-shadow-ink: 160 150 148;             /* Rose Island shaded structure #A09694 */
+  --nx-shadow-ink: 120 140 132;             /* cool sage shadow */
   --nx-shadow-1: 0 1px 0 0 rgb(255 255 255 / 0.6) inset, 0 1px 2px rgb(var(--nx-shadow-ink) / 0.05), 0 14px 36px -18px rgb(var(--nx-shadow-ink) / 0.18);
   --nx-shadow-2: 0 1px 0 0 rgb(255 255 255 / 0.8) inset, 0 2px 4px rgb(var(--nx-shadow-ink) / 0.05), 0 30px 64px -26px rgb(var(--nx-shadow-ink) / 0.26);
   --nx-shadow-inset: 0 0 0 1px rgb(var(--nx-shadow-ink) / 0.03) inset, 0 1px 6px rgb(var(--nx-shadow-ink) / 0.07) inset;
@@ -115,15 +113,15 @@
   /* Archipelago (three.js reads these; same names in Ink) */
   /* Rose Island (public case-study frames) sampled: lit structure #B1B5B4, shaded #A8AEAC / #A09694,
      horizon haze #E2E7E0 — i.e. warm-grey shadow on a bright, barely-tinted field. */
-  --nx-3d-rock: #a09694;     /* Rose Island shaded structure */
-  --nx-3d-land-1: #c5c8c6;   /* lit platform (sampled ~#B1B5B4, lifted) */
-  --nx-3d-land-2: #d8dbd8;   /* mid terrace */
-  --nx-3d-land-3: #e8eae7;   /* summit — pearl, still off the canvas */
+  --nx-3d-rock: #8a9a92;
+  --nx-3d-land-1: #c5d4cc;
+  --nx-3d-land-2: #d5e4dc;
+  --nx-3d-land-3: #e8f2ec;
   --nx-3d-bridge: #16827e;
   --nx-3d-cloud: #ffffff;
-  --nx-3d-key: #fff4e4;      /* sunlight */
-  --nx-3d-sky: #e2e7e0;      /* sampled horizon haze */
-  --nx-3d-ground: #b1b5b4;   /* sampled lit structure */
+  --nx-3d-key: #f3ffe8;
+  --nx-3d-sky: #eaf5ee;
+  --nx-3d-ground: #c5d4cc;
 }
 
 /* ────────────────────────── INK ────────────────────────── */
@@ -131,16 +129,16 @@
   color-scheme: dark;
 
   /* Layer 1 — semantic contract */
-  --color-bg-rgb: 15 20 30;                 /* #0F141E deep ink, slightly bluer than before */
-  --color-surface-rgb: 11 15 24;            /* #0B0F18 recessed well */
-  --color-surface-raised-rgb: 36 46 64;     /* #242E40 card — lifted off the night */
-  --color-text-rgb: 242 237 228;            /* #F2EDE4 brighter ivory */
-  --color-text-muted-rgb: 196 194 184;      /* #C4C2B8 */
+  --color-bg-rgb: 10 18 20;                 /* #0A1214 deep teal-ink, not inverted mint */
+  --color-surface-rgb: 8 14 16;
+  --color-surface-raised-rgb: 28 44 46;     /* #1C2C2E mint-slate card */
+  --color-text-rgb: 236 245 240;            /* #ECF5F0 mint ivory */
+  --color-text-muted-rgb: 176 196 188;
   --color-border: rgb(var(--color-text-rgb) / 0.12);
   --color-accent-rgb: 140 224 216;          /* #8CE0D8 brighter teal on ink */
   --color-accent-hover-rgb: 168 236 230;    /* #A8ECE6 */
   --color-accent-active-rgb: 110 200 192;   /* #6EC8C0 */
-  --color-on-accent-rgb: 15 20 30;          /* ink on teal */
+  --color-on-accent-rgb: 10 18 20;
   --color-warm-rgb: 235 160 127;            /* #EBA07F terracotta */
   --color-warm-text-rgb: 235 160 127;
   --color-focus: rgb(var(--color-accent-rgb) / 0.85);
@@ -148,14 +146,14 @@
   /* Layer 2 — surfaces: deeper = darker */
   --nx-canvas-rgb: var(--color-bg-rgb);
   --nx-surface-rgb: var(--color-surface-rgb);
-  --nx-elevated-rgb: 28 37 52;              /* #1C2534 inputs / keys */
+  --nx-elevated-rgb: 22 36 38;
   --nx-card-rgb: var(--color-surface-raised-rgb);
-  --nx-card-strong-rgb: 44 56 76;           /* #2C384C popovers */
+  --nx-card-strong-rgb: 36 56 58;
 
   --nx-text-rgb: var(--color-text-rgb);
   --nx-text-2-rgb: var(--color-text-muted-rgb);
-  --nx-text-3-rgb: 168 174 186;             /* #A8AEBA */
-  --nx-text-inverse-rgb: 15 20 30;
+  --nx-text-3-rgb: 148 172 166;
+  --nx-text-inverse-rgb: 10 18 20;
 
   --nx-line: var(--color-border);
   --nx-line-subtle: rgb(var(--nx-text-rgb) / 0.07);
@@ -194,20 +192,20 @@
   --nx-disabled-text-rgb: 96 103 116;
 
   --nx-deco-1: rgb(var(--nx-accent-rgb) / 0.22);
-  --nx-deco-2: rgb(90 120 170 / 0.45);
+  --nx-deco-2: rgb(40 90 80 / 0.45);
   --nx-deco-3: rgb(var(--nx-warm-rgb) / 0.12);
   --nx-grid: rgb(var(--nx-text-rgb) / 0.04);
   --nx-noise-opacity: 0.04;
 
-  --nx-3d-rock: #1e2838;
-  --nx-3d-land-1: #556274;   /* lifted slate vs #0F141E */
-  --nx-3d-land-2: #6a788c;
-  --nx-3d-land-3: #8896a8;   /* summit catches the key light */
+  --nx-3d-rock: #1a2a28;
+  --nx-3d-land-1: #3d5550;
+  --nx-3d-land-2: #54706a;
+  --nx-3d-land-3: #6e8c86;
   --nx-3d-bridge: #8ce0d8;
-  --nx-3d-cloud: #a8b4c6;
-  --nx-3d-key: #ffd9b0;
-  --nx-3d-sky: #18202c;
-  --nx-3d-ground: #080c12;
+  --nx-3d-cloud: #a8c4bc;
+  --nx-3d-key: #d8ffe8;
+  --nx-3d-sky: #121c1a;
+  --nx-3d-ground: #060c0a;
 
   --nx-shadow-ink: 0 0 0;
   --nx-shadow-1: 0 1px 0 0 rgb(255 255 255 / 0.04) inset, 0 12px 32px -14px rgb(0 0 0 / 0.55);
