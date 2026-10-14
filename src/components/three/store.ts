@@ -51,6 +51,12 @@ export interface SceneState {
    * node — correct answers light up, wrong ones leave a gap. Null elsewhere.
    */
   path: { mask: boolean[]; cluster: number } | null
+  /**
+   * Category ids worth revisiting, derived from REAL history (latest attempt in a
+   * category had wrong answers). Each one turns one topic node terracotta. Empty
+   * when there is no history — the loom then shows no terracotta at all.
+   */
+  reviewCategories: string[]
 }
 
 const state: SceneState = {
@@ -69,6 +75,7 @@ const state: SceneState = {
   pointerIn: false,
   hover: null,
   path: null,
+  reviewCategories: [],
 }
 
 const listeners = new Set<(s: SceneState) => void>()
@@ -99,7 +106,7 @@ type PageParams = Partial<Omit<SceneState, 'scroll' | 'px' | 'py' | 'pointerIn' 
 /** Declarative hook for pages: describe how the network should behave here. */
 export function useNetwork(params: PageParams, deps: unknown[] = []) {
   useEffect(() => {
-    setScene({ hoverable: false, clusterWeights: null, focusCluster: -1, path: null, ...params })
+    setScene({ hoverable: false, clusterWeights: null, focusCluster: -1, path: null, reviewCategories: [], ...params })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps)
 }

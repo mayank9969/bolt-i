@@ -5,6 +5,7 @@ import * as THREE from 'three'
 import { BEHAVIOUR, buildNetwork, damp, type Network, type NetworkMode } from './network'
 import { getScene, setScene, subscribeScene, type CameraPreset, type SceneState } from './store'
 import { onThemeChange, readToken, tokenHex } from '@/lib/theme'
+import { categoryCluster } from '@/lib/categories'
 
 /**
  * THE LIVING KNOWLEDGE NETWORK
@@ -34,6 +35,8 @@ interface Palette {
   ink: THREE.Color
   accent: THREE.Color
   accentB: THREE.Color
+  warm: THREE.Color
+  frame: THREE.Color
   node: THREE.Color
   core: THREE.Color
   line: THREE.Color
@@ -52,6 +55,8 @@ function readPalette(): Palette {
     ink,
     accent: new THREE.Color(tokenHex('--nx-accent-rgb')),
     accentB: new THREE.Color(tokenHex('--nx-accent-b-rgb')),
+    warm: new THREE.Color(tokenHex('--nx-warm-rgb')),
+    frame: new THREE.Color(readToken('--nx-3d-frame') || '#c9c8c1'),
     node: new THREE.Color(readToken('--nx-3d-node') || '#efe9dd'),
     core: new THREE.Color(readToken('--nx-3d-core') || '#1a1917'),
     line: new THREE.Color(readToken('--nx-3d-strut') || '#8d8880'),
@@ -245,35 +250,114 @@ function NetworkObject({ palette, quality, degraded }: { palette: Palette; quali
   const haloRefs = useRef<(THREE.Mesh | null)[]>([])
   const glowRef = useRef<THREE.PointLight>(null)
 
-  // ── geometry for lines: 2 verts per edge ──
+  // ── MEMORY LOOM strands: each edge is a woven curve (SEG straight pieces along a
+  //    quadratic bow). The bow direction alternates per edge so neighbouring strands
+  //    cross over/under each other instead of fanning out as straight spokes. ──
+  const SEG = quality === 'low' ? 3 : 6
+  const VPE = SEG * 2 // vertices per edge
+  const bulge = useMemo(() => {
+    const out = new Float32Array(net.edgeCount * 3)
+    for (let e = 0; e < net.edgeCount; e++) {
+      const a = net.edges[e * 2]
+      const b = net.edges[e * 2 + 1]
+      const ax = net.home[a * 3], ay = net.home[a * 3 + 1], az = net.home[a * 3 + 2]
+      const bx = net.home[b * 3], by = net.home[b * 3 + 1], bz = net.home[b * 3 + 2]
+      const dx = bx - ax, dy = by - ay, dz = bz - az
+      const len = Math.hypot(dx, dy, dz) || 1
+      // perpendicular: cross(d, up) then tilt by a per-edge angle so bows leave the plane
+      let px = dz, py = 0, pz = -dx
+      const pl = Math.hypot(px, pz) || 1
+      px /= pl; pz /= pl
+      const h = ((e * 2654435761) >>> 0) / 4294967296
+      const ang = h * Math.PI * 2
+      const ca = Math.cos(ang), sa = Math.sin(ang)
+      // rotate the perpendicular around the edge axis (approx: blend with up)
+      px = px * ca; py = sa * 0.9; pz = pz * ca
+      const sign = (a + b) % 2 === 0 ? 1 : -1 // alternate over / under
+      const amt = (net.edgeKind[e] === 2 ? 0.26 : net.edgeKind[e] === 0 ? 0.12 : 0.18) * len * sign
+      out[e * 3] = px * amt
+      out[e * 3 + 1] = py * amt
+      out[e * 3 + 2] = pz * amt
+    }
+    return out
+  }, [net])
   const lineGeo = useMemo(() => {
     const g = new THREE.BufferGeometry()
-    const n = net.edgeCount * 2
+    const n = net.edgeCount * VPE
     g.setAttribute('position', new THREE.BufferAttribute(new Float32Array(n * 3), 3))
     const kind = new Float32Array(n)
     const hash = new Float32Array(n)
     const cl = new Float32Array(n)
+    const path = new Float32Array(n)
     for (let e = 0; e < net.edgeCount; e++) {
       const a = net.edges[e * 2]
       const b = net.edges[e * 2 + 1]
       const h = ((e * 2654435761) >>> 0) / 4294967296
-      kind[e * 2] = kind[e * 2 + 1] = net.edgeKind[e]
-      hash[e * 2] = hash[e * 2 + 1] = h
-      cl[e * 2] = cl[e * 2 + 1] = Math.min(net.cluster[a], net.cluster[b])
+      const pa = net.pathLen[a]
+      const pb = net.pathLen[b]
+      for (let k = 0; k < SEG; k++) {
+        const v0 = e * VPE + k * 2
+        kind[v0] = kind[v0 + 1] = net.edgeKind[e]
+        hash[v0] = hash[v0 + 1] = h
+        cl[v0] = cl[v0 + 1] = Math.min(net.cluster[a], net.cluster[b])
+        path[v0] = pa + (pb - pa) * (k / SEG)
+        path[v0 + 1] = pa + (pb - pa) * ((k + 1) / SEG)
+      }
     }
     g.setAttribute('aKind', new THREE.BufferAttribute(kind, 1))
     g.setAttribute('aHash', new THREE.BufferAttribute(hash, 1))
     g.setAttribute('aCluster', new THREE.BufferAttribute(cl, 1))
     g.setAttribute('aLit', new THREE.BufferAttribute(new Float32Array(n), 1))
     g.setAttribute('aHover', new THREE.BufferAttribute(new Float32Array(n), 1))
-    const path = new Float32Array(n)
-    for (let e = 0; e < net.edgeCount; e++) {
-      path[e * 2] = net.pathLen[net.edges[e * 2]]
-      path[e * 2 + 1] = net.pathLen[net.edges[e * 2 + 1]]
-    }
     g.setAttribute('aPath', new THREE.BufferAttribute(path, 1))
     return g
-  }, [net])
+  }, [net, VPE, SEG])
+  /** write one value to every vertex of an edge (hover / lit attributes) */
+  const setEdge = (attr: THREE.BufferAttribute, e: number, v: number) => {
+    const arr = attr.array as Float32Array
+    arr.fill(v, e * VPE, e * VPE + VPE)
+  }
+
+  // ── layered forms: two thin loom frames per region + long warp threads the strands hang from ──
+  const frameMat = useMemo(() => new THREE.MeshBasicMaterial({ color: palette.frame, transparent: true, opacity: 0.55, depthWrite: false }), [])
+  const warpMat = useMemo(() => new THREE.LineBasicMaterial({ color: palette.line, transparent: true, opacity: 0.16, depthWrite: false }), [])
+  const warpGeo = useMemo(() => {
+    const g = new THREE.BufferGeometry()
+    const N = quality === 'low' ? 8 : 14
+    const p = new Float32Array(N * 6)
+    let sd = 99
+    const rnd = () => ((sd = (sd * 16807) % 2147483647) / 2147483647)
+    for (let i = 0; i < N; i++) {
+      const c = net.centers[i % 3]
+      const x = c[0] + (rnd() - 0.5) * 4.2
+      const z = c[2] + (rnd() - 0.5) * 3.2
+      const lean = (rnd() - 0.5) * 0.9
+      p[i * 6] = x - lean; p[i * 6 + 1] = c[1] + 3.6 + rnd(); p[i * 6 + 2] = z
+      p[i * 6 + 3] = x + lean; p[i * 6 + 4] = c[1] - 3.4 - rnd(); p[i * 6 + 5] = z
+    }
+    g.setAttribute('position', new THREE.BufferAttribute(p, 3))
+    return g
+  }, [net, quality])
+  const frameRefs = useRef<(THREE.Mesh | null)[]>([])
+
+  // ── terracotta "worth revisiting" nodes: real categories from history → one secondary node each ──
+  const reviewTarget = useMemo(() => new Float32Array(net.count), [net])
+  const reviewSm = useMemo(() => new Float32Array(net.count), [net])
+  useEffect(() => {
+    const perCluster = net.count / 3
+    const secondaries = net.clusterOrder[0].filter((n) => net.tier[n] === 1).length || 5
+    const apply = (st: SceneState) => {
+      reviewTarget.fill(0)
+      st.reviewCategories.forEach((id) => {
+        const c = categoryCluster(id)
+        let h = 0
+        for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) >>> 0
+        reviewTarget[c * perCluster + 1 + (h % secondaries)] = 1
+      })
+    }
+    apply(getScene())
+    return subscribeScene(apply)
+  }, [net, reviewTarget])
 
   const lineMat = useMemo(
     () =>
@@ -370,7 +454,9 @@ function NetworkObject({ palette, quality, degraded }: { palette: Palette; quali
     dustMat.uniforms.uCanvas.value.copy(palette.canvas)
     ;(coreMat as THREE.MeshStandardMaterial).color.copy(palette.core)
     haloMat.color.copy(palette.accent)
-  }, [palette, lineMat, dustMat, coreMat, haloMat])
+    frameMat.color.copy(palette.frame)
+    warpMat.color.copy(palette.line)
+  }, [palette, lineMat, dustMat, coreMat, haloMat, frameMat, warpMat])
 
   // ── smoothed scene parameters ──
   const sm = useRef({
@@ -571,15 +657,11 @@ function NetworkObject({ palette, quality, degraded }: { palette: Palette; quali
     if (s.hoverable) {
       if (nearest !== S.hoverNode) {
         const hov = lineGeo.getAttribute('aHover') as THREE.BufferAttribute
-        S.hoverEdges.forEach((e) => {
-          hov.setX(e * 2, 0)
-          hov.setX(e * 2 + 1, 0)
-        })
+        S.hoverEdges.forEach((e) => setEdge(hov, e, 0))
         hoverTarget.fill(0)
         S.hoverEdges = nearest >= 0 ? net.adjacency[nearest] : []
         S.hoverEdges.forEach((e) => {
-          hov.setX(e * 2, 1)
-          hov.setX(e * 2 + 1, 1)
+          setEdge(hov, e, 1)
           hoverTarget[net.edges[e * 2]] = 0.4
           hoverTarget[net.edges[e * 2 + 1]] = 0.4
         })
@@ -602,10 +684,7 @@ function NetworkObject({ palette, quality, degraded }: { palette: Palette; quali
       }
     } else if (S.hoverNode !== -1) {
       const hov = lineGeo.getAttribute('aHover') as THREE.BufferAttribute
-      S.hoverEdges.forEach((e) => {
-        hov.setX(e * 2, 0)
-        hov.setX(e * 2 + 1, 0)
-      })
+      S.hoverEdges.forEach((e) => setEdge(hov, e, 0))
       hov.needsUpdate = true
       hoverTarget.fill(0)
       S.hoverEdges = []
@@ -635,17 +714,20 @@ function NetworkObject({ palette, quality, degraded }: { palette: Palette; quali
         }
         litSm[i] = damp(litSm[i], litTarget, P ? 6 : 3.5, dt)
         hoverSm[i] = damp(hoverSm[i], hoverTarget[i], 10, dt)
+        reviewSm[i] = damp(reviewSm[i], reviewTarget[i], 2.5, dt)
         const lit = litSm[i]
+        const rv = reviewSm[i]
         const focusDim = S.focusMix > 0 && cl !== S.focus ? 1 - S.focusMix * 0.6 : 1
         const breathe = 1 + Math.sin(t * 0.8 + net.phase[i]) * 0.04 * live
         const densityScale = tier === 2 ? 0.55 + S.density * 0.45 : 1
-        const r = isHub ? 0 : net.radius[i] * breathe * densityScale * (1 + lit * 0.4) * (1 + hoverSm[i] * 0.8) * (0.6 + focusDim * 0.4) * (0.7 + S.presence * 0.3)
+        const r = isHub ? 0 : net.radius[i] * breathe * densityScale * (1 + lit * 0.4) * (1 + hoverSm[i] * 0.8) * (1 + rv * 0.55) * (0.6 + focusDim * 0.4) * (0.7 + S.presence * 0.3)
         _m.compose(_v.set(pos[i * 3], pos[i * 3 + 1], pos[i * 3 + 2]), _q.identity(), _s.setScalar(r))
         nodes.setMatrixAt(i, _m)
         // colour: bone → accent when activated; hover → accent; dim toward canvas for focus/presence
         _c.copy(palette.node).lerp(palette.accent, Math.min(1, lit * 0.9 + hoverSm[i]))
         if (tier === 1 && lit < 0.5) _c.lerp(palette.accentB, 0.25 * (1 - lit)) // secondaries carry the cool secondary tone
-        _c.lerp(palette.canvas, Math.min(0.9, (1 - focusDim) * 0.8 + presenceMix * 0.75))
+        if (rv > 0.001) _c.lerp(palette.warm, rv) // terracotta: a topic worth revisiting (from real history)
+        _c.lerp(palette.canvas, Math.min(0.9, (1 - focusDim) * 0.8 + presenceMix * 0.75 * (1 - rv * 0.5)))
         nodes.setColorAt(i, _c)
       }
       nodes.instanceMatrix.needsUpdate = true
@@ -690,18 +772,26 @@ function NetworkObject({ palette, quality, degraded }: { palette: Palette; quali
       const la = lineGeo.getAttribute('aLit') as THREE.BufferAttribute
       const arr = pa.array as Float32Array
       const larr = la.array as Float32Array
+      const sway = 1 + Math.sin(t * 0.23) * 0.08 * live // the bows breathe very slightly
       for (let e = 0; e < net.edgeCount; e++) {
         const a = net.edges[e * 2]
         const b = net.edges[e * 2 + 1]
-        arr[e * 6] = pos[a * 3]
-        arr[e * 6 + 1] = pos[a * 3 + 1]
-        arr[e * 6 + 2] = pos[a * 3 + 2]
-        arr[e * 6 + 3] = pos[b * 3]
-        arr[e * 6 + 4] = pos[b * 3 + 1]
-        arr[e * 6 + 5] = pos[b * 3 + 2]
+        const ax = pos[a * 3], ay = pos[a * 3 + 1], az = pos[a * 3 + 2]
+        const bx = pos[b * 3], by = pos[b * 3 + 1], bz = pos[b * 3 + 2]
+        const kx = bulge[e * 3] * sway, ky = bulge[e * 3 + 1] * sway, kz = bulge[e * 3 + 2] * sway
+        let base = e * VPE * 3
+        for (let k = 0; k < SEG; k++) {
+          for (let q = 0; q < 2; q++) {
+            const u = (k + q) / SEG
+            const w = 4 * u * (1 - u) // quadratic bow, zero at both ends
+            arr[base] = ax + (bx - ax) * u + kx * w
+            arr[base + 1] = ay + (by - ay) * u + ky * w
+            arr[base + 2] = az + (bz - az) * u + kz * w
+            base += 3
+          }
+        }
         const l = Math.min(litSm[a], litSm[b])
-        larr[e * 2] = l
-        larr[e * 2 + 1] = l
+        larr.fill(l, e * VPE, e * VPE + VPE)
       }
       pa.needsUpdate = true
       la.needsUpdate = true
@@ -713,6 +803,21 @@ function NetworkObject({ palette, quality, degraded }: { palette: Palette; quali
     lineMat.uniforms.uFocusMix.value = S.focusMix
     lineMat.uniforms.uRelink.value = B.relinkEvery
 
+    // ── loom frames + warp threads: recede with presence, turn imperceptibly ──
+    frameMat.opacity = (palette.dark ? 0.42 : 0.6) * S.presence
+    warpMat.opacity = (palette.dark ? 0.2 : 0.16) * S.presence
+    for (let c = 0; c < 3; c++) {
+      const h = net.hubs[c]
+      for (let f = 0; f < 2; f++) {
+        const m = frameRefs.current[c * 2 + f]
+        if (!m) continue
+        m.position.set(pos[h * 3], pos[h * 3 + 1], pos[h * 3 + 2])
+        m.rotation.x = Math.PI / 2 + (f ? 0.55 : -0.35) + Math.sin(t * 0.07 + c) * 0.04
+        m.rotation.y = (f ? -1 : 1) * (t * 0.02 + c * 0.8)
+        const focusDim = S.focusMix > 0 && c !== S.focus ? 1 - S.focusMix * 0.5 : 1
+        m.scale.setScalar(focusDim * (0.85 + S.presence * 0.15))
+      }
+    }
     // ── dust ──
     dustMat.uniforms.uTime.value = t
     dustMat.uniforms.uOpacity.value = (palette.dark ? 0.45 : 0.3) * S.dust * S.presence
@@ -727,6 +832,15 @@ function NetworkObject({ palette, quality, degraded }: { palette: Palette; quali
       </instancedMesh>
       <lineSegments ref={linesRef} geometry={lineGeo} material={lineMat} frustumCulled={false} />
       {dustCount > 0 && <points ref={dustRef} geometry={dustGeo} material={dustMat} frustumCulled={false} />}
+      <lineSegments geometry={warpGeo} material={warpMat} frustumCulled={false} />
+      {[0, 1, 2].map((c) =>
+        [0, 1].map((f) => (
+          <mesh key={`frame-${c}-${f}`} ref={(el) => (frameRefs.current[c * 2 + f] = el)} material={frameMat} scale={1}>
+            {/* thin elliptical frame — the layered form the strands are strung through */}
+            <torusGeometry args={[f ? 1.35 : 1.05, 0.007, 5, quality === 'low' ? 48 : 96]} />
+          </mesh>
+        )),
+      )}
       {[0, 1, 2].map((c) => (
         <group key={c}>
           <mesh ref={(el) => (hubRefs.current[c] = el)} material={coreMat}>

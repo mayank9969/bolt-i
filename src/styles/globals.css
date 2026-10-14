@@ -553,6 +553,10 @@
   /* editorial figure caption */
   .figcap { @apply t-meta; color: var(--nx-text-3); }
   /* section opener: index + rule + optional right label */
+  /* terracotta chip — the one place the warm accent appears in the UI: "worth revisiting" */
+  .chip-warm { @apply inline-flex items-center gap-1.5 h-8 px-3 rounded-full text-[13px] font-medium transition-colors duration-fast ease-out; color: var(--nx-warm-text); background: var(--nx-warm-soft); border: 1px solid rgb(var(--nx-warm-rgb) / 0.28); }
+  .chip-warm:hover { background: rgb(var(--nx-warm-rgb) / 0.2); }
+  .chip-warm:focus-visible { outline: 2px solid var(--nx-focus); outline-offset: 2px; }
   .opener { @apply flex items-center gap-4 t-label; color: var(--nx-text-3); }
   .opener::before { content: ''; width: 2rem; height: 1px; background: var(--nx-accent); }
   /* numbered list row with hairline */

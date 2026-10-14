@@ -1,13 +1,14 @@
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { Link } from 'react-router-dom'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import Reveal from '@/components/Reveal'
 import MagneticLink from '@/components/ui/MagneticLink'
 import CountUp from '@/components/ui/CountUp'
 import { ArrowRight, Shield } from '@/components/ui/Icons'
-import { FAMILY_LABELS, categoryIcon } from '@/lib/categories'
-import { getCategories } from '@/api/quizApi'
-import type { CategoriesResponse } from '@/types/quiz'
+import { FAMILY_LABELS, categoryIcon, categoryLabel } from '@/lib/categories'
+import { getCategories, getHistory } from '@/api/quizApi'
+import type { CategoriesResponse, HistoryEntry } from '@/types/quiz'
+import { reviewTopics } from '@/lib/review'
 import { difficultyLevel, labelCategory } from '@/lib/format'
 import { useNetwork } from '@/components/three/store'
 
@@ -16,6 +17,7 @@ const enter = (i: number) => ({ duration: 0.9, delay: 0.15 + i * 0.1, ease })
 
 export default function Home() {
   const [catalog, setCatalog] = useState<CategoriesResponse | null>(null)
+  const [history, setHistory] = useState<HistoryEntry[] | null>(null)
   const heroRef = useRef<HTMLElement>(null)
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
   const copyY = useTransform(scrollYProgress, [0, 1], [0, 90])
@@ -23,7 +25,11 @@ export default function Home() {
 
   useEffect(() => {
     getCategories().then(setCatalog).catch(() => setCatalog(null))
+    getHistory().then(setHistory).catch(() => setHistory(null))
   }, [])
+  // real history → topics whose latest attempt still had wrong answers (terracotta on the loom)
+  const review = useMemo(() => reviewTopics(history), [history])
+  const reviewIds = useMemo(() => review.map((r) => r.id), [review])
 
   const cats = catalog?.categories ?? []
   const categoryCount = cats.length
@@ -38,8 +44,9 @@ export default function Home() {
       activation: 0.16,
       hoverable: true,
       clusterLabels: FAMILY_LABELS,
+      reviewCategories: reviewIds,
     },
-    [cats.length],
+    [cats.length, reviewIds],
   )
 
   return (
@@ -53,22 +60,22 @@ export default function Home() {
             {/* headline: bottom-left, big serif */}
             <div className="lg:col-span-8 xl:col-span-7 hero-paper">
               <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={enter(0)} className="opener">
-                <span>Living knowledge network</span>
+                <span>The Memory Loom</span>
                 <span className="hidden sm:inline text-fg-3/70">·</span>
                 <span className="hidden sm:inline">{catalog ? `${categoryCount} regions · ${questionCount} questions` : 'Loading the bank…'}</span>
               </motion.p>
 
               <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={enter(1)} className="t-hero text-fg mt-6 max-w-[15ch] text-balance">
-                Every question<br className="hidden sm:inline" /> is a <span className="t-italic text-accent">node.</span>
+                Every answer<br className="hidden sm:inline" /> is a <span className="t-italic text-accent">thread.</span>
                 <br />
-                Every answer,<br /> a <span className="t-italic">connection.</span>
+                Knowledge is<br /> what they <span className="t-italic">weave.</span>
               </motion.h1>
             </div>
 
             {/* lede + actions: bottom-right column */}
             <div className="lg:col-span-4 xl:col-span-5 lg:pl-8 xl:pl-16 lg:border-l lg:border-line">
               <motion.p initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={enter(2)} className="t-lead text-fg-2 max-w-md text-pretty">
-                VEYRA maps what you know — from Mathematics and Python to History and Language — as a network you can watch grow. Pick a region, set the tier, and light it up — one honest, server-scored answer at a time.
+                VEYRA weaves what you know — from Mathematics and Python to History and Language — into one growing structure. Pick a region, set the tier, and add to it — one honest, server-scored answer at a time.
               </motion.p>
 
               <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={enter(3)} className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
@@ -80,6 +87,33 @@ export default function Home() {
                   How it works
                 </Link>
               </motion.div>
+
+              {/* worth revisiting — shown ONLY when real history says so; the same topics are terracotta on the loom */}
+              {review.length > 0 && (
+                <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={enter(4)} className="mt-8 pt-6 border-t border-line">
+                  <p className="t-label text-fg-3 flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-warm" aria-hidden="true" />
+                    Worth revisiting · {review.length} {review.length === 1 ? 'region' : 'regions'}
+                  </p>
+                  <ul className="mt-3 flex flex-wrap gap-2" aria-label="Regions whose latest attempt had wrong answers">
+                    {review.slice(0, 4).map((r) => (
+                      <li key={r.id}>
+                        <Link to="/setup" state={{ category: r.id }} className="chip-warm" title={`Latest attempt: ${r.percentage}% — ${r.wrong} wrong`}>
+                          {categoryLabel(r.id)}
+                          <span className="text-fg-3">· {r.wrong} wrong</span>
+                        </Link>
+                      </li>
+                    ))}
+                    {review.length > 4 && (
+                      <li>
+                        <Link to="/history" className="chip-warm">
+                          +{review.length - 4} more
+                        </Link>
+                      </li>
+                    )}
+                  </ul>
+                </motion.div>
+              )}
             </div>
           </motion.div>
         </div>
@@ -93,7 +127,7 @@ export default function Home() {
         >
           <span className="hidden md:inline-flex items-center gap-3">
             <span className="w-8 h-px bg-line-strong" />
-            Fig. 01 — {catalog ? `${categoryCount} regions of knowledge, ${questionCount} nodes` : 'regions of knowledge, live'}
+            Fig. 01 — {catalog ? `${categoryCount} regions, ${questionCount} questions${review.length ? `, ${review.length} in terracotta to revisit` : ''}` : 'the loom, live'}
           </span>
           <span className="inline-flex items-center gap-3">
             Scroll to move through it

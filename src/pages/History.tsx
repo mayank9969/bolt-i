@@ -9,6 +9,7 @@ import { CategoryBreakdown, DifficultyBreakdown } from '@/components/Breakdowns'
 import Tier from '@/components/ui/Tier'
 import { ArrowRight, Cross } from '@/components/ui/Icons'
 import { useNetwork } from '@/components/three/store'
+import { reviewTopics } from '@/lib/review'
 import { formatPercent, formatScore, labelCategory, performanceTone, toneText } from '@/lib/format'
 import { FAMILY_LABELS, categoryCluster, normaliseCategoryId } from '@/lib/categories'
 
@@ -68,6 +69,8 @@ export default function History() {
     return [establish(fam(0)), establish(fam(1)), establish(mixedItems)]
   }, [history, mixedItems])
 
+  const reviewIds = useMemo(() => reviewTopics(history).map((r) => r.id), [history])
+
   useNetwork(
     {
       mode: 'accumulated',
@@ -77,8 +80,9 @@ export default function History() {
       clusterWeights: history && history.length ? weights : null,
       focusCluster: filter === 'all' ? -1 : categoryCluster(filter),
       clusterLabels: FAMILY_LABELS,
+      reviewCategories: reviewIds,
     },
-    [history, weights, filter, categories],
+    [history, weights, filter, categories, reviewIds],
   )
 
   return (

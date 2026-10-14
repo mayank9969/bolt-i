@@ -2,6 +2,7 @@ import { Suspense, lazy, useCallback, useEffect, useMemo, useState } from 'react
 import { AnimatePresence, motion } from 'framer-motion'
 import { buildNetwork } from './network'
 import { getScene, setScene, subscribeScene, threeDisabled, useHover, type HoverInfo } from './store'
+import { categoryCluster } from '@/lib/categories'
 
 const NetworkScene = lazy(() => import('./NetworkScene'))
 
@@ -114,13 +115,14 @@ function HoverLabel() {
  */
 function StaticNetwork() {
   const net = useMemo(() => buildNetwork({ leaves: 20 }), [])
-  const [page, setPage] = useState(() => ({ presence: 1, activation: getScene().activation, quiet: false }))
+  const [page, setPage] = useState(() => ({ presence: 1, activation: getScene().activation, quiet: false, review: '' }))
   useEffect(() => {
     const read = () => {
       const s = getScene()
       const presence = s.mode === 'quiet' ? 0.3 : s.mode === 'atmospheric' ? 0.6 : s.mode === 'responsive' ? 0.75 : 0.85
       const activation = s.clusterWeights ? 1 : s.activation
-      setPage((p) => (p.presence === presence && p.activation === activation ? p : { presence, activation, quiet: s.mode === 'quiet' }))
+      const review = s.reviewCategories.join('|')
+      setPage((p) => (p.presence === presence && p.activation === activation && p.review === review ? p : { presence, activation, quiet: s.mode === 'quiet', review }))
     }
     read()
     return subscribeScene(read)
@@ -137,6 +139,18 @@ function StaticNetwork() {
     }
     return out
   }, [net])
+  // the same real "worth revisiting" mapping the WebGL loom uses: one secondary node per category
+  const reviewSet = useMemo(() => {
+    const set = new Set<number>()
+    const perCluster = net.count / 3
+    const secondaries = net.clusterOrder[0].filter((n) => net.tier[n] === 1).length || 5
+    page.review.split('|').filter(Boolean).forEach((id) => {
+      let h = 0
+      for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) >>> 0
+      set.add(categoryCluster(id) * perCluster + 1 + (h % secondaries))
+    })
+    return set
+  }, [net, page.review])
   return (
     <svg
       className="absolute inset-0 w-full h-full transition-opacity duration-500"
@@ -158,8 +172,8 @@ function StaticNetwork() {
           key={i}
           cx={p.x}
           cy={p.y}
-          r={(p.tier === 0 ? 16 : p.tier === 1 ? 6 : 3) * p.d}
-          fill={p.tier === 0 ? 'var(--nx-3d-core)' : net.activationRank[i] <= page.activation ? 'var(--nx-accent)' : 'var(--nx-3d-node)'}
+          r={(p.tier === 0 ? 16 : p.tier === 1 ? (reviewSet.has(i) ? 9 : 6) : 3) * p.d}
+          fill={p.tier === 0 ? 'var(--nx-3d-core)' : reviewSet.has(i) ? 'var(--nx-warm)' : net.activationRank[i] <= page.activation ? 'var(--nx-accent)' : 'var(--nx-3d-node)'}
           fillOpacity={0.35 + p.d * 0.65}
           stroke={p.tier === 0 ? 'none' : 'var(--nx-line-strong)'}
         />

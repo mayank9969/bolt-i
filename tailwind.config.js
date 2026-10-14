@@ -31,6 +31,7 @@ export default {
         },
 
         accent: { DEFAULT: t('accent'), 2: t('accent-2'), dark: t('accent-dark'), b: t('accent-b') },
+        warm: { DEFAULT: t('warm'), text: t('warm-text') },
         cta: { DEFAULT: t('cta'), hover: t('cta-hover'), text: t('cta-text') },
 
         ok: t('success'),
