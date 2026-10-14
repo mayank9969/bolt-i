@@ -628,9 +628,27 @@
 /* ── Knowledge Archipelago ─────────────────────────────────────────────── */
 @layer components {
   /* DOM labels that float above hovered / focused islands (drei <Html>) */
-  [data-theme='ink'] .quote-line { color: #ffffff; }
   [data-theme='ink'] .island-label { color: #ffffff; }
   [data-theme='ink'] .t-hero .t-italic { color: #ffffff; }
+  /* Ink: quote + category lists sit on Paper-white so they stay readable */
+  [data-theme='ink'] .ink-sheet {
+    background: #fafbfa;
+    color: #1b2230;
+  }
+  [data-theme='ink'] .ink-sheet .quote-line,
+  [data-theme='ink'] .ink-sheet .text-fg,
+  [data-theme='ink'] .ink-sheet .t-section,
+  [data-theme='ink'] .ink-sheet .t-h3-lg,
+  [data-theme='ink'] .ink-sheet .t-body { color: #1b2230; }
+  [data-theme='ink'] .ink-sheet .text-fg-2,
+  [data-theme='ink'] .ink-sheet .t-caption { color: #4a5262; }
+  [data-theme='ink'] .ink-sheet .text-fg-3 { color: #636a77; }
+  [data-theme='ink'] .ink-sheet .island-chip {
+    color: #1b2230;
+    background: #ffffff;
+    border-color: rgb(27 34 48 / 0.14);
+  }
+  [data-theme='ink'] .ink-sheet .figcap { color: #636a77; }
   .island-label {
     @apply t-meta;
     pointer-events: none;

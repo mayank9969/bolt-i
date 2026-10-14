@@ -105,7 +105,7 @@ export default function Home() {
           className="relative z-10 max-w-page mx-auto w-full px-5 sm:px-6 lg:px-8 mt-6"
           aria-label="Categories"
         >
-          <div className="category-dock">
+          <div className="category-dock ink-sheet">
             <div className="flex items-center justify-between gap-6 figcap mb-3">
               <span className="inline-flex items-center gap-3 min-w-0">
                 <span className="w-8 h-px bg-line-strong shrink-0" />
@@ -195,7 +195,7 @@ export default function Home() {
       </section>
 
       {/* ── Quote: open air, no body copy behind — haze lives here, type stays sharp ── */}
-      <section className="relative py-28 md:py-40 overflow-hidden" aria-label="Epigraph">
+      <section className="ink-sheet relative py-28 md:py-40 overflow-hidden" aria-label="Epigraph">
         <div className="pointer-events-none absolute inset-0" aria-hidden="true">
           <div
             className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(80vw,52rem)] h-[min(50vw,28rem)] rounded-full blur-[90px]"
@@ -211,7 +211,7 @@ export default function Home() {
       </section>
 
       {/* ── Regions: real catalogue, ruled rows not cards ──────────── */}
-      <section className="relative max-w-page mx-auto px-5 sm:px-6 lg:px-8 pb-24 md:pb-36">
+      <section className="ink-sheet relative max-w-page mx-auto px-5 sm:px-6 lg:px-8 py-16 md:py-24 rounded-2xl mb-24 md:mb-36">
         <Reveal>
           <div className="grid lg:grid-cols-12 gap-8 items-baseline mb-6">
             <span className="lg:col-span-2 index">02 — Islands</span>

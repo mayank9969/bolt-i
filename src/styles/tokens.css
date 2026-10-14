@@ -197,15 +197,15 @@
   --nx-grid: rgb(var(--nx-text-rgb) / 0.04);
   --nx-noise-opacity: 0.04;
 
-  --nx-3d-rock: #050607;     /* black stone at rest */
-  --nx-3d-land-1: #0c0e0e;
-  --nx-3d-land-2: #121414;
-  --nx-3d-land-3: #181a1a;
-  --nx-3d-bridge: #8ce0d8;   /* teal paths stay readable */
-  --nx-3d-cloud: #3a4444;
-  --nx-3d-key: #c8ffe0;
-  --nx-3d-sky: #07090a;
-  --nx-3d-ground: #020303;
+  --nx-3d-rock: #1c1c1c;     /* black, brighter than the void so the silhouette reads */
+  --nx-3d-land-1: #2a2a2a;
+  --nx-3d-land-2: #343434;
+  --nx-3d-land-3: #404040;
+  --nx-3d-bridge: #8ce0d8;
+  --nx-3d-cloud: #3a3a3a;
+  --nx-3d-key: #f0f0f0;      /* white key — no mint wash on every island */
+  --nx-3d-sky: #080808;
+  --nx-3d-ground: #050505;
 
   --nx-shadow-ink: 0 0 0;
   --nx-shadow-1: 0 1px 0 0 rgb(255 255 255 / 0.04) inset, 0 12px 32px -14px rgb(0 0 0 / 0.55);

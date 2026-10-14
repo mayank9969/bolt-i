@@ -742,7 +742,7 @@ function Lights({ palette, quality }: { palette: Palette; quality: Quality }) {
         shadow-bias={-0.0006}
         shadow-radius={5}
       />
-      <directionalLight position={[6, 3, -6]} intensity={0.5} color={palette.dark ? '#7fb6c9' : '#dfe9ea'} />
+      <directionalLight position={[6, 3, -6]} intensity={0.45} color={palette.dark ? '#c4c4c4' : '#dfe9ea'} />
     </>
   )
 }
