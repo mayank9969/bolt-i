@@ -1,5 +1,4 @@
 import { Suspense, lazy, useEffect, useMemo, useState } from 'react'
-import { createPortal } from 'react-dom'
 import { getCategories, getHistory } from '@/api/quizApi'
 import { reviewTopics, type ReviewTopic } from '@/lib/review'
 import { buildIslands, type Island } from './islands'
@@ -21,7 +20,6 @@ export default function ArchipelagoStage() {
   const [kind, setKind] = useState<'webgl' | 'static' | 'pending'>('pending')
   const [mode, setMode] = useState<WorldMode>(getWorld().mode)
   const [selected, setSelected] = useState<string | null>(getWorld().selected)
-  const [slot, setSlot] = useState<HTMLElement | null>(null)
   useWorldSlice((s) => s.mode, setMode)
   useWorldSlice((s) => s.selected, setSelected)
   useEffect(() => {
@@ -31,18 +29,10 @@ export default function ArchipelagoStage() {
     }
   }, [mode])
 
-  // mount the canvas *inside* #island-stage when Home provides that frame
   useEffect(() => {
-    const tick = () => {
-      const el = document.getElementById('island-stage')
-      setSlot((prev) => (prev === el ? prev : el))
-      const framed = !!el
-      if (getWorld().framed !== framed) setWorld({ framed })
-    }
-    tick()
-    const id = window.setInterval(tick, 250)
-    return () => window.clearInterval(id)
-  }, [mode])
+    setWorld({ framed: true })
+    return () => setWorld({ framed: false })
+  }, [])
 
   // real data → store (one fetch each; pages fetch their own copies as before)
   useEffect(() => {
@@ -105,9 +95,9 @@ export default function ArchipelagoStage() {
   if (kind === 'pending' || mode === 'off') return null
   const presence = (mode === 'hero' ? 1 : mode === 'focus' ? 0.9 : mode === 'quiet' ? 0.34 : 0) * (selected ? 0.38 : 1)
   const live = (mode === 'hero' || mode === 'focus') && !selected
-  const inner = (
+  return (
     <div
-      className={`archipelago-stage ${slot ? 'absolute inset-0' : 'fixed inset-0 z-[1]'} w-full h-full transition-opacity duration-700 ease-out`}
+      className="archipelago-stage absolute inset-0 w-full h-full"
       data-kind={kind}
       style={{ opacity: presence, pointerEvents: live ? 'auto' : 'none' }}
       aria-hidden={mode === 'hero' || mode === 'focus' ? undefined : true}
@@ -121,8 +111,6 @@ export default function ArchipelagoStage() {
       )}
     </div>
   )
-  if (slot) return createPortal(inner, slot)
-  return inner
 }
 
 /**

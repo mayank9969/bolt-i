@@ -4,7 +4,6 @@ import { Link, NavLink as RouterNavLink, useLocation } from 'react-router-dom'
 import { LogoMark, Wordmark } from './Logo'
 import Background from './Background'
 import ThemeSwitcher from './ThemeSwitcher'
-import ArchipelagoStage from './three/ArchipelagoStage'
 import FieldGuide from './FieldGuide'
 import Exhibit from './Exhibit'
 
@@ -18,15 +17,7 @@ const NAV = [
 export default function Layout({ children }: { children: ReactNode }) {
   const location = useLocation()
   const [open, setOpen] = useState(false)
-  const [scrolled, setScrolled] = useState(false)
   const inQuiz = location.pathname === '/quiz'
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8)
-    onScroll()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
 
   useEffect(() => setOpen(false), [location.pathname])
   useEffect(() => {
@@ -39,13 +30,12 @@ export default function Layout({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen flex flex-col relative">
       <Background />
-      <ArchipelagoStage />
       <FieldGuide />
       <Exhibit />
 
       <header
         className={`sticky top-0 z-50 transition-colors duration-300 border-b ${
-          scrolled || open ? 'bg-canvas border-line' : 'bg-transparent border-transparent'
+          'bg-canvas border-line'
         }`}
       >
         <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">

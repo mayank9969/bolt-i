@@ -1,4 +1,4 @@
-import { motion, useScroll, useTransform } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import Reveal from '@/components/Reveal'
@@ -10,6 +10,7 @@ import { getCategories, getHistory } from '@/api/quizApi'
 import type { CategoriesResponse, HistoryEntry } from '@/types/quiz'
 import { reviewTopics } from '@/lib/review'
 import { difficultyLevel, labelCategory } from '@/lib/format'
+import ArchipelagoStage from '@/components/three/ArchipelagoStage'
 import { setWorld, useWorld, useWorldSlice } from '@/components/three/world'
 import { exhibitFor, exhibitIds, hasExhibit } from '@/lib/exhibits'
 
@@ -20,9 +21,6 @@ export default function Home() {
   const [catalog, setCatalog] = useState<CategoriesResponse | null>(null)
   const [history, setHistory] = useState<HistoryEntry[] | null>(null)
   const heroRef = useRef<HTMLElement>(null)
-  const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
-  const copyY = useTransform(scrollYProgress, [0, 1], [0, 70])
-  const copyO = useTransform(scrollYProgress, [0, 0.6], [1, 0])
 
   useEffect(() => {
     getCategories().then(setCatalog).catch(() => setCatalog(null))
@@ -48,7 +46,7 @@ export default function Home() {
       <section ref={heroRef} className="relative pt-6 md:pt-10 pb-4">
         <div className="relative z-10 max-w-page mx-auto w-full px-5 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-12 gap-x-10 gap-y-8 items-start">
-            <motion.div style={{ y: copyY, opacity: copyO }} className="lg:col-span-5 xl:col-span-5 min-w-0">
+            <motion.div className="lg:col-span-5 xl:col-span-5 min-w-0 relative z-20 bg-canvas rounded-2xl">
               <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={enter(0)} className="opener">
                 <span>The Knowledge Archipelago</span>
               </motion.p>
@@ -86,10 +84,12 @@ export default function Home() {
             <div className="lg:col-span-7 min-w-0">
               <div
                 id="island-stage"
-                className="island-frame"
+                className="island-frame relative z-10"
                 role="img"
                 aria-label="Knowledge archipelago — one island per subject. Choose a category below to focus one."
-              />
+              >
+                <ArchipelagoStage />
+              </div>
             </div>
           </div>
         </div>

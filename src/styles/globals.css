@@ -646,6 +646,7 @@
 
   .island-frame {
     position: relative;
+    isolation: isolate;
     width: 100%;
     height: min(58vh, 560px);
     min-height: 240px;
