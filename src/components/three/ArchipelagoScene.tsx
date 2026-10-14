@@ -157,11 +157,24 @@ function IslandMesh({
     g.position.set(island.x, island.y + bob + A.lift - (1 - introK) * 2.6, island.z)
     const sc = (dimmed ? 0.94 : 1) * (0.2 + introK * 0.8)
     g.scale.setScalar(sc)
-    landMats.forEach((m) => {
+    landMats.forEach((m, i) => {
       m.emissive.copy(palette.accent)
-      m.emissiveIntensity = A.glow
+      m.emissiveIntensity = palette.dark ? A.glow * 1.35 : A.glow
       m.opacity = 1
+      if (palette.dark) {
+        m.color.copy(palette.land[i]).lerp(palette.accent, A.glow * 0.9)
+      } else {
+        m.color.copy(palette.land[i])
+      }
     })
+    if (palette.dark) {
+      rockMat.color.copy(palette.rock).lerp(palette.accent, A.glow * 0.55)
+      rockMat.emissive.copy(palette.accent)
+      rockMat.emissiveIntensity = A.glow * 0.6
+    } else {
+      rockMat.color.copy(palette.rock)
+      rockMat.emissiveIntensity = 0
+    }
   })
 
   const onOver = (e: ThreeEvent<PointerEvent>) => {

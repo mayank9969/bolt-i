@@ -628,6 +628,9 @@
 /* ── Knowledge Archipelago ─────────────────────────────────────────────── */
 @layer components {
   /* DOM labels that float above hovered / focused islands (drei <Html>) */
+  [data-theme='ink'] .quote-line { color: #ffffff; }
+  [data-theme='ink'] .island-label { color: #ffffff; }
+  [data-theme='ink'] .t-hero .t-italic { color: #ffffff; }
   .island-label {
     @apply t-meta;
     pointer-events: none;

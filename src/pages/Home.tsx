@@ -203,7 +203,7 @@ export default function Home() {
           />
         </div>
         <blockquote className="relative z-10 mx-auto max-w-page px-6 text-center">
-          <p className="font-sans italic font-normal text-[1.65rem] sm:text-3xl md:text-4xl text-fg max-w-[18ch] mx-auto text-balance leading-snug tracking-tight">
+          <p className="quote-line font-sans italic font-normal text-[1.65rem] sm:text-3xl md:text-4xl text-fg max-w-[18ch] mx-auto text-balance leading-snug tracking-tight">
             “Everyone forgets that Icarus also flew.”
           </p>
           <footer className="mt-6 t-caption text-fg-3">Jack Gilbert · Failing and Flying</footer>

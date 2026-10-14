@@ -132,7 +132,7 @@
   --color-bg-rgb: 10 18 20;                 /* #0A1214 deep teal-ink, not inverted mint */
   --color-surface-rgb: 8 14 16;
   --color-surface-raised-rgb: 28 44 46;     /* #1C2C2E mint-slate card */
-  --color-text-rgb: 236 245 240;            /* #ECF5F0 mint ivory */
+  --color-text-rgb: 247 247 244;            /* #F7F7F4 white, same role as navy on Paper */
   --color-text-muted-rgb: 176 196 188;
   --color-border: rgb(var(--color-text-rgb) / 0.12);
   --color-accent-rgb: 140 224 216;          /* #8CE0D8 brighter teal on ink */
@@ -197,15 +197,15 @@
   --nx-grid: rgb(var(--nx-text-rgb) / 0.04);
   --nx-noise-opacity: 0.04;
 
-  --nx-3d-rock: #1a2a28;
-  --nx-3d-land-1: #3d5550;
-  --nx-3d-land-2: #54706a;
-  --nx-3d-land-3: #6e8c86;
-  --nx-3d-bridge: #8ce0d8;
-  --nx-3d-cloud: #a8c4bc;
-  --nx-3d-key: #d8ffe8;
-  --nx-3d-sky: #121c1a;
-  --nx-3d-ground: #060c0a;
+  --nx-3d-rock: #050607;     /* black stone at rest */
+  --nx-3d-land-1: #0c0e0e;
+  --nx-3d-land-2: #121414;
+  --nx-3d-land-3: #181a1a;
+  --nx-3d-bridge: #8ce0d8;   /* teal paths stay readable */
+  --nx-3d-cloud: #3a4444;
+  --nx-3d-key: #c8ffe0;
+  --nx-3d-sky: #07090a;
+  --nx-3d-ground: #020303;
 
   --nx-shadow-ink: 0 0 0;
   --nx-shadow-1: 0 1px 0 0 rgb(255 255 255 / 0.04) inset, 0 12px 32px -14px rgb(0 0 0 / 0.55);
