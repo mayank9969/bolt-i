@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Reveal from '@/components/Reveal'
-import { useNetwork } from '@/components/three/store'
+import { useWorld } from '@/components/three/world'
 import Tier from '@/components/ui/Tier'
 import { ArrowRight } from '@/components/ui/Icons'
 import { categoryIcon } from '@/lib/categories'
@@ -19,7 +19,7 @@ import { DIFFICULTY_ORDER, labelCategory } from '@/lib/format'
  */
 export default function About() {
   // ABOUT — atmospheric: museum-slow, off to the side, never competing with the text.
-  useNetwork({ mode: 'atmospheric', camera: 'museum', density: 0.55, activation: 0.3 })
+  useWorld({ mode: 'quiet' })
 
   const [catalog, setCatalog] = useState<CategoryInfo[] | null>(null)
   const [total, setTotal] = useState<number | null>(null)

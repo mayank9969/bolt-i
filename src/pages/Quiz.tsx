@@ -4,7 +4,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { useQuiz } from '@/context/QuizContext'
 import { submitQuiz } from '@/api/quizApi'
 import { ArrowLeft, ArrowRight, Check } from '@/components/ui/Icons'
-import { pulseNetwork, useNetwork } from '@/components/three/store'
+import { useWorld } from '@/components/three/world'
 import { labelCategory, labelDifficulty } from '@/lib/format'
 import { repairText } from '@/lib/text'
 
@@ -49,14 +49,8 @@ export default function Quiz() {
 
   // QUIZ — focus mode: the network recedes into the paper; activation tracks answered count.
   const answeredCount = answers.filter((a) => a.trim() !== '').length
-  useNetwork(
-    { mode: 'quiet', camera: 'far', density: 0.4, activation: total ? 0.1 + (answeredCount / total) * 0.5 : 0.1 },
-    [answeredCount, total],
-  )
-  // moving between questions sends one quiet signal
-  useEffect(() => {
-    pulseNetwork(0.5)
-  }, [index])
+  // the world is switched off while answering — the question owns the page
+  useWorld({ mode: 'off' })
 
   const current = questions[index]
   const isMCQ = current?.question_type === 'mcq'

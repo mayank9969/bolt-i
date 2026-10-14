@@ -3,14 +3,13 @@ import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { useQuiz } from '@/context/QuizContext'
 import Reveal from '@/components/Reveal'
-import { pulseNetwork, useNetwork } from '@/components/three/store'
+import { useWorld } from '@/components/three/world'
 import CountUp from '@/components/ui/CountUp'
 import MagneticLink from '@/components/ui/MagneticLink'
 import { ArrowRight, Check, Cross, Refresh } from '@/components/ui/Icons'
 import Tier from '@/components/ui/Tier'
 import { formatScore, labelCategory, performanceTone, toneText, toneVar } from '@/lib/format'
 import { repairText } from '@/lib/text'
-import { categoryCluster } from '@/lib/categories'
 
 const ease = [0.22, 1, 0.36, 1] as const
 
@@ -24,34 +23,9 @@ export default function Result() {
 
   const pct = result?.percentage ?? 0
   const category = result?.category ?? 'all'
-  // RESULT — activated: the camera starts near a core and pulls back while the score lights the network.
-  // The region the quiz was taken in lights its knowledge path question by question (real review data);
-  // the rest of the network takes the overall score. Nothing here is the only place a fact is shown —
-  // the same outcomes are printed in the summary and the review list below.
-  const region = categoryCluster(category)
-  const pathMask = result?.review.map((r) => !!r.is_correct) ?? []
-  useNetwork(
-    {
-      mode: 'activated',
-      camera: 'reveal',
-      density: 0.85,
-      activation: Math.max(0.05, pct / 100),
-      focusCluster: -1,
-      path: result ? { mask: pathMask, cluster: region } : null,
-      // this attempt's own data: a region quiz with wrong answers leaves a terracotta node to come back to
-      reviewCategories: result && result.wrong_answers > 0 && result.category !== 'all' && result.category !== 'mixed' ? [result.category] : [],
-    },
-    [pct, result],
-  )
-  useEffect(() => {
-    if (!result) return
-    const t1 = setTimeout(() => pulseNetwork(2), 400)
-    const t2 = setTimeout(() => pulseNetwork(1), 2400)
-    return () => {
-      clearTimeout(t1)
-      clearTimeout(t2)
-    }
-  }, [result])
+  // RESULT — the island this quiz was taken on is framed, quietly, behind the printed outcome.
+  // Nothing in the world is the only place a fact is shown; the score and review list below carry it.
+  useWorld({ mode: category === 'all' || category === 'mixed' ? 'quiet' : 'focus', focus: category === 'all' || category === 'mixed' ? null : category }, [category])
 
   if (!result) return null
 

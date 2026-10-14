@@ -25,16 +25,16 @@
   color-scheme: light;
 
   /* Layer 1 — semantic contract */
-  --color-bg-rgb: 247 247 244;              /* #F7F7F4 luminous paper */
-  --color-surface-rgb: 238 238 233;         /* #EEEEE9 recessed band / rail (warm grey) */
-  --color-surface-raised-rgb: 252 252 250;  /* #FCFCFA card */
+  --color-bg-rgb: 248 246 241;              /* #F8F6F1 warm white — luminous, not grey */
+  --color-surface-rgb: 240 236 229;         /* #F0ECE5 recessed band / rail (warm grey) */
+  --color-surface-raised-rgb: 253 252 249;  /* #FDFCF9 card — a half-step brighter than the canvas */
   --color-text-rgb: 27 34 48;               /* #1B2230 deep ink (blue-black) 14.8:1 */
   --color-text-muted-rgb: 74 82 98;         /* #4A5262 7.3:1 */
   --color-border: rgb(var(--color-text-rgb) / 0.10);
   --color-accent-rgb: 30 107 106;           /* #1E6B6A deep teal 5.8:1 */
   --color-accent-hover-rgb: 24 90 89;       /* #185A59 */
   --color-accent-active-rgb: 18 72 71;      /* #124847 */
-  --color-on-accent-rgb: 247 247 244;       /* paper on teal  5.8:1 */
+  --color-on-accent-rgb: 248 246 241;       /* paper on teal  5.8:1 */
   --color-warm-rgb: 176 78 51;              /* #B04E33 terracotta 4.9:1 — review only */
   --color-warm-text-rgb: 158 69 48;         /* #9E4530 terracotta as small text 5.8:1 */
   --color-focus: rgb(var(--color-accent-rgb) / 0.9);
@@ -42,7 +42,7 @@
   /* Layer 2 — surfaces: surface < bg < elevated < card < card-strong. No #FFFFFF. */
   --nx-canvas-rgb: var(--color-bg-rgb);
   --nx-surface-rgb: var(--color-surface-rgb);
-  --nx-elevated-rgb: 250 250 248;           /* #FAFAF8 inputs / keys */
+  --nx-elevated-rgb: 251 250 246;           /* #FBFAF6 inputs / keys */
   --nx-card-rgb: var(--color-surface-raised-rgb);
   --nx-card-strong-rgb: 254 254 253;        /* #FEFEFD popovers, focused field (never pure white) */
 
@@ -50,7 +50,7 @@
   --nx-text-rgb: var(--color-text-rgb);
   --nx-text-2-rgb: var(--color-text-muted-rgb);
   --nx-text-3-rgb: 99 106 119;              /* #636A77  5.1:1 on paper, 4.7:1 on surface */
-  --nx-text-inverse-rgb: 247 247 244;
+  --nx-text-inverse-rgb: 248 246 241;
 
   /* lines: ink at low alpha, so they warm with the surface beneath */
   --nx-line: var(--color-border);
@@ -96,13 +96,14 @@
   --nx-disabled-text-rgb: 139 145 152;      /* #8B9198 decorative / disabled only */
 
   /* atmosphere: one faint teal wash top-right, nothing else */
-  --nx-deco-1: rgb(var(--nx-accent-rgb) / 0.06);
-  --nx-deco-2: transparent;
+  --nx-deco-1: rgb(var(--nx-accent-rgb) / 0.07);        /* teal haze, horizon */
+  --nx-deco-2: rgb(255 244 226 / 0.9);                   /* warm sunlight, top */
+  --nx-deco-3: rgb(var(--nx-warm-rgb) / 0.05);           /* faint terracotta, low left */
   --nx-grid: rgb(var(--nx-text-rgb) / 0.05);
   --nx-noise-opacity: 0.06;
 
   /* shadows: ink-tinted, diffuse, low alpha; inset top edge makes a card read as paper */
-  --nx-shadow-ink: 40 46 58;
+  --nx-shadow-ink: 72 62 48;               /* warm-grey shadow ink (umber, not slate) */
   --nx-shadow-1: 0 1px 0 0 rgb(255 255 255 / 0.6) inset, 0 1px 2px rgb(var(--nx-shadow-ink) / 0.05), 0 14px 36px -18px rgb(var(--nx-shadow-ink) / 0.18);
   --nx-shadow-2: 0 1px 0 0 rgb(255 255 255 / 0.8) inset, 0 2px 4px rgb(var(--nx-shadow-ink) / 0.05), 0 30px 64px -26px rgb(var(--nx-shadow-ink) / 0.26);
   --nx-shadow-inset: 0 0 0 1px rgb(var(--nx-shadow-ink) / 0.03) inset, 0 1px 6px rgb(var(--nx-shadow-ink) / 0.07) inset;
@@ -111,15 +112,16 @@
   --nx-highlight: rgb(255 255 255 / 0.5);
 
   /* 3D material palette (read by NetworkScene — the Memory Loom) */
-  --nx-3d-core: #1b2230;     /* ink cores */
-  --nx-3d-strut: #3e6e73;    /* deep-teal strands (drawn at low alpha) */
-  --nx-3d-frame: #c9c8c1;    /* warm-grey loom frames / layered forms */
-  --nx-3d-node: #fbfbf8;     /* bone nodes */
-  --nx-3d-shadow: #1b2230;
-  --nx-3d-shadow-opacity: 0.32;
-  --nx-3d-key: #fff8ee;      /* warm key — paper sunlight */
-  --nx-3d-fill: #dedddb;     /* neutral fill for form separation */
-  --nx-3d-ground: #d3d2cc;   /* hemisphere ground bounce */
+  /* Archipelago (three.js reads these; same names in Ink) */
+  --nx-3d-rock: #c6bcae;     /* island underside — warm stone */
+  --nx-3d-land-1: #e4ddd0;   /* lowest plateau */
+  --nx-3d-land-2: #efe9dd;   /* middle plateau */
+  --nx-3d-land-3: #f9f5ec;   /* summit — nearly paper */
+  --nx-3d-bridge: #1e6b6a;   /* deep-teal bridges */
+  --nx-3d-cloud: #ffffff;
+  --nx-3d-key: #fff3e2;      /* warm key light — paper sunlight */
+  --nx-3d-sky: #fbfaf7;      /* hemisphere sky */
+  --nx-3d-ground: #d9cfbf;   /* hemisphere ground bounce */
 }
 
 /* ────────────────────────── INK ────────────────────────── */
@@ -189,20 +191,21 @@
   --nx-disabled: rgb(var(--nx-text-rgb) / 0.06);
   --nx-disabled-text-rgb: 96 103 116;
 
-  --nx-deco-1: rgb(var(--nx-accent-rgb) / 0.08);
-  --nx-deco-2: transparent;
+  --nx-deco-1: rgb(var(--nx-accent-rgb) / 0.10);
+  --nx-deco-2: rgb(58 70 96 / 0.55);                     /* cool moonlit lift, top */
+  --nx-deco-3: rgb(var(--nx-warm-rgb) / 0.06);
   --nx-grid: rgb(var(--nx-text-rgb) / 0.035);
   --nx-noise-opacity: 0.035;
 
-  --nx-3d-core: #2a3344;     /* lifted charcoal cores */
-  --nx-3d-strut: #5f9ea3;    /* teal strands, lifted for dark */
-  --nx-3d-frame: #3a4456;    /* layered frames read as a step up from the canvas */
-  --nx-3d-node: #e6e2d8;
-  --nx-3d-shadow: #000000;
-  --nx-3d-shadow-opacity: 0.5;
-  --nx-3d-key: #fff1e0;
-  --nx-3d-fill: #55617a;
-  --nx-3d-ground: #10151e;
+  --nx-3d-rock: #262f40;     /* island underside — deep blue-charcoal */
+  --nx-3d-land-1: #3a4557;   /* lowest plateau — visibly lifted from the canvas */
+  --nx-3d-land-2: #4a5669;
+  --nx-3d-land-3: #5c687a;   /* summit — soft slate, never ivory (not an inversion) */
+  --nx-3d-bridge: #6fbfba;   /* teal lifted for dark */
+  --nx-3d-cloud: #8a95a8;
+  --nx-3d-key: #ffe9cf;      /* warm lamp key */
+  --nx-3d-sky: #2a3446;
+  --nx-3d-ground: #0d1118;
 
   --nx-shadow-ink: 0 0 0;
   --nx-shadow-1: 0 1px 0 0 rgb(255 255 255 / 0.04) inset, 0 12px 32px -14px rgb(0 0 0 / 0.55);

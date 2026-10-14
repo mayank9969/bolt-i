@@ -624,3 +624,40 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ── Knowledge Archipelago ─────────────────────────────────────────────── */
+@layer components {
+  /* DOM labels that float above hovered / focused islands (drei <Html>) */
+  .island-label {
+    @apply t-meta;
+    pointer-events: none;
+    white-space: nowrap;
+    color: var(--nx-text);
+    background: rgb(var(--nx-card-rgb) / 0.92);
+    border: 1px solid var(--nx-line-strong);
+    border-radius: 999px;
+    padding: 0.3rem 0.7rem;
+    box-shadow: var(--nx-shadow-1);
+    transform: translateY(-0.25rem);
+    backdrop-filter: blur(6px);
+  }
+  .island-label-warm { border-color: rgb(var(--nx-warm-rgb) / 0.5); }
+  .island-label-warm::before { content: ''; display: inline-block; width: 0.4rem; height: 0.4rem; border-radius: 999px; background: var(--nx-warm); margin-right: 0.45rem; vertical-align: middle; }
+
+  /* the island index (keyboard / no-3D route to every field guide) */
+  .island-chip {
+    @apply inline-flex items-center gap-2 h-8 px-3 rounded-full text-[13px] font-medium transition-colors duration-fast ease-out;
+    color: var(--nx-text-2);
+    background: rgb(var(--nx-card-rgb) / 0.85);
+    border: 1px solid var(--nx-line);
+  }
+  .island-chip:hover, .island-chip:focus-visible { color: var(--nx-text); border-color: var(--nx-accent); background: rgb(var(--nx-card-rgb) / 1); }
+  .island-chip:focus-visible { outline: 2px solid var(--nx-focus); outline-offset: 2px; }
+
+  /* the field guide panel: a sheet of card paper */
+  .field-guide { background: rgb(var(--nx-card-rgb) / 0.98); border-left: 1px solid var(--nx-line); box-shadow: var(--nx-shadow-2); }
+  .field-guide { border-top-left-radius: 1.25rem; border-top-right-radius: 1.25rem; }
+  @media (min-width: 768px) { .field-guide { border-radius: 0; } }
+  .fg-inner { padding: 1.5rem 1.25rem 2rem; }
+  @media (min-width: 640px) { .fg-inner { padding: 2rem 2.25rem 2.5rem; } }
+}

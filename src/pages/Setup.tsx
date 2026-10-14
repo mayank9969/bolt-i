@@ -6,9 +6,9 @@ import { reviewTopics, type ReviewTopic } from '@/lib/review'
 import { useQuiz } from '@/context/QuizContext'
 import type { CategoryInfo, DifficultyChoice } from '@/types/quiz'
 import Reveal from '@/components/Reveal'
-import { pulseNetwork, useNetwork } from '@/components/three/store'
+import { useWorld } from '@/components/three/world'
 import { ArrowRight, Check, Cross, Minus, Plus } from '@/components/ui/Icons'
-import { FAMILY_LABELS, categoryCluster, categoryIcon } from '@/lib/categories'
+import { categoryIcon } from '@/lib/categories'
 import Tier from '@/components/ui/Tier'
 import { DIFFICULTY_ORDER, difficultyLevel, labelCategory, labelDifficulty } from '@/lib/format'
 
@@ -46,7 +46,6 @@ export default function Setup() {
       .then((h) => setReview(reviewTopics(h)))
       .catch(() => setReview([]))
   }, [])
-  const reviewIds = useMemo(() => review.map((r) => r.id), [review])
   const reviewOf = (id: string) => review.find((r) => r.id === id)
 
   const difficulties = useMemo<DifficultyChoice[]>(() => {
@@ -75,24 +74,8 @@ export default function Setup() {
     if (count > maxCount) setCount(maxCount)
   }, [maxCount, count])
 
-  // SETUP — responsive: the chosen region comes forward, the tier sets density, the size sets activation.
-  const clusterIndex = useMemo(() => categoryCluster(category), [category])
-  useNetwork(
-    {
-      mode: 'responsive',
-      camera: 'side',
-      focusCluster: clusterIndex,
-      density: difficulty === 'easy' ? 0.3 : difficulty === 'medium' ? 0.6 : difficulty === 'hard' ? 1 : 0.8,
-      activation: 0.1 + (count / MAX_COUNT) * 0.6,
-      clusterLabels: FAMILY_LABELS,
-      reviewCategories: reviewIds,
-    },
-    [clusterIndex, difficulty, count, catalog, reviewIds],
-  )
-  // a selection sends a signal through the chosen region
-  useEffect(() => {
-    if (catalog) pulseNetwork(1)
-  }, [category, difficulty, catalog])
+  // SETUP — the chosen island is framed; 'all' shows the whole archipelago from afar
+  useWorld({ mode: category === 'all' ? 'quiet' : 'focus', focus: category === 'all' ? null : category }, [category])
 
   const handleStart = async () => {
     setError('')

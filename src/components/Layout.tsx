@@ -4,7 +4,8 @@ import { Link, NavLink as RouterNavLink, useLocation } from 'react-router-dom'
 import { LogoMark, Wordmark } from './Logo'
 import Background from './Background'
 import ThemeSwitcher from './ThemeSwitcher'
-import NetworkStage from './three/NetworkStage'
+import ArchipelagoStage from './three/ArchipelagoStage'
+import FieldGuide from './FieldGuide'
 
 const NAV = [
   { to: '/', label: 'Home' },
@@ -37,7 +38,8 @@ export default function Layout({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen flex flex-col relative">
       <Background />
-      <NetworkStage />
+      <ArchipelagoStage />
+      <FieldGuide />
 
       <header
         className={`sticky top-0 z-50 transition-colors duration-300 border-b ${

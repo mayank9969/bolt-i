@@ -8,10 +8,10 @@ import TrendChart from '@/components/TrendChart'
 import { CategoryBreakdown, DifficultyBreakdown } from '@/components/Breakdowns'
 import Tier from '@/components/ui/Tier'
 import { ArrowRight, Cross } from '@/components/ui/Icons'
-import { useNetwork } from '@/components/three/store'
-import { reviewTopics } from '@/lib/review'
+import { useWorld } from '@/components/three/world'
 import { formatPercent, formatScore, labelCategory, performanceTone, toneText } from '@/lib/format'
-import { FAMILY_LABELS, categoryCluster, normaliseCategoryId } from '@/lib/categories'
+import { categoryCluster, normaliseCategoryId } from '@/lib/categories'
+const familyOf = (id: string): 0 | 1 => (categoryCluster(id) === 1 ? 1 : 0)
 
 type Filter = 'all' | string
 const ease = [0.22, 1, 0.36, 1] as const
@@ -62,28 +62,15 @@ export default function History() {
     [history, categories],
   )
   const mixedItems = useMemo(() => (history ?? []).filter((h) => h.category === 'all' || h.category === 'mixed'), [history])
-  // the network has three clusters: regions roll up into their family, mixed attempts feed the bridge
+  // the two families' establishment (for the summary strip below); mixed attempts counted separately
   const weights = useMemo<[number, number, number]>(() => {
     if (!history || history.length === 0) return [0, 0, 0]
-    const fam = (f: 0 | 1) => history.filter((h) => h.category !== 'all' && h.category !== 'mixed' && categoryCluster(norm(h.category)) === f)
+    const fam = (f: 0 | 1) => history.filter((h) => h.category !== 'all' && h.category !== 'mixed' && familyOf(norm(h.category)) === f)
     return [establish(fam(0)), establish(fam(1)), establish(mixedItems)]
   }, [history, mixedItems])
 
-  const reviewIds = useMemo(() => reviewTopics(history).map((r) => r.id), [history])
-
-  useNetwork(
-    {
-      mode: 'accumulated',
-      camera: 'archive',
-      density: 0.5 + Math.min(1, (history?.length ?? 0) / 20) * 0.5,
-      activation: stats.avg / 100,
-      clusterWeights: history && history.length ? weights : null,
-      focusCluster: filter === 'all' ? -1 : categoryCluster(filter),
-      clusterLabels: FAMILY_LABELS,
-      reviewCategories: reviewIds,
-    },
-    [history, weights, filter, categories, reviewIds],
-  )
+  // HISTORY — a filtered region frames its island; otherwise the archipelago rests far behind the archive
+  useWorld({ mode: filter === 'all' ? 'quiet' : 'focus', focus: filter === 'all' ? null : filter }, [filter])
 
   return (
     <div className="relative flex-1">

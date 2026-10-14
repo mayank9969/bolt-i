@@ -5,12 +5,12 @@ import Reveal from '@/components/Reveal'
 import MagneticLink from '@/components/ui/MagneticLink'
 import CountUp from '@/components/ui/CountUp'
 import { ArrowRight, Shield } from '@/components/ui/Icons'
-import { FAMILY_LABELS, categoryIcon, categoryLabel } from '@/lib/categories'
+import { categoryIcon, categoryLabel } from '@/lib/categories'
 import { getCategories, getHistory } from '@/api/quizApi'
 import type { CategoriesResponse, HistoryEntry } from '@/types/quiz'
 import { reviewTopics } from '@/lib/review'
 import { difficultyLevel, labelCategory } from '@/lib/format'
-import { useNetwork } from '@/components/three/store'
+import { setWorld, useWorld } from '@/components/three/world'
 
 const ease = [0.22, 1, 0.36, 1] as const
 const enter = (i: number) => ({ duration: 0.9, delay: 0.15 + i * 0.1, ease })
@@ -20,67 +20,46 @@ export default function Home() {
   const [history, setHistory] = useState<HistoryEntry[] | null>(null)
   const heroRef = useRef<HTMLElement>(null)
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
-  const copyY = useTransform(scrollYProgress, [0, 1], [0, 90])
+  const copyY = useTransform(scrollYProgress, [0, 1], [0, 70])
   const copyO = useTransform(scrollYProgress, [0, 0.6], [1, 0])
 
   useEffect(() => {
     getCategories().then(setCatalog).catch(() => setCatalog(null))
     getHistory().then(setHistory).catch(() => setHistory(null))
   }, [])
-  // real history → topics whose latest attempt still had wrong answers (terracotta on the loom)
+  // real history → regions whose latest attempt still had wrong answers (terracotta markers on the map)
   const review = useMemo(() => reviewTopics(history), [history])
-  const reviewIds = useMemo(() => review.map((r) => r.id), [review])
 
   const cats = catalog?.categories ?? []
   const categoryCount = cats.length
   const questionCount = catalog?.total_questions ?? 0
 
-  // HOME — the network is alive: full presence, hover on, slow drift, scroll dollies the camera in.
-  useNetwork(
-    {
-      mode: 'alive',
-      camera: 'hero',
-      density: 0.65,
-      activation: 0.16,
-      hoverable: true,
-      clusterLabels: FAMILY_LABELS,
-      reviewCategories: reviewIds,
-    },
-    [cats.length, reviewIds],
-  )
+  // HOME — the archipelago is the hero: full presence, interactive, scroll-guided reveal.
+  useWorld({ mode: 'hero' })
 
   return (
     <div className="relative">
-      {/* ── Hero: type set into the network ──────────────────────── */}
-      <section ref={heroRef} className="relative min-h-[100svh] -mt-16 pt-16 flex flex-col">
-        {/* readability wash: the network stays fully visible above, the copy sits on paper */}
-        <div className="absolute inset-x-0 bottom-0 h-[58%] pointer-events-none bg-gradient-to-t from-canvas via-canvas/70 to-transparent" aria-hidden="true" />
-        <div className="relative z-10 flex-1 flex flex-col justify-end max-w-page mx-auto w-full px-5 sm:px-6 lg:px-8 pb-10 md:pb-14">
-          <motion.div style={{ y: copyY, opacity: copyO }} className="grid lg:grid-cols-12 gap-x-10 gap-y-10 items-end">
-            {/* headline: bottom-left, big serif */}
-            <div className="lg:col-span-8 xl:col-span-7 hero-paper">
+      {/* ── Hero: copy on the left, the world on the right (below on phones) ── */}
+      <section ref={heroRef} className="relative min-h-[100svh] -mt-16 pt-16 flex flex-col pointer-events-none">
+        <div className="relative z-10 flex-1 flex flex-col justify-center max-w-page mx-auto w-full px-5 sm:px-6 lg:px-8 pt-10 pb-6 md:pb-10">
+          <motion.div style={{ y: copyY, opacity: copyO }} className="grid lg:grid-cols-12 gap-x-10 items-center">
+            <div className="lg:col-span-5 xl:col-span-5 hero-paper pointer-events-auto">
               <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={enter(0)} className="opener">
-                <span>The Memory Loom</span>
-                <span className="hidden sm:inline text-fg-3/70">·</span>
-                <span className="hidden sm:inline">{catalog ? `${categoryCount} regions · ${questionCount} questions` : 'Loading the bank…'}</span>
+                <span>The Knowledge Archipelago</span>
               </motion.p>
 
-              <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={enter(1)} className="t-hero text-fg mt-6 max-w-[15ch] text-balance">
-                Every answer<br className="hidden sm:inline" /> is a <span className="t-italic text-accent">thread.</span>
-                <br />
-                Knowledge is<br /> what they <span className="t-italic">weave.</span>
+              <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={enter(1)} className="t-hero text-fg mt-6 max-w-[12ch] text-balance">
+                Every subject<br /> is an <span className="t-italic text-accent">island.</span>
               </motion.h1>
-            </div>
 
-            {/* lede + actions: bottom-right column */}
-            <div className="lg:col-span-4 xl:col-span-5 lg:pl-8 xl:pl-16 lg:border-l lg:border-line">
-              <motion.p initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={enter(2)} className="t-lead text-fg-2 max-w-md text-pretty">
-                VEYRA weaves what you know — from Mathematics and Python to History and Language — into one growing structure. Pick a region, set the tier, and add to it — one honest, server-scored answer at a time.
+              <motion.p initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={enter(2)} className="t-lead text-fg-2 mt-7 max-w-md text-pretty">
+                {catalog ? `${categoryCount} islands, ${questionCount} questions.` : 'A small world of islands.'} Explore the map, open an island’s field guide, and start a quiz
+                there — every answer scored on the server, never in your browser.
               </motion.p>
 
               <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={enter(3)} className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
                 <MagneticLink to="/setup" className="btn-primary btn-lg">
-                  Enter the network
+                  Start a quiz
                   <ArrowRight className="arrow w-5 h-5" />
                 </MagneticLink>
                 <Link to="/about" className="link-rule text-sm">
@@ -88,52 +67,64 @@ export default function Home() {
                 </Link>
               </motion.div>
 
-              {/* worth revisiting — shown ONLY when real history says so; the same topics are terracotta on the loom */}
               {review.length > 0 && (
-                <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={enter(4)} className="mt-8 pt-6 border-t border-line">
-                  <p className="t-label text-fg-3 flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-warm" aria-hidden="true" />
-                    Worth revisiting · {review.length} {review.length === 1 ? 'region' : 'regions'}
-                  </p>
-                  <ul className="mt-3 flex flex-wrap gap-2" aria-label="Regions whose latest attempt had wrong answers">
-                    {review.slice(0, 4).map((r) => (
-                      <li key={r.id}>
-                        <Link to="/setup" state={{ category: r.id }} className="chip-warm" title={`Latest attempt: ${r.percentage}% — ${r.wrong} wrong`}>
-                          {categoryLabel(r.id)}
-                          <span className="text-fg-3">· {r.wrong} wrong</span>
-                        </Link>
-                      </li>
-                    ))}
-                    {review.length > 4 && (
-                      <li>
-                        <Link to="/history" className="chip-warm">
-                          +{review.length - 4} more
-                        </Link>
-                      </li>
-                    )}
-                  </ul>
-                </motion.div>
+                <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={enter(4)} className="mt-7 flex items-start gap-2.5 text-sm text-fg-2 max-w-md">
+                  <span className="mt-1.5 w-2 h-2 rounded-full bg-warm shrink-0" aria-hidden="true" />
+                  <span>
+                    <span className="text-warm-text font-medium">Terracotta markers</span> stand on {review.length === 1 ? 'the island' : `${review.length} islands`} where your latest attempt left wrong answers:{' '}
+                    {review.slice(0, 3).map((r) => categoryLabel(r.id)).join(', ')}
+                    {review.length > 3 ? ` and ${review.length - 3} more` : ''}.
+                  </span>
+                </motion.p>
               )}
             </div>
+            {/* the right column is left open for the map; on phones the map sits in this reserved space */}
+            <div className="lg:col-span-7 min-h-[46svh] lg:min-h-0" aria-hidden="true" />
           </motion.div>
         </div>
 
-        {/* figure caption + scroll hint, pinned to the hero's lower edge */}
-        <motion.div
+        {/* island index: the keyboard / no-3D way to reach every field guide */}
+        <motion.nav
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 1.2, duration: 0.8 }}
-          className="relative z-10 max-w-page mx-auto w-full px-5 sm:px-6 lg:px-8 pb-6 flex items-center justify-between figcap"
+          transition={{ delay: 1, duration: 0.8 }}
+          className="relative z-10 max-w-page mx-auto w-full px-5 sm:px-6 lg:px-8 pb-6 pointer-events-auto"
+          aria-label="Islands"
         >
-          <span className="hidden md:inline-flex items-center gap-3">
-            <span className="w-8 h-px bg-line-strong" />
-            Fig. 01 — {catalog ? `${categoryCount} regions, ${questionCount} questions${review.length ? `, ${review.length} in terracotta to revisit` : ''}` : 'the loom, live'}
-          </span>
-          <span className="inline-flex items-center gap-3">
-            Scroll to move through it
-            <motion.span animate={{ y: [0, 5, 0] }} transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }} className="block w-px h-6 bg-line-strong origin-top" />
-          </span>
-        </motion.div>
+          <div className="flex items-center justify-between gap-6 figcap mb-3">
+            <span className="inline-flex items-center gap-3">
+              <span className="w-8 h-px bg-line-strong" />
+              Fig. 01 — {catalog ? `${categoryCount} islands · hover or focus one, open its field guide` : 'the archipelago, live'}
+            </span>
+            <span className="hidden md:inline-flex items-center gap-3">
+              Scroll to move in
+              <motion.span animate={{ y: [0, 5, 0] }} transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }} className="block w-px h-6 bg-line-strong origin-top" />
+            </span>
+          </div>
+          <ul className="flex flex-wrap gap-2">
+            {cats.map((c) => {
+              const rv = review.find((r) => r.id === c.id || (c.id === 'math' && r.id === 'maths'))
+              return (
+                <li key={c.id}>
+                  <button
+                    type="button"
+                    className="island-chip"
+                    onMouseEnter={() => setWorld({ hover: c.id })}
+                    onMouseLeave={() => setWorld({ hover: null })}
+                    onFocus={() => setWorld({ hover: c.id })}
+                    onBlur={() => setWorld({ hover: null })}
+                    onClick={() => setWorld({ selected: c.id, hover: c.id })}
+                    aria-haspopup="dialog"
+                  >
+                    <RegionIcon id={c.id} className="w-3.5 h-3.5" />
+                    {labelCategory(c.id)}
+                    {rv && <span className="w-1.5 h-1.5 rounded-full bg-warm" aria-label="worth revisiting" />}
+                  </button>
+                </li>
+              )
+            })}
+          </ul>
+        </motion.nav>
       </section>
 
       {/* ── Manifesto: one line, huge, ruled ───────────────────────── */}
@@ -142,7 +133,7 @@ export default function Home() {
           <div className="grid lg:grid-cols-12 gap-8 items-start">
             <span className="lg:col-span-2 index">01 — Idea</span>
             <h2 className="lg:col-span-10 t-section text-fg max-w-[24ch] text-balance">
-              Knowledge isn’t a list you finish. It’s a structure you build — and it should look like one.
+              Knowledge isn’t a list you finish. It’s a place you get to know — island by island.
             </h2>
           </div>
         </Reveal>
@@ -152,7 +143,7 @@ export default function Home() {
       <section className="relative max-w-page mx-auto px-5 sm:px-6 lg:px-8 pb-24 md:pb-36">
         <Reveal>
           <div className="grid lg:grid-cols-12 gap-8 items-baseline mb-6">
-            <span className="lg:col-span-2 index">02 — Regions</span>
+            <span className="lg:col-span-2 index">02 — Islands</span>
             <p className="lg:col-span-6 text-fg-2 max-w-prose text-pretty">
               {catalog ? `${categoryCount} regions` : 'Many regions'}, three tiers each, two answer formats. Each region below is a live cluster in the network — the numbers come straight from the question bank.
             </p>
@@ -204,7 +195,7 @@ export default function Home() {
                 <span className="w-9 h-9 rounded-full bg-accent text-fg-inverse flex items-center justify-center shrink-0">
                   <span className="w-2 h-2 rounded-full bg-current" />
                 </span>
-                <span className="t-h3-lg text-fg">Mixed <span className="text-fg-2 font-normal">— cross the bridges</span></span>
+                <span className="t-h3-lg text-fg">Mixed <span className="text-fg-2 font-normal">— every island, one voyage</span></span>
               </span>
               <span className="hidden md:block t-caption text-fg-2">Every region, every tier, one session</span>
               <span className="flex items-center gap-3 text-sm text-fg-2 num">
@@ -261,16 +252,16 @@ export default function Home() {
             <div className="grid lg:grid-cols-12 gap-10">
               <div className="lg:col-span-4">
                 <span className="eyebrow">The path</span>
-                <h2 className="t-section mt-4 text-balance">One network, five states.</h2>
-                <p className="muted text-sm mt-5 max-w-sm leading-relaxed">The same structure follows you through the product and changes with what you do — it is the interface, not a backdrop.</p>
+                <h2 className="t-section mt-4 text-balance">One world, five views.</h2>
+                <p className="muted text-sm mt-5 max-w-sm leading-relaxed">The same archipelago follows you through the product and frames what you are doing — never in the way of a question.</p>
               </div>
               <ol className="lg:col-span-8 grid sm:grid-cols-2 gap-x-10">
                 {[
-                  ['Home', 'Alive', 'Signals travel between regions; the camera drifts through depth.'],
-                  ['Setup', 'Responsive', 'Choose a region and it moves toward you; the tier sets how dense it is.'],
-                  ['Quiz', 'Quiet', 'It recedes into the paper so the question owns the page.'],
-                  ['Result', 'Activated', 'Your score lights the network from its cores outward.'],
-                  ['History', 'Accumulated', 'Regions you have practised stay established, attempt after attempt.'],
+                  ['Home', 'Explore', 'The whole archipelago, close enough to touch; scrolling moves you in.'],
+                  ['Setup', 'Approach', 'Choose an island and the camera settles beside it.'],
+                  ['Quiz', 'Ashore', 'The map is put away so the question owns the page.'],
+                  ['Result', 'Return', 'The island you quizzed on waits behind your printed score.'],
+                  ['History', 'Chart', 'Islands your latest attempt left unfinished carry a terracotta marker.'],
                 ].map(([page, state, desc], i) => (
                   <li key={page} className="py-5 border-b" style={{ borderColor: 'rgb(var(--nx-panel-text-rgb) / 0.14)' }}>
                     <div className="flex items-baseline justify-between gap-4">
@@ -291,7 +282,7 @@ export default function Home() {
         <Reveal>
           <div className="grid lg:grid-cols-12 gap-8 items-end border-t border-line-strong pt-10">
             <h2 className="lg:col-span-8 t-title text-fg text-balance">
-              Start with a region. <span className="text-fg-2">Watch it light up.</span>
+              Pick an island. <span className="text-fg-2">Then go ashore.</span>
             </h2>
             <div className="lg:col-span-4 flex lg:justify-end">
               <MagneticLink to="/setup" className="btn-primary btn-lg">
