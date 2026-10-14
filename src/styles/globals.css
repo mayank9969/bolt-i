@@ -644,6 +644,10 @@
   .island-label-warm { border-color: rgb(var(--nx-warm-rgb) / 0.5); }
   .island-label-warm::before { content: ''; display: inline-block; width: 0.4rem; height: 0.4rem; border-radius: 999px; background: var(--nx-warm); margin-right: 0.45rem; vertical-align: middle; }
 
+  /* on the home hero the page shell lets pointer events through to the map; content blocks re-enable them */
+  html[data-world='hero'] main, html[data-world='hero'] main > * { pointer-events: none; }
+  html[data-world='hero'] main > * > * { pointer-events: auto; }
+
   /* the island index (keyboard / no-3D route to every field guide) */
   .island-chip {
     @apply inline-flex items-center gap-2 h-8 px-3 rounded-full text-[13px] font-medium transition-colors duration-fast ease-out;

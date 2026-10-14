@@ -19,6 +19,13 @@ export default function ArchipelagoStage() {
   const [kind, setKind] = useState<'webgl' | 'static' | 'pending'>('pending')
   const [mode, setMode] = useState<WorldMode>(getWorld().mode)
   useWorldSlice((s) => s.mode, setMode)
+  // lets CSS open a pointer path through <main> to the map on the home hero
+  useEffect(() => {
+    document.documentElement.dataset.world = mode
+    return () => {
+      delete document.documentElement.dataset.world
+    }
+  }, [mode])
 
   // real data → store (one fetch each; pages fetch their own copies as before)
   useEffect(() => {

@@ -40,7 +40,7 @@ export default function Home() {
   return (
     <div className="relative">
       {/* ── Hero: copy on the left, the world on the right (below on phones) ── */}
-      <section ref={heroRef} className="relative min-h-[100svh] -mt-16 pt-16 flex flex-col pointer-events-none">
+      <section ref={heroRef} className="relative min-h-[100svh] -mt-16 pt-16 flex flex-col !pointer-events-none">
         <div className="relative z-10 flex-1 flex flex-col justify-center max-w-page mx-auto w-full px-5 sm:px-6 lg:px-8 pt-10 pb-6 md:pb-10">
           <motion.div style={{ y: copyY, opacity: copyO }} className="grid lg:grid-cols-12 gap-x-10 items-center">
             <div className="lg:col-span-5 xl:col-span-5 hero-paper pointer-events-auto">

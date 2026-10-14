@@ -494,7 +494,7 @@ function Lights({ palette, quality }: { palette: Palette; quality: Quality }) {
       <hemisphereLight args={[palette.sky, palette.ground, palette.dark ? 1.1 : 1.6]} />
       <directionalLight
         position={[-6, 9, 5]}
-        intensity={palette.dark ? 1.6 : 2.1}
+        intensity={palette.dark ? 1.5 : 1.8}
         color={palette.key}
         castShadow={quality === 'high'}
         shadow-mapSize={[1024, 1024]}
@@ -513,7 +513,7 @@ function Lights({ palette, quality }: { palette: Palette; quality: Quality }) {
 function FogSync({ palette }: { palette: Palette }) {
   const scene = useThree((s) => s.scene)
   useEffect(() => {
-    scene.fog = new THREE.Fog(palette.canvas.clone(), 12, 26)
+    scene.fog = new THREE.Fog(palette.canvas.clone(), 14, 30)
     return () => {
       scene.fog = null
     }
