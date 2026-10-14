@@ -4,6 +4,7 @@ import { Html } from '@react-three/drei'
 import * as THREE from 'three'
 import { buildIslands, hash01, type Bridge, type Island } from './islands'
 import { getWorld, setWorld, subscribeWorld, useWorldSlice, type WorldState } from './world'
+import { exhibitFor, hasExhibit } from '@/lib/exhibits'
 import { onThemeChange, readToken, tokenHex } from '@/lib/theme'
 import type { CategoryInfo } from '@/types/quiz'
 
@@ -84,6 +85,8 @@ function IslandMesh({
   const group = useRef<THREE.Group>(null)
   const [hot, setHot] = useState(false) // hovered or selected — drives the DOM label
   const [review, setReview] = useState(false)
+  const [exhibitOpen, setExhibitOpen] = useState(false) // this island's exhibit is open
+  const propGroup = useRef<THREE.Group>(null)
   const rockMat = useMemo(() => new THREE.MeshStandardMaterial({ color: palette.rock, roughness: 0.95, flatShading: true }), [])
   const landMats = useMemo(() => palette.land.map((c) => new THREE.MeshStandardMaterial({ color: c, roughness: 0.9, flatShading: true })), [])
   const propMat = useMemo(() => new THREE.MeshStandardMaterial({ color: palette.ink, roughness: 0.6, metalness: 0.05 }), [])
@@ -120,6 +123,8 @@ function IslandMesh({
       setHot((p) => (p === h ? p : h))
       const rv = !!s.review[island.id]
       setReview((p) => (p === rv ? p : rv))
+      const ex = s.selected === island.id && hasExhibit(island.id)
+      setExhibitOpen((p) => (p === ex ? p : ex))
     }
     read(getWorld())
     return subscribeWorld(read)
@@ -133,12 +138,21 @@ function IslandMesh({
     const d = Math.min(0.05, dt)
     const hero = s.mode === 'hero'
     const focused = s.mode === 'focus' && s.focus === island.id
-    const dimmed = s.mode === 'focus' && s.focus !== island.id
+    const exhibitElsewhere = !!s.selected && hasExhibit(s.selected) && s.selected !== island.id
+    const exhibitHere = !!s.selected && hasExhibit(s.selected) && s.selected === island.id
+    const dimmed = (s.mode === 'focus' && s.focus !== island.id) || exhibitElsewhere
     const hotNow = s.hover === island.id || s.selected === island.id
     A.intro = Math.min(1, A.intro + d / 1.4)
     const introK = 1 - Math.pow(1 - Math.max(0, Math.min(1, (A.intro - index * 0.045) / 0.7)), 3)
     A.lift += ((hotNow || focused ? 0.14 : 0) - A.lift) * (1 - Math.exp(-7 * d))
-    A.glow += ((hotNow ? 0.35 : focused ? 0.18 : 0) - A.glow) * (1 - Math.exp(-7 * d))
+    A.glow += ((exhibitHere ? 0.08 : hotNow ? 0.35 : focused ? 0.18 : 0) - A.glow) * (1 - Math.exp(-7 * d))
+    // the island's own prop steps aside while its exhibit is on show
+    if (propGroup.current) {
+      const target = exhibitHere ? 0 : 1
+      const cur = propGroup.current.scale.x
+      const nx = cur + (target - cur) * (1 - Math.exp(-6 * d))
+      propGroup.current.scale.setScalar(Math.max(0.0001, nx))
+    }
     const bob = hero ? Math.sin(performance.now() / 1000 * 0.5 + island.seed * 6.28) * 0.05 : 0
     g.position.set(island.x, island.y + bob + A.lift - (1 - introK) * 2.6, island.z)
     const sc = (dimmed ? 0.94 : 1) * (0.2 + introK * 0.8)
@@ -185,7 +199,10 @@ function IslandMesh({
           <coneGeometry args={[r * 0.26, r * 0.46, 5]} />
         </mesh>
       )}
-      <Prop kind={island.prop} r={r} y={topY} ink={propMat} teal={tealMat} land={landMats[0]} />
+      <group ref={propGroup}>
+        <Prop kind={island.prop} r={r} y={topY} ink={propMat} teal={tealMat} land={landMats[0]} />
+      </group>
+      {exhibitOpen && <Diorama kind={exhibitFor(island.id)!.diorama} r={r} y={topY} ink={propMat} teal={tealMat} warm={warmMat} land={landMats[2]} />}
       {review && (
         <group position={[topLayer.radius * 0.55, topY, -topLayer.radius * 0.4]}>
           <mesh position={[0, 0.11, 0]} material={warmMat} castShadow>
@@ -196,7 +213,7 @@ function IslandMesh({
           </mesh>
         </group>
       )}
-      {hot && (
+      {hot && !exhibitOpen && (
         <Html position={[0, topY + r * 0.9, 0]} center zIndexRange={[20, 10]} style={{ pointerEvents: 'none' }}>
           <span className="island-label">
             {island.label}
@@ -346,6 +363,130 @@ function Prop({ kind, r, y, ink, teal, land }: { kind: Island['prop']; r: number
   }
 }
 
+/* ── exhibit dioramas: three beats, one visible at a time ────────────── */
+function BeatGroup({ index, children }: { index: 0 | 1 | 2; children: React.ReactNode }) {
+  const g = useRef<THREE.Group>(null)
+  useFrame((_, dt) => {
+    const el = g.current
+    if (!el) return
+    const on = getWorld().beat === index
+    const k = 1 - Math.exp(-6 * Math.min(0.05, dt))
+    const target = on ? 1 : 0
+    const cur = el.scale.x
+    const nx = cur + (target - cur) * k
+    el.scale.setScalar(Math.max(0.0001, nx))
+    el.visible = nx > 0.01
+    el.position.y = (1 - nx) * -0.15
+  })
+  return (
+    <group ref={g} scale={0.0001}>
+      {children}
+    </group>
+  )
+}
+
+function Diorama({ kind, r, y, ink, teal, warm, land }: { kind: 'zero' | 'python'; r: number; y: number; ink: THREE.Material; teal: THREE.Material; warm: THREE.Material; land: THREE.Material }) {
+  const s = Math.max(0.6, r) // dioramas are built at island scale
+  // a low plinth every beat stands on
+  const plinth = (
+    <mesh position={[0, y + 0.02, 0]} material={land} receiveShadow>
+      <cylinderGeometry args={[s * 0.62, s * 0.66, 0.04, 24]} />
+    </mesh>
+  )
+  if (kind === 'zero') {
+    return (
+      <group>
+        {plinth}
+        {/* BEFORE — a counting board: three columns of counters, the middle one empty */}
+        <BeatGroup index={0}>
+          <mesh position={[0, y + 0.07, 0]} material={ink} castShadow>
+            <boxGeometry args={[s * 0.9, 0.05, s * 0.5]} />
+          </mesh>
+          {[-1, 1].map((col) =>
+            [0, 1, 2, 3].slice(0, col < 0 ? 4 : 2).map((i) => (
+              <mesh key={`${col}-${i}`} position={[col * s * 0.28, y + 0.12 + i * 0.05, 0]} material={land} castShadow>
+                <cylinderGeometry args={[s * 0.09, s * 0.09, 0.035, 16]} />
+              </mesh>
+            )),
+          )}
+          {/* the empty place */}
+          <mesh position={[0, y + 0.1, 0]} rotation={[-Math.PI / 2, 0, 0]} material={warm}>
+            <ringGeometry args={[s * 0.06, s * 0.085, 24]} />
+          </mesh>
+        </BeatGroup>
+        {/* BREAKTHROUGH — zero stands up as a number, between a positive and a negative */}
+        <BeatGroup index={1}>
+          <mesh position={[0, y + s * 0.38, 0]} material={teal} castShadow>
+            <torusGeometry args={[s * 0.26, s * 0.045, 12, 48]} />
+          </mesh>
+          <mesh position={[-s * 0.42, y + s * 0.12, 0]} material={ink} castShadow>
+            <boxGeometry args={[s * 0.06, s * 0.2, s * 0.06]} />
+          </mesh>
+          <mesh position={[-s * 0.42, y + s * 0.12, 0]} material={ink} castShadow>
+            <boxGeometry args={[s * 0.2, s * 0.06, s * 0.06]} />
+          </mesh>
+          <mesh position={[s * 0.42, y + s * 0.12, 0]} material={ink} castShadow>
+            <boxGeometry args={[s * 0.2, s * 0.06, s * 0.06]} />
+          </mesh>
+        </BeatGroup>
+        {/* AFTER — place value: columns rising by powers of ten, zero at the base of each */}
+        <BeatGroup index={2}>
+          {[0, 1, 2, 3].map((i) => (
+            <group key={i} position={[(i - 1.5) * s * 0.26, y, 0]}>
+              <mesh position={[0, 0.06 + i * s * 0.11, 0]} material={i === 3 ? teal : ink} castShadow>
+                <boxGeometry args={[s * 0.12, 0.08 + i * s * 0.22, s * 0.12]} />
+              </mesh>
+              <mesh position={[0, 0.03, s * 0.12]} rotation={[-Math.PI / 2, 0, 0]} material={teal}>
+                <ringGeometry args={[s * 0.03, s * 0.045, 20]} />
+              </mesh>
+            </group>
+          ))}
+        </BeatGroup>
+      </group>
+    )
+  }
+  // python
+  return (
+    <group>
+      {plinth}
+      {/* BEFORE — dense, uniform lines: C programs and shell scripts, a wall with no door */}
+      <BeatGroup index={0}>
+        {[0, 1, 2, 3, 4, 5, 6].map((i) => (
+          <mesh key={i} position={[0, y + 0.06 + i * 0.075, 0]} material={ink} castShadow>
+            <boxGeometry args={[s * 0.8, 0.03, s * 0.16]} />
+          </mesh>
+        ))}
+        <mesh position={[0, y + 0.3, -s * 0.3]} material={land} castShadow>
+          <boxGeometry args={[s * 0.9, s * 0.56, 0.05]} />
+        </mesh>
+      </BeatGroup>
+      {/* BREAKTHROUGH — indentation as structure: blocks stepping in, readable at a glance */}
+      <BeatGroup index={1}>
+        {[0, 1, 2, 1, 0].map((indent, i) => (
+          <mesh key={i} position={[-s * 0.3 + indent * s * 0.16 + (0.55 - indent * 0.12) * s * 0.5, y + 0.34 - i * 0.075, 0]} material={i === 2 ? teal : ink} castShadow>
+            <boxGeometry args={[(0.55 - indent * 0.12) * s, 0.035, s * 0.14]} />
+          </mesh>
+        ))}
+      </BeatGroup>
+      {/* AFTER — one post, many copies: small blocks fanning outward from the centre */}
+      <BeatGroup index={2}>
+        <mesh position={[0, y + 0.1, 0]} material={teal} castShadow>
+          <boxGeometry args={[s * 0.16, 0.16, s * 0.16]} />
+        </mesh>
+        {Array.from({ length: 14 }, (_, i) => {
+          const a = (i / 14) * Math.PI * 2
+          const d = s * (0.3 + hash01('py', i) * 0.28)
+          return (
+            <mesh key={i} position={[Math.cos(a) * d, y + 0.04, Math.sin(a) * d]} rotation={[0, -a, 0]} material={ink} castShadow>
+              <boxGeometry args={[s * 0.07, 0.05 + hash01('py', i + 20) * 0.05, s * 0.07]} />
+            </mesh>
+          )
+        })}
+      </BeatGroup>
+    </group>
+  )
+}
+
 /* ── bridges: raised teal arcs between related islands ───────────────── */
 function Bridges({ islands, bridges, palette, quality }: { islands: Island[]; bridges: Bridge[]; palette: Palette; quality: Quality }) {
   const mat = useMemo(() => new THREE.MeshStandardMaterial({ color: palette.bridge, roughness: 0.5, metalness: 0.1 }), [])
@@ -441,7 +582,19 @@ function Director({ islands, worldRef }: { islands: Island[]; worldRef: React.Re
         off.set(narrow ? 0 : 2.6, narrow ? -1.2 : 0, 0)
       }
     }
-    if (s.mode === 'hero') {
+    const exhibit = s.selected && hasExhibit(s.selected) ? islands.find((i) => i.id === s.selected) : null
+    if (exhibit) {
+      // step into the island: low, close, and a different side for each beat (guided reveal)
+      const top = exhibit.y + exhibit.layers.reduce((a, l) => a + l[1], 0)
+      const rr = Math.max(0.6, exhibit.r)
+      const ang = [-0.55, 0.15, 0.8][s.beat] ?? 0
+      const dist = rr * 2.9 + 0.9
+      _v2.set(exhibit.x, top + rr * 0.22, exhibit.z)
+      _v.set(exhibit.x + Math.sin(ang) * dist, top + rr * 1.05 + 0.25, exhibit.z + Math.cos(ang) * dist)
+      fov = narrow ? 42 : 30
+      // the panel takes the right (desktop) or bottom (phone): keep the island in the open half
+      off.set(narrow ? 0 : -2.3, narrow ? 1.15 : 0, 0)
+    } else if (s.mode === 'hero') {
       // scroll: a restrained guided reveal — orbit a little and come closer
       const k = s.scroll
       const ang = k * 0.5

@@ -11,6 +11,7 @@ import type { CategoriesResponse, HistoryEntry } from '@/types/quiz'
 import { reviewTopics } from '@/lib/review'
 import { difficultyLevel, labelCategory } from '@/lib/format'
 import { setWorld, useWorld } from '@/components/three/world'
+import { hasExhibit } from '@/lib/exhibits'
 
 const ease = [0.22, 1, 0.36, 1] as const
 const enter = (i: number) => ({ duration: 0.9, delay: 0.15 + i * 0.1, ease })
@@ -94,7 +95,7 @@ export default function Home() {
           <div className="flex items-center justify-between gap-6 figcap mb-3">
             <span className="inline-flex items-center gap-3">
               <span className="w-8 h-px bg-line-strong" />
-              Fig. 01 — {catalog ? `${categoryCount} islands · hover or focus one, open its field guide` : 'the archipelago, live'}
+              Fig. 01 — {catalog ? `${categoryCount} islands · ${cats.filter((c) => hasExhibit(c.id)).length} exhibits open · tap an island` : 'the archipelago, live'}
             </span>
             <span className="hidden md:inline-flex items-center gap-3">
               Scroll to move in
@@ -118,6 +119,7 @@ export default function Home() {
                   >
                     <RegionIcon id={c.id} className="w-3.5 h-3.5" />
                     {labelCategory(c.id)}
+                    {hasExhibit(c.id) && <span className="island-chip-tag">Exhibit</span>}
                     {rv && <span className="w-1.5 h-1.5 rounded-full bg-warm" aria-label="worth revisiting" />}
                   </button>
                 </li>

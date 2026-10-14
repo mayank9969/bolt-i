@@ -90,6 +90,7 @@ export default function ArchipelagoStage() {
   return (
     <div
       className="archipelago-stage fixed inset-0 z-0 transition-opacity duration-700 ease-out"
+      data-kind={kind}
       style={{ opacity: presence, pointerEvents: 'none' }}
       aria-hidden={mode === 'hero' || mode === 'focus' ? undefined : true}
     >

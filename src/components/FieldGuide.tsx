@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { getWorld, setWorld, useWorldSlice } from './three/world'
 import { fieldGuide } from '@/lib/fieldGuide'
+import { hasExhibit } from '@/lib/exhibits'
 import { categoryIcon, categoryLabel } from '@/lib/categories'
 import { DIFFICULTY_ORDER, labelDifficulty } from '@/lib/format'
 import { ArrowRight, Cross } from './ui/Icons'
@@ -22,7 +23,8 @@ export default function FieldGuide() {
   const [selected, setSelected] = useState<string | null>(null)
   const [categories, setCategories] = useState<CategoryInfo[]>(getWorld().categories)
   const [review, setReview] = useState<Record<string, ReviewTopic>>(getWorld().review)
-  useWorldSlice((s) => s.selected, setSelected)
+  // islands with an exhibit open the Exhibit instead
+  useWorldSlice((s) => (s.selected && hasExhibit(s.selected) ? null : s.selected), setSelected)
   useWorldSlice((s) => s.categories, setCategories)
   useWorldSlice((s) => s.review, setReview)
   const closeRef = useRef<HTMLButtonElement>(null)

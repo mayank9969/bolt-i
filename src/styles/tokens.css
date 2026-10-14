@@ -25,16 +25,16 @@
   color-scheme: light;
 
   /* Layer 1 — semantic contract */
-  --color-bg-rgb: 248 246 241;              /* #F8F6F1 warm white — luminous, not grey */
-  --color-surface-rgb: 240 236 229;         /* #F0ECE5 recessed band / rail (warm grey) */
-  --color-surface-raised-rgb: 253 252 249;  /* #FDFCF9 card — a half-step brighter than the canvas */
+  --color-bg-rgb: 250 249 246;              /* #FAF9F6 luminous near-white (Rose Island field: bright, barely warm) */
+  --color-surface-rgb: 241 239 234;         /* #F1EFEA recessed band / rail (soft warm grey) */
+  --color-surface-raised-rgb: 254 253 251;  /* #FEFDFB card — a half-step brighter than the canvas */
   --color-text-rgb: 27 34 48;               /* #1B2230 deep ink (blue-black) 14.8:1 */
   --color-text-muted-rgb: 74 82 98;         /* #4A5262 7.3:1 */
   --color-border: rgb(var(--color-text-rgb) / 0.10);
   --color-accent-rgb: 30 107 106;           /* #1E6B6A deep teal 5.8:1 */
   --color-accent-hover-rgb: 24 90 89;       /* #185A59 */
   --color-accent-active-rgb: 18 72 71;      /* #124847 */
-  --color-on-accent-rgb: 248 246 241;       /* paper on teal  5.8:1 */
+  --color-on-accent-rgb: 250 249 246;       /* paper on teal  5.9:1 */
   --color-warm-rgb: 176 78 51;              /* #B04E33 terracotta 4.9:1 — review only */
   --color-warm-text-rgb: 158 69 48;         /* #9E4530 terracotta as small text 5.8:1 */
   --color-focus: rgb(var(--color-accent-rgb) / 0.9);
@@ -42,7 +42,7 @@
   /* Layer 2 — surfaces: surface < bg < elevated < card < card-strong. No #FFFFFF. */
   --nx-canvas-rgb: var(--color-bg-rgb);
   --nx-surface-rgb: var(--color-surface-rgb);
-  --nx-elevated-rgb: 251 250 246;           /* #FBFAF6 inputs / keys */
+  --nx-elevated-rgb: 252 251 248;           /* #FCFBF8 inputs / keys */
   --nx-card-rgb: var(--color-surface-raised-rgb);
   --nx-card-strong-rgb: 254 254 253;        /* #FEFEFD popovers, focused field (never pure white) */
 
@@ -50,7 +50,7 @@
   --nx-text-rgb: var(--color-text-rgb);
   --nx-text-2-rgb: var(--color-text-muted-rgb);
   --nx-text-3-rgb: 99 106 119;              /* #636A77  5.1:1 on paper, 4.7:1 on surface */
-  --nx-text-inverse-rgb: 248 246 241;
+  --nx-text-inverse-rgb: 250 249 246;
 
   /* lines: ink at low alpha, so they warm with the surface beneath */
   --nx-line: var(--color-border);
@@ -97,13 +97,13 @@
 
   /* atmosphere: one faint teal wash top-right, nothing else */
   --nx-deco-1: rgb(var(--nx-accent-rgb) / 0.07);        /* teal haze, horizon */
-  --nx-deco-2: rgb(255 244 226 / 0.9);                   /* warm sunlight, top */
+  --nx-deco-2: rgb(255 249 240 / 0.95);                  /* warm sunlight, top */
   --nx-deco-3: rgb(var(--nx-warm-rgb) / 0.05);           /* faint terracotta, low left */
   --nx-grid: rgb(var(--nx-text-rgb) / 0.05);
   --nx-noise-opacity: 0.06;
 
   /* shadows: ink-tinted, diffuse, low alpha; inset top edge makes a card read as paper */
-  --nx-shadow-ink: 72 62 48;               /* warm-grey shadow ink (umber, not slate) */
+  --nx-shadow-ink: 84 76 70;               /* warm-grey shadow ink — sampled from Rose Island's shaded structure (#A09694), deepened */
   --nx-shadow-1: 0 1px 0 0 rgb(255 255 255 / 0.6) inset, 0 1px 2px rgb(var(--nx-shadow-ink) / 0.05), 0 14px 36px -18px rgb(var(--nx-shadow-ink) / 0.18);
   --nx-shadow-2: 0 1px 0 0 rgb(255 255 255 / 0.8) inset, 0 2px 4px rgb(var(--nx-shadow-ink) / 0.05), 0 30px 64px -26px rgb(var(--nx-shadow-ink) / 0.26);
   --nx-shadow-inset: 0 0 0 1px rgb(var(--nx-shadow-ink) / 0.03) inset, 0 1px 6px rgb(var(--nx-shadow-ink) / 0.07) inset;
@@ -113,15 +113,17 @@
 
   /* 3D material palette (read by NetworkScene — the Memory Loom) */
   /* Archipelago (three.js reads these; same names in Ink) */
-  --nx-3d-rock: #c6bcae;     /* island underside — warm stone */
-  --nx-3d-land-1: #e4ddd0;   /* lowest plateau */
-  --nx-3d-land-2: #efe9dd;   /* middle plateau */
-  --nx-3d-land-3: #f9f5ec;   /* summit — nearly paper */
+  /* Rose Island (public case-study frames) sampled: lit structure #B1B5B4, shaded #A8AEAC / #A09694,
+     horizon haze #E2E7E0 — i.e. warm-grey shadow on a bright, barely-tinted field. */
+  --nx-3d-rock: #b9b1a7;     /* island underside — warm grey stone */
+  --nx-3d-land-1: #e3dfd8;   /* lowest plateau */
+  --nx-3d-land-2: #eeebe5;   /* middle plateau */
+  --nx-3d-land-3: #f7f5f0;   /* summit — nearly paper */
   --nx-3d-bridge: #1e6b6a;   /* deep-teal bridges */
   --nx-3d-cloud: #ffffff;
-  --nx-3d-key: #fff3e2;      /* warm key light — paper sunlight */
-  --nx-3d-sky: #fbfaf7;      /* hemisphere sky */
-  --nx-3d-ground: #d9cfbf;   /* hemisphere ground bounce */
+  --nx-3d-key: #fff6ea;      /* warm key light — sunlight */
+  --nx-3d-sky: #eef1ee;      /* hemisphere sky — the horizon haze */
+  --nx-3d-ground: #cfc9c0;   /* hemisphere ground bounce — warm grey */
 }
 
 /* ────────────────────────── INK ────────────────────────── */

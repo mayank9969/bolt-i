@@ -26,6 +26,8 @@ export interface WorldState {
   hover: string | null
   /** island whose field guide is open */
   selected: string | null
+  /** exhibit beat (0 before · 1 breakthrough · 2 after) when `selected` has an exhibit */
+  beat: 0 | 1 | 2
   /** 0..1 page scroll inside the hero */
   scroll: number
   px: number
@@ -44,6 +46,7 @@ const state: WorldState = {
   focus: null,
   hover: null,
   selected: null,
+  beat: 0,
   scroll: 0,
   px: 0,
   py: 0,
@@ -72,7 +75,7 @@ export function subscribeWorld(l: (s: WorldState) => void) {
 /** Pages: describe the world for this route. Hover/selection are cleared on route change. */
 export function useWorld(params: { mode: WorldMode; focus?: string | null }, deps: unknown[] = []) {
   useEffect(() => {
-    setWorld({ mode: params.mode, focus: params.focus ?? null, hover: null, selected: null, hoverXY: null })
+    setWorld({ mode: params.mode, focus: params.focus ?? null, hover: null, selected: null, beat: 0, hoverXY: null })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps)
 }

@@ -665,3 +665,17 @@
   .fg-inner { padding: 1.5rem 1.25rem 2rem; }
   @media (min-width: 640px) { .fg-inner { padding: 2rem 2.25rem 2.5rem; } }
 }
+
+/* ── Exhibits ───────────────────────────────────────────────────────────── */
+@layer components {
+  .exhibit-scrim { background: linear-gradient(to right, rgb(var(--nx-canvas-rgb) / 0.1), rgb(var(--nx-canvas-rgb) / 0.35)); }
+  .exhibit { background: rgb(var(--nx-card-rgb) / 0.985); border-left: 1px solid var(--nx-line); box-shadow: var(--nx-shadow-2); border-top-left-radius: 1.25rem; border-top-right-radius: 1.25rem; }
+  @media (min-width: 768px) { .exhibit { border-radius: 0; } }
+  .ex-inner { padding: 1.5rem 1.25rem 2rem; }
+  @media (min-width: 640px) { .ex-inner { padding: 2rem 2.25rem 2.5rem; } }
+  .beat-tab { @apply w-full flex flex-col items-start gap-1 px-3 py-2.5 rounded-xl border text-left transition-colors duration-fast ease-out; color: var(--nx-text-2); border-color: var(--nx-line); background: rgb(var(--nx-elevated-rgb) / 0.8); }
+  .beat-tab:hover { color: var(--nx-text); border-color: var(--nx-line-strong); }
+  .beat-tab[aria-current='step'] { color: var(--nx-text); border-color: var(--nx-accent); background: var(--nx-card); box-shadow: inset 0 0 0 1px var(--nx-accent); }
+  .beat-tab:focus-visible { outline: 2px solid var(--nx-focus); outline-offset: 2px; }
+  .island-chip-tag { @apply t-label; font-size: 0.6rem; padding: 0.1rem 0.4rem; border-radius: 999px; color: rgb(var(--color-on-accent-rgb)); background: var(--nx-accent); }
+}
