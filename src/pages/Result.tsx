@@ -38,6 +38,8 @@ export default function Result() {
       activation: Math.max(0.05, pct / 100),
       focusCluster: -1,
       path: result ? { mask: pathMask, cluster: region } : null,
+      // this attempt's own data: a region quiz with wrong answers leaves a terracotta node to come back to
+      reviewCategories: result && result.wrong_answers > 0 && result.category !== 'all' && result.category !== 'mixed' ? [result.category] : [],
     },
     [pct, result],
   )

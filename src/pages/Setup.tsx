@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-import { getCategories, startQuiz } from '@/api/quizApi'
+import { getCategories, getHistory, startQuiz } from '@/api/quizApi'
+import { reviewTopics, type ReviewTopic } from '@/lib/review'
 import { useQuiz } from '@/context/QuizContext'
 import type { CategoryInfo, DifficultyChoice } from '@/types/quiz'
 import Reveal from '@/components/Reveal'
@@ -34,12 +35,19 @@ export default function Setup() {
   const [count, setCount] = useState(10)
   const [error, setError] = useState('')
   const [starting, setStarting] = useState(false)
+  // real history → regions whose latest attempt still had wrong answers (terracotta on the loom + "revisit" in the list)
+  const [review, setReview] = useState<ReviewTopic[]>([])
 
   useEffect(() => {
     getCategories()
       .then((res) => setCatalog(res.categories))
       .catch((e: Error) => setLoadError(e.message))
+    getHistory()
+      .then((h) => setReview(reviewTopics(h)))
+      .catch(() => setReview([]))
   }, [])
+  const reviewIds = useMemo(() => review.map((r) => r.id), [review])
+  const reviewOf = (id: string) => review.find((r) => r.id === id)
 
   const difficulties = useMemo<DifficultyChoice[]>(() => {
     if (!catalog) return []
@@ -77,8 +85,9 @@ export default function Setup() {
       density: difficulty === 'easy' ? 0.3 : difficulty === 'medium' ? 0.6 : difficulty === 'hard' ? 1 : 0.8,
       activation: 0.1 + (count / MAX_COUNT) * 0.6,
       clusterLabels: FAMILY_LABELS,
+      reviewCategories: reviewIds,
     },
-    [clusterIndex, difficulty, count, catalog],
+    [clusterIndex, difficulty, count, catalog, reviewIds],
   )
   // a selection sends a signal through the chosen region
   useEffect(() => {
@@ -139,6 +148,7 @@ export default function Setup() {
                           icon={<RegionIcon id={c.id} />}
                           title={labelCategory(c.id)}
                           meta={`${totalOf(c)} questions`}
+                          revisit={reviewOf(c.id)}
                           detail={Object.entries(c.difficulties)
                             .sort(([a], [b]) => DIFFICULTY_ORDER.indexOf(a as never) - DIFFICULTY_ORDER.indexOf(b as never))
                             .map(([d, n]) => `${n} ${d}`)
@@ -319,7 +329,7 @@ function Movement({ index, title, hint, children }: { index: string; title: stri
   )
 }
 
-function RegionRow({ selected, onSelect, icon, title, meta, detail }: { selected: boolean; onSelect: () => void; icon: React.ReactNode; title: string; meta: string; detail: string }) {
+function RegionRow({ selected, onSelect, icon, title, meta, detail, revisit }: { selected: boolean; onSelect: () => void; icon: React.ReactNode; title: string; meta: string; detail: string; revisit?: ReviewTopic }) {
   return (
     <button
       type="button"
@@ -333,7 +343,18 @@ function RegionRow({ selected, onSelect, icon, title, meta, detail }: { selected
       </span>
       <span className="min-w-0">
         <span className="t-h3-lg block text-fg">{title}</span>
-        <span className="block t-caption mt-1.5 text-fg-2">{detail}</span>
+        <span className="block t-caption mt-1.5 text-fg-2">
+          {detail}
+          {revisit && (
+            <>
+              {' '}
+              <span className="inline-flex items-center gap-1.5 ml-1 text-warm-text font-medium" title={`Latest attempt ${revisit.percentage}% — ${revisit.wrong} wrong`}>
+                <span className="w-1.5 h-1.5 rounded-full bg-warm" aria-hidden="true" />
+                worth revisiting · {revisit.wrong} wrong last time
+              </span>
+            </>
+          )}
+        </span>
       </span>
       <span className="col-start-2 xs:col-start-auto flex xs:block items-center gap-3 xs:text-right">
         <span className="block text-sm num text-fg-2">{meta}</span>
