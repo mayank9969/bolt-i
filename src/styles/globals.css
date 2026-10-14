@@ -645,8 +645,16 @@
   .island-label-warm::before { content: ''; display: inline-block; width: 0.4rem; height: 0.4rem; border-radius: 999px; background: var(--nx-warm); margin-right: 0.45rem; vertical-align: middle; }
 
   /* on the home hero the page shell lets pointer events through to the map; content blocks re-enable them */
-  html[data-world='hero'] main, html[data-world='hero'] main > * { pointer-events: none; }
-  html[data-world='hero'] main > * > * { pointer-events: auto; }
+  /* Pass clicks through the hero copy stack to the map behind it.
+     Only real controls (links, buttons, the paper column, the island nav) catch the pointer. */
+  html[data-world='hero'] main { pointer-events: none; }
+  html[data-world='hero'] header,
+  html[data-world='hero'] footer,
+  html[data-world='hero'] .hero-paper,
+  html[data-world='hero'] nav,
+  html[data-world='hero'] main a,
+  html[data-world='hero'] main button,
+  html[data-world='hero'] .pointer-events-auto { pointer-events: auto; }
 
   /* the island index (keyboard / no-3D route to every field guide) */
   .island-chip {
@@ -678,4 +686,7 @@
   .beat-tab[aria-current='step'] { color: var(--nx-text); border-color: var(--nx-accent); background: var(--nx-card); box-shadow: inset 0 0 0 1px var(--nx-accent); }
   .beat-tab:focus-visible { outline: 2px solid var(--nx-focus); outline-offset: 2px; }
   .island-chip-tag { @apply t-label; font-size: 0.6rem; padding: 0.1rem 0.4rem; border-radius: 999px; color: rgb(var(--color-on-accent-rgb)); background: var(--nx-accent); }
+  .exhibit-poster { @apply rounded-2xl border border-line-strong bg-card px-6 py-6 sm:px-8 sm:py-7 transition-colors duration-fast ease-out; box-shadow: var(--nx-shadow-1); }
+  .exhibit-poster:hover { border-color: var(--nx-accent); background: var(--nx-elevated); }
+  .exhibit-poster:focus-visible { outline: 2px solid var(--nx-focus); outline-offset: 3px; }
 }

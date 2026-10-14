@@ -136,3 +136,8 @@ export function exhibitFor(id: string | null | undefined): Exhibit | null {
 export function hasExhibit(id: string | null | undefined): boolean {
   return !!exhibitFor(id)
 }
+
+/** Category ids that currently have a museum exhibit. Driven by the table above, not by list position. */
+export function exhibitIds(): string[] {
+  return Object.keys(EXHIBITS)
+}

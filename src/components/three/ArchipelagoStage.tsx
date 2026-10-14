@@ -3,6 +3,7 @@ import { getCategories, getHistory } from '@/api/quizApi'
 import { reviewTopics, type ReviewTopic } from '@/lib/review'
 import { buildIslands, type Island } from './islands'
 import { getWorld, setWorld, subscribeWorld, threeDisabled, useWorldSlice, type WorldMode } from './world'
+import { hasExhibit } from '@/lib/exhibits'
 import type { CategoryInfo } from '@/types/quiz'
 
 const ArchipelagoScene = lazy(() => import('./ArchipelagoScene'))
@@ -154,7 +155,7 @@ function StaticArchipelago({ interactive }: { interactive: boolean }) {
             onMouseLeave={() => setWorld({ hover: null })}
             onFocus={() => setWorld({ hover: isl.id })}
             onBlur={() => setWorld({ hover: null })}
-            onClick={() => setWorld({ selected: isl.id, hover: isl.id })}
+            onClick={() => setWorld({ selected: isl.id, hover: isl.id, beat: 0 })}
             onKeyDown={(e) => {
               if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault()
@@ -171,6 +172,7 @@ function StaticArchipelago({ interactive }: { interactive: boolean }) {
             {/* prop */}
             <rect x={-2} y={-isl.layers.length * 5 - 16} width={4} height={16} fill="var(--nx-text)" />
             {reviewSet.has(isl.id) && <circle cx={r * 0.5} cy={-isl.layers.length * 5 - 2} r={4} fill="var(--nx-warm)" />}
+            {hasExhibit(isl.id) && <ellipse cx={0} cy={0} rx={r * 1.15} ry={r * 0.52} fill="none" stroke="var(--nx-accent)" strokeWidth={2} />}
             {hot && (
               <text x={0} y={-isl.layers.length * 5 - 26} textAnchor="middle" fontSize={12} fontWeight={600} fill="var(--nx-text)">
                 {isl.label}

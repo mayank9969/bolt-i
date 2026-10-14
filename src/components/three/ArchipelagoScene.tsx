@@ -178,7 +178,7 @@ function IslandMesh({
   const onClick = (e: ThreeEvent<MouseEvent>) => {
     if (!interactive) return
     e.stopPropagation()
-    setWorld({ selected: island.id, hover: island.id })
+    setWorld({ selected: island.id, hover: island.id, beat: 0 })
   }
 
   const seg = quality === 'high' ? island.sides : Math.max(5, island.sides - 2)
@@ -202,6 +202,11 @@ function IslandMesh({
       <group ref={propGroup}>
         <Prop kind={island.prop} r={r} y={topY} ink={propMat} teal={tealMat} land={landMats[0]} />
       </group>
+      {hasExhibit(island.id) && !exhibitOpen && (
+        <mesh position={[0, topY + 0.02, 0]} rotation={[-Math.PI / 2, 0, 0]} material={tealMat}>
+          <ringGeometry args={[r * 0.72, r * 0.82, 32]} />
+        </mesh>
+      )}
       {exhibitOpen && <Diorama kind={exhibitFor(island.id)!.diorama} r={r} y={topY} ink={propMat} teal={tealMat} warm={warmMat} land={landMats[2]} />}
       {review && (
         <group position={[topLayer.radius * 0.55, topY, -topLayer.radius * 0.4]}>

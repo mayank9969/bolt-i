@@ -11,7 +11,7 @@ import type { CategoriesResponse, HistoryEntry } from '@/types/quiz'
 import { reviewTopics } from '@/lib/review'
 import { difficultyLevel, labelCategory } from '@/lib/format'
 import { setWorld, useWorld } from '@/components/three/world'
-import { hasExhibit } from '@/lib/exhibits'
+import { exhibitFor, exhibitIds, hasExhibit } from '@/lib/exhibits'
 
 const ease = [0.22, 1, 0.36, 1] as const
 const enter = (i: number) => ({ duration: 0.9, delay: 0.15 + i * 0.1, ease })
@@ -54,8 +54,7 @@ export default function Home() {
               </motion.h1>
 
               <motion.p initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={enter(2)} className="t-lead text-fg-2 mt-7 max-w-md text-pretty">
-                {catalog ? `${categoryCount} islands, ${questionCount} questions.` : 'A small world of islands.'} Explore the map, open an island’s field guide, and start a quiz
-                there — every answer scored on the server, never in your browser.
+                {catalog ? `${categoryCount} islands, ${questionCount} questions.` : 'A small world of islands.'} Two of them have a museum exhibit this version — Mathematics and Python. Open either from the posters below; the 3D map is not required.
               </motion.p>
 
               <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={enter(3)} className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
@@ -80,7 +79,7 @@ export default function Home() {
               )}
             </div>
             {/* the right column is left open for the map; on phones the map sits in this reserved space */}
-            <div className="lg:col-span-7 min-h-[46svh] lg:min-h-0" aria-hidden="true" />
+            <div className="lg:col-span-7 min-h-[46svh] lg:min-h-0 pointer-events-none" aria-hidden="true" />
           </motion.div>
         </div>
 
@@ -114,7 +113,7 @@ export default function Home() {
                     onMouseLeave={() => setWorld({ hover: null })}
                     onFocus={() => setWorld({ hover: c.id })}
                     onBlur={() => setWorld({ hover: null })}
-                    onClick={() => setWorld({ selected: c.id, hover: c.id })}
+                    onClick={() => setWorld({ selected: c.id, hover: c.id, beat: 0 })}
                     aria-haspopup="dialog"
                   >
                     <RegionIcon id={c.id} className="w-3.5 h-3.5" />
@@ -127,6 +126,42 @@ export default function Home() {
             })}
           </ul>
         </motion.nav>
+      </section>
+
+      {/* ── Two exhibits: always visible, never depend on 3D ───────── */}
+      <section className="relative z-10 max-w-page mx-auto w-full px-5 sm:px-6 lg:px-8 pb-8 md:pb-12 pointer-events-auto">
+        <div className="flex items-center justify-between gap-6 figcap mb-4">
+          <span className="inline-flex items-center gap-3">
+            <span className="w-8 h-px bg-line-strong" />
+            Fig. 02 — Open exhibits
+          </span>
+        </div>
+        <ul className="grid md:grid-cols-2 gap-4 md:gap-6">
+          {(catalog ? cats.filter((c) => hasExhibit(c.id)) : exhibitIds().map((id) => ({ id }))).map((c) => {
+            const ex = exhibitFor(c.id)
+            if (!ex) return null
+            const Icon = categoryIcon(c.id)
+            return (
+              <li key={c.id}>
+                <button
+                  type="button"
+                  className="exhibit-poster group w-full text-left"
+                  onClick={() => setWorld({ selected: c.id, hover: c.id, beat: 0 })}
+                  aria-haspopup="dialog"
+                >
+                  <span className="eyebrow">Exhibit · {categoryLabel(c.id)}</span>
+                  <span className="t-h3-lg text-fg mt-3 block text-balance">{ex.title}</span>
+                  <span className="text-fg-2 mt-2 block text-pretty">{ex.subtitle}</span>
+                  <span className="mt-5 inline-flex items-center gap-2 text-sm text-accent">
+                    <Icon className="w-4 h-4" />
+                    Step into the exhibit
+                    <ArrowRight className="w-4 h-4" />
+                  </span>
+                </button>
+              </li>
+            )
+          })}
+        </ul>
       </section>
 
       {/* ── Manifesto: one line, huge, ruled ───────────────────────── */}
