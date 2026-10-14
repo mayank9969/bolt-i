@@ -734,8 +734,21 @@
   background: radial-gradient(circle, var(--nx-deco-2) 0%, transparent 70%);
 }
 [data-theme='ink'] .quote-veil {
-  width: min(92vw, 58rem);
-  height: min(62vw, 36rem);
-  filter: blur(64px);
-  background: radial-gradient(circle, rgb(255 255 255 / 0.5) 0%, rgb(255 255 255 / 0.16) 38%, transparent 72%);
+  background: radial-gradient(circle, rgb(236 248 240 / 0.9) 0%, transparent 70%);
+}
+/* Ink quote: Paper-white field that feathers into the black page */
+[data-theme='ink'] .quote-band {
+  background: linear-gradient(
+    to bottom,
+    rgb(8 8 8 / 0) 0%,
+    #fafbfa 22%,
+    #fafbfa 78%,
+    rgb(8 8 8 / 0) 100%
+  );
+}
+[data-theme='ink'] .quote-band .quote-line {
+  color: #1b2230;
+}
+[data-theme='ink'] .quote-band footer {
+  color: #636a77;
 }
