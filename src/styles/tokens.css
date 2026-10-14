@@ -191,9 +191,9 @@
   --nx-disabled: rgb(var(--nx-text-rgb) / 0.06);
   --nx-disabled-text-rgb: 96 103 116;
 
-  --nx-deco-1: rgb(var(--nx-accent-rgb) / 0.22);
-  --nx-deco-2: rgb(40 90 80 / 0.45);
-  --nx-deco-3: rgb(var(--nx-warm-rgb) / 0.12);
+  --nx-deco-1: rgb(140 224 216 / 0.10);
+  --nx-deco-2: rgb(255 255 255 / 0.12);     /* pale light that can feather into black */
+  --nx-deco-3: rgb(var(--nx-warm-rgb) / 0.08);
   --nx-grid: rgb(var(--nx-text-rgb) / 0.04);
   --nx-noise-opacity: 0.04;
 

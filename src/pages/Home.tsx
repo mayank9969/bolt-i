@@ -195,11 +195,10 @@ export default function Home() {
       </section>
 
       {/* ── Quote: open air, no body copy behind — haze lives here, type stays sharp ── */}
-      <section className="ink-sheet relative py-28 md:py-40 overflow-hidden" aria-label="Epigraph">
+      <section className="relative py-28 md:py-40 overflow-hidden" aria-label="Epigraph">
         <div className="pointer-events-none absolute inset-0" aria-hidden="true">
           <div
-            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(80vw,52rem)] h-[min(50vw,28rem)] rounded-full blur-[90px]"
-            style={{ background: 'radial-gradient(circle, var(--nx-deco-2) 0%, transparent 68%)' }}
+            className="quote-veil absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(80vw,52rem)] h-[min(50vw,28rem)] rounded-full blur-[100px]"
           />
         </div>
         <blockquote className="relative z-10 mx-auto max-w-page px-6 text-center">

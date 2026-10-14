@@ -628,6 +628,13 @@
 /* ── Knowledge Archipelago ─────────────────────────────────────────────── */
 @layer components {
   /* DOM labels that float above hovered / focused islands (drei <Html>) */
+  .quote-veil {
+    background: radial-gradient(circle, var(--nx-deco-2) 0%, transparent 70%);
+  }
+  /* Ink: same white light as Paper, but it fades into the black page — no hard sheet */
+  [data-theme='ink'] .quote-veil {
+    background: radial-gradient(circle, rgb(255 255 255 / 0.16) 0%, rgb(255 255 255 / 0.05) 42%, transparent 72%);
+  }
   [data-theme='ink'] .island-label { color: #ffffff; }
   [data-theme='ink'] .t-hero .t-italic { color: #ffffff; }
   [data-theme='ink'] .quote-line { color: #ffffff; }
