@@ -19,7 +19,7 @@ export default function PortalStage() {
   const [selected, setSelected] = useState<string | null>(null)
   const [categories, setCategories] = useState<CategoryInfo[]>(getWorld().categories)
   const [note, setNote] = useState<{ title: string; text: string; source?: string } | null>(null)
-  const [kind, setKind] = useState<'webgl' | 'static'>('static')
+  const [kind, setKind] = useState<'webgl' | 'static'>('webgl')
   const resetRef = useRef<null | (() => void)>(null)
 
   useEffect(() => {
@@ -83,8 +83,14 @@ export default function PortalStage() {
   }
 
   const ui = (
-    <div className="portal-shell" role="dialog" aria-modal="true" aria-labelledby="portal-title">
-      <div className="portal-stage">
+    <div
+      className="portal-shell"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="portal-title"
+      style={{ position: 'fixed', inset: 0, zIndex: 9999, display: 'flex', flexDirection: 'column', background: 'var(--nx-3d-sky)' }}
+    >
+      <div className="portal-stage" style={{ flex: 1, minHeight: 0, position: 'relative' }}>
         {kind === 'webgl' ? (
             <PortalCanvas
               id={selected}

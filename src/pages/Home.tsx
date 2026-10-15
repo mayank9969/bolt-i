@@ -90,7 +90,11 @@ export default function Home() {
               id="island-stage"
               className="island-frame"
               role="img"
-              aria-label="Knowledge archipelago — one island per subject. Choose a category below to focus one."
+              aria-label="Knowledge archipelago — click an island to enter its exhibit."
+              onClick={() => {
+                const id = hover
+                if (id) setWorld({ selected: id, hover: id, beat: 0 })
+              }}
             >
               <ArchipelagoStage />
             </div>

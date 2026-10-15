@@ -34,6 +34,18 @@ export default function ArchipelagoStage() {
     return () => setWorld({ framed: false })
   }, [])
 
+  useEffect(() => {
+    const root = document.getElementById('island-stage')
+    if (!root) return
+    const onClick = () => {
+      if (getWorld().selected) return
+      const h = getWorld().hover
+      if (h) setWorld({ selected: h, hover: h, beat: 0 })
+    }
+    root.addEventListener('click', onClick)
+    return () => root.removeEventListener('click', onClick)
+  }, [])
+
   // real data → store (one fetch each; pages fetch their own copies as before)
   useEffect(() => {
     let alive = true
