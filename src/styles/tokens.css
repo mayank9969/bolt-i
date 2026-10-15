@@ -120,8 +120,8 @@
   --nx-3d-bridge: #16827e;
   --nx-3d-cloud: #ffffff;
   --nx-3d-key: #ffffff;
-  --nx-3d-sky: #fafbfa;
-  --nx-3d-ground: #e8ebe9;
+  --nx-3d-sky: #f3efe6;
+  --nx-3d-ground: #e4dfd4;
 }
 
 /* ────────────────────────── INK ────────────────────────── */
@@ -203,9 +203,9 @@
   --nx-3d-land-3: #f7f7f7;
   --nx-3d-bridge: #8ce0d8;
   --nx-3d-cloud: #3a3a3a;
-  --nx-3d-key: #ffffff;
-  --nx-3d-sky: #050505;
-  --nx-3d-ground: #000000;
+  --nx-3d-key: #fff1dc;
+  --nx-3d-sky: #0a1422;
+  --nx-3d-ground: #05080e;
 
   --nx-shadow-ink: 0 0 0;
   --nx-shadow-1: 0 1px 0 0 rgb(255 255 255 / 0.04) inset, 0 12px 32px -14px rgb(0 0 0 / 0.55);

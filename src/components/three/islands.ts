@@ -23,6 +23,7 @@ export type Prop =
   | 'stack' // language — stacked slabs (books)
   | 'blocks' // programming / computer science — cube stack
   | 'beacon' // general knowledge / default — a cairn with a lantern
+  | 'horizon' // physics — stylised event horizon (not a simulation)
 
 export interface Island {
   id: string
@@ -57,7 +58,7 @@ const PROPS: Record<string, Prop> = {
   maths: 'obelisk',
   math: 'obelisk',
   mathematics: 'obelisk',
-  physics: 'orrery',
+  physics: 'horizon',
   astronomy_space: 'orrery',
   astronomy: 'orrery',
   chemistry: 'flask',
@@ -88,8 +89,6 @@ export function hash01(s: string, salt = 0): number {
   return ((h >>> 0) % 100000) / 100000
 }
 
-const GOLDEN = Math.PI * (3 - Math.sqrt(5))
-
 export function buildIslands(categories: CategoryInfo[]): { islands: Island[]; bridges: Bridge[] } {
   const total = categories.reduce((s, c) => s + Object.values(c.difficulties).reduce((a, b) => a + b, 0), 0) || 1
   const n = categories.length
@@ -99,11 +98,12 @@ export function buildIslands(categories: CategoryInfo[]): { islands: Island[]; b
     const id = normaliseCategoryId(c.id)
     const questions = Object.values(c.difficulties).reduce((a, b) => a + b, 0)
     const seed = hash01(id)
-    // sunflower spiral: compact, no overlaps, grows gracefully with any count
-    const ang = i * GOLDEN + seed * 0.4
-    const rad = n === 1 ? 0 : 1.15 + 1.05 * Math.sqrt(i)
+    // spacious ellipse around the visitor — not a flat spiral or a card row
+    const ang = n === 1 ? 0 : (i / n) * Math.PI * 2 + seed * 0.12
+    const radX = n === 1 ? 0 : 4.35
+    const radZ = n === 1 ? 0 : 3.45
     const share = questions / total
-    const r = 0.55 + Math.min(0.45, Math.sqrt(share * Math.max(1, n)) * 0.5)
+    const r = 0.48 + Math.min(0.38, Math.sqrt(share * Math.max(1, n)) * 0.42)
     const exhibitIsle = id === 'maths' || id === 'python'
     const layerCount = 2 + (seed > 0.45 ? 1 : 0)
     const layers: [number, number][] = []
@@ -114,9 +114,9 @@ export function buildIslands(categories: CategoryInfo[]): { islands: Island[]; b
       family: categoryCluster(id) === 1 ? 1 : 0,
       questions,
       difficulties: c.difficulties,
-      x: Math.cos(ang) * rad,
-      y: (hash01(id, 3) - 0.5) * 0.5,
-      z: Math.sin(ang) * rad * 0.78,
+      x: Math.cos(ang) * radX,
+      y: (hash01(id, 3) - 0.5) * 1.35,
+      z: Math.sin(ang) * radZ,
       r: exhibitIsle ? r * 1.18 : r,
       seed,
       sides: exhibitIsle && id === 'maths' ? 8 : exhibitIsle && id === 'python' ? 5 : 6 + Math.floor(hash01(id, 5) * 4),

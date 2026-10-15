@@ -116,6 +116,38 @@ export default function Home() {
                 </span>
               </span>
             </div>
+            <div className="flex items-center gap-2 mb-3 md:hidden">
+              <button
+                type="button"
+                className="island-chip"
+                aria-label="Previous island"
+                onClick={() => {
+                  if (!cats.length) return
+                  const ids = cats.map((c) => c.id)
+                  const cur = selected || hover || ids[0]
+                  const i = Math.max(0, ids.indexOf(cur))
+                  const n = ids[(i - 1 + ids.length) % ids.length]
+                  setWorld({ selected: n, hover: n, beat: 0 })
+                }}
+              >
+                Previous
+              </button>
+              <button
+                type="button"
+                className="island-chip"
+                aria-label="Next island"
+                onClick={() => {
+                  if (!cats.length) return
+                  const ids = cats.map((c) => c.id)
+                  const cur = selected || hover || ids[0]
+                  const i = Math.max(0, ids.indexOf(cur))
+                  const n = ids[(i + 1) % ids.length]
+                  setWorld({ selected: n, hover: n, beat: 0 })
+                }}
+              >
+                Next
+              </button>
+            </div>
             <ul className="flex flex-wrap gap-2">
               {cats.map((c) => {
                 const rv = review.find((r) => r.id === c.id || (c.id === 'math' && r.id === 'maths'))

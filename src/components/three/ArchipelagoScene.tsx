@@ -64,8 +64,8 @@ const _off = new THREE.Vector3()
 
 /* ── camera framing per mode (desktop · phone) ─────────────────────── */
 const CAM = {
-  hero: { pos: [6.2, 4.4, 8.4], look: [0, -0.2, 0], fov: 34, phone: { pos: [0.6, 6.4, 10.5], look: [0, -1.4, 0], fov: 46 } },
-  quiet: { pos: [-3, 7.5, 12.5], look: [0, -0.8, 0], fov: 32, phone: { pos: [0, 9, 14], look: [0, -1.5, 0], fov: 44 } },
+  hero: { pos: [0.15, 1.85, 0.4], look: [2.8, 0.2, 0.4], fov: 42, phone: { pos: [0.1, 1.55, 0.25], look: [2.2, 0.1, 0.2], fov: 48 } },
+  quiet: { pos: [0, 6.8, 11], look: [0, -0.4, 0], fov: 32, phone: { pos: [0, 8, 12], look: [0, -1.2, 0], fov: 44 } },
 } as const
 
 /* ── one island ─────────────────────────────────────────────────────── */
@@ -213,6 +213,7 @@ function IslandMesh({
         {island.id !== 'maths' && island.id !== 'python' && (
           <Prop kind={island.prop} r={r} y={topY} ink={propMat} teal={tealMat} land={landMats[0]} />
         )}
+        {island.id === 'physics' && <HorizonMotes r={r} y={topY} active={hot} />}
       </group>
       {hasExhibit(island.id) && !exhibitOpen && (
         <mesh position={[0, topY + 0.02, 0]} rotation={[-Math.PI / 2, 0, 0]} material={tealMat}>
@@ -230,11 +231,12 @@ function IslandMesh({
           </mesh>
         </group>
       )}
-      {hot && !exhibitOpen && (
-        <Html position={[0, topY + r * 0.9, 0]} center zIndexRange={[20, 10]} style={{ pointerEvents: 'none' }}>
-          <span className="island-label">
+      {!exhibitOpen && (
+        <Html position={[0, topY + r * 0.95, 0]} center zIndexRange={[20, 10]} style={{ pointerEvents: 'none' }}>
+          <span className={`island-label${hot ? ' is-hot' : ''}`}>
             {island.label}
-            {review && <span className="island-label-warm">· worth revisiting</span>}
+            {hot && island.questions > 0 && <span> · {island.questions}</span>}
+            {review && <span className="island-label-warm">revisit</span>}
           </span>
         </Html>
       )}
@@ -421,6 +423,17 @@ function Prop({ kind, r, y, ink, teal, land }: { kind: Island['prop']; r: number
           </mesh>
         </group>
       )
+    case 'horizon':
+      return (
+        <group position={[0, y + s * 0.28, 0]}>
+          <mesh material={ink} castShadow>
+            <sphereGeometry args={[s * 0.16, 20, 16]} />
+          </mesh>
+          <mesh rotation={[Math.PI / 2.15, 0.2, 0]} material={teal}>
+            <torusGeometry args={[s * 0.32, 0.018, 8, 48]} />
+          </mesh>
+        </group>
+      )
     default:
       return (
         <group position={[0, y, 0]}>
@@ -433,6 +446,40 @@ function Prop({ kind, r, y, ink, teal, land }: { kind: Island['prop']; r: number
         </group>
       )
   }
+}
+
+/** Physics — a few motes that spiral into the horizon when hovered or selected. */
+function HorizonMotes({ r, y, active }: { r: number; y: number; active: boolean }) {
+  const geo = useMemo(() => {
+    const g = new THREE.BufferGeometry()
+    g.setAttribute('position', new THREE.BufferAttribute(new Float32Array(36 * 3), 3))
+    return g
+  }, [])
+  const mat = useMemo(
+    () => new THREE.PointsMaterial({ color: '#e8c9a0', size: 0.045, transparent: true, opacity: 0.85, depthWrite: false }),
+    [],
+  )
+  useFrame(() => {
+    const t = performance.now() / 1000
+    const arr = geo.attributes.position.array as Float32Array
+    const spin = active ? 1.15 : 0.28
+    for (let i = 0; i < 36; i++) {
+      const u = i / 36
+      const fall = active ? (t * 0.22 + u) % 1 : 0.35 + u * 0.2
+      const rad = r * (0.52 * (1 - fall * 0.85))
+      const ang = u * Math.PI * 2 + t * spin
+      arr[i * 3] = Math.cos(ang) * rad
+      arr[i * 3 + 1] = y + 0.28 + Math.sin(ang * 1.7) * 0.03 - fall * 0.08
+      arr[i * 3 + 2] = Math.sin(ang) * rad * 0.42
+    }
+    geo.attributes.position.needsUpdate = true
+    mat.opacity = active ? 0.9 : 0.35
+  })
+  useEffect(() => () => {
+    geo.dispose()
+    mat.dispose()
+  }, [geo, mat])
+  return <points geometry={geo} material={mat} />
 }
 
 /* ── exhibit dioramas: three beats, one visible at a time ────────────── */
@@ -666,23 +713,25 @@ function Director({ islands, worldRef }: { islands: Island[]; worldRef: React.Re
       fov = narrow ? 42 : 30
       off.set(s.framed ? 0 : narrow ? 0 : -2.3, s.framed ? 0 : narrow ? 1.15 : 0, 0)
     } else if (s.mode === 'hero') {
+      const pick = s.selected || s.hover
+      const target = pick ? islands.find((i) => i.id === pick) : null
       if (s.framed) {
-        _v.set(narrow ? 0.3 : 3.6, narrow ? 4.0 : 3.2, narrow ? 6.8 : 6.0)
-        _v2.set(0, 0.2, 0)
-        fov = narrow ? 40 : 32
+        const yaw = performance.now() / 1000 * 0.045
+        _v.set(Math.sin(yaw) * 0.42, narrow ? 1.55 : 1.82, Math.cos(yaw) * 0.42)
+        if (target) {
+          _v2.set(target.x, target.y + 0.25, target.z)
+          const dx = target.x - _v.x
+          const dz = target.z - _v.z
+          const len = Math.hypot(dx, dz) || 1
+          _v.set(target.x - (dx / len) * (narrow ? 2.6 : 3.1), target.y + (narrow ? 1.4 : 1.7), target.z - (dz / len) * (narrow ? 2.6 : 3.1))
+        } else {
+          _v2.set(Math.sin(yaw) * 3.4, 0.15, Math.cos(yaw) * 3.4)
+        }
+        fov = narrow ? 48 : 42
       }
-      const k = s.scroll
-      const ang = k * 0.5
-      const dx = _v.x - _v2.x
-      const dz = _v.z - _v2.z
-      _v.x = _v2.x + dx * Math.cos(ang) - dz * Math.sin(ang)
-      _v.z = _v2.z + dx * Math.sin(ang) + dz * Math.cos(ang)
-      _v.lerp(_v2, k * 0.22)
-      _v.y -= k * 0.6
-      // pointer parallax (camera, not world)
-      const pin = s.pointerIn ? 1 : 0
-      _v.x += s.px * 0.35 * pin
-      _v.y += s.py * 0.2 * pin
+      const pin = s.pointerIn && !target ? 1 : 0
+      _v.x += s.px * 0.12 * pin
+      _v.y += s.py * 0.08 * pin
     }
     const l = 1 - Math.exp(-(exhibit ? 1.15 : 2.2) * dt)
     st.pos.lerp(_v, l)
@@ -733,7 +782,7 @@ function Lights({ palette, quality }: { palette: Palette; quality: Quality }) {
         shadow-bias={-0.0006}
         shadow-radius={5}
       />
-      <directionalLight position={[6, 3, -6]} intensity={0.45} color={palette.dark ? '#c4c4c4' : '#dfe9ea'} />
+      <directionalLight position={[6, 3, -6]} intensity={palette.dark ? 0.7 : 0.5} color={palette.dark ? '#f0dcc4' : '#fff6e8'} />
     </>
   )
 }
@@ -741,7 +790,7 @@ function Lights({ palette, quality }: { palette: Palette; quality: Quality }) {
 function FogSync({ palette }: { palette: Palette }) {
   const scene = useThree((s) => s.scene)
   useEffect(() => {
-    scene.fog = new THREE.Fog(palette.canvas.clone(), 14, 30)
+    scene.fog = new THREE.Fog(palette.canvas.clone(), palette.dark ? 7 : 6, palette.dark ? 18 : 16)
     return () => {
       scene.fog = null
     }
@@ -762,7 +811,15 @@ export default function ArchipelagoScene() {
   const [categories, setCategories] = useState<CategoryInfo[]>(() => getWorld().categories)
   const [interactive, setInteractive] = useState(false)
   const [visible, setVisible] = useState(true)
+  const [onScreen, setOnScreen] = useState(true)
   useEffect(() => onThemeChange(() => setPalette(readPalette())), [])
+  useEffect(() => {
+    const el = document.getElementById('island-stage')
+    if (!el || typeof IntersectionObserver === 'undefined') return
+    const io = new IntersectionObserver(([e]) => setOnScreen(e.isIntersecting), { threshold: 0.12 })
+    io.observe(el)
+    return () => io.disconnect()
+  }, [])
   useWorldSlice((s) => s.categories, setCategories)
   useWorldSlice((s) => s.mode === 'hero' || s.mode === 'focus', setInteractive)
   useWorldSlice((s) => s.mode !== 'off', setVisible)
@@ -773,7 +830,7 @@ export default function ArchipelagoScene() {
     <Canvas
       dpr={dpr}
       shadows={quality === 'high'}
-      frameloop={visible ? 'demand' : 'never'}
+      frameloop={visible && onScreen ? 'demand' : 'never'}
       gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
       camera={{ position: CAM.hero.pos as unknown as [number, number, number], fov: 34, near: 0.1, far: 60 }}
       onPointerMissed={() => {

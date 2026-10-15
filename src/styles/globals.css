@@ -644,6 +644,7 @@
     transform: translateY(-0.25rem);
     background: rgb(var(--nx-card-rgb));
   }
+  .island-label:not(.is-hot) { opacity: 0.7; }
   .island-label-warm { border-color: rgb(var(--nx-warm-rgb) / 0.5); }
   .island-label-warm::before { content: ''; display: inline-block; width: 0.4rem; height: 0.4rem; border-radius: 999px; background: var(--nx-warm); margin-right: 0.45rem; vertical-align: middle; }
 
