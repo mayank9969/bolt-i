@@ -633,7 +633,8 @@
   [data-theme='ink'] .quote-line { color: #ffffff; }
   .island-label {
     @apply t-meta;
-    pointer-events: none;
+    pointer-events: auto;
+    cursor: pointer;
     white-space: nowrap;
     color: var(--nx-text);
     background: rgb(var(--nx-card-rgb) / 0.92);

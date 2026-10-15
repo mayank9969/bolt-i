@@ -1,13 +1,14 @@
-import { Suspense, lazy, useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router-dom'
-import { getWorld, setWorld, useWorldSlice, threeDisabled } from './world'
+import { getWorld, setWorld, subscribeWorld, threeDisabled } from './world'
 import { fieldGuide } from '@/lib/fieldGuide'
 import { exhibitFor, hasExhibit } from '@/lib/exhibits'
 import { categoryLabel } from '@/lib/categories'
 import { Cross } from '@/components/ui/Icons'
 import type { CategoryInfo } from '@/types/quiz'
 
-const PortalCanvas = lazy(() => import('./PortalCanvas'))
+import PortalCanvas from './PortalCanvas'
 
 /**
  * Full-screen subject portal. Island click opens this — not a zoom of the map.
@@ -21,8 +22,15 @@ export default function PortalStage() {
   const [kind, setKind] = useState<'webgl' | 'static'>('static')
   const resetRef = useRef<null | (() => void)>(null)
 
-  useWorldSlice((s) => s.selected, setSelected)
-  useWorldSlice((s) => s.categories, setCategories)
+  useEffect(() => {
+    const sync = () => {
+      const s = getWorld()
+      setSelected(s.selected)
+      setCategories(s.categories)
+    }
+    sync()
+    return subscribeWorld(sync)
+  }, [])
 
   useEffect(() => {
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
@@ -74,11 +82,10 @@ export default function PortalStage() {
     navigate('/setup', { state: { category: selected } })
   }
 
-  return (
+  const ui = (
     <div className="portal-shell" role="dialog" aria-modal="true" aria-labelledby="portal-title">
       <div className="portal-stage">
         {kind === 'webgl' ? (
-          <Suspense fallback={<div className="portal-fallback" />}>
             <PortalCanvas
               id={selected}
               onNote={setNote}
@@ -86,7 +93,6 @@ export default function PortalStage() {
                 resetRef.current = fn
               }}
             />
-          </Suspense>
         ) : (
           <div className="portal-fallback" aria-hidden="true">
             <p className="t-meta">{categoryLabel(selected)}</p>
@@ -136,4 +142,5 @@ export default function PortalStage() {
       )}
     </div>
   )
+  return createPortal(ui, document.body)
 }

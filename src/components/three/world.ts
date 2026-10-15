@@ -78,7 +78,7 @@ export function subscribeWorld(l: (s: WorldState) => void) {
 /** Pages: describe the world for this route. Hover/selection are cleared on route change. */
 export function useWorld(params: { mode: WorldMode; focus?: string | null }, deps: unknown[] = []) {
   useEffect(() => {
-    setWorld({ mode: params.mode, focus: params.focus ?? null, hover: null, selected: null, beat: 0, hoverXY: null })
+    setWorld({ mode: params.mode, focus: params.focus ?? null })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps)
 }

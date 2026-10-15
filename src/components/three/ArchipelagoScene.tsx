@@ -168,6 +168,10 @@ function IslandMesh({
     rockMat.emissiveIntensity = A.glow * 0.6
   })
 
+  const open = () => {
+    if (!interactive) return
+    setWorld({ selected: island.id, hover: island.id, beat: 0 })
+  }
   const onOver = (e: ThreeEvent<PointerEvent>) => {
     if (!interactive) return
     e.stopPropagation()
@@ -180,14 +184,17 @@ function IslandMesh({
     document.body.style.cursor = ''
   }
   const onClick = (e: ThreeEvent<MouseEvent>) => {
-    if (!interactive) return
     e.stopPropagation()
-    setWorld({ selected: island.id, hover: island.id, beat: 0 })
+    open()
   }
 
   const seg = quality === 'high' ? island.sides : Math.max(5, island.sides - 2)
   return (
-    <group ref={group} onPointerOver={onOver} onPointerOut={onOut} onClick={onClick}>
+    <group ref={group} onPointerOver={onOver} onPointerOut={onOut} onClick={onClick} onPointerDown={onClick}>
+      <mesh position={[0, r * 0.2, 0]} onPointerDown={onClick} onClick={onClick}>
+        <sphereGeometry args={[Math.max(0.7, r * 1.45), 12, 10]} />
+        <meshBasicMaterial transparent opacity={0} depthWrite={false} />
+      </mesh>
       {/* rock: an inverted faceted cone */}
       <mesh position={[0, -rockH / 2, 0]} rotation={[0, island.seed * Math.PI, 0]} material={rockMat} castShadow receiveShadow>
         <cylinderGeometry args={[r * 0.98, r * 0.16, rockH, seg, 1]} />
@@ -232,12 +239,19 @@ function IslandMesh({
         </group>
       )}
       {!exhibitOpen && (
-        <Html position={[0, topY + r * 0.95, 0]} center zIndexRange={[20, 10]} style={{ pointerEvents: 'none' }}>
-          <span className={`island-label${hot ? ' is-hot' : ''}`}>
+        <Html position={[0, topY + r * 0.95, 0]} center zIndexRange={[20, 10]} style={{ pointerEvents: 'auto' }}>
+          <button
+            type="button"
+            className={`island-label${hot ? ' is-hot' : ''}`}
+            onPointerDown={(e) => {
+              e.stopPropagation()
+              open()
+            }}
+          >
             {island.label}
             {hot && island.questions > 0 && <span> · {island.questions}</span>}
             {review && <span className="island-label-warm">revisit</span>}
-          </span>
+          </button>
         </Html>
       )}
     </group>
