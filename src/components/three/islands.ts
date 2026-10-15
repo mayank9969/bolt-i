@@ -99,11 +99,11 @@ export function buildIslands(categories: CategoryInfo[]): { islands: Island[]; b
     const questions = Object.values(c.difficulties).reduce((a, b) => a + b, 0)
     const seed = hash01(id)
     // spacious ellipse around the visitor — not a flat spiral or a card row
-    const ang = n === 1 ? 0 : (i / n) * Math.PI * 2 + seed * 0.06
-    const radX = n === 1 ? 0 : 6.6
-    const radZ = n === 1 ? 0 : 5.2
+    const ang = n === 1 ? 0 : (i / n) * Math.PI * 2 + seed * 0.12
+    const radX = n === 1 ? 0 : 4.35
+    const radZ = n === 1 ? 0 : 3.45
     const share = questions / total
-    const r = 0.28 + Math.min(0.18, Math.sqrt(share * Math.max(1, n)) * 0.22)
+    const r = 0.48 + Math.min(0.38, Math.sqrt(share * Math.max(1, n)) * 0.42)
     const exhibitIsle = id === 'maths' || id === 'python'
     const layerCount = 2 + (seed > 0.45 ? 1 : 0)
     const layers: [number, number][] = []
@@ -115,7 +115,7 @@ export function buildIslands(categories: CategoryInfo[]): { islands: Island[]; b
       questions,
       difficulties: c.difficulties,
       x: Math.cos(ang) * radX,
-      y: (hash01(id, 3) - 0.5) * 1.1,
+      y: (hash01(id, 3) - 0.5) * 1.35,
       z: Math.sin(ang) * radZ,
       r: exhibitIsle ? r * 1.18 : r,
       seed,
