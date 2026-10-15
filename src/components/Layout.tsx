@@ -6,6 +6,7 @@ import Background from './Background'
 import ThemeSwitcher from './ThemeSwitcher'
 import FieldGuide from './FieldGuide'
 import Exhibit from './Exhibit'
+import PortalStage from './three/PortalStage'
 
 const NAV = [
   { to: '/', label: 'Home' },
@@ -32,6 +33,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       <Background />
       <FieldGuide />
       <Exhibit />
+      <PortalStage />
 
       <header
         className={`sticky top-0 z-50 transition-colors duration-300 border-b ${

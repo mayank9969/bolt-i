@@ -23,7 +23,7 @@ export default function Exhibit() {
   const [beat, setBeat] = useState<0 | 1 | 2>(0)
   const [categories, setCategories] = useState<CategoryInfo[]>(getWorld().categories)
   const [staticMode, setStaticMode] = useState(false)
-  useWorldSlice((s) => s.selected, setSelected)
+  useWorldSlice((s) => (s.selected ? null : s.selected), setSelected)
   useWorldSlice((s) => s.beat, setBeat)
   useWorldSlice((s) => s.categories, setCategories)
   const data = useMemo(() => exhibitFor(selected), [selected])

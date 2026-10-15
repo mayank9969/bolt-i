@@ -753,3 +753,44 @@
 [data-theme='ink'] .quote-band footer {
   color: #636a77;
 }
+
+.portal-shell {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: flex;
+  flex-direction: column;
+  background: var(--nx-3d-sky, rgb(var(--nx-canvas-rgb)));
+}
+.portal-stage { flex: 1; min-height: 0; }
+.portal-stage canvas { display: block; width: 100%; height: 100%; }
+.portal-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.85rem 1.1rem 1.1rem;
+  border-top: 1px solid var(--nx-line-strong);
+  background: rgb(var(--nx-card-rgb) / 0.96);
+}
+.portal-note {
+  position: absolute;
+  left: 1rem;
+  right: 1rem;
+  bottom: 5.5rem;
+  max-width: 28rem;
+  padding: 1rem 1.1rem;
+  border-radius: 1rem;
+  border: 1px solid var(--nx-line-strong);
+  background: rgb(var(--nx-card-rgb) / 0.96);
+  box-shadow: var(--nx-shadow-2);
+}
+.portal-fallback {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 2rem;
+  background: radial-gradient(circle at 50% 40%, var(--nx-deco-2), transparent 60%);
+}
