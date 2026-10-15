@@ -649,6 +649,15 @@
   .island-label-warm { border-color: rgb(var(--nx-warm-rgb) / 0.5); }
   .island-label-warm::before { content: ''; display: inline-block; width: 0.4rem; height: 0.4rem; border-radius: 999px; background: var(--nx-warm); margin-right: 0.45rem; vertical-align: middle; }
 
+  .island-frame.is-explore {
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
+    border-radius: 0;
+  }
   .island-frame {
     position: relative;
     isolation: isolate;

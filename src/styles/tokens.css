@@ -113,15 +113,15 @@
   /* Archipelago (three.js reads these; same names in Ink) */
   /* Rose Island (public case-study frames) sampled: lit structure #B1B5B4, shaded #A8AEAC / #A09694,
      horizon haze #E2E7E0 — i.e. warm-grey shadow on a bright, barely-tinted field. */
-  --nx-3d-rock: #1a1a1a;
-  --nx-3d-land-1: #242424;   /* black islands on the white field */
-  --nx-3d-land-2: #2e2e2e;
-  --nx-3d-land-3: #3a3a3a;
+  --nx-3d-rock: #4a4036;
+  --nx-3d-land-1: #4e6a3c;
+  --nx-3d-land-2: #6a8b4c;
+  --nx-3d-land-3: #8fad62;
   --nx-3d-bridge: #16827e;
-  --nx-3d-cloud: #ffffff;
-  --nx-3d-key: #ffffff;
-  --nx-3d-sky: #f3efe6;
-  --nx-3d-ground: #e4dfd4;
+  --nx-3d-cloud: #f7fbff;
+  --nx-3d-key: #fff3d0;
+  --nx-3d-sky: #b7cfe4;
+  --nx-3d-ground: #2a4a28;
 }
 
 /* ────────────────────────── INK ────────────────────────── */
@@ -197,15 +197,15 @@
   --nx-grid: rgb(var(--nx-text-rgb) / 0.04);
   --nx-noise-opacity: 0.04;
 
-  --nx-3d-rock: #2a2a2a;     /* underside, still darker than the white plateau */
-  --nx-3d-land-1: #d8d8d8;   /* white islands on black void */
-  --nx-3d-land-2: #ececec;
-  --nx-3d-land-3: #f7f7f7;
+  --nx-3d-rock: #3a4238;
+  --nx-3d-land-1: #9bb89a;
+  --nx-3d-land-2: #c5d8b8;
+  --nx-3d-land-3: #e4f0dc;
   --nx-3d-bridge: #8ce0d8;
-  --nx-3d-cloud: #3a3a3a;
-  --nx-3d-key: #fff1dc;
-  --nx-3d-sky: #0a1422;
-  --nx-3d-ground: #05080e;
+  --nx-3d-cloud: #8aa0b8;
+  --nx-3d-key: #ffe6c0;
+  --nx-3d-sky: #0e1a2e;
+  --nx-3d-ground: #0a1810;
 
   --nx-shadow-ink: 0 0 0;
   --nx-shadow-1: 0 1px 0 0 rgb(255 255 255 / 0.04) inset, 0 12px 32px -14px rgb(0 0 0 / 0.55);

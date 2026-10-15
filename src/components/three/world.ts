@@ -39,6 +39,8 @@ export interface WorldState {
   tick: number
   /** canvas is clipped to #island-stage rather than the full viewport */
   framed: boolean
+  /** full-world 360° orbit (click empty sky / forest, not an island) */
+  explore: boolean
 }
 
 const state: WorldState = {
@@ -56,6 +58,7 @@ const state: WorldState = {
   hoverXY: null,
   tick: 0,
   framed: false,
+  explore: false,
 }
 
 const listeners = new Set<(s: WorldState) => void>()

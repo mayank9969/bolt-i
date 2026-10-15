@@ -11,7 +11,7 @@ import type { CategoriesResponse, HistoryEntry } from '@/types/quiz'
 import { reviewTopics } from '@/lib/review'
 import { difficultyLevel, labelCategory } from '@/lib/format'
 import ArchipelagoStage from '@/components/three/ArchipelagoStage'
-import { setWorld, useWorld, useWorldSlice } from '@/components/three/world'
+import { getWorld, setWorld, useWorld, useWorldSlice } from '@/components/three/world'
 import { exhibitFor, exhibitIds, hasExhibit } from '@/lib/exhibits'
 
 const ease = [0.22, 1, 0.36, 1] as const
@@ -45,20 +45,20 @@ export default function Home() {
       {/* ── Hero: copy on the left, framed map on the right (stacked on phones) ── */}
       <section ref={heroRef} className="relative pt-4 pb-4">
         <div className="relative z-10 max-w-page mx-auto w-full px-5 sm:px-6 lg:px-8">
-          <div className="max-w-xl">
-            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={enter(0)} className="opener">
+          <div className="max-w-2xl mx-auto text-center">
+            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={enter(0)} className="opener justify-center">
               <span>The Knowledge Archipelago</span>
             </motion.p>
 
-            <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={enter(1)} className="t-hero text-fg mt-6 max-w-[12ch] text-balance">
+            <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={enter(1)} className="t-hero text-fg mt-6 mx-auto max-w-[16ch] text-balance">
               Every subject<br /> is an <span className="t-italic text-accent">island.</span>
             </motion.h1>
 
-            <motion.p initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={enter(2)} className="t-lead text-fg-2 mt-7 max-w-md text-pretty">
+            <motion.p initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={enter(2)} className="t-lead text-fg-2 mt-7 mx-auto max-w-lg text-pretty">
               {catalog ? `${categoryCount} islands, ${questionCount} questions.` : 'A small world of islands.'} Explore the map, open a field guide, and start a quiz — every answer scored on the server, never in your browser. Mathematics and Python have a short exhibit this version; every other island still starts its quiz the usual way.
             </motion.p>
 
-            <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={enter(3)} className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
+            <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={enter(3)} className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-4">
               <MagneticLink to="/setup" className="btn-primary btn-lg">
                 Start a quiz
                 <ArrowRight className="arrow w-5 h-5" />
@@ -69,7 +69,7 @@ export default function Home() {
             </motion.div>
 
             {review.length > 0 && (
-              <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={enter(4)} className="mt-7 flex items-start gap-2.5 text-sm text-fg-2 max-w-md">
+              <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={enter(4)} className="mt-7 mx-auto flex items-start justify-center gap-2.5 text-sm text-fg-2 max-w-md text-left">
                 <span className="mt-1.5 w-2 h-2 rounded-full bg-warm shrink-0" aria-hidden="true" />
                 <span>
                   <span className="text-warm-text font-medium">Terracotta markers</span> stand on {review.length === 1 ? 'the island' : `${review.length} islands`} where your latest attempt left wrong answers:{' '}
@@ -92,8 +92,9 @@ export default function Home() {
               role="img"
               aria-label="Knowledge archipelago — click an island to enter its exhibit."
               onClick={() => {
-                const id = hover
+                const id = getWorld().hover
                 if (id) setWorld({ selected: id, hover: id, beat: 0 })
+                else setWorld({ explore: true })
               }}
             >
               <ArchipelagoStage />

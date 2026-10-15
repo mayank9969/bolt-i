@@ -20,8 +20,13 @@ export default function ArchipelagoStage() {
   const [kind, setKind] = useState<'webgl' | 'static' | 'pending'>('pending')
   const [mode, setMode] = useState<WorldMode>(getWorld().mode)
   const [selected, setSelected] = useState<string | null>(getWorld().selected)
+  const [explore, setExplore] = useState(false)
   useWorldSlice((s) => s.mode, setMode)
   useWorldSlice((s) => s.selected, setSelected)
+  useWorldSlice((s) => s.explore, setExplore)
+  useEffect(() => {
+    document.getElementById('island-stage')?.classList.toggle('is-explore', explore)
+  }, [explore])
   useEffect(() => {
     document.documentElement.dataset.world = mode
     return () => {
@@ -121,6 +126,16 @@ export default function ArchipelagoStage() {
         </Suspense>
       ) : (
         <StaticArchipelago interactive={mode === 'hero' || mode === 'focus'} />
+      )}
+      {explore && (
+        <button
+          type="button"
+          className="island-chip"
+          style={{ position: 'absolute', top: 16, right: 16, zIndex: 5 }}
+          onClick={() => setWorld({ explore: false })}
+        >
+          Close 360° view
+        </button>
       )}
     </div>
   )

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Canvas, useFrame, useThree, type ThreeEvent } from '@react-three/fiber'
-import { Html } from '@react-three/drei'
+import { Html, OrbitControls } from '@react-three/drei'
 import * as THREE from 'three'
 import { buildIslands, hash01, type Bridge, type Island } from './islands'
 import { getWorld, setWorld, subscribeWorld, useWorldSlice, type WorldState } from './world'
@@ -64,7 +64,7 @@ const _off = new THREE.Vector3()
 
 /* ── camera framing per mode (desktop · phone) ─────────────────────── */
 const CAM = {
-  hero: { pos: [0.15, 1.85, 0.4], look: [2.8, 0.2, 0.4], fov: 42, phone: { pos: [0.1, 1.55, 0.25], look: [2.2, 0.1, 0.2], fov: 48 } },
+  hero: { pos: [0, 6.4, 13.2], look: [0, -0.8, 0], fov: 36, phone: { pos: [0, 7.2, 14], look: [0, -1.2, 0], fov: 46 } },
   quiet: { pos: [0, 6.8, 11], look: [0, -0.4, 0], fov: 32, phone: { pos: [0, 8, 12], look: [0, -1.2, 0], fov: 44 } },
 } as const
 
@@ -221,6 +221,11 @@ function IslandMesh({
           <Prop kind={island.prop} r={r} y={topY} ink={propMat} teal={tealMat} land={landMats[0]} />
         )}
         {island.id === 'physics' && <HorizonMotes r={r} y={topY} active={hot} />}
+        {island.id !== 'maths' && island.id !== 'python' && (
+          <mesh position={[r * 0.22, topY + r * 0.22, -r * 0.18]} material={tealMat} castShadow>
+            <coneGeometry args={[r * 0.16, r * 0.42, 6]} />
+          </mesh>
+        )}
       </group>
       {hasExhibit(island.id) && !exhibitOpen && (
         <mesh position={[0, topY + 0.02, 0]} rotation={[-Math.PI / 2, 0, 0]} material={tealMat}>
@@ -664,7 +669,7 @@ function Clouds({ palette }: { palette: Palette }) {
     () =>
       Array.from({ length: 7 }, (_, i) => ({
         x: (hash01('cloud', i) - 0.5) * 11,
-        y: -1.6 - hash01('cloud', i + 10) * 1.6,
+        y: 3.4 + hash01('cloud', i + 10) * 1.4,
         z: (hash01('cloud', i + 20) - 0.5) * 7,
         s: 0.7 + hash01('cloud', i + 30) * 0.9,
         sp: 0.04 + hash01('cloud', i + 40) * 0.05,
@@ -697,6 +702,7 @@ function Director({ islands, worldRef }: { islands: Island[]; worldRef: React.Re
   useFrame(({ camera }, rawDt) => {
     const dt = Math.min(0.05, rawDt)
     const s = getWorld()
+    if (s.explore) return
     const st = S.current
     const narrow = size.width < 768
     const base = s.mode === 'hero' ? CAM.hero : CAM.quiet
@@ -801,10 +807,79 @@ function Lights({ palette, quality }: { palette: Palette; quality: Quality }) {
   )
 }
 
+function SkyDome({ palette }: { palette: Palette }) {
+  return (
+    <mesh>
+      <sphereGeometry args={[46, 24, 16]} />
+      <meshBasicMaterial color={palette.sky} side={THREE.BackSide} />
+    </mesh>
+  )
+}
+
+function Forest({ palette, quality }: { palette: Palette; quality: Quality }) {
+  const count = quality === 'high' ? 200 : 80
+  const mesh = useRef<THREE.InstancedMesh>(null)
+  const dummy = useMemo(() => new THREE.Object3D(), [])
+  const mat = useMemo(
+    () => new THREE.MeshStandardMaterial({ color: palette.dark ? '#1a3d28' : '#2d5c34', roughness: 0.92, flatShading: true }),
+    [palette],
+  )
+  useEffect(() => {
+    const m = mesh.current
+    if (!m) return
+    for (let i = 0; i < count; i++) {
+      const a = hash01('canopy', i) * Math.PI * 2
+      const rad = 7 + hash01('canopy', i + 3) * 20
+      dummy.position.set(Math.cos(a) * rad, -4.15 + hash01('canopy', i + 7) * 0.35, Math.sin(a) * rad)
+      const s = 0.4 + hash01('canopy', i + 11) * 0.85
+      dummy.scale.set(s, 1.1 + s * 1.5, s)
+      dummy.rotation.y = hash01('canopy', i + 13) * 6
+      dummy.updateMatrix()
+      m.setMatrixAt(i, dummy.matrix)
+    }
+    m.instanceMatrix.needsUpdate = true
+  }, [count, dummy])
+  return (
+    <group>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -4.55, 0]} receiveShadow>
+        <circleGeometry args={[34, 40]} />
+        <meshStandardMaterial color={palette.dark ? '#0b1a10' : '#1f4324'} roughness={1} />
+      </mesh>
+      <instancedMesh ref={mesh} args={[undefined, undefined, count]} material={mat} castShadow>
+        <coneGeometry args={[0.55, 1.65, 5]} />
+      </instancedMesh>
+    </group>
+  )
+}
+
+function ExploreRig() {
+  const [on, setOn] = useState(false)
+  const [held, setHeld] = useState(false)
+  useWorldSlice((s) => s.explore, setOn)
+  const reduce = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  if (!on) return null
+  return (
+    <OrbitControls
+      enablePan={false}
+      enableDamping
+      dampingFactor={0.08}
+      autoRotate={!held && !reduce}
+      autoRotateSpeed={0.32}
+      minDistance={7}
+      maxDistance={24}
+      minPolarAngle={0.25}
+      maxPolarAngle={Math.PI / 2.12}
+      onStart={() => setHeld(true)}
+      onEnd={() => setHeld(false)}
+    />
+  )
+}
+
 function FogSync({ palette }: { palette: Palette }) {
   const scene = useThree((s) => s.scene)
   useEffect(() => {
-    scene.fog = new THREE.Fog(palette.canvas.clone(), palette.dark ? 7 : 6, palette.dark ? 18 : 16)
+    scene.background = new THREE.Color(palette.sky)
+    scene.fog = new THREE.Fog(new THREE.Color(palette.sky), palette.dark ? 14 : 16, palette.dark ? 48 : 52)
     return () => {
       scene.fog = null
     }
@@ -845,16 +920,19 @@ export default function ArchipelagoScene() {
       dpr={dpr}
       shadows={quality === 'high'}
       frameloop={visible && onScreen ? 'demand' : 'never'}
-      gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
-      camera={{ position: CAM.hero.pos as unknown as [number, number, number], fov: 34, near: 0.1, far: 60 }}
+      gl={{ antialias: true, alpha: false, powerPreference: 'high-performance' }}
+      camera={{ position: CAM.hero.pos as unknown as [number, number, number], fov: 36, near: 0.1, far: 80 }}
       onPointerMissed={() => {
-        if (getWorld().hover) setWorld({ hover: null })
+        setWorld({ hover: null })
+        if (!getWorld().selected) setWorld({ explore: true, hover: null })
       }}
       style={{ pointerEvents: interactive ? 'auto' : 'none' }}
     >
       <FogSync palette={palette} />
       <Lights palette={palette} quality={quality} />
       <Director islands={islands} worldRef={worldRef} />
+      <SkyDome palette={palette} />
+      <Forest palette={palette} quality={quality} />
       <group ref={worldRef}>
         {islands.map((isl, i) => (
           <IslandMesh key={isl.id} island={isl} palette={palette} quality={quality} index={i} interactive={interactive} />
@@ -862,6 +940,7 @@ export default function ArchipelagoScene() {
         <Bridges islands={islands} bridges={bridges} palette={palette} quality={quality} />
         {quality === 'high' && <Clouds palette={palette} />}
       </group>
+      <ExploreRig />
     </Canvas>
   )
 }
