@@ -120,8 +120,8 @@
   --nx-3d-bridge: #16827e;
   --nx-3d-cloud: #f7fbff;
   --nx-3d-key: #fff3d0;
-  --nx-3d-sky: #b7cfe4;
-  --nx-3d-ground: #2a4a28;
+  --nx-3d-sky: #c5dcf0;
+  --nx-3d-ground: #6a8f5a;
 }
 
 /* ────────────────────────── INK ────────────────────────── */
@@ -204,7 +204,7 @@
   --nx-3d-bridge: #8ce0d8;
   --nx-3d-cloud: #8aa0b8;
   --nx-3d-key: #ffe6c0;
-  --nx-3d-sky: #0e1a2e;
+  --nx-3d-sky: #1a2c48;
   --nx-3d-ground: #0a1810;
 
   --nx-shadow-ink: 0 0 0;

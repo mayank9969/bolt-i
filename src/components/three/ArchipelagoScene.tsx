@@ -64,8 +64,8 @@ const _off = new THREE.Vector3()
 
 /* ── camera framing per mode (desktop · phone) ─────────────────────── */
 const CAM = {
-  hero: { pos: [0, 6.4, 13.2], look: [0, -0.8, 0], fov: 36, phone: { pos: [0, 7.2, 14], look: [0, -1.2, 0], fov: 46 } },
-  quiet: { pos: [0, 6.8, 11], look: [0, -0.4, 0], fov: 32, phone: { pos: [0, 8, 12], look: [0, -1.2, 0], fov: 44 } },
+  hero: { pos: [0, 8.8, 18.5], look: [0, 0.15, 0], fov: 32, phone: { pos: [0, 10.2, 20], look: [0, 0, 0], fov: 40 } },
+  quiet: { pos: [0, 9, 16], look: [0, 0, 0], fov: 32, phone: { pos: [0, 10, 18], look: [0, -0.4, 0], fov: 42 } },
 } as const
 
 /* ── one island ─────────────────────────────────────────────────────── */
@@ -212,8 +212,8 @@ function IslandMesh({
         ))
       )}
       {island.peak && island.id !== 'maths' && island.id !== 'python' && (
-        <mesh position={[-topLayer.radius * 0.45, topY + r * 0.22, topLayer.radius * 0.3]} material={landMats[2]} castShadow>
-          <coneGeometry args={[r * 0.26, r * 0.46, 5]} />
+        <mesh position={[-topLayer.radius * 0.45, topY + r * 0.12, topLayer.radius * 0.3]} material={landMats[2]} castShadow>
+          <sphereGeometry args={[r * 0.18, 8, 6]} />
         </mesh>
       )}
       <group ref={propGroup}>
@@ -222,8 +222,8 @@ function IslandMesh({
         )}
         {island.id === 'physics' && <HorizonMotes r={r} y={topY} active={hot} />}
         {island.id !== 'maths' && island.id !== 'python' && (
-          <mesh position={[r * 0.22, topY + r * 0.22, -r * 0.18]} material={tealMat} castShadow>
-            <coneGeometry args={[r * 0.16, r * 0.42, 6]} />
+          <mesh position={[r * 0.18, topY + r * 0.12, -r * 0.14]} material={landMats[2]} castShadow>
+            <sphereGeometry args={[r * 0.14, 8, 6]} />
           </mesh>
         )}
       </group>
@@ -733,25 +733,20 @@ function Director({ islands, worldRef }: { islands: Island[]; worldRef: React.Re
       fov = narrow ? 42 : 30
       off.set(s.framed ? 0 : narrow ? 0 : -2.3, s.framed ? 0 : narrow ? 1.15 : 0, 0)
     } else if (s.mode === 'hero') {
-      const pick = s.selected || s.hover
+      const pick = s.hover
       const target = pick ? islands.find((i) => i.id === pick) : null
       if (s.framed) {
-        const yaw = performance.now() / 1000 * 0.045
-        _v.set(Math.sin(yaw) * 0.42, narrow ? 1.55 : 1.82, Math.cos(yaw) * 0.42)
+        _v.set(narrow ? 0 : 0.4, narrow ? 10 : 8.8, narrow ? 20 : 18.5)
+        _v2.set(0, 0.2, 0)
+        fov = narrow ? 40 : 32
         if (target) {
-          _v2.set(target.x, target.y + 0.25, target.z)
-          const dx = target.x - _v.x
-          const dz = target.z - _v.z
-          const len = Math.hypot(dx, dz) || 1
-          _v.set(target.x - (dx / len) * (narrow ? 2.6 : 3.1), target.y + (narrow ? 1.4 : 1.7), target.z - (dz / len) * (narrow ? 2.6 : 3.1))
-        } else {
-          _v2.set(Math.sin(yaw) * 3.4, 0.15, Math.cos(yaw) * 3.4)
+          _v2.x += target.x * 0.12
+          _v2.z += target.z * 0.12
         }
-        fov = narrow ? 48 : 42
       }
       const pin = s.pointerIn && !target ? 1 : 0
-      _v.x += s.px * 0.12 * pin
-      _v.y += s.py * 0.08 * pin
+      _v.x += s.px * 0.35 * pin
+      _v.y += s.py * 0.12 * pin
     }
     const l = 1 - Math.exp(-(exhibit ? 1.15 : 2.2) * dt)
     st.pos.lerp(_v, l)
@@ -788,7 +783,7 @@ function Director({ islands, worldRef }: { islands: Island[]; worldRef: React.Re
 function Lights({ palette, quality }: { palette: Palette; quality: Quality }) {
   return (
     <>
-      <hemisphereLight args={[palette.sky, palette.ground, palette.dark ? 1.15 : 1.85]} />
+      <hemisphereLight args={[palette.dark ? palette.sky : '#e8f2fb', palette.dark ? '#243428' : '#9bb57a', palette.dark ? 1.2 : 2.1]} />
       <directionalLight
         position={[-6, 9, 5]}
         intensity={palette.dark ? 1.5 : 1.8}
@@ -817,11 +812,11 @@ function SkyDome({ palette }: { palette: Palette }) {
 }
 
 function Forest({ palette, quality }: { palette: Palette; quality: Quality }) {
-  const count = quality === 'high' ? 200 : 80
+  const count = quality === 'high' ? 280 : 120
   const mesh = useRef<THREE.InstancedMesh>(null)
   const dummy = useMemo(() => new THREE.Object3D(), [])
   const mat = useMemo(
-    () => new THREE.MeshStandardMaterial({ color: palette.dark ? '#1a3d28' : '#2d5c34', roughness: 0.92, flatShading: true }),
+    () => new THREE.MeshStandardMaterial({ color: palette.dark ? '#3d5c48' : '#5a7d4a', roughness: 0.95, flatShading: true }),
     [palette],
   )
   useEffect(() => {
@@ -829,26 +824,19 @@ function Forest({ palette, quality }: { palette: Palette; quality: Quality }) {
     if (!m) return
     for (let i = 0; i < count; i++) {
       const a = hash01('canopy', i) * Math.PI * 2
-      const rad = 7 + hash01('canopy', i + 3) * 20
-      dummy.position.set(Math.cos(a) * rad, -4.15 + hash01('canopy', i + 7) * 0.35, Math.sin(a) * rad)
-      const s = 0.4 + hash01('canopy', i + 11) * 0.85
-      dummy.scale.set(s, 1.1 + s * 1.5, s)
-      dummy.rotation.y = hash01('canopy', i + 13) * 6
+      const rad = 10 + hash01('canopy', i + 3) * 28
+      dummy.position.set(Math.cos(a) * rad, -16.5 + hash01('canopy', i + 7) * 1.8, Math.sin(a) * rad)
+      const s = 0.7 + hash01('canopy', i + 11) * 1.4
+      dummy.scale.set(s * 1.2, s * 0.7, s * 1.2)
       dummy.updateMatrix()
       m.setMatrixAt(i, dummy.matrix)
     }
     m.instanceMatrix.needsUpdate = true
   }, [count, dummy])
   return (
-    <group>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -4.55, 0]} receiveShadow>
-        <circleGeometry args={[34, 40]} />
-        <meshStandardMaterial color={palette.dark ? '#0b1a10' : '#1f4324'} roughness={1} />
-      </mesh>
-      <instancedMesh ref={mesh} args={[undefined, undefined, count]} material={mat} castShadow>
-        <coneGeometry args={[0.55, 1.65, 5]} />
-      </instancedMesh>
-    </group>
+    <instancedMesh ref={mesh} args={[undefined, undefined, count]} material={mat}>
+      <sphereGeometry args={[0.7, 6, 5]} />
+    </instancedMesh>
   )
 }
 
@@ -865,10 +853,10 @@ function ExploreRig() {
       dampingFactor={0.08}
       autoRotate={!held && !reduce}
       autoRotateSpeed={0.32}
-      minDistance={7}
-      maxDistance={24}
-      minPolarAngle={0.25}
-      maxPolarAngle={Math.PI / 2.12}
+      minDistance={14}
+      maxDistance={36}
+      minPolarAngle={0.28}
+      maxPolarAngle={Math.PI / 2.25}
       onStart={() => setHeld(true)}
       onEnd={() => setHeld(false)}
     />
@@ -879,7 +867,7 @@ function FogSync({ palette }: { palette: Palette }) {
   const scene = useThree((s) => s.scene)
   useEffect(() => {
     scene.background = new THREE.Color(palette.sky)
-    scene.fog = new THREE.Fog(new THREE.Color(palette.sky), palette.dark ? 14 : 16, palette.dark ? 48 : 52)
+    scene.fog = new THREE.Fog(new THREE.Color(palette.sky), palette.dark ? 18 : 22, palette.dark ? 62 : 72)
     return () => {
       scene.fog = null
     }

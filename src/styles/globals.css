@@ -640,7 +640,8 @@
     background: rgb(var(--nx-card-rgb) / 0.92);
     border: 1px solid var(--nx-line-strong);
     border-radius: 999px;
-    padding: 0.3rem 0.7rem;
+    padding: 0.18rem 0.5rem;
+    font-size: 0.7rem;
     box-shadow: var(--nx-shadow-1);
     transform: translateY(-0.25rem);
     background: rgb(var(--nx-card-rgb));
@@ -662,8 +663,8 @@
     position: relative;
     isolation: isolate;
     width: 100%;
-    height: min(62vh, 640px);
-    min-height: 320px;
+    height: min(70vh, 720px);
+    min-height: 380px;
     border-radius: 1.25rem;
     border: 1px solid var(--nx-line-strong);
     background: var(--nx-3d-sky, rgb(var(--nx-surface-rgb)));
