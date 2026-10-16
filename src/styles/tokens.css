@@ -113,10 +113,10 @@
   /* Archipelago (three.js reads these; same names in Ink) */
   /* Rose Island (public case-study frames) sampled: lit structure #B1B5B4, shaded #A8AEAC / #A09694,
      horizon haze #E2E7E0 — i.e. warm-grey shadow on a bright, barely-tinted field. */
-  --nx-3d-rock: #4a4036;
-  --nx-3d-land-1: #4e6a3c;
-  --nx-3d-land-2: #6a8b4c;
-  --nx-3d-land-3: #8fad62;
+  --nx-3d-rock: #6b5a48;
+  --nx-3d-land-1: #3d6a32;
+  --nx-3d-land-2: #4f8a3c;
+  --nx-3d-land-3: #6aaa50;
   --nx-3d-bridge: #16827e;
   --nx-3d-cloud: #f7fbff;
   --nx-3d-key: #fff3d0;

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Canvas, useFrame, useThree, type ThreeEvent } from '@react-three/fiber'
-import { Html, OrbitControls } from '@react-three/drei'
+import { Html, OrbitControls, Sky } from '@react-three/drei'
 import * as THREE from 'three'
 import { buildIslands, hash01, type Bridge, type Island } from './islands'
 import { getWorld, setWorld, subscribeWorld, useWorldSlice, type WorldState } from './world'
@@ -159,13 +159,12 @@ function IslandMesh({
     g.scale.setScalar(sc)
     landMats.forEach((m, i) => {
       m.emissive.copy(palette.accent)
-      m.emissiveIntensity = A.glow * (palette.dark ? 1.35 : 1.1)
-      m.opacity = 1
-      m.color.copy(palette.land[i]).lerp(palette.accent, A.glow * 0.9)
+      m.emissiveIntensity = A.glow * 0.18
+      m.color.copy(palette.land[i]).lerp(palette.accent, A.glow * 0.22)
     })
-    rockMat.color.copy(palette.rock).lerp(palette.accent, A.glow * 0.55)
+    rockMat.color.copy(palette.rock).lerp(palette.accent, A.glow * 0.12)
     rockMat.emissive.copy(palette.accent)
-    rockMat.emissiveIntensity = A.glow * 0.6
+    rockMat.emissiveIntensity = A.glow * 0.08
   })
 
   const open = () => {
@@ -222,9 +221,7 @@ function IslandMesh({
         )}
         {island.id === 'physics' && <HorizonMotes r={r} y={topY} active={hot} />}
         {island.id !== 'maths' && island.id !== 'python' && (
-          <mesh position={[r * 0.18, topY + r * 0.14, -r * 0.16]} material={landMats[2]} castShadow>
-            <sphereGeometry args={[r * 0.16, 7, 6]} />
-          </mesh>
+          <IsleGrove r={r} y={topY} seed={island.seed} dark={palette.dark} />
         )}
         {island.seed > 0.62 && island.id !== 'maths' && island.id !== 'python' && (
           <mesh position={[r * 0.4, topY * 0.4, 0]} rotation={[0.2, 0.4, 0.9]} material={landMats[0]}>
@@ -324,6 +321,44 @@ function PythonLand({ r, stack, land, teal, ink }: { r: number; stack: LandLayer
       <mesh position={[r * 0.42, stack[stack.length - 1].y + 0.14, 0]} material={teal} castShadow>
         <boxGeometry args={[0.08, 0.16, 0.08]} />
       </mesh>
+    </group>
+  )
+}
+
+function IsleGrove({ r, y, seed, dark }: { r: number; y: number; seed: number; dark: boolean }) {
+  const g = useRef<THREE.Group>(null)
+  const n = 1 + (seed > 0.4 ? 1 : 0) + (seed > 0.75 ? 1 : 0)
+  useFrame(() => {
+    const el = g.current
+    if (!el) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    el.rotation.z = Math.sin(performance.now() / 1400 + seed * 8) * 0.035
+  })
+  const leaf = dark ? '#8fbf84' : '#3f7a38'
+  const leaf2 = dark ? '#c5dcb0' : '#5a9a48'
+  const bark = dark ? '#6a5a48' : '#5c4634'
+  return (
+    <group ref={g}>
+      {Array.from({ length: n }, (_, i) => {
+        const a = seed * 6.2 + i * 2.1
+        const d = r * (0.18 + i * 0.16)
+        return (
+          <group key={i} position={[Math.cos(a) * d, y, Math.sin(a) * d]}>
+            <mesh position={[0, r * 0.28, 0]} castShadow>
+              <cylinderGeometry args={[r * 0.028, r * 0.045, r * 0.55, 6]} />
+              <meshStandardMaterial color={bark} roughness={0.9} />
+            </mesh>
+            <mesh position={[0, r * 0.58, 0]} castShadow>
+              <sphereGeometry args={[r * 0.26, 8, 6]} />
+              <meshStandardMaterial color={leaf} roughness={0.75} />
+            </mesh>
+            <mesh position={[r * 0.1, r * 0.72, r * 0.04]} castShadow>
+              <sphereGeometry args={[r * 0.18, 8, 6]} />
+              <meshStandardMaterial color={leaf2} roughness={0.75} />
+            </mesh>
+          </group>
+        )
+      })}
     </group>
   )
 }
@@ -669,20 +704,20 @@ function Bridges({ islands, bridges, palette, quality }: { islands: Island[]; br
 
 /* ── soft clouds drifting below the islands (high quality only) ─────── */
 function Clouds({ palette }: { palette: Palette }) {
-  const mat = useMemo(() => new THREE.MeshStandardMaterial({ color: palette.cloud, roughness: 1, transparent: true, opacity: palette.dark ? 0.12 : 0.55 }), [])
+  const mat = useMemo(() => new THREE.MeshStandardMaterial({ color: palette.dark ? '#9aadc0' : '#f4f7fb', roughness: 1, transparent: true, opacity: palette.dark ? 0.28 : 0.7, fog: false }), [])
   useEffect(() => {
-    mat.color.copy(palette.cloud)
-    mat.opacity = palette.dark ? 0.12 : 0.55
+    mat.color.set(palette.dark ? '#9aadc0' : '#f4f7fb')
+    mat.opacity = palette.dark ? 0.28 : 0.7
   }, [palette, mat])
   const group = useRef<THREE.Group>(null)
   const puffs = useMemo(
     () =>
-      Array.from({ length: 7 }, (_, i) => ({
-        x: (hash01('cloud', i) - 0.5) * 11,
-        y: 3.4 + hash01('cloud', i + 10) * 1.4,
-        z: (hash01('cloud', i + 20) - 0.5) * 7,
-        s: 0.7 + hash01('cloud', i + 30) * 0.9,
-        sp: 0.04 + hash01('cloud', i + 40) * 0.05,
+      Array.from({ length: 11 }, (_, i) => ({
+        x: (hash01('cloud', i) - 0.5) * 22,
+        y: 6.2 + hash01('cloud', i + 10) * 3.2,
+        z: (hash01('cloud', i + 20) - 0.5) * 16,
+        s: 1.2 + hash01('cloud', i + 30) * 1.6,
+        sp: 0.025 + hash01('cloud', i + 40) * 0.03,
       })),
     [],
   )
@@ -822,30 +857,17 @@ function Lights({ palette, quality }: { palette: Palette; quality: Quality }) {
   )
 }
 
-function SkyDome({ palette }: { palette: Palette }) {
-  const geo = useMemo(() => {
-    const g = new THREE.SphereGeometry(180, 32, 20)
-    const pos = g.attributes.position
-    const col = new Float32Array(pos.count * 3)
-    const top = new THREE.Color(palette.dark ? '#152238' : '#8ec0ea')
-    const hor = new THREE.Color(palette.dark ? '#2a3d52' : '#d5e8f5')
-    const bot = new THREE.Color(palette.dark ? '#1a2e24' : '#7a9a62')
-    const c = new THREE.Color()
-    for (let i = 0; i < pos.count; i++) {
-      const y = pos.getY(i) / 180
-      if (y > 0) c.copy(hor).lerp(top, Math.min(1, y * 1.1))
-      else c.copy(hor).lerp(bot, Math.min(1, -y * 1.15))
-      col[i * 3] = c.r
-      col[i * 3 + 1] = c.g
-      col[i * 3 + 2] = c.b
-    }
-    g.setAttribute('color', new THREE.BufferAttribute(col, 3))
-    return g
-  }, [palette.dark])
+function Atmosphere({ palette }: { palette: Palette }) {
+  const sun = palette.dark ? ([8, 6, -18] as const) : ([60, 28, 40] as const)
   return (
-    <mesh geometry={geo}>
-      <meshBasicMaterial vertexColors side={THREE.BackSide} fog={false} />
-    </mesh>
+    <Sky
+      distance={400000}
+      sunPosition={sun}
+      turbidity={palette.dark ? 10 : 5.5}
+      rayleigh={palette.dark ? 0.35 : 2.2}
+      mieCoefficient={0.004}
+      mieDirectionalG={0.8}
+    />
   )
 }
 
@@ -1006,8 +1028,8 @@ export default function ArchipelagoScene() {
     <Canvas
       dpr={dpr}
       shadows={quality === 'high'}
-      frameloop={visible && onScreen ? 'demand' : 'never'}
-      gl={{ antialias: true, alpha: false, powerPreference: 'high-performance' }}
+      frameloop={visible && onScreen ? 'always' : 'never'}
+      gl={{ antialias: true, alpha: false, powerPreference: 'high-performance', toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.05 }}
       camera={{ position: CAM.hero.pos as unknown as [number, number, number], fov: 36, near: 0.2, far: 240 }}
       onPointerMissed={() => {
         setWorld({ hover: null })
@@ -1018,7 +1040,7 @@ export default function ArchipelagoScene() {
       <FogSync palette={palette} />
       <Lights palette={palette} quality={quality} />
       <Director islands={islands} worldRef={worldRef} />
-      <SkyDome palette={palette} />
+      <Atmosphere palette={palette} />
       <Hills palette={palette} />
       <Forest palette={palette} quality={quality} />
       {quality === 'high' && <DriftLeaves palette={palette} />}
