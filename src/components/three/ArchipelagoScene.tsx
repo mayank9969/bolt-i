@@ -222,8 +222,18 @@ function IslandMesh({
         )}
         {island.id === 'physics' && <HorizonMotes r={r} y={topY} active={hot} />}
         {island.id !== 'maths' && island.id !== 'python' && (
-          <mesh position={[r * 0.22, topY + r * 0.22, -r * 0.18]} material={tealMat} castShadow>
-            <coneGeometry args={[r * 0.16, r * 0.42, 6]} />
+          <mesh position={[r * 0.18, topY + r * 0.14, -r * 0.16]} material={landMats[2]} castShadow>
+            <sphereGeometry args={[r * 0.16, 7, 6]} />
+          </mesh>
+        )}
+        {island.seed > 0.62 && island.id !== 'maths' && island.id !== 'python' && (
+          <mesh position={[r * 0.4, topY * 0.4, 0]} rotation={[0.2, 0.4, 0.9]} material={landMats[0]}>
+            <cylinderGeometry args={[0.012, 0.012, r * 0.9, 4]} />
+          </mesh>
+        )}
+        {(island.id === 'biology' || island.id === 'geography') && (
+          <mesh position={[r * 0.35, -r * 0.2, 0]} material={tealMat}>
+            <boxGeometry args={[0.03, r * 1.1, 0.03]} />
           </mesh>
         )}
       </group>
@@ -752,6 +762,11 @@ function Director({ islands, worldRef }: { islands: Island[]; worldRef: React.Re
       const pin = s.pointerIn && !target ? 1 : 0
       _v.x += s.px * 0.12 * pin
       _v.y += s.py * 0.08 * pin
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && !s.explore) {
+        const t = performance.now() / 1000
+        _v.x += Math.sin(t * 0.12) * 0.18
+        _v.y += Math.sin(t * 0.09) * 0.1
+      }
     }
     const l = 1 - Math.exp(-(exhibit ? 1.15 : 2.2) * dt)
     st.pos.lerp(_v, l)
@@ -817,11 +832,12 @@ function SkyDome({ palette }: { palette: Palette }) {
 }
 
 function Forest({ palette, quality }: { palette: Palette; quality: Quality }) {
-  const count = quality === 'high' ? 200 : 80
+  const count = quality === 'high' ? 220 : 90
   const mesh = useRef<THREE.InstancedMesh>(null)
+  const group = useRef<THREE.Group>(null)
   const dummy = useMemo(() => new THREE.Object3D(), [])
   const mat = useMemo(
-    () => new THREE.MeshStandardMaterial({ color: palette.dark ? '#1a3d28' : '#2d5c34', roughness: 0.92, flatShading: true }),
+    () => new THREE.MeshStandardMaterial({ color: palette.dark ? '#3d6a48' : '#4e7a3c', roughness: 0.92, flatShading: true }),
     [palette],
   )
   useEffect(() => {
@@ -829,26 +845,108 @@ function Forest({ palette, quality }: { palette: Palette; quality: Quality }) {
     if (!m) return
     for (let i = 0; i < count; i++) {
       const a = hash01('canopy', i) * Math.PI * 2
-      const rad = 7 + hash01('canopy', i + 3) * 20
-      dummy.position.set(Math.cos(a) * rad, -4.15 + hash01('canopy', i + 7) * 0.35, Math.sin(a) * rad)
-      const s = 0.4 + hash01('canopy', i + 11) * 0.85
-      dummy.scale.set(s, 1.1 + s * 1.5, s)
-      dummy.rotation.y = hash01('canopy', i + 13) * 6
+      const rad = 8 + hash01('canopy', i + 3) * 22
+      dummy.position.set(Math.cos(a) * rad, -5.4 + hash01('canopy', i + 7) * 0.9, Math.sin(a) * rad)
+      const s = 0.45 + hash01('canopy', i + 11) * 0.95
+      dummy.scale.set(s * 1.15, s * 0.85, s * 1.15)
       dummy.updateMatrix()
       m.setMatrixAt(i, dummy.matrix)
     }
     m.instanceMatrix.needsUpdate = true
   }, [count, dummy])
+  useFrame(() => {
+    const g = group.current
+    if (!g || getWorld().mode !== 'hero') return
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (reduce) return
+    const t = performance.now() / 1000
+    g.position.y = Math.sin(t * 0.18) * 0.06
+  })
   return (
-    <group>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -4.55, 0]} receiveShadow>
-        <circleGeometry args={[34, 40]} />
-        <meshStandardMaterial color={palette.dark ? '#0b1a10' : '#1f4324'} roughness={1} />
-      </mesh>
-      <instancedMesh ref={mesh} args={[undefined, undefined, count]} material={mat} castShadow>
-        <coneGeometry args={[0.55, 1.65, 5]} />
+    <group ref={group}>
+      <instancedMesh ref={mesh} args={[undefined, undefined, count]} material={mat}>
+        <sphereGeometry args={[0.62, 6, 5]} />
       </instancedMesh>
     </group>
+  )
+}
+
+function Hills({ palette }: { palette: Palette }) {
+  const col = palette.dark ? '#2a4638' : '#5a7a48'
+  return (
+    <group>
+      {[
+        [-18, -6.2, -22, 14, 3.2],
+        [16, -6.8, -20, 12, 2.6],
+        [2, -7.2, -28, 18, 4],
+      ].map((h, i) => (
+        <mesh key={i} position={[h[0], h[1], h[2]]} scale={[h[3], h[4], h[3] * 0.7]}>
+          <sphereGeometry args={[1, 10, 7]} />
+          <meshStandardMaterial color={col} roughness={1} flatShading />
+        </mesh>
+      ))}
+    </group>
+  )
+}
+
+function Mist({ palette }: { palette: Palette }) {
+  const mat = useMemo(
+    () =>
+      new THREE.MeshBasicMaterial({
+        color: palette.dark ? '#8aa4b8' : '#e8f2ea',
+        transparent: true,
+        opacity: palette.dark ? 0.08 : 0.16,
+        depthWrite: false,
+      }),
+    [palette],
+  )
+  const g = useRef<THREE.Group>(null)
+  useFrame(() => {
+    const el = g.current
+    if (!el || getWorld().mode !== 'hero') return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const t = performance.now() / 1000
+    el.position.x = Math.sin(t * 0.07) * 0.8
+  })
+  return (
+    <group ref={g}>
+      <mesh position={[0, -2.4, -6]} rotation={[-0.12, 0, 0]} material={mat}>
+        <planeGeometry args={[40, 8]} />
+      </mesh>
+      <mesh position={[4, -1.6, 2]} rotation={[-0.08, 0.2, 0]} material={mat}>
+        <planeGeometry args={[22, 5]} />
+      </mesh>
+    </group>
+  )
+}
+
+function DriftLeaves({ palette }: { palette: Palette }) {
+  const n = 18
+  const mesh = useRef<THREE.InstancedMesh>(null)
+  const dummy = useMemo(() => new THREE.Object3D(), [])
+  const mat = useMemo(
+    () => new THREE.MeshBasicMaterial({ color: palette.dark ? '#8fbf7a' : '#6a9a4a', transparent: true, opacity: 0.55, depthWrite: false }),
+    [palette],
+  )
+  useFrame(() => {
+    const m = mesh.current
+    if (!m || getWorld().mode !== 'hero') return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const t = performance.now() / 1000
+    for (let i = 0; i < n; i++) {
+      const u = (t * 0.04 + hash01('leaf', i)) % 1
+      dummy.position.set((hash01('leaf', i + 2) - 0.5) * 12, 2.2 - u * 5.5, (hash01('leaf', i + 5) - 0.5) * 10)
+      dummy.rotation.set(u * 2, u * 3, 0)
+      dummy.scale.setScalar(0.08 + hash01('leaf', i + 8) * 0.08)
+      dummy.updateMatrix()
+      m.setMatrixAt(i, dummy.matrix)
+    }
+    m.instanceMatrix.needsUpdate = true
+  })
+  return (
+    <instancedMesh ref={mesh} args={[undefined, undefined, n]} material={mat}>
+      <planeGeometry args={[1, 0.45]} />
+    </instancedMesh>
   )
 }
 
@@ -932,7 +1030,10 @@ export default function ArchipelagoScene() {
       <Lights palette={palette} quality={quality} />
       <Director islands={islands} worldRef={worldRef} />
       <SkyDome palette={palette} />
+      <Hills palette={palette} />
       <Forest palette={palette} quality={quality} />
+      <Mist palette={palette} />
+      {quality === 'high' && <DriftLeaves palette={palette} />}
       <group ref={worldRef}>
         {islands.map((isl, i) => (
           <IslandMesh key={isl.id} island={isl} palette={palette} quality={quality} index={i} interactive={interactive} />

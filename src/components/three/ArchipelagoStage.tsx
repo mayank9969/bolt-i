@@ -6,6 +6,8 @@ import { getWorld, setWorld, subscribeWorld, threeDisabled, useWorldSlice, type 
 import { hasExhibit } from '@/lib/exhibits'
 import type { CategoryInfo } from '@/types/quiz'
 
+import AmbientAudio from './AmbientAudio'
+
 const ArchipelagoScene = lazy(() => import('./ArchipelagoScene'))
 
 /**
@@ -127,6 +129,7 @@ export default function ArchipelagoStage() {
       ) : (
         <StaticArchipelago interactive={mode === 'hero' || mode === 'focus'} />
       )}
+      {kind === 'webgl' && <AmbientAudio />}
       {explore && (
         <button
           type="button"
