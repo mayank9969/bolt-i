@@ -744,6 +744,25 @@
   filter: blur(72px);
   background: radial-gradient(circle, var(--nx-deco-2) 0%, transparent 70%);
 }
+/* Paper quote: black field that feathers into the white page */
+[data-theme='paper'] .quote-veil {
+  background: radial-gradient(circle, rgb(255 255 255 / 0.1) 0%, transparent 70%);
+}
+[data-theme='paper'] .quote-band {
+  background: linear-gradient(
+    to bottom,
+    rgb(250 251 250 / 0) 0%,
+    #080808 20%,
+    #080808 80%,
+    rgb(250 251 250 / 0) 100%
+  );
+}
+[data-theme='paper'] .quote-band .quote-line {
+  color: #fafbfa;
+}
+[data-theme='paper'] .quote-band footer {
+  color: #9aa3b0;
+}
 [data-theme='ink'] .quote-veil {
   background: radial-gradient(circle, rgb(236 248 240 / 0.9) 0%, transparent 70%);
 }
