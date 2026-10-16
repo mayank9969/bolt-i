@@ -64,8 +64,8 @@ const _off = new THREE.Vector3()
 
 /* ── camera framing per mode (desktop · phone) ─────────────────────── */
 const CAM = {
-  hero: { pos: [2.4, 7.6, 15.5], look: [0, 0.1, 0], fov: 34, phone: { pos: [0.4, 8.4, 16.5], look: [0, -0.2, 0], fov: 42 } },
-  quiet: { pos: [0, 8, 14], look: [0, 0, 0], fov: 32, phone: { pos: [0, 9, 16], look: [0, -0.4, 0], fov: 42 } },
+  hero: { pos: [0, 6.4, 13.2], look: [0, -0.8, 0], fov: 36, phone: { pos: [0, 7.2, 14], look: [0, -1.2, 0], fov: 46 } },
+  quiet: { pos: [0, 6.8, 11], look: [0, -0.4, 0], fov: 32, phone: { pos: [0, 8, 12], look: [0, -1.2, 0], fov: 44 } },
 } as const
 
 /* ── one island ─────────────────────────────────────────────────────── */
@@ -778,24 +778,29 @@ function Director({ islands, worldRef }: { islands: Island[]; worldRef: React.Re
       fov = narrow ? 42 : 30
       off.set(s.framed ? 0 : narrow ? 0 : -2.3, s.framed ? 0 : narrow ? 1.15 : 0, 0)
     } else if (s.mode === 'hero') {
-      const pick = s.hover
+      const pick = s.selected || s.hover
       const target = pick ? islands.find((i) => i.id === pick) : null
       if (s.framed) {
-        _v.set(narrow ? 0.6 : 2.4, narrow ? 8.2 : 7.6, narrow ? 16.5 : 15.5)
-        _v2.set(0, 0.05, 0)
-        fov = narrow ? 42 : 34
+        const yaw = performance.now() / 1000 * 0.045
+        _v.set(Math.sin(yaw) * 0.42, narrow ? 1.55 : 1.82, Math.cos(yaw) * 0.42)
         if (target) {
-          _v2.x += target.x * 0.18
-          _v2.z += target.z * 0.18
+          _v2.set(target.x, target.y + 0.25, target.z)
+          const dx = target.x - _v.x
+          const dz = target.z - _v.z
+          const len = Math.hypot(dx, dz) || 1
+          _v.set(target.x - (dx / len) * (narrow ? 2.6 : 3.1), target.y + (narrow ? 1.4 : 1.7), target.z - (dz / len) * (narrow ? 2.6 : 3.1))
+        } else {
+          _v2.set(Math.sin(yaw) * 3.4, 0.15, Math.cos(yaw) * 3.4)
         }
+        fov = narrow ? 48 : 42
       }
       const pin = s.pointerIn && !target ? 1 : 0
-      _v.x += s.px * 0.25 * pin
-      _v.y += s.py * 0.1 * pin
+      _v.x += s.px * 0.12 * pin
+      _v.y += s.py * 0.08 * pin
       if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && !s.explore) {
         const t = performance.now() / 1000
-        _v.x += Math.sin(t * 0.1) * 0.22
-        _v.y += Math.sin(t * 0.08) * 0.12
+        _v.x += Math.sin(t * 0.1) * 0.12
+        _v.y += Math.sin(t * 0.08) * 0.07
       }
     }
     const l = 1 - Math.exp(-(exhibit ? 1.15 : 2.2) * dt)
@@ -866,60 +871,81 @@ function Atmosphere({ palette }: { palette: Palette }) {
   )
 }
 
-function Forest({ palette, quality }: { palette: Palette; quality: Quality }) {
-  const count = quality === 'high' ? 220 : 90
+function ForestLayer({
+  count,
+  salt,
+  y0,
+  spread,
+  size,
+  color,
+}: {
+  count: number
+  salt: number
+  y0: number
+  spread: number
+  size: number
+  color: string
+}) {
   const mesh = useRef<THREE.InstancedMesh>(null)
-  const group = useRef<THREE.Group>(null)
   const dummy = useMemo(() => new THREE.Object3D(), [])
-  const mat = useMemo(
-    () => new THREE.MeshStandardMaterial({ color: palette.dark ? '#3d6a48' : '#4e7a3c', roughness: 0.92, flatShading: true }),
-    [palette],
-  )
+  const mat = useMemo(() => new THREE.MeshStandardMaterial({ color, roughness: 0.9, flatShading: true }), [color])
   useEffect(() => {
     const m = mesh.current
     if (!m) return
     for (let i = 0; i < count; i++) {
-      const a = hash01('canopy', i) * Math.PI * 2
-      const rad = 8 + hash01('canopy', i + 3) * 22
-      dummy.position.set(Math.cos(a) * rad, -8.2 + hash01('canopy', i + 7) * 0.8, Math.sin(a) * rad)
-      const s = 0.45 + hash01('canopy', i + 11) * 0.95
-      dummy.scale.set(s * 1.15, s * 0.85, s * 1.15)
+      const a = hash01('canopy', i + salt) * Math.PI * 2
+      const rad = 1.2 + hash01('canopy', i + salt + 3) * spread
+      dummy.position.set(Math.cos(a) * rad, y0 + hash01('canopy', i + salt + 7) * 1.1, Math.sin(a) * rad)
+      const s = size * (0.7 + hash01('canopy', i + salt + 11) * 0.9)
+      dummy.scale.set(s * 1.25, s * 0.7, s * 1.25)
       dummy.updateMatrix()
       m.setMatrixAt(i, dummy.matrix)
     }
     m.instanceMatrix.needsUpdate = true
-  }, [count, dummy])
+  }, [count, dummy, salt, y0, spread, size])
+  return (
+    <instancedMesh ref={mesh} args={[undefined, undefined, count]} material={mat}>
+      <sphereGeometry args={[0.7, 6, 5]} />
+    </instancedMesh>
+  )
+}
+
+function Forest({ palette, quality }: { palette: Palette; quality: Quality }) {
+  const group = useRef<THREE.Group>(null)
+  const hi = quality === 'high'
   useFrame(() => {
     const g = group.current
     if (!g || getWorld().mode !== 'hero') return
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    if (reduce) return
-    const t = performance.now() / 1000
-    g.position.y = Math.sin(t * 0.18) * 0.06
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    g.position.y = Math.sin(performance.now() / 1000 * 0.18) * 0.05
   })
+  const dark = palette.dark
   return (
     <group ref={group}>
-      <instancedMesh ref={mesh} args={[undefined, undefined, count]} material={mat}>
-        <sphereGeometry args={[0.62, 6, 5]} />
-      </instancedMesh>
+      <ForestLayer count={hi ? 420 : 180} salt={1} y0={-3.4} spread={26} size={1.35} color={dark ? '#2f5a3c' : '#2f6b32'} />
+      <ForestLayer count={hi ? 280 : 120} salt={40} y0={-2.6} spread={22} size={0.95} color={dark ? '#4a7a52' : '#4a8a3c'} />
+      <ForestLayer count={hi ? 180 : 80} salt={80} y0={-4.6} spread={30} size={1.7} color={dark ? '#1e3f2c' : '#245828'} />
     </group>
   )
 }
 
 function Hills({ palette }: { palette: Palette }) {
-  const col = palette.dark ? '#3a5844' : '#628a50'
+  const col = palette.dark ? '#3a5844' : '#4a7340'
+  const col2 = palette.dark ? '#2a4034' : '#3d6236'
   return (
     <group>
       {[
-        [-22, -11, -36, 7, 2.1],
-        [20, -11.4, -34, 6, 1.8],
-        [0, -12, -42, 9, 2.4],
-        [12, -11.6, 38, 5.5, 1.6],
-        [-14, -11.8, 36, 6.2, 1.7],
+        [-10, -3.8, -14, 8, 3.2, col],
+        [11, -4.0, -13, 7, 2.8, col2],
+        [0, -4.6, -18, 11, 4.0, col],
+        [-14, -3.6, 8, 6.5, 2.6, col2],
+        [13, -3.8, 9, 6, 2.4, col],
+        [-6, -4.2, 16, 8, 3.0, col2],
+        [7, -4.4, 17, 7.5, 2.7, col],
       ].map((h, i) => (
-        <mesh key={i} position={[h[0], h[1], h[2]]} scale={[h[3], h[4], h[3] * 0.65]}>
+        <mesh key={i} position={[h[0] as number, h[1] as number, h[2] as number]} scale={[h[3] as number, h[4] as number, (h[3] as number) * 0.7]}>
           <sphereGeometry args={[1, 10, 7]} />
-          <meshStandardMaterial color={col} roughness={1} flatShading />
+          <meshStandardMaterial color={h[5] as string} roughness={1} flatShading />
         </mesh>
       ))}
     </group>
