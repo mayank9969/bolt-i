@@ -823,10 +823,28 @@ function Lights({ palette, quality }: { palette: Palette; quality: Quality }) {
 }
 
 function SkyDome({ palette }: { palette: Palette }) {
+  const geo = useMemo(() => {
+    const g = new THREE.SphereGeometry(180, 32, 20)
+    const pos = g.attributes.position
+    const col = new Float32Array(pos.count * 3)
+    const top = new THREE.Color(palette.dark ? '#152238' : '#8ec0ea')
+    const hor = new THREE.Color(palette.dark ? '#2a3d52' : '#d5e8f5')
+    const bot = new THREE.Color(palette.dark ? '#1a2e24' : '#7a9a62')
+    const c = new THREE.Color()
+    for (let i = 0; i < pos.count; i++) {
+      const y = pos.getY(i) / 180
+      if (y > 0) c.copy(hor).lerp(top, Math.min(1, y * 1.1))
+      else c.copy(hor).lerp(bot, Math.min(1, -y * 1.15))
+      col[i * 3] = c.r
+      col[i * 3 + 1] = c.g
+      col[i * 3 + 2] = c.b
+    }
+    g.setAttribute('color', new THREE.BufferAttribute(col, 3))
+    return g
+  }, [palette.dark])
   return (
-    <mesh>
-      <sphereGeometry args={[46, 24, 16]} />
-      <meshBasicMaterial color={palette.sky} side={THREE.BackSide} />
+    <mesh geometry={geo}>
+      <meshBasicMaterial vertexColors side={THREE.BackSide} fog={false} />
     </mesh>
   )
 }
@@ -846,7 +864,7 @@ function Forest({ palette, quality }: { palette: Palette; quality: Quality }) {
     for (let i = 0; i < count; i++) {
       const a = hash01('canopy', i) * Math.PI * 2
       const rad = 8 + hash01('canopy', i + 3) * 22
-      dummy.position.set(Math.cos(a) * rad, -5.4 + hash01('canopy', i + 7) * 0.9, Math.sin(a) * rad)
+      dummy.position.set(Math.cos(a) * rad, -8.2 + hash01('canopy', i + 7) * 0.8, Math.sin(a) * rad)
       const s = 0.45 + hash01('canopy', i + 11) * 0.95
       dummy.scale.set(s * 1.15, s * 0.85, s * 1.15)
       dummy.updateMatrix()
@@ -872,50 +890,21 @@ function Forest({ palette, quality }: { palette: Palette; quality: Quality }) {
 }
 
 function Hills({ palette }: { palette: Palette }) {
-  const col = palette.dark ? '#2a4638' : '#5a7a48'
+  const col = palette.dark ? '#3a5844' : '#628a50'
   return (
     <group>
       {[
-        [-18, -6.2, -22, 14, 3.2],
-        [16, -6.8, -20, 12, 2.6],
-        [2, -7.2, -28, 18, 4],
+        [-22, -11, -36, 7, 2.1],
+        [20, -11.4, -34, 6, 1.8],
+        [0, -12, -42, 9, 2.4],
+        [12, -11.6, 38, 5.5, 1.6],
+        [-14, -11.8, 36, 6.2, 1.7],
       ].map((h, i) => (
-        <mesh key={i} position={[h[0], h[1], h[2]]} scale={[h[3], h[4], h[3] * 0.7]}>
+        <mesh key={i} position={[h[0], h[1], h[2]]} scale={[h[3], h[4], h[3] * 0.65]}>
           <sphereGeometry args={[1, 10, 7]} />
           <meshStandardMaterial color={col} roughness={1} flatShading />
         </mesh>
       ))}
-    </group>
-  )
-}
-
-function Mist({ palette }: { palette: Palette }) {
-  const mat = useMemo(
-    () =>
-      new THREE.MeshBasicMaterial({
-        color: palette.dark ? '#8aa4b8' : '#e8f2ea',
-        transparent: true,
-        opacity: palette.dark ? 0.08 : 0.16,
-        depthWrite: false,
-      }),
-    [palette],
-  )
-  const g = useRef<THREE.Group>(null)
-  useFrame(() => {
-    const el = g.current
-    if (!el || getWorld().mode !== 'hero') return
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    const t = performance.now() / 1000
-    el.position.x = Math.sin(t * 0.07) * 0.8
-  })
-  return (
-    <group ref={g}>
-      <mesh position={[0, -2.4, -6]} rotation={[-0.12, 0, 0]} material={mat}>
-        <planeGeometry args={[40, 8]} />
-      </mesh>
-      <mesh position={[4, -1.6, 2]} rotation={[-0.08, 0.2, 0]} material={mat}>
-        <planeGeometry args={[22, 5]} />
-      </mesh>
     </group>
   )
 }
@@ -963,10 +952,10 @@ function ExploreRig() {
       dampingFactor={0.08}
       autoRotate={!held && !reduce}
       autoRotateSpeed={0.32}
-      minDistance={7}
-      maxDistance={24}
-      minPolarAngle={0.25}
-      maxPolarAngle={Math.PI / 2.12}
+      minDistance={9}
+      maxDistance={18}
+      minPolarAngle={0.4}
+      maxPolarAngle={Math.PI / 2.35}
       onStart={() => setHeld(true)}
       onEnd={() => setHeld(false)}
     />
@@ -977,7 +966,7 @@ function FogSync({ palette }: { palette: Palette }) {
   const scene = useThree((s) => s.scene)
   useEffect(() => {
     scene.background = new THREE.Color(palette.sky)
-    scene.fog = new THREE.Fog(new THREE.Color(palette.sky), palette.dark ? 14 : 16, palette.dark ? 48 : 52)
+    scene.fog = new THREE.Fog(new THREE.Color(palette.sky), palette.dark ? 22 : 26, palette.dark ? 90 : 110)
     return () => {
       scene.fog = null
     }
@@ -1019,7 +1008,7 @@ export default function ArchipelagoScene() {
       shadows={quality === 'high'}
       frameloop={visible && onScreen ? 'demand' : 'never'}
       gl={{ antialias: true, alpha: false, powerPreference: 'high-performance' }}
-      camera={{ position: CAM.hero.pos as unknown as [number, number, number], fov: 36, near: 0.1, far: 80 }}
+      camera={{ position: CAM.hero.pos as unknown as [number, number, number], fov: 36, near: 0.2, far: 240 }}
       onPointerMissed={() => {
         setWorld({ hover: null })
         if (!getWorld().selected) setWorld({ explore: true, hover: null })
@@ -1032,7 +1021,6 @@ export default function ArchipelagoScene() {
       <SkyDome palette={palette} />
       <Hills palette={palette} />
       <Forest palette={palette} quality={quality} />
-      <Mist palette={palette} />
       {quality === 'high' && <DriftLeaves palette={palette} />}
       <group ref={worldRef}>
         {islands.map((isl, i) => (
