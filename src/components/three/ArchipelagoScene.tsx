@@ -64,8 +64,8 @@ const _off = new THREE.Vector3()
 
 /* ── camera framing per mode (desktop · phone) ─────────────────────── */
 const CAM = {
-  hero: { pos: [0, 6.4, 13.2], look: [0, -0.8, 0], fov: 36, phone: { pos: [0, 7.2, 14], look: [0, -1.2, 0], fov: 46 } },
-  quiet: { pos: [0, 6.8, 11], look: [0, -0.4, 0], fov: 32, phone: { pos: [0, 8, 12], look: [0, -1.2, 0], fov: 44 } },
+  hero: { pos: [2.4, 7.6, 15.5], look: [0, 0.1, 0], fov: 34, phone: { pos: [0.4, 8.4, 16.5], look: [0, -0.2, 0], fov: 42 } },
+  quiet: { pos: [0, 8, 14], look: [0, 0, 0], fov: 32, phone: { pos: [0, 9, 16], look: [0, -0.4, 0], fov: 42 } },
 } as const
 
 /* ── one island ─────────────────────────────────────────────────────── */
@@ -87,8 +87,8 @@ function IslandMesh({
   const [review, setReview] = useState(false)
   const [exhibitOpen, setExhibitOpen] = useState(false) // this island's exhibit is open
   const propGroup = useRef<THREE.Group>(null)
-  const rockMat = useMemo(() => new THREE.MeshStandardMaterial({ color: palette.rock, roughness: 0.95, flatShading: true }), [])
-  const landMats = useMemo(() => palette.land.map((c) => new THREE.MeshStandardMaterial({ color: c, roughness: 0.9, flatShading: true })), [])
+  const rockMat = useMemo(() => new THREE.MeshStandardMaterial({ color: palette.rock, roughness: 0.92, flatShading: true }), [])
+  const landMats = useMemo(() => palette.land.map((c) => new THREE.MeshStandardMaterial({ color: c, roughness: 0.82, flatShading: false })), [])
   const propMat = useMemo(() => new THREE.MeshStandardMaterial({ color: palette.ink, roughness: 0.6, metalness: 0.05 }), [])
   const tealMat = useMemo(() => new THREE.MeshStandardMaterial({ color: palette.accent, roughness: 0.55 }), [])
   const warmMat = useMemo(() => new THREE.MeshStandardMaterial({ color: palette.warm, roughness: 0.6 }), [])
@@ -102,7 +102,7 @@ function IslandMesh({
 
   const anim = useRef({ lift: 0, glow: 0, intro: 0 })
   const r = island.r
-  const rockH = r * 1.25
+  const rockH = r * 1.85
   // plateau stack: y positions
   const stack = useMemo(() => {
     let y = 0
@@ -327,7 +327,7 @@ function PythonLand({ r, stack, land, teal, ink }: { r: number; stack: LandLayer
 
 function IsleGrove({ r, y, seed, dark }: { r: number; y: number; seed: number; dark: boolean }) {
   const g = useRef<THREE.Group>(null)
-  const n = 1 + (seed > 0.4 ? 1 : 0) + (seed > 0.75 ? 1 : 0)
+  const n = 2 + (seed > 0.35 ? 1 : 0) + (seed > 0.7 ? 1 : 0)
   useFrame(() => {
     const el = g.current
     if (!el) return
@@ -778,29 +778,24 @@ function Director({ islands, worldRef }: { islands: Island[]; worldRef: React.Re
       fov = narrow ? 42 : 30
       off.set(s.framed ? 0 : narrow ? 0 : -2.3, s.framed ? 0 : narrow ? 1.15 : 0, 0)
     } else if (s.mode === 'hero') {
-      const pick = s.selected || s.hover
+      const pick = s.hover
       const target = pick ? islands.find((i) => i.id === pick) : null
       if (s.framed) {
-        const yaw = performance.now() / 1000 * 0.045
-        _v.set(Math.sin(yaw) * 0.42, narrow ? 1.55 : 1.82, Math.cos(yaw) * 0.42)
+        _v.set(narrow ? 0.6 : 2.4, narrow ? 8.2 : 7.6, narrow ? 16.5 : 15.5)
+        _v2.set(0, 0.05, 0)
+        fov = narrow ? 42 : 34
         if (target) {
-          _v2.set(target.x, target.y + 0.25, target.z)
-          const dx = target.x - _v.x
-          const dz = target.z - _v.z
-          const len = Math.hypot(dx, dz) || 1
-          _v.set(target.x - (dx / len) * (narrow ? 2.6 : 3.1), target.y + (narrow ? 1.4 : 1.7), target.z - (dz / len) * (narrow ? 2.6 : 3.1))
-        } else {
-          _v2.set(Math.sin(yaw) * 3.4, 0.15, Math.cos(yaw) * 3.4)
+          _v2.x += target.x * 0.18
+          _v2.z += target.z * 0.18
         }
-        fov = narrow ? 48 : 42
       }
       const pin = s.pointerIn && !target ? 1 : 0
-      _v.x += s.px * 0.12 * pin
-      _v.y += s.py * 0.08 * pin
+      _v.x += s.px * 0.25 * pin
+      _v.y += s.py * 0.1 * pin
       if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && !s.explore) {
         const t = performance.now() / 1000
-        _v.x += Math.sin(t * 0.12) * 0.18
-        _v.y += Math.sin(t * 0.09) * 0.1
+        _v.x += Math.sin(t * 0.1) * 0.22
+        _v.y += Math.sin(t * 0.08) * 0.12
       }
     }
     const l = 1 - Math.exp(-(exhibit ? 1.15 : 2.2) * dt)
