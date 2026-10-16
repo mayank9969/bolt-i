@@ -91,7 +91,8 @@ export default function Home() {
               className="island-frame"
               role="img"
               aria-label="Knowledge archipelago — click an island to enter its exhibit."
-              onClick={() => {
+              onClick={(e) => {
+                if ((e.target as HTMLElement).closest('button, a')) return
                 const id = getWorld().hover
                 if (id) setWorld({ selected: id, hover: id, beat: 0 })
                 else setWorld({ explore: true })

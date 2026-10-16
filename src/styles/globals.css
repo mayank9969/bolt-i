@@ -666,10 +666,11 @@
     min-height: 320px;
     border-radius: 1.25rem;
     border: 1px solid var(--nx-line-strong);
-    background: var(--nx-3d-sky, rgb(var(--nx-surface-rgb)));
+    background: #8eb8dc;
     box-shadow: var(--nx-shadow-1);
     overflow: hidden;
   }
+  [data-theme='ink'] .island-frame { background: #152238; }
   @media (min-width: 1024px) {
     .island-frame { height: min(68vh, 640px); min-height: 420px; }
   }

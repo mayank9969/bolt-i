@@ -985,7 +985,13 @@ function DriftLeaves({ palette }: { palette: Palette }) {
 function ExploreRig() {
   const [on, setOn] = useState(false)
   const [held, setHeld] = useState(false)
+  const { camera } = useThree()
   useWorldSlice((s) => s.explore, setOn)
+  useEffect(() => {
+    if (!on) return
+    camera.position.set(0, 6.2, 14)
+    camera.lookAt(0, 0.2, 0)
+  }, [on, camera])
   const reduce = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
   if (!on) return null
   return (
@@ -994,11 +1000,12 @@ function ExploreRig() {
       enableDamping
       dampingFactor={0.08}
       autoRotate={!held && !reduce}
-      autoRotateSpeed={0.32}
-      minDistance={9}
-      maxDistance={18}
-      minPolarAngle={0.4}
-      maxPolarAngle={Math.PI / 2.35}
+      autoRotateSpeed={0.28}
+      target={[0, 0.2, 0]}
+      minDistance={11}
+      maxDistance={22}
+      minPolarAngle={0.45}
+      maxPolarAngle={Math.PI / 2.4}
       onStart={() => setHeld(true)}
       onEnd={() => setHeld(false)}
     />
@@ -1008,7 +1015,7 @@ function ExploreRig() {
 function FogSync({ palette }: { palette: Palette }) {
   const scene = useThree((s) => s.scene)
   useEffect(() => {
-    scene.background = new THREE.Color(palette.sky)
+    scene.background = new THREE.Color(palette.dark ? '#152238' : '#8eb8dc')
     scene.fog = new THREE.Fog(new THREE.Color(palette.sky), palette.dark ? 22 : 26, palette.dark ? 90 : 110)
     return () => {
       scene.fog = null
@@ -1054,7 +1061,7 @@ export default function ArchipelagoScene() {
       camera={{ position: CAM.hero.pos as unknown as [number, number, number], fov: 36, near: 0.2, far: 240 }}
       onPointerMissed={() => {
         setWorld({ hover: null })
-        if (!getWorld().selected) setWorld({ explore: true, hover: null })
+        if (!getWorld().selected && !getWorld().explore) setWorld({ explore: true, hover: null })
       }}
       style={{ pointerEvents: interactive ? 'auto' : 'none' }}
     >

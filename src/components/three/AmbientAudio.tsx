@@ -83,7 +83,10 @@ export default function AmbientAudio() {
       className="island-chip"
       style={{ position: 'absolute', left: 12, bottom: 12, zIndex: 4 }}
       aria-pressed={on}
-      onClick={() => setOn((v) => !v)}
+      onClick={(e) => {
+        e.stopPropagation()
+        setOn((v) => !v)
+      }}
     >
       {on ? 'Sound on' : 'Sound off'}
     </button>

@@ -135,7 +135,10 @@ export default function ArchipelagoStage() {
           type="button"
           className="island-chip"
           style={{ position: 'absolute', top: 16, right: 16, zIndex: 5 }}
-          onClick={() => setWorld({ explore: false })}
+          onClick={(e) => {
+            e.stopPropagation()
+            setWorld({ explore: false })
+          }}
         >
           Close 360° view
         </button>
