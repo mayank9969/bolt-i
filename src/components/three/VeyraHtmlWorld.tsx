@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import './veyra-html-world.css'
 
 const STAGE_HTML = `
 <section class="stage veyra-inpage-stage" id="stage" aria-label="Veyra archipelago">
@@ -35,15 +36,6 @@ const STAGE_HTML = `
 </section>
 `
 
-function loadStyle(href: string) {
-  if (document.querySelector(`link[data-veyra-href="${href}"]`)) return
-  const l = document.createElement('link')
-  l.rel = 'stylesheet'
-  l.href = href
-  l.dataset.veyraHref = href
-  document.head.appendChild(l)
-}
-
 function loadScript(src: string) {
   return new Promise<void>((resolve, reject) => {
     const existing = document.querySelector(`script[data-veyra-src="${src}"]`) as HTMLScriptElement | null
@@ -75,7 +67,6 @@ export default function VeyraHtmlWorld() {
   useEffect(() => {
     const root = rootRef.current
     if (!root) return
-    loadStyle('/veyra-world/world.css')
     if (!root.querySelector('#world')) root.innerHTML = STAGE_HTML
 
     const w = window as unknown as { __VEYRA_SCENE?: boolean }

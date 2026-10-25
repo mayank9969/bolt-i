@@ -1773,19 +1773,22 @@ function refreshLandmarkHover(){
 
     item.halo.visible=selectedHere;
   });
+  updateIslandTags();
 }
 const labelWorld=new THREE.Vector3(),labelBounds=new THREE.Box3();
 function updateIslandTags(){
   const width=stage.clientWidth,height=stage.clientHeight;
   for(const item of islands){
     const labelActive=item.tag.classList.contains('hovered');
-    if(!labelActive){item.tag.style.display='none';continue;}
+    if(!labelActive){item.tag.style.display='none';item.tag.style.opacity='0';continue;}
     item.landmark.updateMatrixWorld(true);labelBounds.setFromObject(item.landmark);
-    labelBounds.getCenter(labelWorld);labelWorld.y=labelBounds.max.y+.22;
+    labelBounds.getCenter(labelWorld);labelWorld.y=labelBounds.max.y+.55;
     const p=labelWorld.project(camera),x=(p.x*.5+.5)*width,y=(-p.y*.5+.5)*height;
-    const inView=p.z>-1&&p.z<1&&x>70&&x<width-70&&y>28&&y<height-28;
-    item.tag.style.display=inView?'block':'none';
-    if(inView){item.tag.style.left=x+'px';item.tag.style.top=y+'px';}
+    item.tag.style.display='block';
+    item.tag.style.visibility='visible';
+    item.tag.style.opacity='1';
+    item.tag.style.left=Math.max(8,Math.min(width-8,x))+'px';
+    item.tag.style.top=Math.max(8,Math.min(height-8,y))+'px';
   }
 }
 canvas.addEventListener('pointermove',onPointerMove);
