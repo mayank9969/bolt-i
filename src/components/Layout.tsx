@@ -9,10 +9,12 @@ import Exhibit from './Exhibit'
 import PortalStage from './three/PortalStage'
 
 const NAV = [
-  { to: '/', label: 'Home' },
-  { to: '/play', label: 'Studio' },
-  { to: '/history', label: 'Archive' },
-  { to: '/about', label: 'About' },
+  { to: '/', label: 'Today' },
+  { to: '/setup', label: 'Quiz' },
+  { to: '/progress', label: 'Progress' },
+  { to: '/concepts', label: 'Learn' },
+  { to: '/take', label: 'Take' },
+  { to: '/history', label: 'History' },
 ]
 
 export default function Layout({ children }: { children: ReactNode }) {
@@ -53,7 +55,7 @@ export default function Layout({ children }: { children: ReactNode }) {
             <ThemeSwitcher />
             {!inQuiz && (
               <Link to="/setup" className="btn-primary btn-sm">
-                Start Quiz
+                Start quiz
               </Link>
             )}
           </div>
@@ -124,21 +126,14 @@ export default function Layout({ children }: { children: ReactNode }) {
 
 function NavItem({ to, label }: { to: string; label: string }) {
   return (
-    <RouterNavLink to={to} end={to === '/'} className="relative px-3.5 py-1.5 rounded-full t-nav">
-      {({ isActive }) => (
-        <>
-          {isActive && (
-            <motion.span
-              layoutId="nav-active"
-              className="absolute inset-0 rounded-full border border-line-strong"
-              transition={{ type: 'spring', stiffness: 400, damping: 32 }}
-            />
-          )}
-          <span className={`relative z-10 transition-colors ${isActive ? 'text-fg' : 'text-fg-2 hover:text-fg'}`}>
-            {label}
-          </span>
-        </>
-      )}
+    <RouterNavLink
+      to={to}
+      end={to === '/'}
+      className={({ isActive }) =>
+        `relative px-1 py-1.5 t-nav ${isActive ? 'text-fg font-semibold border-b-2 border-[#A3432B]' : 'text-fg-2 hover:text-fg'}`
+      }
+    >
+      {label}
     </RouterNavLink>
   )
 }

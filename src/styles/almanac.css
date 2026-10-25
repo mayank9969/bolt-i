@@ -1,0 +1,125 @@
+/* Almanac Today (v3 prototype layout) + neo-brutalist outlines.
+   Does not restyle #island-stage, .island-frame, or .island-chip. */
+
+.almanac {
+  --al-ground: #f4efe6;
+  --al-text: #1f2430;
+  --al-t2: #4b5160;
+  --al-accent: #a3432b;
+  --al-line: #d9d1c2;
+  --al-card: #fbf8f2;
+}
+[data-theme='ink'] .almanac {
+  --al-ground: #171a22;
+  --al-text: #f1ece2;
+  --al-t2: #b8b4aa;
+  --al-accent: #d06a4e;
+  --al-line: #2c313d;
+  --al-card: #1b1f28;
+}
+
+.almanac-hero {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 2.5rem;
+  align-items: center;
+}
+@media (max-width: 900px) {
+  .almanac-hero { grid-template-columns: 1fr; }
+}
+.almanac-kicker {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--al-t2);
+}
+.almanac-display {
+  font-size: clamp(2.5rem, 6vw, 4.75rem);
+  line-height: 1.02;
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  color: var(--al-text);
+  margin: 0.6rem 0 0;
+}
+.almanac-display .acc {
+  color: var(--al-accent);
+}
+.almanac-lead {
+  font-size: 1.05rem;
+  color: var(--al-t2);
+  max-width: 52ch;
+  margin: 1.35rem 0 1.6rem;
+  font-weight: 500;
+}
+.almanac-btn {
+  display: inline-flex;
+  align-items: center;
+  height: 2.6rem;
+  padding: 0 1.15rem;
+  border-radius: 999px;
+  font-weight: 800;
+  background: var(--al-text);
+  color: var(--al-ground);
+  border: 2px solid #17231f;
+  box-shadow: 4px 4px 0 #17231f;
+}
+.almanac-btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 #17231f;
+}
+@media (prefers-reduced-motion: reduce) {
+  .almanac-btn:hover { transform: none; }
+}
+.almanac-link {
+  font-weight: 700;
+  margin-left: 1rem;
+  border-bottom: 2px solid var(--al-text);
+}
+.almanac-legend {
+  text-align: center;
+  margin: 0.5rem 0 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--al-t2);
+}
+.almanac-card {
+  background: var(--al-card);
+  border: 2px solid #17231f;
+  box-shadow: 4px 4px 0 #17231f;
+  border-radius: 1.1rem;
+  padding: 1.4rem 1.5rem;
+}
+[data-theme='ink'] .almanac-card,
+[data-theme='ink'] .almanac-btn {
+  border-color: #f4efe6;
+  box-shadow: 4px 4px 0 #080808;
+}
+.almanac-grid {
+  display: grid;
+  gap: 1.15rem;
+}
+@media (min-width: 900px) {
+  .almanac-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+.almanac-bar {
+  height: 6px;
+  background: var(--al-line);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 0.45rem;
+}
+.almanac-bar > i {
+  display: block;
+  height: 100%;
+  background: #2f5d62;
+}
+.almanac-bar.low > i { background: var(--al-accent); }
+
+.site-almanac nav.hidden { display: none; }
+.almanac-nav a[aria-current='page'] {
+  color: var(--nx-text);
+  font-weight: 650;
+  border-bottom: 2px solid var(--al-accent);
+}
