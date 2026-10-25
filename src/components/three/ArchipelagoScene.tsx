@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Canvas, useFrame, useThree, type ThreeEvent } from '@react-three/fiber'
 import { Html, OrbitControls, Sky } from '@react-three/drei'
+import { ForestTree, IslandModel, SubjectTree } from './VeyraModels'
 import * as THREE from 'three'
 import { buildIslands, hash01, type Bridge, type Island } from './islands'
 import { getWorld, setWorld, subscribeWorld, useWorldSlice, type WorldState } from './world'
@@ -102,7 +103,6 @@ function IslandMesh({
 
   const anim = useRef({ lift: 0, glow: 0, intro: 0 })
   const r = island.r
-  const rockH = r * 1.85
   // plateau stack: y positions
   const stack = useMemo(() => {
     let y = 0
@@ -194,35 +194,24 @@ function IslandMesh({
         <sphereGeometry args={[Math.max(0.7, r * 1.45), 12, 10]} />
         <meshBasicMaterial transparent opacity={0} depthWrite={false} />
       </mesh>
-      {/* rock: an inverted faceted cone */}
-      <mesh position={[0, -rockH / 2, 0]} rotation={[0, island.seed * Math.PI, 0]} material={rockMat} castShadow receiveShadow>
-        <cylinderGeometry args={[r * 0.98, r * 0.16, rockH, seg, 1]} />
-      </mesh>
-      {/* plateaus — Mathematics and Python get a designed miniature; others stay data-driven cylinders */}
-      {island.id === 'maths' ? (
-        <MathsLand r={r} stack={stack} land={landMats} teal={tealMat} ink={propMat} seg={seg} />
-      ) : island.id === 'python' ? (
-        <PythonLand r={r} stack={stack} land={landMats} teal={tealMat} ink={propMat} />
-      ) : (
-        stack.map((l, i) => (
-          <mesh key={i} position={[l.dx, l.y, l.dz]} rotation={[0, l.rot, 0]} material={landMats[Math.min(2, i)]} castShadow receiveShadow>
-            <cylinderGeometry args={[l.radius, l.radius * 1.04, l.h, seg + 2, 1]} />
-          </mesh>
-        ))
-      )}
-      {island.peak && island.id !== 'maths' && island.id !== 'python' && (
-        <mesh position={[-topLayer.radius * 0.45, topY + r * 0.22, topLayer.radius * 0.3]} material={landMats[2]} castShadow>
-          <coneGeometry args={[r * 0.26, r * 0.46, 5]} />
-        </mesh>
-      )}
+      <group rotation={[0, island.seed * Math.PI * 2, 0]}>
+        <IslandModel variant={index} radius={r} />
+      </group>
+      {island.id === 'maths' && <MathsLand r={r} stack={stack} land={landMats} teal={tealMat} ink={propMat} seg={seg} />}
+      {island.id === 'python' && <PythonLand r={r} stack={stack} land={landMats} teal={tealMat} ink={propMat} />}
       <group ref={propGroup}>
         {island.id !== 'maths' && island.id !== 'python' && (
           <Prop kind={island.prop} r={r} y={topY} ink={propMat} teal={tealMat} land={landMats[0]} />
         )}
         {island.id === 'physics' && <HorizonMotes r={r} y={topY} active={hot} />}
-        {island.id !== 'maths' && island.id !== 'python' && (
-          <IsleGrove r={r} y={topY} seed={island.seed} dark={palette.dark} />
-        )}
+        <group position={[0, topY * 0.15, 0]}>
+          <SubjectTree scale={r * 1.1} yaw={island.seed * 6} />
+          {island.seed > 0.4 && (
+            <group position={[r * 0.28, 0, -r * 0.12]}>
+              <SubjectTree scale={r * 0.75} yaw={island.seed * 3} />
+            </group>
+          )}
+        </group>
         {island.seed > 0.62 && island.id !== 'maths' && island.id !== 'python' && (
           <mesh position={[r * 0.4, topY * 0.4, 0]} rotation={[0.2, 0.4, 0.9]} material={landMats[0]}>
             <cylinderGeometry args={[0.012, 0.012, r * 0.9, 4]} />
@@ -321,44 +310,6 @@ function PythonLand({ r, stack, land, teal, ink }: { r: number; stack: LandLayer
       <mesh position={[r * 0.42, stack[stack.length - 1].y + 0.14, 0]} material={teal} castShadow>
         <boxGeometry args={[0.08, 0.16, 0.08]} />
       </mesh>
-    </group>
-  )
-}
-
-function IsleGrove({ r, y, seed, dark }: { r: number; y: number; seed: number; dark: boolean }) {
-  const g = useRef<THREE.Group>(null)
-  const n = 2 + (seed > 0.35 ? 1 : 0) + (seed > 0.7 ? 1 : 0)
-  useFrame(() => {
-    const el = g.current
-    if (!el) return
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    el.rotation.z = Math.sin(performance.now() / 1400 + seed * 8) * 0.035
-  })
-  const leaf = dark ? '#8fbf84' : '#3f7a38'
-  const leaf2 = dark ? '#c5dcb0' : '#5a9a48'
-  const bark = dark ? '#6a5a48' : '#5c4634'
-  return (
-    <group ref={g}>
-      {Array.from({ length: n }, (_, i) => {
-        const a = seed * 6.2 + i * 2.1
-        const d = r * (0.18 + i * 0.16)
-        return (
-          <group key={i} position={[Math.cos(a) * d, y, Math.sin(a) * d]}>
-            <mesh position={[0, r * 0.28, 0]} castShadow>
-              <cylinderGeometry args={[r * 0.028, r * 0.045, r * 0.55, 6]} />
-              <meshStandardMaterial color={bark} roughness={0.9} />
-            </mesh>
-            <mesh position={[0, r * 0.58, 0]} castShadow>
-              <sphereGeometry args={[r * 0.26, 8, 6]} />
-              <meshStandardMaterial color={leaf} roughness={0.75} />
-            </mesh>
-            <mesh position={[r * 0.1, r * 0.72, r * 0.04]} castShadow>
-              <sphereGeometry args={[r * 0.18, 8, 6]} />
-              <meshStandardMaterial color={leaf2} roughness={0.75} />
-            </mesh>
-          </group>
-        )
-      })}
     </group>
   )
 }
@@ -925,6 +876,15 @@ function Forest({ palette, quality }: { palette: Palette; quality: Quality }) {
       <ForestLayer count={hi ? 420 : 180} salt={1} y0={-3.4} spread={26} size={1.35} color={dark ? '#2f5a3c' : '#2f6b32'} />
       <ForestLayer count={hi ? 280 : 120} salt={40} y0={-2.6} spread={22} size={0.95} color={dark ? '#4a7a52' : '#4a8a3c'} />
       <ForestLayer count={hi ? 180 : 80} salt={80} y0={-4.6} spread={30} size={1.7} color={dark ? '#1e3f2c' : '#245828'} />
+      {Array.from({ length: hi ? 36 : 16 }, (_, i) => {
+        const a = hash01('ftree', i) * Math.PI * 2
+        const rad = 4 + hash01('ftree', i + 3) * 16
+        return (
+          <group key={i} position={[Math.cos(a) * rad, -2.8, Math.sin(a) * rad]}>
+            <ForestTree scale={0.8 + hash01('ftree', i + 9) * 0.7} yaw={hash01('ftree', i + 5) * 6} />
+          </group>
+        )
+      })}
     </group>
   )
 }
