@@ -55,6 +55,31 @@
 }
 
 
+/* Type only — same Home layout */
+.home-intro .t-hero {
+  font-weight: 800;
+  letter-spacing: -0.045em;
+}
+.home-intro .t-italic {
+  font-weight: 800;
+  font-style: italic;
+}
+.home-intro .opener {
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+.home-intro .t-lead {
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+.home-intro .btn-primary {
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.home-intro .link-rule {
+  font-weight: 700;
+}
+
 .category-dock {
   border: var(--ui-stroke);
   background: var(--ui-paper);
