@@ -53,62 +53,7 @@
   padding: 0.28rem 0.55rem;
   box-shadow: 3px 3px 0 var(--ui-ink);
 }
-/* Home hero: screenshot layout + neo-brutalist colour, weight, outline */
-.home-intro .t-hero {
-  font-weight: 800;
-  letter-spacing: -0.04em;
-  color: var(--ui-ink);
-}
-.home-intro .t-italic {
-  color: var(--ui-teal);
-  font-style: italic;
-  font-weight: 800;
-}
-.home-intro .t-lead {
-  color: #3a4540;
-  font-weight: 500;
-}
-[data-theme='ink'] .home-intro .t-lead {
-  color: var(--ui-ink);
-  opacity: 0.75;
-}
-.home-intro .opener {
-  color: var(--ui-ink);
-  font-weight: 800;
-}
-.home-intro .opener::before {
-  width: 2.25rem;
-  height: 3px;
-  background: var(--ui-teal);
-}
-.home-intro .btn-primary {
-  background: var(--ui-teal);
-  color: #f6f1e6;
-  border: 2px solid var(--ui-ink);
-  box-shadow: 4px 4px 0 var(--ui-ink);
-  font-weight: 800;
-  border-radius: 999px;
-}
-.home-intro .btn-primary:hover:not(:disabled) {
-  transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0 var(--ui-ink);
-  background: var(--ui-teal);
-}
-@media (prefers-reduced-motion: reduce) {
-  .home-intro .btn-primary:hover:not(:disabled) { transform: none; }
-}
-[data-theme='ink'] .home-intro .btn-primary {
-  color: #17231f;
-  background: var(--ui-lime);
-  border-color: var(--ui-ink);
-}
-.home-intro .link-rule {
-  font-weight: 700;
-  color: var(--ui-ink);
-}
-.home-intro .text-warm-text {
-  color: var(--ui-coral);
-}
+
 
 .category-dock {
   border: var(--ui-stroke);
