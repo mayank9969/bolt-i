@@ -7,6 +7,7 @@ import { hasExhibit } from '@/lib/exhibits'
 import type { CategoryInfo } from '@/types/quiz'
 
 import AmbientAudio from './AmbientAudio'
+import VeyraHtmlWorld from './VeyraHtmlWorld'
 
 /**
  * The one persistent stage (lives in Layout, fixed behind the UI).
@@ -145,11 +146,7 @@ export default function ArchipelagoStage() {
       aria-hidden={live ? undefined : true}
     >
       {kind === 'webgl' ? (
-        <iframe
-          title="Veyra archipelago"
-          src="/veyra-world/index.html"
-          className="absolute inset-0 w-full h-full border-0"
-        />
+        <VeyraHtmlWorld />
       ) : (
         <StaticArchipelago interactive={live} />
       )}
