@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { useWorld } from '@/components/three/world'
 
@@ -32,23 +33,38 @@ const REFLECT: Item[] = [
   { title: 'Milestones', benefit: 'First quiz, perfect round, subject explorer — only if you earned them.', action: 'Check marks', kind: 'fill-coral', to: '/progress' },
 ]
 
+const list = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.07, delayChildren: 0.08 } },
+}
+const card = {
+  hidden: { opacity: 0, y: 22 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: [0.22, 1, 0.36, 1] } },
+}
+
 function Block({ kicker, title, items, go }: { kicker: string; title: string; items: Item[]; go: (i: Item) => void }) {
   return (
-    <section className="studio-band">
+    <motion.section
+      className="studio-band"
+      initial={{ opacity: 0, y: 16 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-60px' }}
+      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+    >
       <p className="studio-kicker">{kicker}</p>
       <h2 className="studio-band-title">{title}</h2>
-      <ul className="studio-topics">
+      <motion.ul className="studio-topics" variants={list} initial="hidden" whileInView="show" viewport={{ once: true, margin: '-40px' }}>
         {items.map((item) => (
-          <li key={item.title} className="studio-topic">
+          <motion.li key={item.title} className="studio-topic" variants={card} whileHover={{ y: -4, transition: { duration: 0.2 } }}>
             <h3>{item.title}</h3>
             <p>{item.benefit}</p>
             <button type="button" className={`studio-go studio-go-${item.kind}`} onClick={() => go(item)}>
               {item.action}
             </button>
-          </li>
+          </motion.li>
         ))}
-      </ul>
-    </section>
+      </motion.ul>
+    </motion.section>
   )
 }
 
@@ -65,9 +81,25 @@ export default function Play() {
 
   return (
     <div className="practice-page relative z-10 max-w-page mx-auto px-5 sm:px-6 lg:px-8 pt-16 pb-24 md:pt-24">
-      <p className="nb-stamp">Practice</p>
-      <h1 className="t-hero text-fg mt-6 max-w-[16ch]">Thirteen doors. One engine.</h1>
-      <p className="t-lead text-fg-2 mt-6 max-w-lg">Each sitting is explained, then a button that goes there. The map stays on Home.</p>
+      <motion.p className="nb-stamp" initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4 }}>
+        Practice
+      </motion.p>
+      <motion.h1
+        className="t-hero text-fg mt-6 max-w-[16ch]"
+        initial={{ opacity: 0, y: 18 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.55, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
+      >
+        Thirteen doors. One engine.
+      </motion.h1>
+      <motion.p
+        className="t-lead text-fg-2 mt-6 max-w-lg"
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.16 }}
+      >
+        Each sitting is explained, then a button that goes there. The map stays on Home.
+      </motion.p>
       <Block kicker="Practice" title="Sit with questions." items={PRACTICE} go={go} />
       <Block kicker="Explore" title="Learn beside the quiz." items={EXPLORE} go={go} />
       <Block kicker="Reflect" title="Look at what you already did." items={REFLECT} go={go} />

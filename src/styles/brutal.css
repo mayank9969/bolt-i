@@ -137,24 +137,28 @@
 /* About: only key phrases — Ink = white (as Home italic); Paper = opposite (ink on lime) */
 .about-key-line {
   display: block;
-  margin: 1.25rem 0 0;
-  max-width: 28ch;
-  font-weight: 800;
-  font-size: clamp(1.25rem, 2.4vw, 1.65rem);
-  line-height: 1.2;
+  margin: 1.5rem 0 0;
+  max-width: 36ch;
+  font-weight: 600;
+  font-style: italic;
+  font-size: clamp(1.35rem, 2.6vw, 1.85rem);
+  line-height: 1.25;
   letter-spacing: -0.03em;
-  padding: 0.65rem 0.8rem;
-  border: 2px solid currentColor;
+  padding: 0;
+  border: none;
+  background: none;
 }
 [data-theme='ink'] .about-key-line {
   color: #ffffff;
-  background: transparent;
-  border-color: #ffffff;
+  border-left: 3px solid #ffffff;
+  padding-left: 0.85rem;
 }
 [data-theme='paper'] .about-key-line {
   color: #17231f;
   background: var(--ui-lime);
-  border-color: #17231f;
+  display: inline-block;
+  padding: 0.55rem 0.85rem;
+  box-shadow: 4px 4px 0 #17231f;
 }
 
 /* Practice follows Ink’s contrast: light type, dark fields, inverted on Paper */
