@@ -1,4 +1,4 @@
-import { Suspense, lazy, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { getCategories, getHistory } from '@/api/quizApi'
 import { reviewTopics, type ReviewTopic } from '@/lib/review'
 import { buildIslands, type Island } from './islands'
@@ -7,8 +7,6 @@ import { hasExhibit } from '@/lib/exhibits'
 import type { CategoryInfo } from '@/types/quiz'
 
 import AmbientAudio from './AmbientAudio'
-
-const ArchipelagoScene = lazy(() => import('./ArchipelagoScene'))
 
 /**
  * The one persistent stage (lives in Layout, fixed behind the UI).
@@ -21,10 +19,8 @@ const ArchipelagoScene = lazy(() => import('./ArchipelagoScene'))
 export default function ArchipelagoStage() {
   const [kind, setKind] = useState<'webgl' | 'static' | 'pending'>('pending')
   const [mode, setMode] = useState<WorldMode>(getWorld().mode)
-  const [selected, setSelected] = useState<string | null>(getWorld().selected)
   const [explore, setExplore] = useState(false)
   useWorldSlice((s) => s.mode, setMode)
-  useWorldSlice((s) => s.selected, setSelected)
   useWorldSlice((s) => s.explore, setExplore)
   useEffect(() => {
     document.getElementById('island-stage')?.classList.toggle('is-explore', explore)
@@ -111,38 +107,53 @@ export default function ArchipelagoStage() {
     }
   }, [kind])
 
+  useEffect(() => {
+    const names: Record<string, string> = {
+      Mathematics: 'maths',
+      Science: 'science',
+      Technology: 'technology',
+      'Python Programming': 'python',
+      'Computer Science': 'computer_science',
+      Physics: 'physics',
+      Chemistry: 'chemistry',
+      Biology: 'biology',
+      'Astronomy & Space': 'astronomy_space',
+      Geography: 'geography',
+      History: 'history',
+      'English & Language': 'english_language',
+      'General Knowledge': 'general_knowledge',
+      'Logic & Reasoning': 'logic_reasoning',
+      'Economics & Business': 'economics_business',
+    }
+    const onMsg = (e: MessageEvent) => {
+      if (!e.data || e.data.type !== 'veyra-island') return
+      const id = names[e.data.name as string]
+      if (id) setWorld({ selected: id, hover: id, beat: 0 })
+    }
+    window.addEventListener('message', onMsg)
+    return () => window.removeEventListener('message', onMsg)
+  }, [])
+
   if (mode === 'off') return null
   if (kind === 'pending') return <div className="absolute inset-0" aria-hidden="true" />
-  const presence = (mode === 'hero' ? 1 : mode === 'focus' ? 0.9 : mode === 'quiet' ? 0.34 : 0) * (selected ? 0.38 : 1)
-  const live = (mode === 'hero' || mode === 'focus') && !selected
+  const live = mode === 'hero' || mode === 'focus'
   return (
     <div
       className="archipelago-stage absolute inset-0 w-full h-full"
       data-kind={kind}
-      style={{ opacity: presence, pointerEvents: live ? 'auto' : 'none' }}
-      aria-hidden={mode === 'hero' || mode === 'focus' ? undefined : true}
+      style={{ pointerEvents: live ? 'auto' : 'none' }}
+      aria-hidden={live ? undefined : true}
     >
       {kind === 'webgl' ? (
-        <Suspense fallback={null}>
-          <ArchipelagoScene />
-        </Suspense>
+        <iframe
+          title="Veyra archipelago"
+          src="/veyra-world/index.html"
+          className="absolute inset-0 w-full h-full border-0"
+        />
       ) : (
-        <StaticArchipelago interactive={mode === 'hero' || mode === 'focus'} />
+        <StaticArchipelago interactive={live} />
       )}
       {kind === 'webgl' && <AmbientAudio />}
-      {explore && (
-        <button
-          type="button"
-          className="island-chip"
-          style={{ position: 'absolute', top: 16, right: 16, zIndex: 5 }}
-          onClick={(e) => {
-            e.stopPropagation()
-            setWorld({ explore: false })
-          }}
-        >
-          Close 360° view
-        </button>
-      )}
     </div>
   )
 }
