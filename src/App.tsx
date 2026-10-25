@@ -10,6 +10,11 @@ import Quiz from './pages/Quiz'
 import Result from './pages/Result'
 import History from './pages/History'
 import About from './pages/About'
+import Play from './pages/Play'
+import Concepts from './pages/Concepts'
+import Progress from './pages/Progress'
+import Take from './pages/Take'
+import Lab from './pages/Lab'
 
 export default function App() {
   const location = useLocation()
@@ -31,6 +36,11 @@ export default function App() {
               <Route path="/result" element={<Result />} />
               <Route path="/history" element={<History />} />
               <Route path="/about" element={<About />} />
+              <Route path="/play" element={<Play />} />
+              <Route path="/concepts" element={<Concepts />} />
+              <Route path="/progress" element={<Progress />} />
+              <Route path="/take" element={<Take />} />
+              <Route path="/lab" element={<Lab />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </PageTransition>

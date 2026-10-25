@@ -1,0 +1,114 @@
+{
+  "maths": [
+    {
+      "id": "maths-algebra-balance",
+      "title": "Equations as a balance",
+      "analogy": "Think of an equation as a balanced scale. Whatever you do to one side, do to the other so it stays level.",
+      "idea": "In 3x + 5 = 20, undo the +5 first, then undo the multiplication by 3. That gives 3x = 15 and x = 5.",
+      "example": "A box holds x pencils. Three boxes and five loose pencils make 20. Removing the five loose pencils leaves 15, so each box holds 5.",
+      "visual": "balance",
+      "check": {
+        "prompt": "Solve 2x + 4 = 14.",
+        "choices": [
+          "x = 5",
+          "x = 9",
+          "x = 18"
+        ],
+        "answer": 0,
+        "why": "Subtract 4 from both sides to get 2x = 10, then divide both sides by 2."
+      }
+    },
+    {
+      "id": "maths-derivative-slope",
+      "title": "A derivative is a changing slope",
+      "analogy": "A car\u2019s speedometer shows speed at this instant. A derivative does the same for a changing quantity: it measures the curve\u2019s slope at one point.",
+      "idea": "For y = x\u00b2, the slope at x is 2x. At x = 3, the curve is rising at slope 6. The tangent line is the straight line that just matches the curve there.",
+      "example": "Near x = 3, a small increase of 0.1 in x changes x\u00b2 by about 0.6, because the local slope is about 6.",
+      "visual": "derivative",
+      "check": {
+        "prompt": "For y = x\u00b2, what is the slope at x = 2?",
+        "choices": [
+          "2",
+          "4",
+          "8"
+        ],
+        "answer": 1,
+        "why": "The derivative is 2x, so at x = 2 the slope is 4."
+      }
+    },
+    {
+      "id": "maths-functions-machine",
+      "title": "Functions as input-output machines",
+      "analogy": "A function is like a vending machine: put in an input, follow one fixed rule, and get the corresponding output.",
+      "idea": "For f(x) = 2x + 1, the rule doubles the input and adds one. Use the same rule each time; different inputs can produce different outputs.",
+      "example": "If x = 3, then f(3) = 2(3) + 1 = 7. The input is 3; the output is 7.",
+      "visual": "function",
+      "check": {
+        "prompt": "If f(x) = 2x + 1, what is f(4)?",
+        "choices": [
+          "8",
+          "9",
+          "10"
+        ],
+        "answer": 1,
+        "why": "Double 4 and add 1: 8 + 1 = 9."
+      }
+    }
+  ],
+  "python": [
+    {
+      "id": "python-variables-boxes",
+      "title": "Variables are named boxes",
+      "analogy": "A variable name is a label pointing to a value. Reassigning the name changes what it points to; it does not rewrite the old value everywhere.",
+      "idea": "After score = 4 followed by score = score + 3, the name score refers to 7. The second line reads the old value, adds 3, then stores the result.",
+      "example": "level = 1; level = level + 1 leaves level equal to 2.",
+      "visual": "variables",
+      "check": {
+        "prompt": "After count = 5; count = count + 2, what is count?",
+        "choices": [
+          "5",
+          "7",
+          "52"
+        ],
+        "answer": 1,
+        "why": "The second assignment adds 2 to the current value 5, then stores 7."
+      }
+    },
+    {
+      "id": "python-loops-repetition",
+      "title": "A loop repeats a small instruction",
+      "analogy": "A loop is like following a recipe step a set number of times. The loop variable tells you which turn you are on.",
+      "idea": "for i in range(3) runs with i equal to 0, then 1, then 2. The stop value 3 is excluded, so there are three turns.",
+      "example": "total = 0; for n in [2, 4, 6]: total += n ends with total equal to 12.",
+      "visual": "loop",
+      "check": {
+        "prompt": "How many times does range(4) run in a for loop?",
+        "choices": [
+          "3",
+          "4",
+          "5"
+        ],
+        "answer": 1,
+        "why": "range(4) produces 0, 1, 2, and 3: four values."
+      }
+    },
+    {
+      "id": "python-shared-list-alias",
+      "title": "Two names can point to one list",
+      "analogy": "Two labels can be attached to the same shared whiteboard. Changing the board through either label changes what both labels show.",
+      "idea": "If a = [1, 2] and b = a, both names refer to the same list. Calling b.append(3) changes that shared list, so a also shows [1, 2, 3].",
+      "example": "To make an independent copy, use b = a.copy(); then appending to b does not change a.",
+      "visual": "alias",
+      "check": {
+        "prompt": "After a = [1]; b = a; b.append(2), what does a contain?",
+        "choices": [
+          "[1]",
+          "[1, 2]",
+          "[2]"
+        ],
+        "answer": 1,
+        "why": "Both names point to the same list, so the append is visible through a."
+      }
+    }
+  ]
+}

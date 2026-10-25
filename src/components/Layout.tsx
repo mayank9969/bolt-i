@@ -11,6 +11,7 @@ import PortalStage from './three/PortalStage'
 const NAV = [
   { to: '/', label: 'Home' },
   { to: '/setup', label: 'Start Quiz' },
+  { to: '/play', label: 'Play' },
   { to: '/history', label: 'History' },
   { to: '/about', label: 'About' },
 ]

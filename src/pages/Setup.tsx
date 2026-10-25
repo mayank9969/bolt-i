@@ -30,9 +30,10 @@ export default function Setup() {
 
   const [catalog, setCatalog] = useState<CategoryInfo[] | null>(null)
   const [loadError, setLoadError] = useState('')
-  const [category, setCategory] = useState<string>((location.state as { category?: string } | null)?.category ?? 'all')
-  const [difficulty, setDifficulty] = useState<DifficultyChoice>('easy')
-  const [count, setCount] = useState(10)
+  const preset = location.state as { category?: string; difficulty?: DifficultyChoice; questionCount?: number; daily?: boolean } | null
+  const [category, setCategory] = useState<string>(preset?.category ?? 'all')
+  const [difficulty, setDifficulty] = useState<DifficultyChoice>(preset?.difficulty ?? 'easy')
+  const [count, setCount] = useState(preset?.questionCount ?? 10)
   const [error, setError] = useState('')
   const [starting, setStarting] = useState(false)
   // real history → islands whose latest attempt still had wrong answers (terracotta marker on the map + "revisit" in the list)
