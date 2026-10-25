@@ -393,7 +393,7 @@ export default function Home() {
               Pick an island. <span className="text-fg-2">Then go ashore.</span>
             </h2>
             <div className="lg:col-span-4 flex lg:justify-end">
-              <MagneticLink to="/setup" className="nb-cta btn-lg">
+              <MagneticLink to="/setup" className="btn-primary btn-lg">
                 Start a quiz
                 <ArrowRight className="arrow w-5 h-5" />
               </MagneticLink>
