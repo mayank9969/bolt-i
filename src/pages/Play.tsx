@@ -1,21 +1,20 @@
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useWorld } from '@/components/three/world'
-import Reveal from '@/components/Reveal'
 
-const ITEMS: { to?: string; state?: object; title: string; note: string; action?: 'daily' }[] = [
-  { to: '/setup', title: 'Start Quiz', note: 'Pick an island, a difficulty, and a length.' },
-  { action: 'daily', title: 'Daily Challenge', note: 'Five mixed questions, the same set for today.' },
-  { to: '/setup', title: 'Practise missed questions', note: 'Revisit islands with terracotta markers after a quiz.' },
-  { to: '/setup', title: 'Smart review', note: 'Due practice uses your history; start a quiz on a weak island.' },
-  { to: '/progress', title: 'Progress dashboard', note: 'Scores, categories, and learning milestones.' },
-  { to: '/history', title: 'Show history', note: 'Every scored attempt the server still holds.' },
-  { to: '/take', title: 'Today’s Take', note: 'A short written view, kept on this device.' },
-  { to: '/take', title: 'Past takes', note: 'Read back what you wrote on earlier days.' },
-  { to: '/concepts', title: 'Concept Studio', note: 'Curated lessons from the newest.py library.' },
-  { to: '/setup', title: 'Practise a focus skill', note: 'Open a subject island and keep the count small.' },
-  { to: '/progress', title: 'Recommended next session', note: 'The weakest category in your history.' },
-  { to: '/progress', title: 'Learning milestones', note: 'First quiz, perfect round, explorer, streak.' },
-  { to: '/lab', title: 'Four-Day Topic Lab', note: 'A four-day loop of short quizzes.' },
+const ITEMS: { n: string; title: string; note: string; to?: string; daily?: boolean }[] = [
+  { n: '01', title: 'Start a quiz', note: 'Island, difficulty, length', to: '/setup' },
+  { n: '02', title: 'Daily challenge', note: 'Five mixed questions for today', daily: true },
+  { n: '03', title: 'Missed questions', note: 'Terracotta islands after a quiz', to: '/setup' },
+  { n: '04', title: 'Smart review', note: 'A weak island from your history', to: '/progress' },
+  { n: '05', title: 'Progress', note: 'Scores and milestones', to: '/progress' },
+  { n: '06', title: 'History', note: 'Every scored attempt', to: '/history' },
+  { n: '07', title: 'Today’s take', note: 'A written view, this device only', to: '/take' },
+  { n: '08', title: 'Past takes', note: 'Earlier writing', to: '/take' },
+  { n: '09', title: 'Concept studio', note: 'Lessons from the library', to: '/concepts' },
+  { n: '10', title: 'Focus skill', note: 'A short sitting on one island', to: '/setup' },
+  { n: '11', title: 'Next session', note: 'Recommended from the archive', to: '/progress' },
+  { n: '12', title: 'Milestones', note: 'First quiz, perfect round, explorer', to: '/progress' },
+  { n: '13', title: 'Four-day lab', note: 'Four short sittings', to: '/lab' },
 ]
 
 export default function Play() {
@@ -23,43 +22,38 @@ export default function Play() {
   const navigate = useNavigate()
 
   return (
-    <div className="relative z-10 max-w-page mx-auto px-5 sm:px-6 lg:px-8 py-10 md:py-16">
-      <Reveal>
-        <p className="opener">
-          <span>Player menu</span>
-        </p>
-        <h1 className="t-hero text-fg mt-4 max-w-[16ch]">
-          Practise, review, <span className="t-italic text-accent">learn.</span>
-        </h1>
-        <p className="t-lead text-fg-2 mt-5 max-w-lg">
-          The same player path as newest.py — wired to the live quiz engine where a session can start, and kept on this page where it cannot.
-        </p>
-      </Reveal>
-      <ul className="mt-10 grid sm:grid-cols-2 gap-3">
+    <div className="relative z-10 max-w-page mx-auto px-5 sm:px-6 lg:px-8 pt-16 pb-24 md:pt-24">
+      <p className="figcap inline-flex items-center gap-3">
+        <span className="w-8 h-px bg-line-strong" />
+        Studio · player menu
+      </p>
+      <h1 className="t-hero text-fg mt-6 max-w-[12ch]">Contents</h1>
+      <p className="t-lead text-fg-2 mt-6 max-w-md">
+        The player path from newest.py, set as a table of contents. The map stays on Home.
+      </p>
+
+      <ol className="toc mt-14">
         {ITEMS.map((item) => (
-          <li key={item.title}>
+          <li key={item.n}>
             <button
               type="button"
-              className="w-full text-left rounded-2xl border border-line bg-card p-5 hover:border-line-strong transition-colors"
+              className="toc-row"
               onClick={() => {
-                if (item.action === 'daily') {
+                if (item.daily) {
                   navigate('/setup', { state: { category: 'all', difficulty: 'mixed', questionCount: 5, daily: true } })
                   return
                 }
-                if (item.to) navigate(item.to, { state: item.state })
+                if (item.to) navigate(item.to)
               }}
             >
-              <p className="text-fg font-medium">{item.title}</p>
-              <p className="t-meta text-fg-2 mt-1">{item.note}</p>
+              <span className="toc-num">{item.n}</span>
+              <span className="toc-title">{item.title}</span>
+              <span className="toc-dots" aria-hidden="true" />
+              <span className="toc-note">{item.note}</span>
             </button>
           </li>
         ))}
-      </ul>
-      <p className="t-meta text-fg-3 mt-8">
-        <Link to="/" className="link-rule">
-          Back to the archipelago
-        </Link>
-      </p>
+      </ol>
     </div>
   )
 }

@@ -826,3 +826,58 @@
   padding: 2rem;
   background: radial-gradient(circle at 50% 40%, var(--nx-deco-2), transparent 60%);
 }
+
+/* Journal table of contents — Studio / player menu */
+.toc {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--nx-line);
+}
+.toc-row {
+  display: grid;
+  grid-template-columns: 2.5rem minmax(0, auto) 1fr auto;
+  align-items: baseline;
+  gap: 0.75rem;
+  width: 100%;
+  text-align: left;
+  padding: 1.05rem 0;
+  border-bottom: 1px solid var(--nx-line);
+  background: none;
+  color: inherit;
+  cursor: pointer;
+}
+.toc-row:hover .toc-title {
+  color: var(--nx-accent);
+}
+.toc-num {
+  font-variant-numeric: tabular-nums;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  color: var(--nx-text-3);
+}
+.toc-title {
+  font-weight: 600;
+  font-size: 1.05rem;
+  letter-spacing: -0.02em;
+}
+.toc-dots {
+  border-bottom: 1px dotted rgb(var(--nx-text-rgb) / 0.28);
+  transform: translateY(-0.35em);
+  min-width: 1.5rem;
+}
+.toc-note {
+  font-size: 0.8rem;
+  color: var(--nx-text-3);
+  max-width: 18rem;
+  text-align: right;
+}
+@media (max-width: 640px) {
+  .toc-row {
+    grid-template-columns: 2rem 1fr;
+  }
+  .toc-dots,
+  .toc-note {
+    display: none;
+  }
+}

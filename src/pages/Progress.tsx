@@ -52,12 +52,13 @@ export default function Progress() {
   }, [history])
 
   return (
-    <div className="relative z-10 max-w-page mx-auto px-5 sm:px-6 lg:px-8 py-10 md:py-16">
+    <div className="relative z-10 max-w-page mx-auto px-5 sm:px-6 lg:px-8 pt-16 pb-24 md:pt-24">
       <Reveal>
-        <p className="opener">
-          <span>Progress</span>
+        <p className="figcap inline-flex items-center gap-3">
+          <span className="w-8 h-px bg-line-strong" />
+          Archive · progress
         </p>
-        <h1 className="t-hero text-fg mt-4">What the archive shows.</h1>
+        <h1 className="t-hero text-fg mt-6">What the archive shows.</h1>
       </Reveal>
       {error && <p className="mt-6 text-warm-text">{error}</p>}
       <p className="t-lead text-fg-2 mt-6">

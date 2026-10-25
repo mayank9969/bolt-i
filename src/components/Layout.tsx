@@ -10,9 +10,8 @@ import PortalStage from './three/PortalStage'
 
 const NAV = [
   { to: '/', label: 'Home' },
-  { to: '/setup', label: 'Start Quiz' },
-  { to: '/play', label: 'Play' },
-  { to: '/history', label: 'History' },
+  { to: '/play', label: 'Studio' },
+  { to: '/history', label: 'Archive' },
   { to: '/about', label: 'About' },
 ]
 
@@ -36,12 +35,8 @@ export default function Layout({ children }: { children: ReactNode }) {
       <Exhibit />
       <PortalStage />
 
-      <header
-        className={`sticky top-0 z-50 transition-colors duration-300 border-b ${
-          'bg-canvas border-line'
-        }`}
-      >
-        <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+      <header className="sticky top-0 z-50 bg-canvas/92 backdrop-blur-md border-b border-line">
+        <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 h-[4.25rem] flex items-center justify-between gap-4">
           <Link to="/" className="flex items-center gap-2.5 group shrink-0 rounded-lg" aria-label="VEYRA home">
             <LogoMark size={32} className="transition-transform duration-300 group-hover:scale-105 group-hover:rotate-[-3deg]" />
             <Wordmark className="text-[17px]" />
@@ -150,18 +145,15 @@ function NavItem({ to, label }: { to: string; label: string }) {
 
 function Footer() {
   return (
-    <footer className="relative z-10 mt-auto border-t border-line-strong bg-canvas">
-      <div className="max-w-page mx-auto px-5 sm:px-6 lg:px-8 py-10 grid sm:grid-cols-12 gap-6 items-end">
-        <div className="sm:col-span-6 flex items-center gap-3">
-          <LogoMark size={24} />
-          <Wordmark className="text-base" />
+    <footer className="relative z-10 mt-auto border-t border-line bg-canvas">
+      <div className="max-w-page mx-auto px-5 sm:px-6 lg:px-8 py-12 flex flex-col sm:flex-row sm:items-end justify-between gap-6">
+        <div>
+          <p className="figcap">VEYRA</p>
+          <p className="t-caption text-fg-2 mt-2 max-w-sm">
+            A knowledge archipelago. Paper and Ink. Scores live on the server.
+          </p>
         </div>
-        <p className="sm:col-span-3 t-label text-fg-3">
-          Knowledge Archipelago · build v5
-        </p>
-        <p className="sm:col-span-3 sm:text-right t-caption text-fg-3">
-          Built by <span className="text-fg-2 font-medium">Mayank Sarwal</span>
-        </p>
+        <p className="t-caption text-fg-3">Mayank Sarwal</p>
       </div>
     </footer>
   )
