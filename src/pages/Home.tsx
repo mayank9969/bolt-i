@@ -220,6 +220,43 @@ export default function Home() {
         </ul>
       </section>
 
+      {/* ── Key sittings (not the full Practice list) ─────────────── */}
+      <section className="relative z-10 max-w-page mx-auto w-full px-5 sm:px-6 lg:px-8 pt-16 md:pt-24">
+        <div className="flex items-center gap-3 figcap mb-8">
+          <span className="w-8 h-px bg-line-strong" />
+          Besides the map
+        </div>
+        <div className="grid md:grid-cols-2 gap-10 md:gap-16">
+          <div>
+            <p className="t-label text-fg-3">Daily challenge</p>
+            <h2 className="t-h3-lg text-fg mt-2">Five questions, mixed, for today.</h2>
+            <p className="text-fg-2 mt-3 text-pretty">
+              A short sitting from the whole bank. Same length newest.py used for a daily five. The engine still picks live questions — nothing is invented in the browser.
+            </p>
+            <Link to="/setup" state={{ category: 'all', difficulty: 'mixed', questionCount: 5, daily: true }} className="link-rule text-sm mt-5">
+              Start today’s five
+            </Link>
+          </div>
+          <div>
+            <p className="t-label text-fg-3">Today’s take</p>
+            <h2 className="t-h3-lg text-fg mt-2">Write a view. Keep it here.</h2>
+            <p className="text-fg-2 mt-3 text-pretty">
+              A prompt for the day and a place to answer in your own words. It stays on this device — the quiz API is not involved. Past takes sit on the same page.
+            </p>
+            <Link to="/take" className="link-rule text-sm mt-5">
+              Open today’s take
+            </Link>
+          </div>
+        </div>
+        <p className="t-meta text-fg-3 mt-10">
+          Daily five, review, lessons, and the archive live under{' '}
+          <Link to="/play" className="link-rule">
+            Practice
+          </Link>
+          .
+        </p>
+      </section>
+
       {/* ── Manifesto: one line, huge, ruled ───────────────────────── */}
       <section className="relative max-w-page mx-auto px-5 sm:px-6 lg:px-8 pt-24 md:pt-36 pb-16 md:pb-24">
         <Reveal>

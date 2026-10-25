@@ -10,7 +10,7 @@ import PortalStage from './three/PortalStage'
 
 const NAV = [
   { to: '/', label: 'Home' },
-  { to: '/play', label: 'Studio' },
+  { to: '/play', label: 'Practice' },
   { to: '/history', label: 'Archive' },
   { to: '/about', label: 'About' },
 ]
