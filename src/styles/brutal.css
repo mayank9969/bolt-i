@@ -53,12 +53,43 @@
   padding: 0.28rem 0.55rem;
   box-shadow: 3px 3px 0 var(--ui-ink);
 }
-.nb-hero-mark {
-  background: var(--ui-lime);
-  color: #17231f;
-  padding: 0 0.15em;
+/* Home hero: original layout; colour + weight only */
+.home-intro .t-hero {
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  color: var(--ui-ink);
+}
+.home-intro .t-italic {
+  color: var(--ui-teal);
+  font-weight: 800;
+}
+.home-intro .t-lead {
+  color: var(--ui-ink);
+  opacity: 0.78;
+  font-weight: 500;
+}
+.home-intro .opener {
+  color: var(--ui-ink);
+  font-weight: 800;
+}
+.home-intro .opener::before {
+  background: var(--ui-teal);
+  height: 3px;
+}
+.home-intro .btn-primary {
+  background: var(--ui-teal);
+  color: #f6f1e6;
   border: var(--ui-stroke);
-  box-shadow: 3px 3px 0 var(--ui-ink);
+  box-shadow: var(--ui-shadow);
+  font-weight: 800;
+  border-radius: 0.4rem;
+}
+[data-theme='ink'] .home-intro .btn-primary {
+  color: #17231f;
+  background: var(--ui-lime);
+}
+.home-intro .text-warm-text {
+  color: var(--ui-coral);
 }
 
 .category-dock {

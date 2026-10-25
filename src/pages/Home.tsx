@@ -45,13 +45,13 @@ export default function Home() {
       {/* ── Hero: copy on the left, framed map on the right (stacked on phones) ── */}
       <section ref={heroRef} className="relative pt-4 pb-4">
         <div className="relative z-10 max-w-page mx-auto w-full px-5 sm:px-6 lg:px-8">
-          <div className="max-w-2xl mx-auto text-center">
-            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={enter(0)} className="justify-center">
-              <span className="nb-stamp">The Knowledge Archipelago</span>
+          <div className="home-intro max-w-2xl mx-auto text-center">
+            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={enter(0)} className="opener justify-center">
+              <span>The Knowledge Archipelago</span>
             </motion.p>
 
             <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={enter(1)} className="t-hero text-fg mt-6 mx-auto max-w-[16ch] text-balance">
-              Every subject<br /> is an <span className="nb-hero-mark">island.</span>
+              Every subject<br /> is an <span className="t-italic text-accent">island.</span>
             </motion.h1>
 
             <motion.p initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={enter(2)} className="t-lead text-fg-2 mt-7 mx-auto max-w-lg text-pretty">
@@ -59,7 +59,7 @@ export default function Home() {
             </motion.p>
 
             <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={enter(3)} className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-4">
-              <MagneticLink to="/setup" className="nb-cta btn-lg">
+              <MagneticLink to="/setup" className="btn-primary btn-lg">
                 Start a quiz
                 <ArrowRight className="arrow w-5 h-5" />
               </MagneticLink>
