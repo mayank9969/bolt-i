@@ -4,24 +4,33 @@ const STAGE_HTML = `
 <section class="stage veyra-inpage-stage" id="stage" aria-label="Veyra archipelago">
   <canvas id="world"></canvas>
   <div class="hud">
-    <div class="hint" hidden>15 connected islands</div>
-    <div class="interaction" hidden></div>
+    <div class="hint">15 connected islands · a world of ideas</div>
+    <div class="interaction">Move your cursor to look · Select an island</div>
     <div class="selected" id="selected"></div>
-    <div class="focus-shade" id="focusShade"></div>
-    <div class="focus-flash" id="focusFlash"></div>
-    <div class="focus-story-cue" id="focusStoryCue"></div>
-    <div class="focus-puzzle" id="focusPuzzle"><p id="focusPuzzleFeedback"></p></div>
-    <div class="subject-info" id="subjectInfo">
-      <button type="button" id="subjectInfoClose">Close</button>
-      <div id="subjectInfoEyebrow"></div>
-      <div id="subjectInfoTitle"></div>
-      <div id="subjectInfoText"></div>
-    </div>
-    <div class="focus-graph" id="focusGraph">
-      <div id="focusGraphLabel"></div>
-      <canvas id="focusGraphCanvas"></canvas>
-    </div>
-    <div id="sceneStatus" class="scene-status">Loading the archipelago…</div>
+    <div class="focus-shade" id="focusShade" aria-hidden="true"></div>
+    <div class="focus-flash" id="focusFlash" aria-hidden="true"></div>
+    <div class="focus-story-cue" id="focusStoryCue" aria-live="polite"></div>
+    <aside class="focus-puzzle" id="focusPuzzle" aria-hidden="true">
+      <strong>Assemble the discovery</strong>
+      <div class="focus-puzzle-buttons">
+        <button type="button" data-step="0">Observe</button>
+        <button type="button" data-step="1">Compare</button>
+        <button type="button" data-step="2">Connect</button>
+      </div>
+      <p id="focusPuzzleFeedback">Choose the steps in order to reveal the final clue.</p>
+    </aside>
+    <article class="subject-info" id="subjectInfo" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="subjectInfoTitle">
+      <button class="focus-close" id="subjectInfoClose" type="button" aria-label="Close subject details">×</button>
+      <span class="eyebrow" id="subjectInfoEyebrow">Island field note</span>
+      <h2 id="subjectInfoTitle"></h2>
+      <p id="subjectInfoText"></p>
+      <aside class="focus-graph" id="focusGraph" aria-hidden="true">
+        <span class="focus-graph-label" id="focusGraphLabel"></span>
+        <div id="focusGraphCanvas"></div>
+        <div class="focus-graph-status">The 3D story works without the graph connection.</div>
+      </aside>
+    </article>
+    <div class="scene-status" id="sceneStatus" role="status">Preparing the 3D archipelago…</div>
   </div>
 </section>
 `

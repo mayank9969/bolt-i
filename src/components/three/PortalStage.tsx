@@ -117,7 +117,14 @@ export default function PortalStage() {
           </p>
         </div>
         <div className="flex flex-wrap gap-2 shrink-0">
-          <button type="button" className="island-chip" onClick={() => resetRef.current?.()}>
+          <button
+            type="button"
+            className="island-chip"
+            onClick={(e) => {
+              e.stopPropagation()
+              resetRef.current?.()
+            }}
+          >
             Reset view
           </button>
           <button type="button" className="btn-primary btn-sm" onClick={startQuiz}>

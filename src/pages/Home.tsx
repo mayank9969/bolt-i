@@ -92,7 +92,7 @@ export default function Home() {
               role="img"
               aria-label="Knowledge archipelago — click an island to enter its exhibit."
               onClick={(e) => {
-                if ((e.target as HTMLElement).closest('button, a')) return
+                if ((e.target as HTMLElement).closest('button, a, canvas, .veyra-html-root, #stage')) return
                 const id = getWorld().hover
                 if (id) setWorld({ selected: id, hover: id, beat: 0 })
                 else setWorld({ explore: true })

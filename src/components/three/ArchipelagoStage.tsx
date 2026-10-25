@@ -108,33 +108,6 @@ export default function ArchipelagoStage() {
     }
   }, [kind])
 
-  useEffect(() => {
-    const names: Record<string, string> = {
-      Mathematics: 'maths',
-      Science: 'science',
-      Technology: 'technology',
-      'Python Programming': 'python',
-      'Computer Science': 'computer_science',
-      Physics: 'physics',
-      Chemistry: 'chemistry',
-      Biology: 'biology',
-      'Astronomy & Space': 'astronomy_space',
-      Geography: 'geography',
-      History: 'history',
-      'English & Language': 'english_language',
-      'General Knowledge': 'general_knowledge',
-      'Logic & Reasoning': 'logic_reasoning',
-      'Economics & Business': 'economics_business',
-    }
-    const onMsg = (e: MessageEvent) => {
-      if (!e.data || e.data.type !== 'veyra-island') return
-      const id = names[e.data.name as string]
-      if (id) setWorld({ selected: id, hover: id, beat: 0 })
-    }
-    window.addEventListener('message', onMsg)
-    return () => window.removeEventListener('message', onMsg)
-  }, [])
-
   if (mode === 'off') return null
   if (kind === 'pending') return <div className="absolute inset-0" aria-hidden="true" />
   const live = mode === 'hero' || mode === 'focus'

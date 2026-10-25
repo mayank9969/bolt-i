@@ -203,8 +203,12 @@ export default function PortalCanvas({
   const controls = useRef<ControlsHandle | null>(null)
   useEffect(() => onThemeChange(() => setPal(palette())), [])
   useEffect(() => {
-    registerReset(() => controls.current?.reset())
-  }, [registerReset])
+    const reset = () => {
+      const c = controls.current
+      if (c && typeof c.reset === 'function') c.reset()
+    }
+    registerReset(reset)
+  }, [id, registerReset])
   const reduce = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
   return (
