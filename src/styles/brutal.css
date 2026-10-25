@@ -134,26 +134,50 @@
   color: var(--ui-ink);
 }
 
-.about-nb .t-title,
-.about-nb .t-section,
-.about-nb h2,
-.about-nb h3 {
+/* About: only key phrases — Ink = white (as Home italic); Paper = opposite (ink on lime) */
+.about-key {
   font-weight: 800;
-  letter-spacing: -0.035em;
-  color: var(--ui-ink);
+  font-style: inherit;
+  letter-spacing: -0.02em;
+  padding: 0.05em 0.28em;
+  border: 2px solid currentColor;
+  box-decoration-break: clone;
+  background: none;
 }
-.about-nb .t-lead {
-  font-weight: 500;
+[data-theme='ink'] .about-key {
+  color: #ffffff;
+  background: transparent;
+  border-color: #ffffff;
 }
-.about-nb table {
-  border: var(--ui-stroke);
-  box-shadow: var(--ui-shadow);
-  background: var(--ui-paper);
+[data-theme='paper'] .about-key {
+  color: #17231f;
+  background: var(--ui-lime);
+  border-color: #17231f;
 }
-.about-nb .btn-primary {
+dt.about-key {
+  display: inline-block;
+  margin-bottom: 0.35rem;
+}
+
+/* Practice follows Ink’s contrast: light type, dark fields, inverted on Paper */
+.practice-page .t-hero {
   font-weight: 800;
-  border: var(--ui-stroke);
-  box-shadow: var(--ui-shadow);
+  letter-spacing: -0.04em;
+}
+[data-theme='ink'] .practice-page .t-hero,
+[data-theme='ink'] .practice-page .studio-band-title,
+[data-theme='ink'] .practice-page .studio-topic h3 {
+  color: #ffffff;
+}
+[data-theme='ink'] .practice-page .studio-topic {
+  background: #121c18;
+  color: #f4f0e4;
+  border-color: #f4f0e4;
+  box-shadow: 4px 4px 0 #080808;
+}
+[data-theme='paper'] .practice-page .studio-topic {
+  background: #f6f1e6;
+  color: #17231f;
 }
 
 .choice {

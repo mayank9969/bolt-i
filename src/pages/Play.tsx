@@ -64,7 +64,7 @@ export default function Play() {
   }
 
   return (
-    <div className="relative z-10 max-w-page mx-auto px-5 sm:px-6 lg:px-8 pt-16 pb-24 md:pt-24">
+    <div className="practice-page relative z-10 max-w-page mx-auto px-5 sm:px-6 lg:px-8 pt-16 pb-24 md:pt-24">
       <p className="nb-stamp">Practice</p>
       <h1 className="t-hero text-fg mt-6 max-w-[16ch]">Thirteen doors. One engine.</h1>
       <p className="t-lead text-fg-2 mt-6 max-w-lg">Each sitting is explained, then a button that goes there. The map stays on Home.</p>

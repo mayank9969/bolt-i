@@ -53,7 +53,7 @@ export default function About() {
             <p className="t-lead text-fg-2 mt-6 text-pretty">
               VEYRA is a small, honest quiz product for {regionList}. You choose a region, a tier and a size; the
               server picks the questions, checks every answer and keeps the record. There is nothing to configure and
-              nothing to unlock — just questions, a score you can trust, and a history that shows how it moves.
+              nothing to unlock — just questions, <mark className="about-key">a score you can trust</mark>, and a history that shows how it moves.
             </p>
           </header>
         </Reveal>
@@ -182,7 +182,7 @@ export default function About() {
             {/* 04 · Where the scoring happens */}
             <Section id="server" n="04" title="Where the scoring happens">
               <p className="t-body text-fg-2 text-pretty">
-                The browser never sees a correct answer. When you start a quiz the server chooses the questions at random
+                <mark className="about-key">The browser never sees a correct answer.</mark> When you start a quiz the server chooses the questions at random
                 and sends only the text and the options. When you finish, it checks your answers with the same scoring
                 code as the original command-line quiz, saves the attempt, and returns the marked review.
               </p>
@@ -203,7 +203,7 @@ export default function About() {
             {/* 05 · The name */}
             <Section id="name" n="05" title="Why “VEYRA”">
               <p className="t-body text-fg-2 text-pretty">
-                Knowledge isn’t a list you finish; it’s a place you get to know. The Knowledge Archipelago behind these pages is
+                <mark className="about-key">Knowledge isn’t a list you finish</mark>; it’s a place you get to know. The Knowledge Archipelago behind these pages is
                 that idea made visible: one island for every subject in the bank, deep-teal bridges where fields lean on each
                 other, a terracotta marker on any island your last attempt left unfinished — and a field guide for each, with
                 one verified turning point and a source you can check. It is put away while you answer.
@@ -215,7 +215,7 @@ export default function About() {
                   ['Progression', 'Each attempt is a data point. Over time the trend matters more than any single score.'],
                 ].map(([k, d]) => (
                   <div key={k}>
-                    <dt className="t-h3 text-fg">{k}</dt>
+                    <dt className="t-h3 about-key">{k}</dt>
                     <dd className="text-fg-2 mt-2 text-pretty">{d}</dd>
                   </div>
                 ))}
