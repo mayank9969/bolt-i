@@ -46,7 +46,7 @@ export default function About() {
         {/* ── Intro ─────────────────────────────────────────────────── */}
         <Reveal>
           <header className="max-w-3xl column-paper">
-            <span className="opener">About</span>
+            <span className="nb-stamp">About</span>
             <h1 className="t-title text-fg mt-5 text-balance">
               A quiet place to find out what you actually know.
             </h1>

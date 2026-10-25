@@ -122,6 +122,15 @@
   --nx-3d-key: #fff3d0;
   --nx-3d-sky: #c8dff2;
   --nx-3d-ground: #2a4a28;
+
+  /* UI-only neo-brutalist chrome (never read by the 3D renderer) */
+  --ui-paper: #f6f1e6;
+  --ui-ink: #17231f;
+  --ui-teal: #16827e;
+  --ui-lime: #d9f06b;
+  --ui-coral: #ef7058;
+  --ui-stroke: 2px solid #17231f;
+  --ui-shadow: 4px 4px 0 #17231f;
 }
 
 /* ────────────────────────── INK ────────────────────────── */
@@ -206,6 +215,14 @@
   --nx-3d-key: #ffe6c0;
   --nx-3d-sky: #0e1a2e;
   --nx-3d-ground: #0a1810;
+
+  --ui-paper: #121c18;
+  --ui-ink: #f4f0e4;
+  --ui-teal: #8ce0d8;
+  --ui-lime: #d9f06b;
+  --ui-coral: #ef7058;
+  --ui-stroke: 2px solid #f4f0e4;
+  --ui-shadow: 4px 4px 0 #080808;
 
   --nx-shadow-ink: 0 0 0;
   --nx-shadow-1: 0 1px 0 0 rgb(255 255 255 / 0.04) inset, 0 12px 32px -14px rgb(0 0 0 / 0.55);

@@ -46,12 +46,12 @@ export default function Home() {
       <section ref={heroRef} className="relative pt-4 pb-4">
         <div className="relative z-10 max-w-page mx-auto w-full px-5 sm:px-6 lg:px-8">
           <div className="max-w-2xl mx-auto text-center">
-            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={enter(0)} className="opener justify-center">
-              <span>The Knowledge Archipelago</span>
+            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={enter(0)} className="justify-center">
+              <span className="nb-stamp">The Knowledge Archipelago</span>
             </motion.p>
 
             <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={enter(1)} className="t-hero text-fg mt-6 mx-auto max-w-[16ch] text-balance">
-              Every subject<br /> is an <span className="t-italic text-accent">island.</span>
+              Every subject<br /> is an <span className="nb-hero-mark">island.</span>
             </motion.h1>
 
             <motion.p initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={enter(2)} className="t-lead text-fg-2 mt-7 mx-auto max-w-lg text-pretty">
@@ -59,7 +59,7 @@ export default function Home() {
             </motion.p>
 
             <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={enter(3)} className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-4">
-              <MagneticLink to="/setup" className="btn-primary btn-lg">
+              <MagneticLink to="/setup" className="nb-cta btn-lg">
                 Start a quiz
                 <ArrowRight className="arrow w-5 h-5" />
               </MagneticLink>
@@ -125,7 +125,7 @@ export default function Home() {
             <div className="flex items-center gap-2 mb-3 md:hidden">
               <button
                 type="button"
-                className="island-chip"
+                className="dock-chip"
                 aria-label="Previous island"
                 onClick={() => {
                   if (!cats.length) return
@@ -140,7 +140,7 @@ export default function Home() {
               </button>
               <button
                 type="button"
-                className="island-chip"
+                className="dock-chip"
                 aria-label="Next island"
                 onClick={() => {
                   if (!cats.length) return
@@ -162,7 +162,7 @@ export default function Home() {
                   <li key={c.id}>
                     <button
                       type="button"
-                      className="island-chip"
+                      className="dock-chip"
                       aria-pressed={on}
                       aria-haspopup="dialog"
                       onMouseEnter={() => setWorld({ hover: c.id })}
@@ -393,7 +393,7 @@ export default function Home() {
               Pick an island. <span className="text-fg-2">Then go ashore.</span>
             </h2>
             <div className="lg:col-span-4 flex lg:justify-end">
-              <MagneticLink to="/setup" className="btn-primary btn-lg">
+              <MagneticLink to="/setup" className="nb-cta btn-lg">
                 Start a quiz
                 <ArrowRight className="arrow w-5 h-5" />
               </MagneticLink>

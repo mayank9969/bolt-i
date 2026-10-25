@@ -1,0 +1,188 @@
+/* Neo-brutalist chrome. Never targets #island-stage, .island-frame,
+   the map figcap, or .island-chip (Sound / 3D chrome). */
+
+.nb-head {
+  background: var(--ui-paper);
+  border-bottom: var(--ui-stroke);
+}
+.nb-head .nb-nav-link {
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  padding: 0.4rem 0.75rem;
+  border: 2px solid transparent;
+}
+.nb-head .nb-nav-link.is-on {
+  border: var(--ui-stroke);
+  background: var(--ui-lime);
+  color: #17231f;
+  box-shadow: 3px 3px 0 var(--ui-ink);
+}
+.nb-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  background: var(--ui-teal);
+  color: #f6f1e6;
+  border: var(--ui-stroke);
+  box-shadow: var(--ui-shadow);
+  padding: 0.55rem 1rem;
+  border-radius: 0.4rem;
+}
+.nb-cta:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 5px 5px 0 var(--ui-ink);
+}
+@media (prefers-reduced-motion: reduce) {
+  .nb-cta:hover { transform: none; }
+}
+[data-theme='ink'] .nb-cta {
+  color: #17231f;
+  background: var(--ui-lime);
+}
+
+.nb-stamp {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  background: var(--ui-lime);
+  color: #17231f;
+  border: var(--ui-stroke);
+  padding: 0.28rem 0.55rem;
+  box-shadow: 3px 3px 0 var(--ui-ink);
+}
+.nb-hero-mark {
+  background: var(--ui-lime);
+  color: #17231f;
+  padding: 0 0.15em;
+  border: var(--ui-stroke);
+  box-shadow: 3px 3px 0 var(--ui-ink);
+}
+
+.category-dock {
+  border: var(--ui-stroke);
+  background: var(--ui-paper);
+  box-shadow: var(--ui-shadow);
+  border-radius: 0.75rem;
+}
+.category-dock .dock-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  height: 2rem;
+  padding: 0 0.7rem;
+  font-size: 13px;
+  font-weight: 650;
+  border: var(--ui-stroke);
+  background: var(--ui-paper);
+  color: var(--ui-ink);
+  border-radius: 999px;
+}
+.category-dock .dock-chip[aria-pressed='true'] {
+  background: var(--ui-lime);
+  color: #17231f;
+}
+
+.nb-foot {
+  background: var(--ui-paper);
+  border-top: var(--ui-stroke);
+}
+
+.studio-kicker {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #17231f;
+  background: var(--ui-coral);
+  border: var(--ui-stroke);
+  padding: 0.2rem 0.5rem;
+}
+
+.studio-grid {
+  display: grid;
+  gap: 0.9rem;
+}
+@media (min-width: 768px) {
+  .studio-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+.studio-card {
+  text-align: left;
+  width: 100%;
+  border: var(--ui-stroke);
+  box-shadow: var(--ui-shadow);
+  background: var(--ui-paper);
+  color: var(--ui-ink);
+  padding: 1.1rem 1.15rem 1.2rem;
+  border-radius: 0.65rem;
+  cursor: pointer;
+}
+.studio-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--ui-ink);
+}
+@media (prefers-reduced-motion: reduce) {
+  .studio-card:hover { transform: none; }
+}
+.studio-card[data-accent='lime'] { background: var(--ui-lime); color: #17231f; }
+.studio-card[data-accent='teal'] { background: var(--ui-teal); color: #f6f1e6; }
+.studio-card[data-accent='coral'] { background: var(--ui-coral); color: #17231f; }
+.studio-card[data-accent='paper'] { background: var(--ui-paper); }
+[data-theme='ink'] .studio-card[data-accent='teal'] { color: #17231f; background: var(--ui-teal); }
+.studio-card h3 {
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin: 0;
+}
+.studio-card p {
+  margin: 0.4rem 0 0;
+  font-size: 0.92rem;
+  line-height: 1.4;
+  opacity: 0.92;
+}
+
+.nb-panel {
+  border: var(--ui-stroke);
+  box-shadow: var(--ui-shadow);
+  background: var(--ui-paper);
+  color: var(--ui-ink);
+  border-radius: 0.75rem;
+  padding: 1.1rem 1.2rem;
+}
+.nb-panel dt {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.nb-panel dd {
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  margin: 0.2rem 0 0;
+}
+
+.nb-switch {
+  border: var(--ui-stroke) !important;
+  border-radius: 0.45rem !important;
+  background: var(--ui-paper) !important;
+  box-shadow: 3px 3px 0 var(--ui-ink);
+}
+
+.exhibit-poster {
+  border: var(--ui-stroke);
+  box-shadow: var(--ui-shadow);
+  background: var(--ui-paper);
+  padding: 1.25rem 1.3rem;
+  border-radius: 0.75rem;
+}
+
+.choice {
+  border: var(--ui-stroke) !important;
+  border-radius: 0.5rem !important;
+  box-shadow: 3px 3px 0 var(--ui-ink);
+}

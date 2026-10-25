@@ -79,7 +79,7 @@ export default function History() {
         <Reveal>
           <div className="grid lg:grid-cols-12 gap-x-10 gap-y-8 items-end">
             <div className="lg:col-span-8 hero-paper">
-              <span className="opener">Accumulated knowledge</span>
+              <span className="nb-stamp">Archive</span>
               <h1 className="t-title text-fg mt-5 text-balance">
                 {history && history.length ? (
                   <>
@@ -143,7 +143,7 @@ export default function History() {
           <>
             {/* ── Ledger of big numbers ─────────────────────── */}
             <Reveal delay={0.05}>
-              <dl className="mt-14 grid grid-cols-2 lg:grid-cols-4 border-t border-line-strong stats-paper">
+              <dl className="mt-14 grid grid-cols-2 lg:grid-cols-4 gap-3 stats-paper">
                 <Big label="Quizzes taken" value={String(stats.n)} />
                 <Big label="Average score" value={formatPercent(stats.avg, 1)} tone={performanceTone(stats.avg)} />
                 <Big label="Overall accuracy" value={formatPercent(stats.accuracy, 0)} sub={`${stats.c} / ${stats.q} correct`} />
@@ -258,10 +258,10 @@ export default function History() {
 
 function Big({ label, value, sub, tone }: { label: string; value: string; sub?: string; tone?: ReturnType<typeof performanceTone> }) {
   return (
-    <div className="py-6 pr-6 border-b border-line lg:border-b-0 lg:border-r last:border-r-0 last:pr-0 lg:pl-6 first:pl-0">
-      <dt className="figcap">{label}</dt>
-      <dd className={`t-stat mt-3 num ${tone ? toneText[tone] : 'text-fg'}`}>{value}</dd>
-      {sub && <dd className="t-caption text-fg-3 mt-2 num">{sub}</dd>}
+    <div className="nb-panel">
+      <dt>{label}</dt>
+      <dd className={tone ? toneText[tone] : ''}>{value}</dd>
+      {sub && <p className="t-caption mt-2 num" style={{ opacity: 0.7 }}>{sub}</p>}
     </div>
   )
 }

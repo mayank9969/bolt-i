@@ -35,7 +35,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       <Exhibit />
       <PortalStage />
 
-      <header className="sticky top-0 z-50 bg-canvas/92 backdrop-blur-md border-b border-line">
+      <header className="nb-head sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 h-[4.25rem] flex items-center justify-between gap-4">
           <Link to="/" className="flex items-center gap-2.5 group shrink-0 rounded-lg" aria-label="VEYRA home">
             <LogoMark size={32} className="transition-transform duration-300 group-hover:scale-105 group-hover:rotate-[-3deg]" />
@@ -52,7 +52,7 @@ export default function Layout({ children }: { children: ReactNode }) {
           <div className="hidden md:flex items-center gap-3">
             <ThemeSwitcher />
             {!inQuiz && (
-              <Link to="/setup" className="btn-primary btn-sm">
+              <Link to="/setup" className="nb-cta">
                 Start Quiz
               </Link>
             )}
@@ -105,7 +105,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                   </RouterNavLink>
                 ))}
                 {!inQuiz && (
-                  <Link to="/setup" className="btn-primary mt-3 min-h-[3rem]">
+                  <Link to="/setup" className="nb-cta mt-3 min-h-[3rem] justify-center">
                     Start Quiz
                   </Link>
                 )}
@@ -124,28 +124,19 @@ export default function Layout({ children }: { children: ReactNode }) {
 
 function NavItem({ to, label }: { to: string; label: string }) {
   return (
-    <RouterNavLink to={to} end={to === '/'} className="relative px-3.5 py-1.5 rounded-full t-nav">
-      {({ isActive }) => (
-        <>
-          {isActive && (
-            <motion.span
-              layoutId="nav-active"
-              className="absolute inset-0 rounded-full border border-line-strong"
-              transition={{ type: 'spring', stiffness: 400, damping: 32 }}
-            />
-          )}
-          <span className={`relative z-10 transition-colors ${isActive ? 'text-fg' : 'text-fg-2 hover:text-fg'}`}>
-            {label}
-          </span>
-        </>
-      )}
+    <RouterNavLink
+      to={to}
+      end={to === '/'}
+      className={({ isActive }) => `nb-nav-link relative t-nav ${isActive ? 'is-on' : 'text-fg-2 hover:text-fg'}`}
+    >
+      {label}
     </RouterNavLink>
   )
 }
 
 function Footer() {
   return (
-    <footer className="relative z-10 mt-auto border-t border-line bg-canvas">
+    <footer className="nb-foot relative z-10 mt-auto">
       <div className="max-w-page mx-auto px-5 sm:px-6 lg:px-8 py-12 flex flex-col sm:flex-row sm:items-end justify-between gap-6">
         <div>
           <p className="figcap">VEYRA</p>

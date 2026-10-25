@@ -1,59 +1,75 @@
 import { useNavigate } from 'react-router-dom'
 import { useWorld } from '@/components/three/world'
 
-const ITEMS: { n: string; title: string; note: string; to?: string; daily?: boolean }[] = [
-  { n: '01', title: 'Start a quiz', note: 'Island, difficulty, length', to: '/setup' },
-  { n: '02', title: 'Daily challenge', note: 'Five mixed questions for today', daily: true },
-  { n: '03', title: 'Missed questions', note: 'Terracotta islands after a quiz', to: '/setup' },
-  { n: '04', title: 'Smart review', note: 'A weak island from your history', to: '/progress' },
-  { n: '05', title: 'Progress', note: 'Scores and milestones', to: '/progress' },
-  { n: '06', title: 'History', note: 'Every scored attempt', to: '/history' },
-  { n: '07', title: 'Today’s take', note: 'A written view, this device only', to: '/take' },
-  { n: '08', title: 'Past takes', note: 'Earlier writing', to: '/take' },
-  { n: '09', title: 'Concept studio', note: 'Lessons from the library', to: '/concepts' },
-  { n: '10', title: 'Focus skill', note: 'A short sitting on one island', to: '/setup' },
-  { n: '11', title: 'Next session', note: 'Recommended from the archive', to: '/progress' },
-  { n: '12', title: 'Milestones', note: 'First quiz, perfect round, explorer', to: '/progress' },
-  { n: '13', title: 'Four-day lab', note: 'Four short sittings', to: '/lab' },
+type Card = {
+  title: string
+  benefit: string
+  to?: string
+  daily?: boolean
+  accent: 'lime' | 'teal' | 'coral' | 'paper'
+}
+
+const PRACTICE: Card[] = [
+  { title: 'Start a quiz', benefit: 'Pick an island and sit a scored session.', to: '/setup', accent: 'teal' },
+  { title: 'Daily challenge', benefit: 'Five mixed questions, locked to today’s date.', daily: true, accent: 'lime' },
+  { title: 'Missed questions', benefit: 'Go back to islands that still carry terracotta.', to: '/setup', accent: 'paper' },
+  { title: 'Smart review', benefit: 'Open the weakest category in your archive.', to: '/progress', accent: 'paper' },
+  { title: 'Focus skill', benefit: 'A short sitting on one subject.', to: '/setup', accent: 'paper' },
 ]
+
+const EXPLORE: Card[] = [
+  { title: 'Concept studio', benefit: 'Rotate through curated lessons, then a check.', to: '/concepts', accent: 'lime' },
+  { title: 'Four-day lab', benefit: 'Four short quizzes on a looping schedule.', to: '/lab', accent: 'coral' },
+]
+
+const REFLECT: Card[] = [
+  { title: 'Progress', benefit: 'See scores and what the archive has established.', to: '/progress', accent: 'paper' },
+  { title: 'History', benefit: 'Every scored attempt the server still holds.', to: '/history', accent: 'teal' },
+  { title: 'Today’s take', benefit: 'Write a view. It stays on this device.', to: '/take', accent: 'paper' },
+  { title: 'Past takes', benefit: 'Read back earlier writing.', to: '/take', accent: 'paper' },
+  { title: 'Next session', benefit: 'A recommended island from your history.', to: '/progress', accent: 'lime' },
+  { title: 'Milestones', benefit: 'First quiz, perfect round, explorer.', to: '/progress', accent: 'paper' },
+]
+
+function Group({ label, items, go }: { label: string; items: Card[]; go: (c: Card) => void }) {
+  return (
+    <section className="mt-14">
+      <p className="studio-kicker">{label}</p>
+      <ul className="studio-grid mt-4">
+        {items.map((item) => (
+          <li key={item.title}>
+            <button type="button" className="studio-card" data-accent={item.accent} onClick={() => go(item)}>
+              <h3>{item.title}</h3>
+              <p>{item.benefit}</p>
+            </button>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+}
 
 export default function Play() {
   useWorld({ mode: 'quiet' })
   const navigate = useNavigate()
+  const go = (item: Card) => {
+    if (item.daily) {
+      navigate('/setup', { state: { category: 'all', difficulty: 'mixed', questionCount: 5, daily: true } })
+      return
+    }
+    if (item.to) navigate(item.to)
+  }
 
   return (
     <div className="relative z-10 max-w-page mx-auto px-5 sm:px-6 lg:px-8 pt-16 pb-24 md:pt-24">
-      <p className="figcap inline-flex items-center gap-3">
-        <span className="w-8 h-px bg-line-strong" />
-        Studio · player menu
+      <p className="nb-stamp">Studio</p>
+      <h1 className="t-hero text-fg mt-6 max-w-[14ch]">Practice. Explore. Reflect.</h1>
+      <p className="t-lead text-fg-2 mt-6 max-w-lg">
+        Thirteen ways to use VEYRA. The archipelago stays on Home; everything here is a door into a sitting you already have.
       </p>
-      <h1 className="t-hero text-fg mt-6 max-w-[12ch]">Contents</h1>
-      <p className="t-lead text-fg-2 mt-6 max-w-md">
-        The player path from newest.py, set as a table of contents. The map stays on Home.
-      </p>
-
-      <ol className="toc mt-14">
-        {ITEMS.map((item) => (
-          <li key={item.n}>
-            <button
-              type="button"
-              className="toc-row"
-              onClick={() => {
-                if (item.daily) {
-                  navigate('/setup', { state: { category: 'all', difficulty: 'mixed', questionCount: 5, daily: true } })
-                  return
-                }
-                if (item.to) navigate(item.to)
-              }}
-            >
-              <span className="toc-num">{item.n}</span>
-              <span className="toc-title">{item.title}</span>
-              <span className="toc-dots" aria-hidden="true" />
-              <span className="toc-note">{item.note}</span>
-            </button>
-          </li>
-        ))}
-      </ol>
+      <Group label="Practice" items={PRACTICE} go={go} />
+      <Group label="Explore" items={EXPLORE} go={go} />
+      <Group label="Reflect" items={REFLECT} go={go} />
     </div>
   )
 }
