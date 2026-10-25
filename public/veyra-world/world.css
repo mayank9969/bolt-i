@@ -1,9 +1,99 @@
-
-.veyra-html-root,.veyra-html-root #stage,.veyra-html-root .stage{
-  position:absolute;inset:0;width:100%;height:100%;min-height:100%;
-  margin:0;border:0;border-radius:0;overflow:hidden;
-  background:linear-gradient(180deg,#a9cadb 0%,#dce7db 53%,#668b58 100%);
+.veyra-html-root,
+.veyra-html-root #stage,
+.veyra-html-root .stage {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  overflow: hidden !important;
+  box-shadow: none !important;
+  background: linear-gradient(180deg, #a9cadb 0%, #dce7db 53%, #668b58 100%);
 }
-.veyra-html-root canvas#world{position:absolute;inset:0;width:100%;height:100%;display:block}
-.veyra-html-root .hint,.veyra-html-root .interaction{display:none!important}
-.veyra-html-root .veyra-world-error{position:absolute;inset:auto 16px 16px;color:#203}
+.veyra-html-root canvas#world {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: pan-y;
+  cursor: grab;
+}
+.veyra-html-root .hud {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+.veyra-html-root .hint,
+.veyra-html-root .interaction {
+  display: none !important;
+}
+.veyra-html-root .island-tag {
+  position: absolute;
+  transform: translate(-50%, -130%);
+  padding: 6px 9px;
+  border: 1px solid #ffffffc4;
+  border-radius: 999px;
+  background: #fbfcf6e8;
+  color: #34434a;
+  box-shadow: 0 4px 14px #233c3424;
+  font-size: 11px;
+  font-weight: 750;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+}
+.veyra-html-root .island-tag.hovered {
+  opacity: 1;
+  visibility: visible;
+  background: #147d76;
+  color: #fff;
+}
+.veyra-html-root .scene-status {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: #f9fbf2ed;
+  color: #334348;
+  font-size: 13px;
+  z-index: 2;
+  pointer-events: none;
+}
+.veyra-html-root .scene-status.error {
+  background: #fff7f2f2;
+  color: #713e31;
+}
+.veyra-html-root .subject-info {
+  position: absolute;
+  right: 18px;
+  bottom: 18px;
+  z-index: 5;
+  width: min(330px, calc(100% - 36px));
+  padding: 16px 18px;
+  border-radius: 20px;
+  background: rgba(248, 250, 246, 0.94);
+  pointer-events: none;
+  opacity: 0;
+}
+.veyra-html-root .subject-info.on {
+  opacity: 1;
+  pointer-events: auto;
+}
+.veyra-html-root .focus-shade,
+.veyra-html-root .focus-flash,
+.veyra-html-root .focus-story-cue,
+.veyra-html-root .focus-graph,
+.veyra-html-root .focus-puzzle {
+  position: absolute;
+  z-index: 4;
+  opacity: 0;
+  pointer-events: none;
+}

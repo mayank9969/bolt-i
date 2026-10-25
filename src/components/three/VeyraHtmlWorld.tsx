@@ -21,7 +21,7 @@ const STAGE_HTML = `
       <div id="focusGraphLabel"></div>
       <canvas id="focusGraphCanvas"></canvas>
     </div>
-    <div id="sceneStatus"></div>
+    <div id="sceneStatus" class="scene-status">Loading the archipelago…</div>
   </div>
 </section>
 `
@@ -62,51 +62,31 @@ function loadScript(src: string) {
 
 export default function VeyraHtmlWorld() {
   const rootRef = useRef<HTMLDivElement>(null)
-  const booted = useRef(false)
 
   useEffect(() => {
     const root = rootRef.current
-    if (!root || booted.current) return
-    if (document.getElementById('world') && (window as unknown as { VeyraThree?: unknown }).VeyraThree && root.querySelector('canvas')?.dataset.live === '1') return
-    booted.current = true
-    loadStyle('/veyra-world/demo.css')
+    if (!root) return
     loadStyle('/veyra-world/world.css')
-    root.innerHTML = STAGE_HTML
-    const canvas = root.querySelector('#world') as HTMLCanvasElement | null
-    if (canvas) canvas.dataset.live = '1'
+    if (!root.querySelector('#world')) root.innerHTML = STAGE_HTML
 
-    let cancelled = false
+    const w = window as unknown as { __VEYRA_SCENE?: boolean }
+    if (w.__VEYRA_SCENE) return
+    w.__VEYRA_SCENE = true
+
     ;(async () => {
       try {
         await loadScript('/veyra-world/assets/veyra-models/veyra-three.bundle.js')
-        await loadScript('/veyra-world/assets/veyra-models/veyra-models-data.js')
-        if (cancelled) return
-        const code = await fetch('/veyra-world/scene.js').then((r) => {
-          if (!r.ok) throw new Error('scene.js')
-          return r.text()
-        })
-        if (cancelled) return
-        // scene.js is an async IIFE that reads #stage / #world from the document
-        // eslint-disable-next-line no-new-func
-        new Function(code)()
+        await loadScript('/veyra-world/scene.js')
       } catch (err) {
         console.error('Veyra world failed to start', err)
-        if (root && !cancelled) {
-          root.innerHTML = '<p class="veyra-world-error">The archipelago could not start.</p>'
+        const status = document.getElementById('sceneStatus')
+        if (status) {
+          status.textContent = 'The archipelago could not start.'
+          status.classList.add('error')
         }
       }
     })()
-
-    return () => {
-      cancelled = true
-    }
   }, [])
 
-  return (
-    <div
-      ref={rootRef}
-      className="veyra-html-root absolute inset-0 w-full h-full"
-      style={{ background: '#8eb8dc' }}
-    />
-  )
+  return <div ref={rootRef} className="veyra-html-root absolute inset-0 w-full h-full" />
 }

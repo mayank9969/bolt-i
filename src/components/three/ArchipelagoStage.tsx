@@ -151,6 +151,19 @@ export default function ArchipelagoStage() {
         <StaticArchipelago interactive={live} />
       )}
       {kind === 'webgl' && <AmbientAudio />}
+      {explore && (
+        <button
+          type="button"
+          className="island-chip"
+          style={{ position: 'absolute', top: 16, right: 16, zIndex: 6 }}
+          onClick={(e) => {
+            e.stopPropagation()
+            setWorld({ explore: false })
+          }}
+        >
+          Close
+        </button>
+      )}
     </div>
   )
 }

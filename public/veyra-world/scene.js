@@ -259,11 +259,18 @@ async function loadEmbeddedModel(encoded){
   const binary=await response.arrayBuffer();
   return new Promise((resolve,reject)=>gltfLoader.parse(binary,'',gltf=>resolve(gltf.scene),reject));
 }
-if(!window.VEYRA_MODEL_DATA)throw new Error('Veyra model bundle did not load. Keep assets/veyra-models/ beside this demo.');
+if(!THREE||!GLTFLoader)throw new Error('Three.js did not load.');
+if(!stage||!canvas)throw new Error('Archipelago canvas is missing.');
+function loadUrlModel(url){
+  return new Promise((resolve,reject)=>gltfLoader.load(url,gltf=>resolve(gltf.scene),undefined,reject));
+}
 const [detailTreeSource,forestTreeSource,...islandSources]=await Promise.all([
-  loadEmbeddedModel(window.VEYRA_MODEL_DATA.tree),
-  loadEmbeddedModel(window.VEYRA_MODEL_DATA.forestTree),
-  ...window.VEYRA_MODEL_DATA.islands.map(loadEmbeddedModel)
+  loadUrlModel('/models/veyra_canopy_tree_detail.glb'),
+  loadUrlModel('/models/veyra_canopy_tree_forest.glb'),
+  loadUrlModel('/models/veyra_floating_island_01.glb'),
+  loadUrlModel('/models/veyra_floating_island_02.glb'),
+  loadUrlModel('/models/veyra_floating_island_03.glb'),
+  loadUrlModel('/models/veyra_floating_island_04.glb'),
 ]);
 let terrainField=null;
 function terrainElevation(x,z){
