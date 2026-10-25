@@ -569,16 +569,20 @@
       },
       {
         "question": "Which astronomical object or idea matches this clue: many lie in the main belt between Mars and Jupiter?",
-        "answer": "an asteroid",
+        "answer": "asteroids",
         "category": "astronomy_space",
         "difficulty": "easy",
         "question_type": "normal",
         "options": {},
-        "explanation": "an asteroid: many lie in the main belt between Mars and Jupiter.",
+        "explanation": "Asteroids: many lie in the main belt between Mars and Jupiter.",
         "feedback_criteria": [],
         "skill_tags": [
           "astronomy_space",
           "easy"
+        ],
+        "accepted_answers": [
+          "an asteroid",
+          "asteroid"
         ]
       },
       {
@@ -1316,12 +1320,12 @@
         "difficulty": "medium",
         "question_type": "mcq",
         "options": {
-          "A": "an asteroid",
+          "A": "asteroids",
           "B": "a light-year",
           "C": "Earth",
           "D": "a comet"
         },
-        "explanation": "an asteroid: many lie in the main belt between Mars and Jupiter.",
+        "explanation": "Asteroids: many lie in the main belt between Mars and Jupiter.",
         "feedback_criteria": [],
         "skill_tags": [
           "astronomy_space",
@@ -2044,16 +2048,20 @@
       },
       {
         "question": "A case study reports rocky or metallic small body orbiting the Sun; it also notes many lie in the main belt between Mars and Jupiter. Which astronomical object or idea best explains both clues?",
-        "answer": "an asteroid",
+        "answer": "asteroids",
         "category": "astronomy_space",
         "difficulty": "hard",
         "question_type": "normal",
         "options": {},
-        "explanation": "an asteroid: rocky or metallic small body orbiting the Sun.",
+        "explanation": "Asteroids: many lie in the main belt between Mars and Jupiter.",
         "feedback_criteria": [],
         "skill_tags": [
           "astronomy_space",
           "hard"
+        ],
+        "accepted_answers": [
+          "an asteroid",
+          "asteroid"
         ]
       },
       {
@@ -2065,10 +2073,10 @@
         "options": {
           "A": "a light-year",
           "B": "Jupiter",
-          "C": "an asteroid",
+          "C": "asteroids",
           "D": "Venus"
         },
-        "explanation": "an asteroid: many lie in the main belt between Mars and Jupiter.",
+        "explanation": "Asteroids: many lie in the main belt between Mars and Jupiter.",
         "feedback_criteria": [],
         "skill_tags": [
           "astronomy_space",
