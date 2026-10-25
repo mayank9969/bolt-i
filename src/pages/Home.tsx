@@ -125,7 +125,7 @@ export default function Home() {
             <div className="flex items-center gap-2 mb-3 md:hidden">
               <button
                 type="button"
-                className="dock-chip"
+                className="island-chip"
                 aria-label="Previous island"
                 onClick={() => {
                   if (!cats.length) return
@@ -140,7 +140,7 @@ export default function Home() {
               </button>
               <button
                 type="button"
-                className="dock-chip"
+                className="island-chip"
                 aria-label="Next island"
                 onClick={() => {
                   if (!cats.length) return
@@ -162,7 +162,7 @@ export default function Home() {
                   <li key={c.id}>
                     <button
                       type="button"
-                      className="dock-chip"
+                      className="island-chip"
                       aria-pressed={on}
                       aria-haspopup="dialog"
                       onMouseEnter={() => setWorld({ hover: c.id })}
