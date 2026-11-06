@@ -1,5 +1,5 @@
-import { useEffect, useState, type ReactNode } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
+import type { ReactNode } from 'react'
+import { motion } from 'framer-motion'
 import { Link, NavLink as RouterNavLink, useLocation } from 'react-router-dom'
 import { LogoMark, Wordmark } from './Logo'
 import Background from './Background'
@@ -17,17 +17,8 @@ const NAV = [
 
 export default function Layout({ children }: { children: ReactNode }) {
   const location = useLocation()
-  const [open, setOpen] = useState(false)
   const inQuiz = location.pathname === '/quiz'
   const inPractice = location.pathname === '/play'
-
-  useEffect(() => setOpen(false), [location.pathname])
-  useEffect(() => {
-    if (!open) return
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false)
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [open])
 
   return (
     <div className="min-h-screen flex flex-col relative">
@@ -43,77 +34,21 @@ export default function Layout({ children }: { children: ReactNode }) {
             <Wordmark className="text-[17px]" />
           </Link>
 
-          {/* Desktop nav */}
-          <nav className="hidden md:flex items-center gap-1">
+          <nav className="flex items-center gap-0.5 sm:gap-1 min-w-0 overflow-x-auto [scrollbar-width:none]">
             {NAV.map((item) => (
               <NavItem key={item.to} to={item.to} label={item.label} />
             ))}
           </nav>
 
-          <div className="hidden md:flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             <ThemeSwitcher />
             {!inQuiz && (
-              <Link to="/setup" className="btn-primary btn-sm">
+              <Link to="/setup" className="btn-primary btn-sm hidden sm:inline-flex">
                 Start Quiz
               </Link>
             )}
           </div>
-
-          {/* Mobile: theme + menu */}
-          <div className="md:hidden flex items-center gap-2">
-            <ThemeSwitcher />
-            <button
-            onClick={() => setOpen((v) => !v)}
-            className="w-10 h-10 rounded-xl flex items-center justify-center text-fg-2 hover:text-fg hover:bg-card transition-colors"
-            aria-label={open ? 'Close menu' : 'Open menu'}
-            aria-expanded={open}
-          >
-            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-              {open ? <path d="M6 6l12 12M6 18L18 6" /> : <path d="M4 7h16M4 12h16M4 17h16" />}
-            </svg>
-            </button>
-          </div>
         </div>
-
-        {/* Mobile menu */}
-        <AnimatePresence>
-          {open && (
-            <motion.nav
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-              className="md:hidden overflow-hidden border-t border-line bg-canvas"
-            >
-              <div className="px-5 py-4 flex flex-col gap-1">
-                {NAV.map((item) => (
-                  <RouterNavLink
-                    key={item.to}
-                    to={item.to}
-                    end={item.to === '/'}
-                    className={({ isActive }) =>
-                      `flex items-center gap-3 px-4 min-h-[3rem] rounded-xl t-nav transition-colors ${
-                        isActive ? 'bg-accent/10 text-fg' : 'text-fg-2 hover:bg-card hover:text-fg'
-                      }`
-                    }
-                  >
-                    {({ isActive }) => (
-                      <>
-                        <span className={`w-1 h-4 rounded-full ${isActive ? 'bg-accent' : 'bg-transparent'}`} aria-hidden="true" />
-                        {item.label}
-                      </>
-                    )}
-                  </RouterNavLink>
-                ))}
-                {!inQuiz && (
-                  <Link to="/setup" className="btn-primary mt-3 min-h-[3rem]">
-                    Start Quiz
-                  </Link>
-                )}
-              </div>
-            </motion.nav>
-          )}
-        </AnimatePresence>
       </header>
 
       <main className="flex-1 relative z-10 flex flex-col overflow-x-clip">{children}</main>
@@ -125,7 +60,7 @@ export default function Layout({ children }: { children: ReactNode }) {
 
 function NavItem({ to, label }: { to: string; label: string }) {
   return (
-    <RouterNavLink to={to} end={to === '/'} className="relative px-3.5 py-1.5 rounded-full t-nav">
+    <RouterNavLink to={to} end={to === '/'} className="relative px-2.5 sm:px-3.5 py-1.5 rounded-full t-nav">
       {({ isActive }) => (
         <>
           {isActive && (
