@@ -19,6 +19,7 @@ export default function Layout({ children }: { children: ReactNode }) {
   const location = useLocation()
   const [open, setOpen] = useState(false)
   const inQuiz = location.pathname === '/quiz'
+  const inPractice = location.pathname === '/play'
 
   useEffect(() => setOpen(false), [location.pathname])
   useEffect(() => {
@@ -117,7 +118,7 @@ export default function Layout({ children }: { children: ReactNode }) {
 
       <main className="flex-1 relative z-10 flex flex-col overflow-x-clip">{children}</main>
 
-      {!inQuiz && <Footer />}
+      {!inQuiz && !inPractice && <Footer />}
     </div>
   )
 }
