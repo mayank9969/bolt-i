@@ -28,10 +28,10 @@ export default function Layout({ children }: { children: ReactNode }) {
       <PortalStage />
 
       <header className="sticky top-0 z-50 bg-canvas/92 backdrop-blur-md border-b border-line">
-        <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 h-[4.25rem] flex items-center justify-between gap-4">
-          <Link to="/" className="flex items-center gap-2.5 group shrink-0 rounded-lg" aria-label="VEYRA home">
-            <LogoMark size={40} />
-            <Wordmark className="text-[17px]" />
+        <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 h-[4.75rem] flex items-center justify-between gap-4">
+          <Link to="/" className="flex items-center gap-3 group shrink-0 rounded-lg" aria-label="VEYRA home">
+            <LogoMark size={56} />
+            <Wordmark className="text-[19px]" />
           </Link>
 
           <nav className="flex items-center gap-0.5 sm:gap-1 min-w-0 overflow-x-auto [scrollbar-width:none]">
@@ -85,7 +85,7 @@ function Footer() {
       <div className="max-w-page mx-auto px-5 sm:px-6 lg:px-8 py-12 flex flex-col sm:flex-row sm:items-end justify-between gap-6">
         <div>
           <p className="figcap flex items-center gap-2">
-            <LogoMark size={22} animated={false} />
+            <LogoMark size={28} animated={false} />
             VEYRA
           </p>
           <p className="t-caption text-fg-2 mt-2 max-w-sm">

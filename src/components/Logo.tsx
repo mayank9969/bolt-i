@@ -37,7 +37,7 @@ export function LogoMark({ size = 36, className = '', animated = true }: LogoPro
       el.classList.remove('is-run', 'is-settled', 'is-rippling')
       void el.offsetWidth
       el.classList.add('is-run')
-      settleT = window.setTimeout(() => el.classList.add('is-settled'), 6100)
+      settleT = window.setTimeout(() => el.classList.add('is-settled'), 3300)
     }
 
     const ripple = () => {
