@@ -11,6 +11,7 @@ import { ArrowRight, Cross } from '@/components/ui/Icons'
 import { useWorld } from '@/components/three/world'
 
 import { formatPercent, formatScore, labelCategory, performanceTone, toneText } from '@/lib/format'
+import HistoryStats from '@/components/HistoryStats'
 import { categoryCluster, normaliseCategoryId } from '@/lib/categories'
 const familyOf = (id: string): 0 | 1 => (categoryCluster(id) === 1 ? 1 : 0)
 
@@ -80,7 +81,7 @@ export default function History() {
         <Reveal>
           <div className="grid lg:grid-cols-12 gap-x-10 gap-y-8 items-end">
             <div className="lg:col-span-8">
-              <p className="ed-eyebrow">Archive</p>
+              <p className="ed-eyebrow">History</p>
               <h1 className="ed-display mt-4 text-balance">
                 {history && history.length ? (
                   <>A record of returning</>
@@ -222,6 +223,8 @@ export default function History() {
                 </div>
               </div>
             </Reveal>
+
+            <HistoryStats history={visible} />
 
             {/* ── Attempts ──────────────────────────────────── */}
             <div className="mt-20 grid lg:grid-cols-12 gap-x-10">

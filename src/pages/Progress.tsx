@@ -56,9 +56,9 @@ export default function Progress() {
       <Reveal>
         <p className="figcap inline-flex items-center gap-3">
           <span className="w-8 h-px bg-line-strong" />
-          Archive · progress
+          History · progress
         </p>
-        <h1 className="t-hero text-fg mt-6">What the archive shows.</h1>
+        <h1 className="t-hero text-fg mt-6">What history shows.</h1>
       </Reveal>
       {error && <p className="mt-6 text-warm-text">{error}</p>}
       <p className="t-lead text-fg-2 mt-6">

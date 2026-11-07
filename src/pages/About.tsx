@@ -48,7 +48,7 @@ export default function About() {
 
           <Section title="Ideas travel">
             <p>
-              Knowledge does not stay with one sitting. An attempt is scored, then it is written into the Archive — so
+              Knowledge does not stay with one sitting. An attempt is scored, then it is written into History — so
               a later you can see which subjects you returned to, and how that hour actually went.
             </p>
             <p>
@@ -60,11 +60,12 @@ export default function About() {
 
           <Section title="Leave it open">
             <p>
-              One percentage is a moment, not a verdict. The Archive is there so you can come back, not so a single
+              One percentage is a moment, not a verdict. History is there so you can come back, not so a single
               score can stand in for everything you understand.
             </p>
             <p>
-              Today’s Take, when you want it, is a private line in your own words. Skip it if you like.{' '}
+              Today’s Take, when you want it, is a private line in your own words — subjective and unscored. Skip it if
+              you like.{' '}
               <span className="ed-hit">Learning stays unfinished on purpose.</span>
             </p>
             <p className="mt-6">
@@ -72,7 +73,7 @@ export default function About() {
                 to="/history"
                 className="text-fg font-medium underline underline-offset-4 decoration-line-strong hover:decoration-fg"
               >
-                Open the Archive
+                Open History
               </Link>
             </p>
           </Section>

@@ -58,7 +58,7 @@ export default function Take() {
         </p>
         <h1 className="t-hero text-fg mt-6">Write a view.</h1>
         <p className="t-lead text-fg-2 mt-5 max-w-lg">
-          Prompts from newest.py. Stored only in this browser — the quiz API is not involved.
+          Subjective and unscored. A private line in this browser — the quiz engine never marks it.
         </p>
       </Reveal>
       {prompt && (
