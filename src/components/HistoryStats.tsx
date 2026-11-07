@@ -7,6 +7,24 @@ import { cttByDifficulty, irtReady, sittingSeries, sparseSubjects } from '@/lib/
 
 const ease = [0.22, 1, 0.36, 1] as const
 
+function spline(pts: [number, number][]) {
+  if (!pts.length) return ''
+  if (pts.length === 1) return `M${pts[0][0]} ${pts[0][1]}`
+  let d = `M${pts[0][0].toFixed(2)} ${pts[0][1].toFixed(2)}`
+  for (let i = 0; i < pts.length - 1; i++) {
+    const p0 = pts[Math.max(0, i - 1)]
+    const p1 = pts[i]
+    const p2 = pts[i + 1]
+    const p3 = pts[Math.min(pts.length - 1, i + 2)]
+    const c1x = p1[0] + (p2[0] - p0[0]) / 6
+    const c1y = p1[1] + (p2[1] - p0[1]) / 6
+    const c2x = p2[0] - (p3[0] - p1[0]) / 6
+    const c2y = p2[1] - (p3[1] - p1[1]) / 6
+    d += ` C${c1x.toFixed(2)} ${c1y.toFixed(2)} ${c2x.toFixed(2)} ${c2y.toFixed(2)} ${p2[0].toFixed(2)} ${p2[1].toFixed(2)}`
+  }
+  return d
+}
+
 function pct01(x: number, digits = 0) {
   return formatPercent(x * 100, digits)
 }
@@ -189,172 +207,195 @@ function RangePlot({
   max: number
   mean: number
 }) {
-  const x = (v: number) => 8 + (Math.min(100, Math.max(0, v)) / 100) * 84
+  const x = (v: number) => 10 + (Math.min(100, Math.max(0, v)) / 100) * 80
+  const box = spline([
+    [x(q1), 22],
+    [x(q1) + 1.2, 8],
+    [x((q1 + q3) / 2), 6],
+    [x(q3) - 1.2, 8],
+    [x(q3), 22],
+    [x(q3) - 1.2, 36],
+    [x((q1 + q3) / 2), 38],
+    [x(q1) + 1.2, 36],
+    [x(q1), 22],
+  ])
   return (
-    <svg viewBox="0 0 100 36" className="w-full h-auto" aria-hidden="true">
-      <line x1="8" x2="92" y1="18" y2="18" stroke="var(--nx-line-strong)" strokeWidth="0.4" />
-      {[0, 50, 100].map((t) => (
-        <text key={t} x={x(t)} y="34" textAnchor="middle" fontSize="4" fill="var(--nx-text-3)">
-          {t}
-        </text>
-      ))}
-      <motion.line
-        x1={x(min)}
-        x2={x(max)}
-        y1="18"
-        y2="18"
-        stroke="var(--nx-text)"
-        strokeWidth="0.6"
-        initial={{ pathLength: 0 }}
-        whileInView={{ pathLength: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8, ease }}
-      />
-      <motion.rect
-        x={x(q1)}
-        y="10"
-        width={Math.max(0.8, x(q3) - x(q1))}
-        height="16"
+    <svg viewBox="0 0 100 52" className="w-full h-auto" aria-hidden="true">
+      <path d={`M${x(min)} 22 C${x(min)} 18, ${x(q1)} 16, ${x(q1)} 22`} fill="none" stroke="var(--nx-text)" strokeWidth="0.7" />
+      <path d={`M${x(q3)} 22 C${x(q3)} 16, ${x(max)} 18, ${x(max)} 22`} fill="none" stroke="var(--nx-text)" strokeWidth="0.7" />
+      <motion.path
+        d={box}
         fill="var(--nx-accent)"
-        opacity={0.28}
-        initial={{ scaleX: 0 }}
-        whileInView={{ scaleX: 1 }}
+        fillOpacity={0.22}
+        stroke="var(--nx-accent)"
+        strokeWidth="0.5"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
-        style={{ transformOrigin: `${x(q1)}px 18px` }}
-        transition={{ duration: 0.9, delay: 0.15, ease }}
+        transition={{ duration: 0.8 }}
       />
       <motion.line
         x1={x(median)}
         x2={x(median)}
-        y1="10"
-        y2="26"
+        y1="8"
+        y2="36"
         stroke="var(--nx-text)"
-        strokeWidth="1.2"
+        strokeWidth="1.4"
         initial={{ scaleY: 0 }}
         whileInView={{ scaleY: 1 }}
         viewport={{ once: true }}
-        style={{ transformOrigin: `${x(median)}px 18px` }}
-        transition={{ delay: 0.35, duration: 0.4 }}
+        style={{ transformOrigin: `${x(median)}px 22px` }}
       />
-      <motion.circle
-        cx={x(mean)}
-        cy="18"
-        r="2.2"
-        fill="var(--nx-accent-2, var(--nx-accent))"
-        initial={{ scale: 0 }}
-        whileInView={{ scale: 1 }}
-        viewport={{ once: true }}
-        transition={{ delay: 0.5, type: 'spring', stiffness: 300, damping: 16 }}
-      />
+      <motion.circle cx={x(mean)} cy="22" r="2.4" fill="var(--nx-text)" initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }} transition={{ delay: 0.4, type: 'spring' }} />
+      <text x={x(median)} y="48" textAnchor="middle" fontSize="3.4" fill="var(--nx-text-3)">
+        median {Math.round(median)}
+      </text>
+      <text x={x(mean)} y="5" textAnchor="middle" fontSize="3.4" fill="var(--nx-text-3)">
+        mean {Math.round(mean)}
+      </text>
     </svg>
   )
 }
 
 function Spark({ series, roll }: { series: number[]; roll: number[] }) {
   const w = 320
-  const h = 88
+  const h = 110
   const n = series.length
   const X = (i: number) => (n <= 1 ? w / 2 : (i / (n - 1)) * w)
-  const Y = (v: number) => h - (Math.min(100, Math.max(0, v)) / 100) * (h - 8) - 4
-  const line = (arr: number[]) => arr.map((v, i) => `${i === 0 ? 'M' : 'L'} ${X(i)} ${Y(v)}`).join(' ')
+  const Y = (v: number) => h - 18 - (Math.min(100, Math.max(0, v)) / 100) * (h - 28)
+  const rawPts: [number, number][] = series.map((v, i) => [X(i), Y(v)])
+  const rollPts: [number, number][] = roll.map((v, i) => [X(i), Y(v)])
+  const area = `${spline(rollPts)} L ${X(n - 1)} ${h - 14} L 0 ${h - 14} Z`
   return (
-    <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-auto" aria-hidden="true">
-      <line x1="0" x2={w} y1={Y(50)} y2={Y(50)} stroke="var(--nx-line)" strokeDasharray="3 4" />
+    <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-auto overflow-visible" aria-hidden="true">
+      <path d={`M0 ${Y(50)} C ${w * 0.3} ${Y(50) - 2}, ${w * 0.7} ${Y(50) + 2}, ${w} ${Y(50)}`} fill="none" stroke="var(--nx-line)" strokeDasharray="4 6" />
+      <motion.path d={area} fill="var(--nx-accent)" fillOpacity={0.12} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} />
       <motion.path
-        d={line(series)}
+        d={spline(rawPts)}
         fill="none"
-        stroke="var(--nx-line-strong)"
-        strokeWidth="1.5"
+        stroke="var(--nx-text-3)"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        pathLength={1}
+        initial={{ pathLength: 0 }}
+        whileInView={{ pathLength: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 1.3, ease }}
+      />
+      <motion.path
+        d={spline(rollPts)}
+        fill="none"
+        stroke="var(--nx-accent)"
+        strokeWidth="3"
+        strokeLinecap="round"
+        pathLength={1}
+        initial={{ pathLength: 0 }}
+        whileInView={{ pathLength: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 1.5, delay: 0.1, ease }}
+      />
+      {rawPts.map((p, i) => (
+        <motion.circle
+          key={i}
+          cx={p[0]}
+          cy={p[1]}
+          r="3"
+          fill="var(--nx-canvas)"
+          stroke="var(--nx-text)"
+          strokeWidth="1.2"
+          initial={{ scale: 0 }}
+          whileInView={{ scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.5 + i * 0.04, type: 'spring', stiffness: 300, damping: 16 }}
+        />
+      ))}
+    </svg>
+  )
+}
+
+function IntervalBar({ lo, hi, p }: { lo: number; hi: number; p: number }) {
+  const x = (v: number) => 8 + v * 84
+  const hill = spline([
+    [x(Math.max(0, lo - 0.08)), 34],
+    [x(lo), 22],
+    [x(p), 10],
+    [x(hi), 22],
+    [x(Math.min(1, hi + 0.08)), 34],
+  ])
+  return (
+    <svg viewBox="0 0 100 48" className="w-full h-auto" aria-hidden="true">
+      <line x1="8" x2="92" y1="34" y2="34" stroke="var(--nx-line-strong)" strokeWidth="0.4" />
+      <motion.path
+        d={`${hill} L ${x(Math.min(1, hi + 0.08))} 34 L ${x(Math.max(0, lo - 0.08))} 34 Z`}
+        fill="var(--nx-accent)"
+        fillOpacity={0.28}
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+      />
+      <motion.path
+        d={hill}
+        fill="none"
+        stroke="var(--nx-accent)"
+        strokeWidth="1.4"
         pathLength={1}
         initial={{ pathLength: 0 }}
         whileInView={{ pathLength: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 1.1, ease }}
       />
-      <motion.path
-        d={line(roll)}
-        fill="none"
-        stroke="var(--nx-accent)"
-        strokeWidth="2.4"
-        strokeLinecap="round"
-        pathLength={1}
-        initial={{ pathLength: 0 }}
-        whileInView={{ pathLength: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 1.3, delay: 0.15, ease }}
-      />
-    </svg>
-  )
-}
-
-function IntervalBar({ lo, hi, p }: { lo: number; hi: number; p: number }) {
-  const x = (v: number) => 4 + v * 92
-  return (
-    <svg viewBox="0 0 100 28" className="w-full h-auto" aria-hidden="true">
-      <rect x="4" y="11" width="92" height="6" rx="3" fill="var(--nx-line)" />
-      <motion.rect
-        x={x(lo)}
-        y="11"
-        width={Math.max(1, x(hi) - x(lo))}
-        height="6"
-        rx="3"
-        fill="var(--nx-accent)"
-        initial={{ scaleX: 0 }}
-        whileInView={{ scaleX: 1 }}
-        viewport={{ once: true }}
-        style={{ transformOrigin: `${x(lo)}px 14px` }}
-        transition={{ duration: 0.9, ease }}
-      />
-      <motion.circle
-        cx={x(p)}
-        cy="14"
-        r="3.4"
-        fill="var(--nx-text)"
-        initial={{ scale: 0 }}
-        whileInView={{ scale: 1 }}
-        viewport={{ once: true }}
-        transition={{ delay: 0.4, type: 'spring', stiffness: 320, damping: 14 }}
-      />
-      <text x="4" y="26" fontSize="4" fill="var(--nx-text-3)">
-        0%
+      <circle cx={x(p)} cy="10" r="2.2" fill="var(--nx-text)" />
+      <text x={x(lo)} y="44" textAnchor="middle" fontSize="3.6" fill="var(--nx-text-3)">
+        {Math.round(lo * 100)}%
       </text>
-      <text x="96" y="26" fontSize="4" textAnchor="end" fill="var(--nx-text-3)">
-        100%
+      <text x={x(p)} y="6" textAnchor="middle" fontSize="3.6" fill="var(--nx-text)">
+        {Math.round(p * 100)}%
+      </text>
+      <text x={x(hi)} y="44" textAnchor="middle" fontSize="3.6" fill="var(--nx-text-3)">
+        {Math.round(hi * 100)}%
       </text>
     </svg>
   )
 }
 
 function SubjectBars({ name, raw, smooth, sparse }: { name: string; raw: number; smooth: number; sparse: boolean }) {
+  const w = 200
+  const h = 56
+  const peak = (v: number) => 48 - v * 36
+  const rawC = spline([
+    [0, 48],
+    [w * 0.35, peak(raw) + 6],
+    [w * 0.55, peak(raw)],
+    [w, 48],
+  ])
+  const smC = spline([
+    [0, 48],
+    [w * 0.4, peak(smooth) + 4],
+    [w * 0.62, peak(smooth)],
+    [w, 48],
+  ])
   return (
     <div>
-      <p className="ed-kicker" style={{ fontSize: '1.15rem', marginBottom: '0.4rem' }}>
+      <p className="ed-kicker" style={{ fontSize: '1.15rem', marginBottom: '0.35rem' }}>
         {name}
         {sparse ? <span className="ed-soft"> · still thin</span> : null}
       </p>
-      <div className="space-y-2">
-        <Bar label="Raw" value={raw} tone="line" />
-        <Bar label="Smoothed" value={smooth} tone="accent" />
-      </div>
-    </div>
-  )
-}
-
-function Bar({ label, value, tone }: { label: string; value: number; tone: 'line' | 'accent' }) {
-  return (
-    <div className="flex items-center gap-3">
-      <span className="t-caption w-20 text-fg-3">{label}</span>
-      <div className="flex-1 h-2 rounded-full track overflow-hidden">
-        <motion.div
-          className="h-full rounded-full"
-          style={{ background: tone === 'accent' ? 'var(--nx-accent)' : 'var(--nx-text)' }}
-          initial={{ width: 0 }}
-          whileInView={{ width: `${Math.min(100, value * 100)}%` }}
+      <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-auto" aria-hidden="true">
+        <motion.path d={`${rawC} L ${w} 48 L 0 48 Z`} fill="var(--nx-text)" fillOpacity={0.12} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} />
+        <motion.path
+          d={`${smC} L ${w} 48 L 0 48 Z`}
+          fill="var(--nx-accent)"
+          fillOpacity={0.35}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.9, ease }}
+          transition={{ delay: 0.12 }}
         />
-      </div>
-      <span className="num t-caption w-12 text-right text-fg">{pct01(value)}</span>
+        <motion.path d={smC} fill="none" stroke="var(--nx-accent)" strokeWidth="2" pathLength={1} initial={{ pathLength: 0 }} whileInView={{ pathLength: 1 }} viewport={{ once: true }} transition={{ duration: 1.1, ease }} />
+        <text x="4" y="12" fontSize="9" fill="var(--nx-text-3)">
+          raw {pct01(raw)} · smooth {pct01(smooth)}
+        </text>
+      </svg>
     </div>
   )
 }
@@ -381,15 +422,37 @@ function CttRow({
           ? ' Discrimination waits until there are four sittings in this band.'
           : ` Stronger sittings outscored weaker ones by ${(discrimination * 100).toFixed(0)} points here.`}
       </p>
-      <div className="h-2 rounded-full track overflow-hidden">
-        <motion.div
-          className="h-full rounded-full fill"
-          initial={{ width: 0 }}
-          whileInView={{ width: `${p * 100}%` }}
+      <svg viewBox="0 0 200 40" className="w-full h-auto" aria-hidden="true">
+        <motion.path
+          d={spline([
+            [0, 36],
+            [40, 36 - p * 22],
+            [110, 36 - p * 28],
+            [200, 36],
+          ]) + ' L 200 36 L 0 36 Z'}
+          fill="var(--nx-accent)"
+          fillOpacity={0.3}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 1, ease }}
         />
-      </div>
+        <motion.path
+          d={spline([
+            [0, 36],
+            [40, 36 - p * 22],
+            [110, 36 - p * 28],
+            [200, 36],
+          ])}
+          fill="none"
+          stroke="var(--nx-accent)"
+          strokeWidth="2"
+          pathLength={1}
+          initial={{ pathLength: 0 }}
+          whileInView={{ pathLength: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1.15, ease }}
+        />
+      </svg>
     </div>
   )
 }

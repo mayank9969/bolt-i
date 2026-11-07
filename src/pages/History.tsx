@@ -189,26 +189,7 @@ export default function History() {
                       className="grid grid-cols-[1fr_auto] sm:grid-cols-[10rem_1fr_auto] items-center gap-x-6 gap-y-2 py-5 border-b border-line"
                     >
                       <span className="t-h3 text-fg">{String(name)}</span>
-                      <div className="col-span-2 sm:col-span-1 h-px bg-line-strong relative">
-                        <motion.span
-                          initial={{ scaleX: 0 }}
-                          whileInView={{ scaleX: Number(w) }}
-                          viewport={{ once: true }}
-                          transition={{ duration: 1.35, delay: 0.12 + i * 0.1, ease }}
-                          className="absolute inset-y-[-1.5px] left-0 right-0 origin-left bg-accent"
-                        />
-                        {Array.from({ length: Math.min(12, Number(n)) }, (_, k) => (
-                          <motion.span
-                            key={k}
-                            className="absolute top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-accent"
-                            style={{ left: `${((k + 1) / 13) * Number(w) * 100}%` }}
-                            initial={{ scale: 0, opacity: 0 }}
-                            whileInView={{ scale: 1, opacity: 1 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: 0.35 + i * 0.08 + k * 0.06, type: 'spring', stiffness: 420, damping: 16 }}
-                          />
-                        ))}
-                      </div>
+                      <SubjectWave weight={Number(w)} sittings={Number(n)} delay={i * 0.1} />
                       <span className="text-right t-caption text-fg-2 num sm:w-24">
                         {Number(n)} {Number(n) === 1 ? 'attempt' : 'attempts'}
                         <span className="block figcap mt-0.5">{Math.round(Number(w) * 100)}% set</span>
@@ -285,6 +266,40 @@ export default function History() {
         )}
       </div>
     </div>
+  )
+}
+
+function SubjectWave({ weight, sittings, delay }: { weight: number; sittings: number; delay: number }) {
+  const w = 240
+  const h = 36
+  const end = 16 + weight * 200
+  const amp = 5 + sittings * 0.7
+  const d = `M16 ${h / 2} C ${16 + end * 0.25} ${h / 2 - amp}, ${16 + end * 0.55} ${h / 2 + amp * 0.7}, ${end} ${h / 2}`
+  const fill = `${d} L ${end} ${h - 4} Q ${16 + end * 0.5} ${h - 2} 16 ${h - 4} Z`
+  return (
+    <svg viewBox={`0 0 ${w} ${h}`} className="col-span-2 sm:col-span-1 w-full h-9" aria-hidden="true">
+      <motion.path
+        d={fill}
+        fill="var(--nx-accent)"
+        fillOpacity={0.18}
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ delay, duration: 0.6 }}
+      />
+      <motion.path
+        d={d}
+        fill="none"
+        stroke="var(--nx-accent)"
+        strokeWidth="2.4"
+        strokeLinecap="round"
+        pathLength={1}
+        initial={{ pathLength: 0 }}
+        whileInView={{ pathLength: 1 }}
+        viewport={{ once: true }}
+        transition={{ delay: delay + 0.08, duration: 1.2, ease }}
+      />
+    </svg>
   )
 }
 
