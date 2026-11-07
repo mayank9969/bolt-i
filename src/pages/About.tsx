@@ -1,3 +1,7 @@
+import '@fontsource-variable/fraunces/wght.css'
+import '@fontsource-variable/fraunces/wght-italic.css'
+import '@fontsource-variable/source-serif-4/wght.css'
+import '@fontsource-variable/source-serif-4/wght-italic.css'
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import Reveal from '@/components/Reveal'
@@ -15,7 +19,7 @@ export default function About() {
         <Reveal>
           <header className="max-w-3xl">
             <p className="ed-eyebrow">A personal learning project</p>
-            <h1 className="ed-display text-[clamp(2.35rem,5.8vw,4rem)] mt-5 text-balance">
+            <h1 className="ed-display ed-hero mt-6">
               A question is never the <em>end</em> of the story.
             </h1>
             <p className="ed-prose mt-7">
