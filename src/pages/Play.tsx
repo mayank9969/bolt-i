@@ -10,7 +10,7 @@ export default function Play() {
   return (
     <iframe
       title="VEYRA Practice"
-      src="/practice-relay/index.html?eye=1"
+      src="/practice-relay/index.html?eye=2"
       className="w-full border-0 block bg-[#FBF7EC]"
       style={{ height: 'calc(100dvh - 4.25rem)', minHeight: 640 }}
     />
