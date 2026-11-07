@@ -310,13 +310,13 @@ html { scroll-behavior: auto; }
 nav[aria-label="Sections"] { backdrop-filter: none; -webkit-backdrop-filter: none; background-color: var(--color-parchment); }
 
 /* The invitation and the eye share a single editorial line of sight. */
-.v-closing-invitation { display: grid; grid-template-columns: minmax(0,1fr) minmax(150px, 38%); align-items: center; column-gap: clamp(1rem,3vw,2.75rem); }
+.v-closing-invitation { display: grid; grid-template-columns: minmax(0,1fr) minmax(140px, 32%); align-items: center; column-gap: clamp(1rem,3vw,2.25rem); overflow: hidden; }
 .v-closing-invitation-copy { min-width: 0; }
 .v-closing-lead { max-width: 31ch; font: 400 clamp(1.72rem,2.15vw,1.95rem)/1.32 "Instrument Serif", Georgia, serif; color: var(--v-ink); }
 .v-closing-body { max-width: 42ch; font: 400 clamp(1.16rem,1.35vw,1.25rem)/1.68 Inter, sans-serif; color: #505650; }
 .v-closing-coda { grid-template-columns: 38px minmax(0,1fr); }
-.v-curious-eye { appearance: none; display: block; width: min(100%, 360px); height: 250px; justify-self: center; padding: 0; border: 0; background: #150a1c; color: inherit; cursor: crosshair; border-radius: 8px; overflow: hidden; }
-.v-curious-eye canvas, .v-curious-eye svg { width: 100%; height: auto; display: block; overflow: visible; }
+.v-curious-eye { appearance: none; display: block; box-sizing: border-box; width: 100%; max-width: 280px; height: 200px; justify-self: end; align-self: center; padding: 0; border: 0; background: #150a1c; color: inherit; cursor: crosshair; border-radius: 10px; overflow: hidden; }
+.v-curious-eye canvas, .v-curious-eye svg { width: 100%; height: 100%; display: block; overflow: hidden; }
 .v-curious-open { opacity: 0; transform: scaleY(.025); transform-origin: 50% 50%; transition: transform 650ms cubic-bezier(.2,.75,.2,1), opacity 180ms ease; }
 .v-curious-shut { opacity: 1; transition: opacity 180ms ease; }
 .v-curious-iris { transform: translate(var(--look-x,0px),var(--look-y,0px)); transition: transform 180ms ease-out; }

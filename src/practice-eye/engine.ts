@@ -253,13 +253,13 @@ export function startEye(canvas: HTMLCanvasElement, onLabel: (s: string) => void
     dpr = 1;
   const resize = () => {
     dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const box = canvas.parentElement?.getBoundingClientRect();
-    W = Math.max(220, box?.width || canvas.clientWidth || 360);
-    H = Math.max(160, box?.height || canvas.clientHeight || W * 0.72);
+    const box = canvas.getBoundingClientRect();
+    W = Math.max(160, box.width || canvas.clientWidth || 280);
+    H = Math.max(140, box.height || canvas.clientHeight || W * 0.7);
     canvas.width = Math.round(W * dpr);
     canvas.height = Math.round(H * dpr);
-    canvas.style.width = W + "px";
-    canvas.style.height = H + "px";
+    canvas.style.width = "";
+    canvas.style.height = "";
   };
   resize();
   window.addEventListener("resize", resize);
