@@ -11,6 +11,29 @@
   color: rgb(var(--nx-text-rgb));
 }
 
+[data-theme='paper'] .about-ed {
+  --veyra-flower-line: #17283a;
+  --veyra-flower-line-soft: #47627a;
+  --veyra-flower-core: #0f1c2a;
+  --veyra-flower-pulse: #04858c;
+  --veyra-flower-halo: #27a0a8;
+  --veyra-flower-tint-a: #0a9d9a;
+  --veyra-flower-tint-b: #5b3fd1;
+  --veyra-flower-tint-c: #d3367a;
+  --veyra-flower-tint-d: #d98410;
+}
+[data-theme='ink'] .about-ed {
+  --veyra-flower-line: #e4f0ff;
+  --veyra-flower-line-soft: #a4bddb;
+  --veyra-flower-core: #fff;
+  --veyra-flower-pulse: #c4fff7;
+  --veyra-flower-halo: #7fe4f0;
+  --veyra-flower-tint-a: #22e8d8;
+  --veyra-flower-tint-b: #7eb8ff;
+  --veyra-flower-tint-c: #c9a8ff;
+  --veyra-flower-tint-d: #ff9ad4;
+}
+
 .about-ed .ed-eyebrow,
 .archive-ed .ed-eyebrow {
   font-family: var(--ed-body);

@@ -6,7 +6,7 @@ import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import Reveal from '@/components/Reveal'
 import CarryInk from '@/components/CarryInk'
-import WireFlower from '@/components/WireFlower'
+import VeyraFlower from '@/components/VeyraFlower'
 import { useWorld } from '@/components/three/world'
 import { ArrowRight } from '@/components/ui/Icons'
 
@@ -77,27 +77,38 @@ export default function About() {
             </p>
           </Section>
         </article>
+      </div>
 
+      <section className="quote-band relative py-28 md:py-40 overflow-hidden" aria-label="Epigraph">
+        <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+          <div className="quote-veil absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full" />
+        </div>
+        <blockquote className="relative z-10 mx-auto max-w-page px-6 text-center">
+          <p className="quote-line font-sans italic font-normal text-[1.35rem] sm:text-2xl md:text-[1.85rem] max-w-[28ch] mx-auto text-balance leading-snug tracking-tight">
+            The mind can build a universe, yet spend a lifetime living inside the walls of a habit. Days become years,
+            patterns become identity, and one day you may realize you spent your life repeating a version of yourself
+            you never chose.
+          </p>
+          <p className="quote-line font-sans italic mt-6 text-[1.15rem] sm:text-xl max-w-[32ch] mx-auto leading-snug">
+            Perhaps the greatest prison is the one you mistake for your nature. But the moment you recognize its walls,
+            you can begin to break them.
+          </p>
+          <p className="quote-line font-sans italic mt-8 text-[1.5rem] sm:text-3xl md:text-4xl max-w-[20ch] mx-auto leading-snug tracking-tight">
+            So tell me, are you shaping your life, or merely repeating it?
+          </p>
+        </blockquote>
+      </section>
+
+      <div className="relative z-10 max-w-page mx-auto px-5 sm:px-6 lg:px-8 pb-16">
         <Reveal>
-          <figure className="ed-coda">
-            <WireFlower />
-            <blockquote>
-              <p className="ed-q-lead">
-                The mind can build a universe, yet spend a lifetime living inside the walls of a habit. Days become
-                years, patterns become identity, and one day you may realize you spent your life repeating a version of
-                yourself you never chose.
-              </p>
-              <p>
-                Perhaps the greatest prison is the one you mistake for your nature. But the moment you recognize its
-                walls, you can begin to break them.
-              </p>
-              <p className="ed-q-ask">So tell me, are you shaping your life, or merely repeating it?</p>
-            </blockquote>
-          </figure>
+          <div className="veyra-flower-wrap mx-auto max-w-md py-8">
+            <VeyraFlower />
+          </div>
         </Reveal>
-
         <Reveal>
-          <p className="ed-close mt-10">Made by Mayank, for the pleasure of learning.</p>
+          <p className="ed-close mt-6">
+            Made by Mayank Sarwal, for the pleasure of learning — for only the curiouser learners out there.
+          </p>
           <Link to="/setup" className="btn-primary btn-lg mt-8 inline-flex">
             Start a quiz
             <ArrowRight className="arrow w-5 h-5" />

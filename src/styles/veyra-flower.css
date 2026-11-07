@@ -1,0 +1,141 @@
+/* ==== VEYRA FLOWER COMPONENT ==== */
+.veyra-flower{
+  --vf-line:      var(--veyra-flower-line,#e4f0ff);
+  --vf-line-soft: var(--veyra-flower-line-soft,#a4bddb);
+  --vf-core:      var(--veyra-flower-core,#fff);
+  --vf-pulse:     var(--veyra-flower-pulse,#c4fff7);
+  --vf-halo:      var(--veyra-flower-halo,#7fe4f0);
+  --vf-tint-a:    var(--veyra-flower-tint-a,#22e8d8);
+  --vf-tint-b:    var(--veyra-flower-tint-b,#8a63ff);
+  --vf-tint-c:    var(--veyra-flower-tint-c,#ff5fa2);
+  --vf-tint-d:    var(--veyra-flower-tint-d,#ffb457);
+  display:block;width:100%;max-width:560px;aspect-ratio:3/4;background:transparent;
+}
+.veyra-flower:focus{outline:none}
+.veyra-flower:focus-visible{outline:1px solid var(--vf-line-soft);outline-offset:8px;border-radius:6px}
+.veyra-flower svg{display:block;width:100%;height:100%;overflow:visible}
+
+/* pointer: only main petal fills are hoverable */
+.veyra-flower [data-vf]{pointer-events:none}
+.veyra-flower [data-vf="petals"] .petal > *{pointer-events:none}
+.veyra-flower [data-vf="petals"] .petal > .petal-fill{pointer-events:all}
+
+/* ----- line work (the finished state is the default state) ----- */
+.veyra-flower .draw{fill:none;stroke:var(--vf-line);stroke-width:1;stroke-linecap:round;stroke-linejoin:round;opacity:var(--o,1)}
+.veyra-flower .outline{--o:.95;stroke-width:1.2;
+  stroke:var(--vf-line);stroke:color-mix(in srgb,var(--vf-line) 74%,var(--c2,var(--vf-line)))}
+.veyra-flower .inner{--o:.55;stroke-width:.85;
+  stroke:var(--vf-line);stroke:color-mix(in srgb,var(--vf-line) 60%,var(--c1,var(--vf-line)))}
+.veyra-flower .inner.i2{--o:.4;stroke-width:.75}
+.veyra-flower .rimglow{--o:.16;stroke-width:5;stroke:var(--c2,var(--vf-tint-a))}
+.veyra-flower .vein{--o:.5;stroke-width:.7;stroke:var(--vf-line-soft)}
+.veyra-flower .mesh{--o:.22;stroke-width:.5;stroke:var(--vf-line-soft)}
+.veyra-flower .mesh.m2{--o:.17}
+.veyra-flower .glint{--o:.5;stroke-width:.8;stroke:var(--vf-core)}
+/* echo: a faint, slightly rotated second rim, so each petal reads as layered glass */
+.veyra-flower .echo{--o:.3;stroke-width:.65;stroke:var(--c2,var(--vf-tint-a))}
+/* soft light: wide, very low-opacity strokes stacked to fake a blur without any filter */
+.veyra-flower .soft{--o:.065;stroke-width:36;stroke:var(--c2,var(--vf-tint-a))}
+.veyra-flower .soft.s2{--o:.08;stroke-width:21;stroke:var(--c1,var(--vf-tint-c))}
+.veyra-flower .soft.s3{--o:.07;stroke-width:12;stroke:var(--c3,var(--vf-tint-b))}
+
+/* iridescent light bands: three dispersed strokes per petal */
+.veyra-flower .band{--o:.16;stroke-width:10;stroke:var(--c2,var(--vf-tint-a))}
+.veyra-flower .band.bc{--o:.17;stroke-width:9;stroke:var(--c1,var(--vf-tint-c))}
+.veyra-flower .band.ba{--o:.2;stroke-width:17;stroke:var(--c2,var(--vf-tint-a))}
+.veyra-flower .band.bb{--o:.17;stroke-width:8;stroke:var(--c3,var(--vf-tint-b))}
+.veyra-flower .band.lng{--o:.12;stroke-width:12}
+.veyra-flower .band.lf1{--o:.15;stroke-width:11;stroke:var(--vf-tint-a)}
+.veyra-flower .band.lf2{--o:.18;stroke-width:5;stroke:var(--vf-tint-b)}
+.veyra-flower .band.lf3{--o:.12;stroke-width:4;stroke:var(--vf-tint-c)}
+
+.veyra-flower .stem{--o:.9;stroke-width:1.15}
+.veyra-flower .stem-mid{--o:.3;stroke-width:.6;stroke:var(--vf-line-soft)}
+.veyra-flower .stem-rung{--o:.26;stroke-width:.55;stroke:var(--vf-line-soft)}
+.veyra-flower .stem-fill{fill:var(--vf-tint-a);fill-opacity:.09;stroke:none}
+.veyra-flower .leaf-out{--o:.8;stroke-width:1}
+.veyra-flower .leaf-vein{--o:.34;stroke-width:.55;stroke:var(--vf-line-soft)}
+.veyra-flower .leaf-fill{fill:var(--vf-tint-b);fill-opacity:.07;stroke:none}
+.veyra-flower .filament{--o:.75;stroke-width:.85}
+.veyra-flower .stamen{--o:.8;stroke-width:.85}
+.veyra-flower .ring{--o:.5;stroke-width:.8;stroke:var(--vf-line-soft)}
+
+.veyra-flower .dot{fill:var(--vf-line);opacity:.9;transform-box:fill-box;transform-origin:center}
+.veyra-flower .dot.warm{fill:var(--vf-tint-d)}
+.veyra-flower .dot.rose{fill:var(--vf-tint-c)}
+.veyra-flower .headring{fill:none;stroke:var(--vf-line-soft);stroke-width:.6;--o:.5;opacity:var(--o)}
+.veyra-flower .mote{fill:var(--vf-line);opacity:var(--o,.5)}
+.veyra-flower .mote.m1{fill:var(--vf-tint-a)}
+.veyra-flower .mote.m2{fill:var(--vf-tint-c)}
+
+.veyra-flower .petal-fill{fill:url(#vf-pA);stroke:none}
+.veyra-flower .petal-glow{fill:var(--c2,var(--vf-tint-a));stroke:none;opacity:0}
+.veyra-flower .petal{transform-origin:300px 340px}
+.veyra-flower .sway{transform-origin:298px 786px}
+.veyra-flower .bloom{fill:url(#vf-halo);opacity:.6;transform-origin:300px 340px}
+.veyra-flower .bloom-wide{fill:url(#vf-wide);--o:.85;opacity:var(--o);transform-origin:300px 340px}
+.veyra-flower .core{fill:var(--vf-core);transform-origin:300px 340px}
+.veyra-flower .birth{fill:none;stroke:var(--vf-halo);stroke-width:1;vector-effect:non-scaling-stroke;opacity:0;transform-origin:300px 340px}
+
+/* travelling light (invisible unless animating) */
+.veyra-flower .pulse{fill:none;stroke:var(--vf-pulse);stroke-width:1.8;stroke-linecap:round;
+  --dl:.14;--po:.9;stroke-dasharray:var(--dl) 2;stroke-dashoffset:var(--dl);opacity:0}
+.veyra-flower .pulse.glowline{stroke-width:9;--dl:.26;--po:.16}
+
+/* ----- armed (hidden) start state: applied by JS only when motion is allowed ----- */
+.veyra-flower.is-armed .draw{stroke-dasharray:1;stroke-dashoffset:1;opacity:0}
+.veyra-flower.is-armed .fade,
+.veyra-flower.is-armed .dot,
+.veyra-flower.is-armed .mote,
+.veyra-flower.is-armed .core,
+.veyra-flower.is-armed .bloom,
+.veyra-flower.is-armed .bloom-wide{opacity:0}
+
+/* ----- intro (per-element delays/durations are set inline by JS) ----- */
+.veyra-flower.is-run .draw{animation:vf-draw var(--t,1.2s) cubic-bezier(.3,.6,.25,1) var(--d,0s) both}
+.veyra-flower.is-run .fade{animation:vf-fade var(--t,1.5s) ease-out var(--d,0s) both}
+.veyra-flower.is-run .mote{animation:vf-fade 2s ease-out var(--d,0s) both}
+.veyra-flower.is-run .dot{animation:vf-pop .7s ease-out var(--d,0s) both}
+.veyra-flower.is-run .petal{animation:vf-unfold var(--t,1.6s) cubic-bezier(.2,.7,.2,1) var(--d,0s) both}
+.veyra-flower.is-run .core{animation:vf-core-in 1.1s cubic-bezier(.2,.8,.2,1) .15s both}
+.veyra-flower.is-run .birth{animation:vf-birth 1.8s ease-out .25s both}
+.veyra-flower.is-run .bloom{animation:vf-bloom-in 1.8s ease-out .2s both, vf-flare 1.8s ease-in-out 7.4s}
+.veyra-flower.is-run .bloom-wide{animation:vf-fade 3.2s ease-out 3.2s both}
+.veyra-flower.is-run:not(.is-settled) .pulse{animation:vf-pulse var(--t,1.5s) cubic-bezier(.45,0,.35,1) var(--d,0s) both}
+
+/* ----- settled: near-imperceptible drift, plus one-at-a-time ripple ----- */
+.veyra-flower.is-run.is-settled .bloom{animation:vf-breathe 14s ease-in-out infinite alternate}
+.veyra-flower.is-run.is-settled .bloom-wide{animation:vf-breathe2 18s ease-in-out infinite alternate}
+.veyra-flower.is-settled .sway{animation:vf-sway 22s ease-in-out infinite alternate}
+.veyra-flower.is-settled .mote{animation:vf-twinkle var(--tw,11s) ease-in-out calc(var(--d,0s) * -1) infinite alternate}
+@keyframes vf-twinkle{from{opacity:var(--o,.5)}to{opacity:calc(var(--o,.5) * .4)}}
+.veyra-flower.is-settled .petal.is-rippling .pulse{animation:vf-ripple var(--rt,1.4s) cubic-bezier(.4,0,.3,1) var(--rd,0s) both}
+.veyra-flower.is-settled .petal.is-rippling .petal-glow{animation:vf-glow 2.2s ease-in-out both}
+.veyra-flower.is-offscreen *{animation-play-state:paused !important}
+
+@keyframes vf-draw{0%{stroke-dashoffset:1;opacity:0}3%{opacity:var(--o,1)}100%{stroke-dashoffset:0;opacity:var(--o,1)}}
+@keyframes vf-fade{from{opacity:0}to{opacity:var(--o,1)}}
+@keyframes vf-pop{from{opacity:0;transform:scale(.2)}to{opacity:.9;transform:scale(1)}}
+@keyframes vf-unfold{from{transform:rotate(var(--ur,8deg)) scale(var(--us,.5))}to{transform:none}}
+@keyframes vf-core-in{from{opacity:0;transform:scale(.1)}to{opacity:1;transform:scale(1)}}
+@keyframes vf-birth{0%{opacity:.85;transform:scale(1)}100%{opacity:0;transform:scale(15)}}
+@keyframes vf-bloom-in{from{opacity:0;transform:scale(.12)}to{opacity:.6;transform:scale(1)}}
+@keyframes vf-flare{0%,100%{opacity:.6;transform:scale(1)}50%{opacity:.9;transform:scale(1.22)}}
+@keyframes vf-breathe{from{opacity:.5}to{opacity:.66}}
+@keyframes vf-breathe2{from{opacity:.85}to{opacity:.62}}
+@keyframes vf-sway{from{transform:rotate(-.25deg)}to{transform:rotate(.25deg)}}
+@keyframes vf-pulse{
+  0%{stroke-dashoffset:var(--dl);opacity:0}
+  12%{opacity:var(--po)}88%{opacity:var(--po)}
+  100%{stroke-dashoffset:-1;opacity:0}}
+@keyframes vf-ripple{
+  0%{stroke-dashoffset:var(--dl);opacity:0}
+  15%{opacity:calc(var(--po) * .7)}85%{opacity:calc(var(--po) * .7)}
+  100%{stroke-dashoffset:-1;opacity:0}}
+@keyframes vf-glow{0%,100%{opacity:0}45%{opacity:.2}}
+
+@media (prefers-reduced-motion:reduce){
+  .veyra-flower *{animation:none !important;transition:none !important}
+  .veyra-flower .pulse,.veyra-flower .birth{display:none}
+}
+/* ==== END COMPONENT CSS ==== */
