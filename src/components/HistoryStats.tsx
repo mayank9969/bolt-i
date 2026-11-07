@@ -30,17 +30,12 @@ export default function HistoryStats({ history }: { history: HistoryEntry[] }) {
           }
           meaning={
             <>
-              The <span className="ed-soft">median</span> is the middle sitting — half of your scores sit below it.
-              The <span className="ed-soft">mean</span> is pulled by extremes. The box is the middle half of your
-              work; the whiskers are the lowest and highest sitting the engine stored.
+              Each mark is one quiz. The teal band is where the <span className="ed-soft">middle half</span> of your
+              scores sit. The labeled line is the <span className="ed-soft">median</span> — the middle sitting.
             </>
           }
         >
-          <RangePlot min={d.min} q1={d.q1} median={d.median} q3={d.q3} max={d.max} mean={d.mean} points={series.pct} />
-          <p className="ed-prose mt-5 text-[1rem]">
-            Spread (standard deviation) is {formatPercent(d.sd, 0)}. A large spread means sittings disagree with each
-            other; a small one means you tend to land in the same place.
-          </p>
+          <RangePlot q1={d.q1} median={d.median} q3={d.q3} points={series.pct} />
         </Chapter>
       )}
 
@@ -149,50 +144,43 @@ function Chapter({
 }
 
 function RangePlot({
-  min,
   q1,
   median,
   q3,
-  max,
-  mean,
   points,
 }: {
-  min: number
   q1: number
   median: number
   q3: number
-  max: number
-  mean: number
   points: number[]
 }) {
-  const x = (v: number) => 28 + (Math.min(100, Math.max(0, v)) / 100) * 250
-  const y = 36
-  const jitter = (i: number) => y - 18 + ((i * 17) % 12)
+  const x = (v: number) => 16 + (Math.min(100, Math.max(0, v)) / 100) * 268
   return (
-    <svg viewBox="0 0 300 72" className="w-full h-auto" role="img" aria-label="Box plot of sitting percentages from 0 to 100">
-      {[0, 25, 50, 75, 100].map((t) => (
-        <g key={t}>
-          <line x1={x(t)} x2={x(t)} y1="8" y2="58" stroke="var(--nx-line)" strokeWidth="0.6" />
-          <text x={x(t)} y="70" textAnchor="middle" fontSize="9" fill="var(--nx-text-3)">
-            {t}%
-          </text>
-        </g>
+    <svg viewBox="0 0 300 64" className="w-full h-auto" role="img" aria-label="Each sitting on a 0 to 100 percent line">
+      <line x1="16" x2="284" y1="32" y2="32" stroke="var(--nx-line-strong)" strokeWidth="1" />
+      {[0, 50, 100].map((t) => (
+        <text key={t} x={x(t)} y="58" textAnchor="middle" fontSize="11" fill="var(--nx-text-3)">
+          {t}%
+        </text>
       ))}
-      <line x1={x(min)} x2={x(q1)} y1={y} y2={y} stroke="var(--nx-text)" strokeWidth="1.6" />
-      <line x1={x(q3)} x2={x(max)} y1={y} y2={y} stroke="var(--nx-text)" strokeWidth="1.6" />
-      <line x1={x(min)} x2={x(min)} y1={y - 7} y2={y + 7} stroke="var(--nx-text)" strokeWidth="1.6" />
-      <line x1={x(max)} x2={x(max)} y1={y - 7} y2={y + 7} stroke="var(--nx-text)" strokeWidth="1.6" />
-      <rect x={x(q1)} y={y - 14} width={Math.max(2, x(q3) - x(q1))} height="28" fill="var(--nx-accent)" fillOpacity="0.25" stroke="var(--nx-accent)" strokeWidth="1.4" />
-      <line x1={x(median)} x2={x(median)} y1={y - 14} y2={y + 14} stroke="var(--nx-text)" strokeWidth="2.2" />
-      <polygon points={`${x(mean)},${y - 6} ${x(mean) + 5},${y} ${x(mean)},${y + 6} ${x(mean) - 5},${y}`} fill="var(--nx-text)" />
-      {points.map((p, i) => (
-        <circle key={i} cx={x(p)} cy={jitter(i)} r="2.4" fill="var(--nx-text)" fillOpacity="0.45" />
-      ))}
-      <text x="4" y="32" fontSize="8" fill="var(--nx-text-3)">
-        box
+      <rect
+        x={x(q1)}
+        y="20"
+        width={Math.max(4, x(q3) - x(q1))}
+        height="24"
+        fill="var(--nx-accent)"
+        fillOpacity="0.22"
+        rx="2"
+      />
+      <text x={x((q1 + q3) / 2)} y="14" textAnchor="middle" fontSize="10" fill="var(--nx-text-3)">
+        typical half
       </text>
-      <text x="4" y="42" fontSize="8" fill="var(--nx-text-3)">
-        plot
+      {points.map((p, i) => (
+        <circle key={i} cx={x(p)} cy="32" r="5" fill="var(--nx-canvas)" stroke="var(--nx-text)" strokeWidth="1.6" />
+      ))}
+      <line x1={x(median)} x2={x(median)} y1="16" y2="48" stroke="var(--nx-accent)" strokeWidth="2.5" />
+      <text x={x(median)} y="12" textAnchor={median > 70 ? 'end' : 'start'} fontSize="11" fill="var(--nx-text)">
+        middle {Math.round(median)}%
       </text>
     </svg>
   )
