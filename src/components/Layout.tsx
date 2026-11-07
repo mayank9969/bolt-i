@@ -28,10 +28,10 @@ export default function Layout({ children }: { children: ReactNode }) {
       <PortalStage />
 
       <header className="sticky top-0 z-50 bg-canvas/92 backdrop-blur-md border-b border-line">
-        <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 h-[4.75rem] flex items-center justify-between gap-4">
-          <Link to="/" className="flex items-center gap-3 group shrink-0 rounded-lg" aria-label="VEYRA home">
-            <LogoMark size={56} />
-            <Wordmark className="text-[19px]" />
+        <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 h-[5.25rem] flex items-center justify-between gap-4">
+          <Link to="/" className="flex items-center gap-3.5 group shrink-0 rounded-lg" aria-label="VEYRA home">
+            <LogoMark size={72} />
+            <Wordmark className="text-[22px]" />
           </Link>
 
           <nav className="flex items-center gap-0.5 sm:gap-1 min-w-0 overflow-x-auto [scrollbar-width:none]">

@@ -9,7 +9,7 @@ import { CategoryBreakdown, DifficultyBreakdown } from '@/components/Breakdowns'
 import Tier from '@/components/ui/Tier'
 import { ArrowRight, Cross } from '@/components/ui/Icons'
 import { useWorld } from '@/components/three/world'
-import CarryInk from '@/components/CarryInk'
+
 import { formatPercent, formatScore, labelCategory, performanceTone, toneText } from '@/lib/format'
 import { categoryCluster, normaliseCategoryId } from '@/lib/categories'
 const familyOf = (id: string): 0 | 1 => (categoryCluster(id) === 1 ? 1 : 0)
@@ -93,9 +93,6 @@ export default function History() {
                   ? `${history.length} scored attempt${history.length === 1 ? '' : 's'} kept by the engine. Each sitting is one moment; together they are the longer story.`
                   : 'Completed quizzes will sit here as a personal record — not a verdict.'}
               </p>
-              <div className="mt-6 max-w-xl text-fg">
-                <CarryInk compact />
-              </div>
               {history && history.length > 0 && (
                 <p className="flex flex-wrap gap-1.5 mt-4" aria-hidden="true">
                   {history.slice(-24).map((h) => (
