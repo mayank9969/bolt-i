@@ -30,7 +30,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       <header className="sticky top-0 z-50 bg-canvas/92 backdrop-blur-md border-b border-line">
         <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 h-[4.25rem] flex items-center justify-between gap-4">
           <Link to="/" className="flex items-center gap-2.5 group shrink-0 rounded-lg" aria-label="VEYRA home">
-            <LogoMark size={34} className="transition-transform duration-300 group-hover:scale-105" />
+            <LogoMark size={40} />
             <Wordmark className="text-[17px]" />
           </Link>
 
