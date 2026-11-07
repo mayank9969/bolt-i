@@ -79,9 +79,9 @@ export default function About() {
         </article>
       </div>
 
-      <section className="quote-band relative py-28 md:py-40 overflow-hidden" aria-label="Epigraph">
-        <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-          <div className="quote-veil absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full" />
+      <section className="quote-band about-quote relative pt-24 md:pt-32 pb-0 overflow-visible" aria-label="Epigraph">
+        <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+          <div className="quote-veil absolute left-1/2 top-[38%] -translate-x-1/2 -translate-y-1/2 rounded-full" />
         </div>
         <blockquote className="relative z-10 mx-auto max-w-page px-6 text-center">
           <p className="quote-line font-sans italic font-normal text-[1.35rem] sm:text-2xl md:text-[1.85rem] max-w-[28ch] mx-auto text-balance leading-snug tracking-tight">
@@ -97,16 +97,14 @@ export default function About() {
             So tell me, are you shaping your life, or merely repeating it?
           </p>
         </blockquote>
+        <div className="about-quote-bloom relative z-10 mx-auto -mt-10 md:-mt-16 pointer-events-auto">
+          <VeyraFlower />
+        </div>
       </section>
 
-      <div className="relative z-10 max-w-page mx-auto px-5 sm:px-6 lg:px-8 pb-16">
+      <div className="relative z-10 max-w-page mx-auto px-5 sm:px-6 lg:px-8 pb-16 pt-4">
         <Reveal>
-          <div className="veyra-flower-wrap mx-auto max-w-md py-8">
-            <VeyraFlower />
-          </div>
-        </Reveal>
-        <Reveal>
-          <p className="ed-close mt-6">
+          <p className="ed-close mt-2">
             Made by Mayank Sarwal, for the pleasure of learning — for only the curiouser learners out there.
           </p>
           <Link to="/setup" className="btn-primary btn-lg mt-8 inline-flex">

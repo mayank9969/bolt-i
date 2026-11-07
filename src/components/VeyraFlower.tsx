@@ -15,7 +15,6 @@ export default function VeyraFlower() {
       ref={ref}
       className="veyra-flower"
       role="img"
-      tabIndex={0}
       aria-label="A luminous, iridescent wireframe flower opening from a single point of light"
     >
       <svg viewBox="0 0 600 800" focusable="false" aria-hidden="true">

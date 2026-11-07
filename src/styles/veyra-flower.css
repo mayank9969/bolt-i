@@ -11,9 +11,10 @@
   --vf-tint-d:    var(--veyra-flower-tint-d,#ffb457);
   display:block;width:100%;max-width:560px;aspect-ratio:3/4;background:transparent;
 }
-.veyra-flower:focus{outline:none}
-.veyra-flower:focus-visible{outline:1px solid var(--vf-line-soft);outline-offset:8px;border-radius:6px}
-.veyra-flower svg{display:block;width:100%;height:100%;overflow:visible}
+.veyra-flower:focus,.veyra-flower:focus-visible{outline:none}
+.veyra-flower svg{
+  display:block;width:100%;height:100%;overflow:visible;outline:none;
+}
 
 /* pointer: only main petal fills are hoverable */
 .veyra-flower [data-vf]{pointer-events:none}
