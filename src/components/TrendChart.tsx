@@ -64,7 +64,16 @@ export default function TrendChart({ history }: TrendChartProps) {
           {/* average line */}
           <line x1={pad.left} x2={W - pad.right} y1={avgY} y2={avgY} stroke="var(--nx-text-3)" strokeDasharray="3 5" />
 
-          {area && <motion.path d={area} fill="url(#nx-area)" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 0.4 }} />}
+          {area && (
+            <motion.path
+              d={area}
+              fill="url(#nx-area)"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1.2, delay: 0.35 }}
+            />
+          )}
           {pts.length > 1 && (
             <motion.path
               d={line}
@@ -73,9 +82,11 @@ export default function TrendChart({ history }: TrendChartProps) {
               strokeWidth="2.5"
               strokeLinecap="round"
               strokeLinejoin="round"
+              pathLength={1}
               initial={{ pathLength: 0 }}
-              animate={{ pathLength: 1 }}
-              transition={{ duration: 1.1, ease: 'easeInOut' }}
+              whileInView={{ pathLength: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1.6, ease: [0.22, 0.61, 0.36, 1] }}
             />
           )}
 
@@ -94,13 +105,14 @@ export default function TrendChart({ history }: TrendChartProps) {
               <motion.circle
                 cx={p.x}
                 cy={p.y}
-                r={hover === i ? 6 : 4}
+                r={hover === i ? 7 : 4.5}
                 fill="var(--nx-canvas)"
                 stroke="var(--nx-accent)"
                 strokeWidth="2"
                 initial={{ opacity: 0, scale: 0 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.4 + i * 0.05, duration: 0.3 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.55 + i * 0.07, type: 'spring', stiffness: 380, damping: 18 }}
               />
               {hover === i && <line x1={p.x} x2={p.x} y1={pad.top} y2={pad.top + ch} stroke="var(--nx-line-strong)" />}
               <text x={p.x} y={H - 8} textAnchor="middle" fontSize="12" fill="var(--nx-text-3)" fontFamily="IBM Plex Sans, system-ui, sans-serif">

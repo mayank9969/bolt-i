@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion'
 import type { HistoryEntry } from '@/types/quiz'
 import { formatPercent, labelCategory } from '@/lib/format'
 import { normaliseCategoryId } from '@/lib/categories'
@@ -29,7 +30,13 @@ export default function HistoryStats({ history }: { history: HistoryEntry[] }) {
             subjects. Today’s Take is not in this ledger.
           </p>
         </div>
-        <div className="lg:col-span-8 grid sm:grid-cols-2 gap-x-8 gap-y-6 border-t border-line pt-6">
+        <motion.div
+          className="lg:col-span-8 grid sm:grid-cols-2 gap-x-8 gap-y-6 border-t border-line pt-6"
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+        >
           {d && (
             <dl className="space-y-2 text-sm">
               <dt className="figcap">Descriptive (percentages)</dt>
@@ -65,7 +72,7 @@ export default function HistoryStats({ history }: { history: HistoryEntry[] }) {
               </>
             )}
           </dl>
-        </div>
+        </motion.div>
       </section>
 
       {sparse.length > 0 && (

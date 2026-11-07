@@ -176,26 +176,40 @@ export default function History() {
                     ...regions.map((r) => [labelCategory(r.id), r.w, r.n] as const),
                     ['Mixed', weights[2], mixedItems.length] as const,
                   ].map(([name, w, n], i) => (
-                    <li key={String(name)} className="grid grid-cols-[1fr_auto] sm:grid-cols-[10rem_1fr_auto] items-center gap-x-6 gap-y-2 py-5 border-b border-line">
+                    <motion.li
+                      key={String(name)}
+                      initial={{ opacity: 0, y: 8 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: i * 0.08, duration: 0.45, ease }}
+                      className="grid grid-cols-[1fr_auto] sm:grid-cols-[10rem_1fr_auto] items-center gap-x-6 gap-y-2 py-5 border-b border-line"
+                    >
                       <span className="t-h3 text-fg">{String(name)}</span>
                       <div className="col-span-2 sm:col-span-1 h-px bg-line-strong relative">
                         <motion.span
                           initial={{ scaleX: 0 }}
                           whileInView={{ scaleX: Number(w) }}
                           viewport={{ once: true }}
-                          transition={{ duration: 1.1, delay: i * 0.1, ease }}
-                          className="absolute inset-y-[-1px] left-0 right-0 origin-left bg-accent"
+                          transition={{ duration: 1.35, delay: 0.12 + i * 0.1, ease }}
+                          className="absolute inset-y-[-1.5px] left-0 right-0 origin-left bg-accent"
                         />
-                        {/* nodes along the line: one per attempt (max 12) */}
                         {Array.from({ length: Math.min(12, Number(n)) }, (_, k) => (
-                          <span key={k} className="absolute top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-accent" style={{ left: `${((k + 1) / 13) * Number(w) * 100}%` }} />
+                          <motion.span
+                            key={k}
+                            className="absolute top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-accent"
+                            style={{ left: `${((k + 1) / 13) * Number(w) * 100}%` }}
+                            initial={{ scale: 0, opacity: 0 }}
+                            whileInView={{ scale: 1, opacity: 1 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: 0.35 + i * 0.08 + k * 0.06, type: 'spring', stiffness: 420, damping: 16 }}
+                          />
                         ))}
                       </div>
                       <span className="text-right t-caption text-fg-2 num sm:w-24">
                         {Number(n)} {Number(n) === 1 ? 'attempt' : 'attempts'}
                         <span className="block figcap mt-0.5">{Math.round(Number(w) * 100)}% set</span>
                       </span>
-                    </li>
+                    </motion.li>
                   ))}
                 </ul>
               </div>
@@ -272,10 +286,16 @@ export default function History() {
 
 function Big({ label, value, sub, tone }: { label: string; value: string; sub?: string; tone?: ReturnType<typeof performanceTone> }) {
   return (
-    <div className="arch-stat">
+    <motion.div
+      className="arch-stat"
+      initial={{ opacity: 0, y: 10 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.5, ease }}
+    >
       <dt>{label}</dt>
       <dd className={tone ? toneText[tone] : ''}>{value}</dd>
       {sub && <p className="t-caption mt-2 num text-fg-3">{sub}</p>}
-    </div>
+    </motion.div>
   )
 }

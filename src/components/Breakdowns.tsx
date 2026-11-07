@@ -37,7 +37,7 @@ export function CategoryBreakdown({ history }: Props) {
                 initial={{ width: 0 }}
                 whileInView={{ width: `${(r.count / max) * 100}%` }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
+                transition={{ duration: 1.05, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }}
               />
             </div>
           </div>
@@ -75,7 +75,7 @@ export function DifficultyBreakdown({ history }: Props) {
                 initial={{ height: 0 }}
                 whileInView={{ height: `${Math.max((d.count / max) * 100, 10)}%` }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
+                transition={{ delay: 0.12 + i * 0.12, type: 'spring', stiffness: 140, damping: 16 }}
               />
             </div>
             <span className="text-[13px] text-fg-2 capitalize inline-flex items-center gap-1.5">
