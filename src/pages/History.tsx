@@ -80,9 +80,7 @@ export default function History() {
         <Reveal>
           <div className="grid lg:grid-cols-12 gap-x-10 gap-y-8 items-end">
             <div className="lg:col-span-8">
-              <p className="ed-eyebrow" style={{ fontSize: '0.72rem', letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 600, color: 'rgb(var(--nx-accent-2-rgb))' }}>
-                Archive
-              </p>
+              <p className="ed-eyebrow">Archive</p>
               <h1 className="ed-display mt-4 text-balance">
                 {history && history.length ? (
                   <>A record of returning</>
@@ -171,9 +169,9 @@ export default function History() {
             <Reveal delay={0.08}>
               <div className="mt-16 grid lg:grid-cols-12 gap-x-10 gap-y-6">
                 <div className="lg:col-span-4">
-                  <span className="index">01 — Islands</span>
-                  <h2 className="t-section text-fg mt-3">Established knowledge</h2>
-                  <p className="text-sm text-fg-2 mt-3 max-w-sm text-pretty">How settled each island is — attempts there, weighted by accuracy. An island whose latest attempt left wrong answers carries a terracotta marker on the map.</p>
+                  <span className="index">01 — Subjects</span>
+                  <h2 className="ed-kicker" style={{ fontFamily: 'var(--ed-display)', fontSize: 'clamp(1.4rem,2.2vw,1.8rem)' }}>Where you sat</h2>
+                  <p className="text-sm text-fg-2 mt-3 max-w-sm text-pretty">Each line is a subject you have already attempted. Length follows real sittings and their scores — nothing is added that the engine did not store.</p>
                 </div>
                 <ul className="lg:col-span-8 border-t border-line">
                   {[
@@ -210,7 +208,7 @@ export default function History() {
               <div className="mt-16 grid lg:grid-cols-12 gap-x-10 gap-y-10">
                 <div className="lg:col-span-4">
                   <span className="index">02 — Trend</span>
-                  <h2 className="t-section text-fg mt-3">Over time</h2>
+                  <h2 className="ed-kicker" style={{ fontFamily: 'var(--ed-display)', fontSize: 'clamp(1.4rem,2.2vw,1.8rem)' }}>How scores moved</h2>
                 </div>
                 <div className="lg:col-span-8 grid md:grid-cols-5 gap-x-10 gap-y-10 column-paper lg:before:hidden">
                   <div className="md:col-span-3 border-t border-line">
@@ -232,7 +230,7 @@ export default function History() {
             <div className="mt-20 grid lg:grid-cols-12 gap-x-10">
               <Reveal className="lg:col-span-4">
                 <span className="index">03 — Attempts</span>
-                <h2 className="t-section text-fg mt-3">Every session</h2>
+                <h2 className="ed-kicker" style={{ fontFamily: 'var(--ed-display)', fontSize: 'clamp(1.4rem,2.2vw,1.8rem)' }}>Each sitting</h2>
                 <p className="t-caption text-fg-3 mt-3 num">{newestFirst.length} shown · newest first</p>
               </Reveal>
               <ol className="lg:col-span-8 border-t border-line-strong mt-6 lg:mt-0">

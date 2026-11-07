@@ -7,7 +7,8 @@
   color: rgb(var(--nx-text-rgb));
 }
 
-.about-ed .ed-eyebrow {
+.about-ed .ed-eyebrow,
+.archive-ed .ed-eyebrow {
   font-family: var(--ed-body);
   font-size: 0.72rem;
   letter-spacing: 0.16em;
@@ -15,7 +16,8 @@
   color: rgb(var(--nx-accent-2-rgb));
   font-weight: 600;
 }
-[data-theme='ink'] .about-ed .ed-eyebrow {
+[data-theme='ink'] .about-ed .ed-eyebrow,
+[data-theme='ink'] .archive-ed .ed-eyebrow {
   color: rgb(var(--nx-accent-on-ink-rgb));
 }
 
@@ -28,7 +30,8 @@
   color: rgb(var(--nx-text-rgb));
 }
 
-.about-ed .ed-kicker {
+.about-ed .ed-kicker,
+.archive-ed .ed-kicker {
   font-family: var(--ed-display);
   font-size: clamp(1.45rem, 2.4vw, 1.85rem);
   font-weight: 600;
@@ -48,9 +51,59 @@
 .about-ed .ed-prose p + p {
   margin-top: 1.1rem;
 }
+.about-ed .ed-display em {
+  font-style: italic;
+  font-weight: 500;
+}
 .about-ed .ed-prose em {
   font-style: italic;
   color: rgb(var(--nx-text-rgb));
+}
+
+.about-ed .ed-coda {
+  display: grid;
+  gap: 1.75rem 2.5rem;
+  align-items: center;
+  margin: 4rem 0 0;
+  padding: 2.25rem 0 0;
+  border-top: 1px solid var(--nx-line-strong);
+  max-width: 44rem;
+}
+@media (min-width: 720px) {
+  .about-ed .ed-coda {
+    grid-template-columns: minmax(0, 12rem) minmax(0, 1fr);
+  }
+}
+.about-ed .wire-flower {
+  width: min(12rem, 100%);
+  height: auto;
+  color: rgb(var(--nx-text-rgb));
+  filter: drop-shadow(0 0 18px rgb(var(--nx-accent-rgb) / 0.28));
+}
+[data-theme='ink'] .about-ed .wire-flower {
+  color: #f4f0e4;
+  filter: drop-shadow(0 0 22px rgb(111 191 186 / 0.35));
+}
+.about-ed .ed-coda blockquote {
+  margin: 0;
+}
+.about-ed .ed-coda blockquote p {
+  font-family: var(--ed-display);
+  font-size: clamp(1.35rem, 2.4vw, 1.85rem);
+  font-style: italic;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+  color: rgb(var(--nx-text-rgb));
+}
+.about-ed .ed-coda cite {
+  display: block;
+  margin-top: 0.85rem;
+  font-style: normal;
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: rgb(var(--nx-text-3-rgb));
 }
 
 .about-ed .ed-close {
