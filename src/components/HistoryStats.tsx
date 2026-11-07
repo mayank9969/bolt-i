@@ -1,9 +1,8 @@
 import { motion } from 'framer-motion'
 import type { ReactNode } from 'react'
 import type { HistoryEntry } from '@/types/quiz'
-import { formatPercent, labelCategory } from '@/lib/format'
-import { normaliseCategoryId } from '@/lib/categories'
-import { cttByDifficulty, irtReady, sittingSeries, sparseSubjects } from '@/lib/psychometrics'
+import { formatPercent } from '@/lib/format'
+import { cttByDifficulty, irtReady, sittingSeries } from '@/lib/psychometrics'
 
 const ease = [0.22, 1, 0.36, 1] as const
 
@@ -16,7 +15,6 @@ export default function HistoryStats({ history }: { history: HistoryEntry[] }) {
   const series = sittingSeries(history)
   const ctt = cttByDifficulty(history)
   const irt = irtReady(history)
-  const sparse = sparseSubjects(history, normaliseCategoryId)
   const d = series.describe
   const lastRoll = series.roll[series.roll.length - 1]
 
@@ -86,30 +84,6 @@ export default function HistoryStats({ history }: { history: HistoryEntry[] }) {
           }
         >
           <IntervalBar lo={series.wilson.lo} hi={series.wilson.hi} p={series.wilson.p} />
-        </Chapter>
-      )}
-
-      {sparse.length > 0 && (
-        <Chapter
-          kicker="Thin subjects"
-          title={
-            <>
-              Where the sample is small, we <span className="ed-hit">lean toward the middle</span>
-            </>
-          }
-          meaning={
-            <>
-              Raw accuracy on two sittings can look like a verdict. A{' '}
-              <span className="ed-soft">Bayesian (Laplace) smooth</span> pulls a thin subject toward 50% until you have
-              more questions. Each subject is a dumbbell: raw accuracy on the left, smoothed on the right.
-            </>
-          }
-        >
-          <div className="space-y-6">
-            {sparse.map((s) => (
-              <SubjectBars key={s.id} name={labelCategory(s.id)} raw={s.raw} smooth={s.smoothed} sparse={s.sparse} />
-            ))}
-          </div>
         </Chapter>
       )}
 
@@ -285,31 +259,6 @@ function IntervalBar({ lo, hi, p }: { lo: number; hi: number; p: number }) {
   )
 }
 
-function SubjectBars({ name, raw, smooth, sparse }: { name: string; raw: number; smooth: number; sparse: boolean }) {
-  const x = (v: number) => 8 + v * 220
-  const y = 22
-  return (
-    <div>
-      <p className="ed-kicker" style={{ fontSize: '1.15rem', marginBottom: '0.2rem' }}>
-        {name}
-        {sparse ? <span className="ed-soft"> · still thin</span> : null}
-      </p>
-      <svg viewBox="0 0 280 40" className="w-full h-auto" role="img" aria-label={`${name} raw versus smoothed accuracy`}>
-        <line x1="8" x2="228" y1={y} y2={y} stroke="var(--nx-line)" />
-        <line x1={x(raw)} x2={x(smooth)} y1={y} y2={y} stroke="var(--nx-text)" strokeWidth="2" />
-        <circle cx={x(raw)} cy={y} r="5" fill="var(--nx-text)" />
-        <circle cx={x(smooth)} cy={y} r="5" fill="var(--nx-accent)" />
-        <text x={x(raw)} y="12" textAnchor="middle" fontSize="9" fill="var(--nx-text-3)">
-          raw {pct01(raw)}
-        </text>
-        <text x={x(smooth)} y="38" textAnchor="middle" fontSize="9" fill="var(--nx-text-3)">
-          smooth {pct01(smooth)}
-        </text>
-      </svg>
-    </div>
-  )
-}
-
 function CttRow({
   difficulty,
   n,
@@ -322,7 +271,7 @@ function CttRow({
   discrimination: number | null
 }) {
   return (
-    <div>
+    <motion.div initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.45, ease }}>
       <p className="ed-kicker capitalize" style={{ fontSize: '1.2rem' }}>
         {difficulty}
       </p>
@@ -336,7 +285,14 @@ function CttRow({
         <div>
           <p className="t-caption text-fg-3 mb-1">Difficulty p (share correct)</p>
           <div className="h-3 rounded-sm bg-line overflow-hidden">
-            <div className="h-full bg-accent" style={{ width: `${p * 100}%` }} />
+            <motion.div
+              className="h-full bg-accent origin-left"
+              initial={{ scaleX: 0 }}
+              whileInView={{ scaleX: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.9, ease }}
+              style={{ width: `${p * 100}%` }}
+            />
           </div>
           <p className="num text-sm mt-1">{pct01(p)}</p>
         </div>
@@ -347,13 +303,20 @@ function CttRow({
           ) : (
             <>
               <div className="h-3 rounded-sm bg-line overflow-hidden">
-                <div className="h-full bg-fg" style={{ width: `${Math.min(100, Math.abs(discrimination) * 100)}%` }} />
+                <motion.div
+                  className="h-full bg-fg origin-left"
+                  initial={{ scaleX: 0 }}
+                  whileInView={{ scaleX: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.9, delay: 0.12, ease }}
+                  style={{ width: `${Math.min(100, Math.abs(discrimination) * 100)}%` }}
+                />
               </div>
               <p className="num text-sm mt-1">{discrimination.toFixed(2)}</p>
             </>
           )}
         </div>
       </div>
-    </div>
+    </motion.div>
   )
 }
