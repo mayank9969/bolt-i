@@ -270,36 +270,19 @@ export default function History() {
 }
 
 function SubjectWave({ weight, sittings, delay }: { weight: number; sittings: number; delay: number }) {
-  const w = 240
-  const h = 36
-  const end = 16 + weight * 200
-  const amp = 5 + sittings * 0.7
-  const d = `M16 ${h / 2} C ${16 + end * 0.25} ${h / 2 - amp}, ${16 + end * 0.55} ${h / 2 + amp * 0.7}, ${end} ${h / 2}`
-  const fill = `${d} L ${end} ${h - 4} Q ${16 + end * 0.5} ${h - 2} 16 ${h - 4} Z`
   return (
-    <svg viewBox={`0 0 ${w} ${h}`} className="col-span-2 sm:col-span-1 w-full h-9" aria-hidden="true">
-      <motion.path
-        d={fill}
-        fill="var(--nx-accent)"
-        fillOpacity={0.18}
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ delay, duration: 0.6 }}
-      />
-      <motion.path
-        d={d}
-        fill="none"
-        stroke="var(--nx-accent)"
-        strokeWidth="2.4"
-        strokeLinecap="round"
-        pathLength={1}
-        initial={{ pathLength: 0 }}
-        whileInView={{ pathLength: 1 }}
-        viewport={{ once: true }}
-        transition={{ delay: delay + 0.08, duration: 1.2, ease }}
-      />
-    </svg>
+    <div className="col-span-2 sm:col-span-1">
+      <div className="h-2.5 rounded-sm bg-line overflow-hidden">
+        <motion.div
+          className="h-full bg-accent"
+          initial={{ width: 0 }}
+          whileInView={{ width: `${Math.round(weight * 100)}%` }}
+          viewport={{ once: true }}
+          transition={{ delay, duration: 0.8, ease }}
+        />
+      </div>
+      <p className="t-caption text-fg-3 mt-1">{sittings} sitting{sittings === 1 ? '' : 's'}</p>
+    </div>
   )
 }
 
