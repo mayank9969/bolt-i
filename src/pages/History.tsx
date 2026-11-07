@@ -9,6 +9,7 @@ import { CategoryBreakdown, DifficultyBreakdown } from '@/components/Breakdowns'
 import Tier from '@/components/ui/Tier'
 import { ArrowRight, Cross } from '@/components/ui/Icons'
 import { useWorld } from '@/components/three/world'
+import CarryInk from '@/components/CarryInk'
 import { formatPercent, formatScore, labelCategory, performanceTone, toneText } from '@/lib/format'
 import { categoryCluster, normaliseCategoryId } from '@/lib/categories'
 const familyOf = (id: string): 0 | 1 => (categoryCluster(id) === 1 ? 1 : 0)
@@ -73,22 +74,37 @@ export default function History() {
   useWorld({ mode: filter === 'all' ? 'quiet' : 'focus', focus: filter === 'all' ? null : filter }, [filter])
 
   return (
-    <div className="relative flex-1">
+    <div className="relative flex-1 archive-ed">
       <div className="relative z-10 max-w-page mx-auto px-5 sm:px-6 lg:px-8 py-10 md:py-16">
         {/* ── Header ──────────────────────────────────────── */}
         <Reveal>
           <div className="grid lg:grid-cols-12 gap-x-10 gap-y-8 items-end">
-            <div className="lg:col-span-8 hero-paper">
-              <span className="nb-stamp">Archive</span>
-              <h1 className="t-title text-fg mt-5 text-balance">
+            <div className="lg:col-span-8">
+              <p className="ed-eyebrow" style={{ fontSize: '0.72rem', letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 600, color: 'rgb(var(--nx-accent-2-rgb))' }}>
+                Archive
+              </p>
+              <h1 className="ed-display mt-4 text-balance">
                 {history && history.length ? (
-                  <>
-                    <span className="num">{history.length}</span> attempt{history.length === 1 ? '' : 's'}, <span className="text-fg-2">and the map remembers each one.</span>
-                  </>
+                  <>A record of returning</>
                 ) : (
                   <>Your history</>
                 )}
               </h1>
+              <p className="ed-lede mt-5">
+                {history && history.length
+                  ? `${history.length} scored attempt${history.length === 1 ? '' : 's'} kept by the engine. Each sitting is one moment; together they are the longer story.`
+                  : 'Completed quizzes will sit here as a personal record — not a verdict.'}
+              </p>
+              <div className="mt-6 max-w-xl text-fg">
+                <CarryInk compact />
+              </div>
+              {history && history.length > 0 && (
+                <p className="flex flex-wrap gap-1.5 mt-4" aria-hidden="true">
+                  {history.slice(-24).map((h) => (
+                    <span key={h.attempt} className="arch-dot" title={`Attempt ${h.attempt}`} />
+                  ))}
+                </p>
+              )}
             </div>
             {categories.length > 0 && (
               <div className="lg:col-span-4 flex lg:justify-end">
@@ -143,7 +159,7 @@ export default function History() {
           <>
             {/* ── Ledger of big numbers ─────────────────────── */}
             <Reveal delay={0.05}>
-              <dl className="mt-14 grid grid-cols-2 lg:grid-cols-4 gap-3 stats-paper">
+              <dl className="mt-14 grid grid-cols-2 lg:grid-cols-4 gap-x-8">
                 <Big label="Quizzes taken" value={String(stats.n)} />
                 <Big label="Average score" value={formatPercent(stats.avg, 1)} tone={performanceTone(stats.avg)} />
                 <Big label="Overall accuracy" value={formatPercent(stats.accuracy, 0)} sub={`${stats.c} / ${stats.q} correct`} />
@@ -258,10 +274,10 @@ export default function History() {
 
 function Big({ label, value, sub, tone }: { label: string; value: string; sub?: string; tone?: ReturnType<typeof performanceTone> }) {
   return (
-    <div className="nb-panel">
+    <div className="arch-stat">
       <dt>{label}</dt>
       <dd className={tone ? toneText[tone] : ''}>{value}</dd>
-      {sub && <p className="t-caption mt-2 num" style={{ opacity: 0.7 }}>{sub}</p>}
+      {sub && <p className="t-caption mt-2 num text-fg-3">{sub}</p>}
     </div>
   )
 }

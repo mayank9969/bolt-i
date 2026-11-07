@@ -1,6 +1,7 @@
 @import './tokens.css';
 @import './brutal.css';
 @import './almanac.css';
+@import './editorial.css';
 
 @tailwind base;
 @tailwind components;
