@@ -19,8 +19,8 @@ export default function About() {
               A question is never the <em>end</em> of the story.
             </h1>
             <p className="ed-prose mt-7">
-              I’m Mayank. VEYRA is a place I made to look closer at what I know, and to keep a truthful record of what
-              still needs another sitting.
+              I’m Mayank. VEYRA is a place I made to look closer at what I know, and to keep a{' '}
+              <span className="ed-hit">truthful record</span> of what still needs another sitting.
             </p>
             <div className="mt-10 text-fg">
               <CarryInk />
@@ -31,12 +31,14 @@ export default function About() {
         <article className="ed-article mt-2">
           <Section title="Look closer">
             <p>
-              A question asks you to stop guessing in the dark. You pick one of fifteen subjects, a difficulty, and a
-              length. Some answers are multiple choice; some you type. The quiz engine on the server checks them. The
-              browser never sees a key before you finish.
+              A question asks you to stop guessing in the dark. You pick one of{' '}
+              <span className="ed-hit">fifteen subjects</span>, a difficulty, and a length. Some answers are multiple
+              choice; some you type. The quiz engine on the server checks them.{' '}
+              <span className="ed-soft">The browser never sees a key before you finish.</span>
             </p>
             <p>
-              Two thousand questions sit in the bank. Nothing is locked. Curiosity chooses the island.
+              <span className="ed-hit">Two thousand questions</span> sit in the bank. Nothing is locked.{' '}
+              <span className="ed-soft">Curiosity chooses the island.</span>
             </p>
           </Section>
 
@@ -47,8 +49,8 @@ export default function About() {
             </p>
             <p>
               Between people, a question is the same motion: someone asks, someone tests, someone carries it a little
-              further. VEYRA is a small version of that — not a company profile, just a project that wants the record
-              to stay honest.
+              further. VEYRA is a small version of that — <span className="ed-soft">not a company profile</span>, just
+              a project that wants the record to stay <span className="ed-hit">honest</span>.
             </p>
           </Section>
 
@@ -58,8 +60,8 @@ export default function About() {
               score can stand in for everything you understand.
             </p>
             <p>
-              Today’s Take, when you want it, is a private line in your own words. Skip it if you like. Learning stays
-              unfinished on purpose.
+              Today’s Take, when you want it, is a private line in your own words. Skip it if you like.{' '}
+              <span className="ed-hit">Learning stays unfinished on purpose.</span>
             </p>
             <p className="mt-6">
               <Link
@@ -76,8 +78,16 @@ export default function About() {
           <figure className="ed-coda">
             <WireFlower />
             <blockquote>
-              <p>A question is the mind’s way of keeping the future open.</p>
-              <cite>VEYRA</cite>
+              <p className="ed-q-lead">
+                The mind can build a universe, yet spend a lifetime living inside the walls of a habit. Days become
+                years, patterns become identity, and one day you may realize you spent your life repeating a version of
+                yourself you never chose.
+              </p>
+              <p>
+                Perhaps the greatest prison is the one you mistake for your nature. But the moment you recognize its
+                walls, you can begin to break them.
+              </p>
+              <p className="ed-q-ask">So tell me, are you shaping your life, or merely repeating it?</p>
             </blockquote>
           </figure>
         </Reveal>
