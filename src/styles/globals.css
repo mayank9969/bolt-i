@@ -884,3 +884,44 @@
     display: none;
   }
 }
+
+/* Bloom V mark — from logos.html, site-wide */
+.veyra-logo {
+  display: block;
+  overflow: visible;
+  --logo-a: var(--nx-text);
+  --logo-b: var(--nx-accent);
+  --logo-c: var(--nx-accent-2, var(--nx-accent));
+}
+.veyra-logo-petal {
+  fill: var(--logo-a);
+}
+.veyra-logo-vein {
+  stroke: var(--logo-b);
+  stroke-width: 7;
+}
+.veyra-logo-star {
+  fill: var(--logo-c);
+  transform-origin: 500px 330px;
+}
+.veyra-logo.is-animated .veyra-logo-bloom {
+  transform-origin: 500px 820px;
+  animation: veyra-logo-unfold 1.1s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.veyra-logo.is-animated .veyra-logo-star {
+  animation: veyra-logo-spark 3.6s ease-in-out 0.7s infinite alternate;
+}
+@keyframes veyra-logo-unfold {
+  from { transform: scale(0.55); opacity: 0.4; }
+  to { transform: none; opacity: 1; }
+}
+@keyframes veyra-logo-spark {
+  from { transform: scale(0.92); opacity: 0.85; }
+  to { transform: scale(1.06); opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .veyra-logo.is-animated .veyra-logo-bloom,
+  .veyra-logo.is-animated .veyra-logo-star {
+    animation: none;
+  }
+}

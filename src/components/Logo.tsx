@@ -1,42 +1,44 @@
 interface LogoProps {
   size?: number
   className?: string
+  /** CSS-animated Bloom V (default). Pass false for a still mark. */
+  animated?: boolean
+}
+
+function starPath(cx: number, cy: number, rv: number, rh: number) {
+  return (
+    `M${cx} ${cy - rv}Q${cx} ${cy} ${cx + rh} ${cy}` +
+    `Q${cx} ${cy} ${cx} ${cy + rv}Q${cx} ${cy} ${cx - rh} ${cy}Q${cx} ${cy} ${cx} ${cy - rv}Z`
+  )
 }
 
 /**
- * VEYRA mark — two nodes converging on one point: a V drawn as connection + progression.
- * Colours come from tokens via currentColor / CSS variables so the
- * mark adapts to every theme without a rebuild.
+ * Bloom V from the VEYRA logo set: two petals form a V, a star is the bud.
+ * Animated version unfolds once and the star breathes. Colours follow Paper / Ink.
  */
-export function LogoMark({ size = 36, className = '' }: LogoProps) {
+export function LogoMark({ size = 36, className = '', animated = true }: LogoProps) {
   return (
     <svg
       width={size}
       height={size}
-      viewBox="0 0 100 100"
-      className={className}
+      viewBox="220 140 560 820"
+      className={`veyra-logo ${animated ? 'is-animated' : ''} ${className}`.trim()}
       aria-hidden="true"
     >
-      <rect width="100" height="100" rx="26" fill="var(--nx-card-strong)" />
-      <rect x="0.5" y="0.5" width="99" height="99" rx="25.5" fill="none" stroke="var(--nx-line-strong)" />
-      <path
-        d="M30 30L50 70L70 30"
-        fill="none"
-        stroke="var(--nx-text)"
-        strokeWidth="9"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <circle cx="30" cy="30" r="7" fill="var(--nx-accent)" />
-      <circle cx="70" cy="30" r="7" fill="var(--nx-accent)" />
+      <g className="veyra-logo-bloom">
+        <path className="veyra-logo-petal" d="M500 820C360 720 240 480 260 180C400 330 480 560 500 820Z" />
+        <path className="veyra-logo-petal" d="M500 820C640 720 760 480 740 180C600 330 520 560 500 820Z" />
+      </g>
+      <g className="veyra-logo-vein" fill="none" strokeLinecap="round">
+        <path d="M500 790C440 640 340 440 280 240" />
+        <path d="M500 790C560 640 660 440 720 240" />
+        <path d="M500 820L500 930" />
+      </g>
+      <path className="veyra-logo-star" d={starPath(500, 330, 130, 58)} />
     </svg>
   )
 }
 
 export function Wordmark({ className = '' }: { className?: string }) {
-  return (
-    <span className={`font-semibold tracking-tight text-fg ${className}`}>
-      VEYRA
-    </span>
-  )
+  return <span className={`font-semibold tracking-tight text-fg ${className}`}>VEYRA</span>
 }
