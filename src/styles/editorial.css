@@ -116,7 +116,8 @@
   margin: 0 0 0.85rem;
 }
 
-.about-ed .ed-prose {
+.about-ed .ed-prose,
+.archive-ed .ed-prose {
   font-family: var(--ed-serif);
   font-optical-sizing: auto;
   font-size: 1.125rem;
@@ -124,7 +125,8 @@
   color: rgb(var(--nx-text-2-rgb));
   max-width: 38rem;
 }
-.about-ed .ed-hit {
+.about-ed .ed-hit,
+.archive-ed .ed-hit {
   font-family: var(--ed-display);
   font-optical-sizing: auto;
   font-weight: 700;
@@ -134,7 +136,8 @@
   color: rgb(var(--nx-text-rgb));
   letter-spacing: -0.03em;
 }
-.about-ed .ed-soft {
+.about-ed .ed-soft,
+.archive-ed .ed-soft {
   font-family: var(--ed-serif);
   font-style: italic;
   font-weight: 400;

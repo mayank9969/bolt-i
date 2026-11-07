@@ -1,3 +1,7 @@
+import '@fontsource-variable/fraunces/wght.css'
+import '@fontsource-variable/fraunces/wght-italic.css'
+import '@fontsource-variable/source-serif-4/wght.css'
+import '@fontsource-variable/source-serif-4/wght-italic.css'
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
