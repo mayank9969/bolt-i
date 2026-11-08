@@ -208,7 +208,7 @@ export function startEye(canvas: HTMLCanvasElement, onLabel: (s: string) => void
   let wait = 0;
 
   /* ----- assets ----- */
-  const texSize = 640;
+  const texSize = 1024;
   let texA: HTMLCanvasElement | null = null;
   let texB: HTMLCanvasElement | null = null;
 
@@ -416,7 +416,9 @@ export function startEye(canvas: HTMLCanvasElement, onLabel: (s: string) => void
 
     const cx = W / 2;
     const cy = H * 0.5;
-    const Rr = Math.min(W * 0.4, H * 0.34); // dark ring radius
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+    const Rr = Math.min(W * 0.42, H * 0.42);
     const t = now;
     const breath = Math.sin(t * 1.1) * 0.5 + 0.5;
     const flick = 1 + (Math.random() - 0.5) * 0.06 * S.tension;
@@ -754,7 +756,7 @@ export function startEye(canvas: HTMLCanvasElement, onLabel: (s: string) => void
     ctx.save();
     ctx.setTransform(1, 0, 0, 1, -grainOX, -grainOY);
     ctx.globalCompositeOperation = "overlay";
-    ctx.globalAlpha = 0.32;
+    ctx.globalAlpha = 0.08;
     ctx.fillStyle = grainPattern;
     ctx.fillRect(grainOX, grainOY, canvas.width + 320, canvas.height + 320);
     ctx.restore();

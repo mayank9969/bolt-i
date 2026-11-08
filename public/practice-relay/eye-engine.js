@@ -263,7 +263,7 @@
     };
     const gen = script(S, rnd, api);
     let wait = 0;
-    const texSize = 640;
+    const texSize = 1024;
     let texA = null;
     let texB = null;
     const grainSmall = document.createElement("canvas");
@@ -427,7 +427,9 @@
       ctx.globalAlpha = 1;
       const cx = W / 2;
       const cy = H * 0.5;
-      const Rr = Math.min(W * 0.4, H * 0.34);
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "high";
+      const Rr = Math.min(W * 0.42, H * 0.42);
       const t = now;
       const breath = Math.sin(t * 1.1) * 0.5 + 0.5;
       const flick = 1 + (Math.random() - 0.5) * 0.06 * S.tension;
@@ -700,7 +702,7 @@
       ctx.save();
       ctx.setTransform(1, 0, 0, 1, -grainOX, -grainOY);
       ctx.globalCompositeOperation = "overlay";
-      ctx.globalAlpha = 0.32;
+      ctx.globalAlpha = 0.08;
       ctx.fillStyle = grainPattern;
       ctx.fillRect(grainOX, grainOY, canvas.width + 320, canvas.height + 320);
       ctx.restore();
