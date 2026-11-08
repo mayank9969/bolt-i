@@ -1,0 +1,61 @@
+/* Phone layout + cheaper motion. Does not retarget #island-stage. */
+:root {
+  --veyra-header: 3.5rem;
+}
+@media (min-width: 640px) {
+  :root {
+    --veyra-header: 5.25rem;
+  }
+}
+
+html,
+body,
+#root {
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+@media (max-width: 639px) {
+  .veyra-header {
+    height: var(--veyra-header);
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    gap: 0.4rem;
+  }
+  .veyra-header .veyra-wordmark {
+    font-size: 1rem;
+  }
+  .veyra-nav a {
+    padding: 0.45rem 0.45rem;
+    font-size: 0.68rem;
+    letter-spacing: 0.02em;
+  }
+  .about-ed .ed-hero {
+    font-size: clamp(2.1rem, 11vw, 3rem);
+    max-width: 14ch;
+  }
+  .about-ed .ed-prose {
+    font-size: 1.02rem;
+  }
+  .about-ed .about-quote-bloom {
+    width: min(280px, 78vw);
+  }
+  .about-ed .map-quote-band {
+    padding: 3rem 1.15rem 3.5rem;
+  }
+  .about-ed .map-quote-hed {
+    font-size: clamp(1.55rem, 8vw, 2.2rem);
+  }
+  .about-ed .map-quote-forgive {
+    font-size: clamp(1.7rem, 9vw, 2.4rem);
+  }
+  .quote-band .quote-line {
+    font-size: clamp(1.15rem, 6.5vw, 1.65rem);
+  }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  html {
+    scroll-behavior: auto;
+  }
+}

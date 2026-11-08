@@ -1011,13 +1011,17 @@ export default function ArchipelagoScene() {
   useWorldSlice((s) => s.mode !== 'off', setVisible)
   const { islands, bridges } = useMemo(() => buildIslands(categories), [categories])
   const worldRef = useRef<THREE.Group>(null)
-  const dpr = Math.min(quality === 'high' ? 2 : 1.5, typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1)
+  const mobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 767px)').matches
+  const dpr = Math.min(
+    mobile ? 1.15 : quality === 'high' ? 2 : 1.5,
+    typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1,
+  )
   return (
     <Canvas
       dpr={dpr}
-      shadows={quality === 'high'}
+      shadows={quality === 'high' && !mobile}
       frameloop={visible && onScreen ? 'always' : 'never'}
-      gl={{ antialias: true, alpha: false, powerPreference: 'high-performance', toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.05 }}
+      gl={{ antialias: !mobile, alpha: false, powerPreference: mobile ? 'low-power' : 'high-performance', toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.05 }}
       camera={{ position: CAM.hero.pos as unknown as [number, number, number], fov: 36, near: 0.2, far: 240 }}
       onPointerMissed={() => {
         setWorld({ hover: null })

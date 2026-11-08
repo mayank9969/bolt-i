@@ -122,7 +122,7 @@ function Stage() {
     const size = () => {
       const cssW = Math.max(280, Math.floor(wrap.clientWidth || 640))
       const cssH = Math.floor(cssW * aspect)
-      const dpr = Math.min(window.devicePixelRatio || 1, 2)
+      const dpr = Math.min(window.devicePixelRatio || 1, cssW < 640 ? 1.25 : 2)
       const tw = Math.round(cssW * dpr)
       const th = Math.round(cssH * dpr)
       if (tw === lastW && cv.width === tw && cv.height === th) return
