@@ -97,73 +97,56 @@ function* script(S: State, R: () => number, api: Api): Generator<number> {
   S.sgy = 0;
   yield 1.4;
 
+  const beat = 3;
   while (true) {
-    /* 1 · idle wondering */
     api.say("curious…");
     api.set({ pupil: 0.48, lid: 0.05, mood: 0.14, tension: 0.08 });
-    for (let i = 0; i < 2; i++) {
-      api.look((R() - 0.5) * 1.3, (R() - 0.5) * 0.9, 0.35);
-      yield 1.5 + R() * 1.3;
-    }
+    api.look((R() - 0.5) * 1.1, (R() - 0.5) * 0.7, 0.4);
+    yield beat;
 
-    /* 2 · something catches its attention */
     const tx = sign() * (0.55 + R() * 0.35);
     const ty = (R() - 0.6) * 0.8;
     api.blink();
-    yield 0.25;
     api.say("wait… what's that?");
     api.look(tx, ty, 1.1);
     api.set({ pupil: 0.86, lid: 0, mood: 0.2, tension: 0.25 });
     api.spark(1);
-    yield 1.2;
+    yield beat;
 
-    /* 3 · leaning in – the pupil "hunts" for focus */
     api.say("closer…");
-    for (const v of [0.98, 0.68, 1, 0.76, 0.96]) {
-      api.set({ pupil: v });
-      api.look(tx * (0.85 + R() * 0.2), ty * (0.8 + R() * 0.3), 1.2);
-      yield 0.5 + R() * 0.35;
-    }
+    api.set({ pupil: 0.9, lid: 0 });
+    api.look(tx * 0.9, ty * 0.85, 1.1);
+    yield beat;
 
-    /* 4 · doubt – flinches away, creeps back, flinches again */
     api.say("is it safe?");
     api.set({ pupil: 0.12, lid: 0.34, mood: 1, tension: 0.9 });
     api.look(-tx * 0.8, -ty * 0.3 + 0.25, 1.5);
-    yield 1.1;
+    yield beat;
+
     api.say("hmm…");
     api.set({ pupil: 0.42, lid: 0.2, tension: 0.7 });
     api.look(tx * 0.25, ty * 0.25, 0.24);
-    yield 1.7;
-    api.set({ pupil: 0.16, lid: 0.32, tension: 0.95 });
-    api.look(-tx * 0.4, ty * 0.5 + 0.2, 1.3);
-    api.blink();
-    yield 0.9;
+    yield beat;
+
     api.say("maybe…");
     api.set({ pupil: 0.58, lid: 0.1, tension: 0.6 });
     api.look(tx * 0.6, ty * 0.6, 0.3);
-    yield 1.8;
+    yield beat;
 
-    /* 5 · resolution */
     if (R() < 0.65) {
       api.say("oh…");
       api.look(0, 0, 0.22);
       api.set({ pupil: 1, lid: 0, mood: 0, tension: 0 });
       api.spark(1.5);
-      yield 2.2;
+      yield beat;
       api.say("i want to know everything.");
       api.spark(0.9);
-      yield 3.2;
+      yield beat;
     } else {
       api.say("never mind…");
       api.look(-0.55, 0.7, 0.3);
       api.set({ pupil: 0.24, lid: 0.42, mood: 0.78, tension: 0.4 });
-      yield 1.4;
-      api.blink();
-      yield 0.6;
-      api.blink();
-      yield 1.2;
-      api.set({ lid: 0.08, tension: 0.15 });
-      yield 0.8;
+      yield beat;
     }
   }
 }
@@ -465,30 +448,38 @@ export function startEye(canvas: HTMLCanvasElement, onLabel: (s: string) => void
     ctx.fillStyle = g;
     ctx.fillRect(0, 0, W, H);
 
-    /* the dark ring (limbus / socket) */
-    ctx.save();
-    ctx.shadowColor = rgba(cIn, 0.55);
-    ctx.shadowBlur = Rr * 0.12;
-    ctx.beginPath();
-    ctx.arc(cx, cy, Rr, 0, Math.PI * 2);
-    g = ctx.createRadialGradient(cx, cy, Rr * 0.6, cx, cy, Rr);
-    g.addColorStop(0, "#1c0f20");
-    g.addColorStop(1, "#0d060f");
+    const rx = Math.min(W, H) * 0.46;
+    const ry = rx * 0.56;
+    const almond = () => {
+      ctx.beginPath();
+      ctx.moveTo(cx - rx, cy);
+      ctx.bezierCurveTo(cx - rx * 0.22, cy - ry, cx + rx * 0.22, cy - ry, cx + rx, cy);
+      ctx.bezierCurveTo(cx + rx * 0.22, cy + ry, cx - rx * 0.22, cy + ry, cx - rx, cy);
+      ctx.closePath();
+    };
+
+    /* sclera — almond, not a floating ball */
+    almond();
+    g = ctx.createRadialGradient(cx - rx * 0.08, cy - ry * 0.15, 6, cx, cy, rx);
+    g.addColorStop(0, "#f7f3ea");
+    g.addColorStop(0.62, "#e8e2d6");
+    g.addColorStop(1, "#c9c0b4");
     ctx.fillStyle = g;
     ctx.fill();
-    ctx.restore();
 
     /* iris group ---------------------------------------------------- */
     if (texA && texB) {
-      const Ri = Rr * 0.88 * (1 + 0.012 * breath + 0.01 * S.pupil);
-      const ix = cx + S.gx * Rr * 0.1;
-      const iy = cy + S.gy * Rr * 0.085;
+      const Ri = ry * 0.92 * (1 + 0.012 * breath + 0.01 * S.pupil);
+      const ix = cx + S.gx * rx * 0.16;
+      const iy = cy + S.gy * ry * 0.18;
       const sx = 1 - 0.07 * Math.abs(S.gx);
       const sy = 1 - 0.06 * Math.abs(S.gy);
 
       ctx.save();
+      almond();
+      ctx.clip();
       ctx.beginPath();
-      ctx.arc(cx, cy, Rr * 0.985, 0, Math.PI * 2);
+      ctx.arc(ix, iy, Ri * 1.02, 0, Math.PI * 2);
       ctx.clip();
       ctx.translate(ix, iy);
       ctx.scale(sx, sy);
@@ -641,8 +632,7 @@ export function startEye(canvas: HTMLCanvasElement, onLabel: (s: string) => void
 
     /* corneal reflections (fixed in world – the eye rolls beneath them) */
     ctx.save();
-    ctx.beginPath();
-    ctx.arc(cx, cy, Rr * 0.985, 0, Math.PI * 2);
+    almond();
     ctx.clip();
     ctx.globalCompositeOperation = "screen";
     const hx = cx - Rr * 0.34 + S.gx * Rr * 0.02;
@@ -676,25 +666,28 @@ export function startEye(canvas: HTMLCanvasElement, onLabel: (s: string) => void
     const closure = 1 - (1 - blink) * (1 - lidV);
     if (closure > 0.004) {
       ctx.save();
-      ctx.beginPath();
-      ctx.arc(cx, cy, Rr * 1.003, 0, Math.PI * 2);
+      almond();
       ctx.clip();
-      const ey = cy + Rr * closure * 0.18;
-      const ry = Math.max(0.0001, Rr * (1 - closure) * 1.0);
+      const ey = cy + ry * closure * 0.12;
+      const open = Math.max(0.0001, ry * (1 - closure));
       ctx.beginPath();
-      ctx.rect(cx - Rr - 4, cy - Rr - 4, Rr * 2 + 8, Rr * 2 + 8);
-      ctx.moveTo(cx + Rr, ey);
-      ctx.ellipse(cx, ey, Rr, ry, 0, 0, Math.PI * 2, true);
-      ctx.fillStyle = "#0e0711";
+      ctx.rect(cx - rx - 4, cy - ry - 4, rx * 2 + 8, ry * 2 + 8);
+      ctx.moveTo(cx + rx, ey);
+      ctx.ellipse(cx, ey, rx, open, 0, 0, Math.PI * 2, true);
+      ctx.fillStyle = "#1c1612";
       ctx.fill("evenodd");
-      // warm rim light on the lid edge
       ctx.beginPath();
-      ctx.ellipse(cx, ey, Rr, ry, 0, 0, Math.PI * 2);
+      ctx.ellipse(cx, ey, rx, open, 0, 0, Math.PI * 2);
       ctx.strokeStyle = rgba(cIn, 0.28);
       ctx.lineWidth = 1.5;
       ctx.stroke();
       ctx.restore();
     }
+
+    almond();
+    ctx.strokeStyle = "rgba(40,32,28,0.45)";
+    ctx.lineWidth = 1.4;
+    ctx.stroke();
 
     /* star flare ------------------------------------------------------ */
     {
