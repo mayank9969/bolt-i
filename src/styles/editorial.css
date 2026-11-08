@@ -246,33 +246,8 @@
 .about-ed .map-quote-band {
   position: relative;
   overflow: hidden;
-  padding: 4.5rem 1.5rem 7.5rem;
+  padding: 4.5rem 1.5rem 5.5rem;
   text-align: center;
-}
-.about-ed .map-quote-map {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 38%;
-  width: 100%;
-  pointer-events: none;
-  opacity: 0.55;
-}
-.about-ed .map-quote-grid line {
-  stroke: rgba(180, 230, 230, 0.12);
-  stroke-width: 0.6;
-}
-.about-ed .map-quote-route {
-  fill: none;
-  stroke: #9ee7e4;
-  stroke-width: 2;
-  stroke-linecap: round;
-  filter: drop-shadow(0 0 10px rgba(120, 220, 220, 0.55));
-}
-.about-ed .map-quote-mark {
-  fill: #c8fff8;
-  filter: drop-shadow(0 0 8px rgba(160, 240, 240, 0.8));
 }
 .about-ed .map-quote-copy {
   position: relative;

@@ -106,19 +106,17 @@ export default function About() {
         </div>
       </section>
 
-      <div className="relative z-10 max-w-page mx-auto px-5 sm:px-6 lg:px-8 pt-4">
+      <MapQuotePoster />
+      <div className="relative z-10 max-w-page mx-auto px-5 sm:px-6 lg:px-8 pb-16 pt-8">
         <Reveal>
           <p className="ed-close mt-2">
             Made by Mayank Sarwal, for the pleasure of learning — for only the curiouser learners out there.
           </p>
+          <Link to="/setup" className="btn-primary btn-lg mt-8 inline-flex">
+            Start a quiz
+            <ArrowRight className="arrow w-5 h-5" />
+          </Link>
         </Reveal>
-      </div>
-      <MapQuotePoster />
-      <div className="relative z-10 max-w-page mx-auto px-5 sm:px-6 lg:px-8 pb-16 pt-8">
-        <Link to="/setup" className="btn-primary btn-lg inline-flex">
-          Start a quiz
-          <ArrowRight className="arrow w-5 h-5" />
-        </Link>
       </div>
     </div>
   )
