@@ -52,18 +52,12 @@
     a[2] + (b[2] - a[2]) * t
   ];
   var PAL = [
-    { at: 0, c: [70, 196, 214] },
-    // teal / cyan
-    { at: 0.22, c: [150, 226, 224] },
-    // aqua
-    { at: 0.42, c: [255, 232, 224] },
-    // pearl
-    { at: 0.6, c: [248, 170, 196] },
-    // pink
-    { at: 0.78, c: [200, 166, 238] },
-    // lavender
-    { at: 1, c: [255, 190, 140] }
-    // peach
+    { at: 0, c: [20, 240, 255] },
+    { at: 0.2, c: [140, 255, 250] },
+    { at: 0.38, c: [255, 248, 245] },
+    { at: 0.55, c: [255, 110, 190] },
+    { at: 0.75, c: [210, 140, 255] },
+    { at: 1, c: [255, 150, 70] }
   ];
   function pal(v) {
     v = clamp01(v);
@@ -103,7 +97,7 @@
           let val = fbm3(Math.cos(phi) * 1.35, Math.sin(phi) * 1.35, r * 2.4, 3);
           val = clamp01((val - 0.5) * 2 + 0.5);
           let col = pal(val);
-          const bright = (0.8 + 0.4 * s1) * (0.92 + 0.16 * s2);
+          const bright = (1.08 + 0.35 * s1) * (0.95 + 0.2 * s2);
           col = [col[0] * bright, col[1] * bright, col[2] * bright];
           const eo = 0.47 + 0.1 * (noise3(ct * 6, st * 6, 2) - 0.5) * 2 + 0.07 * (noise3(ct * 38, st * 38, 4) - 0.5) * 2;
           const om = smooth(eo + 0.13, eo - 0.08, r);
@@ -111,7 +105,7 @@
           orange = mix(orange, [96, 34, 16], smooth(0.22, 0.1, r));
           const ob = 0.7 + 0.6 * s1;
           orange = [orange[0] * ob, orange[1] * ob, orange[2] * ob];
-          const fin = mix(col, orange, om);
+          const fin = mix(col, orange, om * 0.32);
           d[idx] = Math.min(255, fin[0]);
           d[idx + 1] = Math.min(255, fin[1]);
           d[idx + 2] = Math.min(255, fin[2]);
@@ -415,12 +409,12 @@
       }
       if (S.startleT > 1.8 && (S.label === "!" || S.label === "oh!")) S.label = "curious\u2026";
     };
-    const WARM_IN = [255, 158, 82];
-    const COOL_IN = [226, 98, 196];
-    const WARM_MID = [228, 62, 28];
-    const COOL_MID = [118, 40, 176];
-    const WARM_LOW = [22, 124, 122];
-    const COOL_LOW = [34, 84, 178];
+    const WARM_IN = [255, 120, 36];
+    const COOL_IN = [255, 90, 200];
+    const WARM_MID = [255, 48, 18];
+    const COOL_MID = [150, 40, 200];
+    const WARM_LOW = [0, 190, 175];
+    const COOL_LOW = [40, 110, 220];
     const draw = (dt) => {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.globalCompositeOperation = "source-over";

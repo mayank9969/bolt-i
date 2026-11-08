@@ -402,12 +402,12 @@ export function startEye(canvas: HTMLCanvasElement, onLabel: (s: string) => void
   };
 
   /* ----- draw ----- */
-  const WARM_IN: RGB = [255, 158, 82];
-  const COOL_IN: RGB = [226, 98, 196];
-  const WARM_MID: RGB = [228, 62, 28];
-  const COOL_MID: RGB = [118, 40, 176];
-  const WARM_LOW: RGB = [22, 124, 122];
-  const COOL_LOW: RGB = [34, 84, 178];
+  const WARM_IN: RGB = [255, 120, 36];
+  const COOL_IN: RGB = [255, 90, 200];
+  const WARM_MID: RGB = [255, 48, 18];
+  const COOL_MID: RGB = [150, 40, 200];
+  const WARM_LOW: RGB = [0, 190, 175];
+  const COOL_LOW: RGB = [40, 110, 220];
 
   const draw = (dt: number) => {
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
