@@ -12,16 +12,36 @@ class Guard extends Component<{ children: ReactNode }, { ok: boolean }> {
   }
 }
 
+/** Quiet A-minor pad — no voice, no beat, just a low sad wash. */
 function startPad(ctx: AudioContext) {
   const master = ctx.createGain()
-  master.gain.value = 0.0001
+  master.gain.setValueAtTime(0, ctx.currentTime)
   master.connect(ctx.destination)
+
   const filter = ctx.createBiquadFilter()
   filter.type = 'lowpass'
-  filter.frequency.value = 420
-  filter.Q.value = 0.7
+  filter.frequency.value = 720
+  filter.Q.value = 0.85
   filter.connect(master)
-  const mk = (freq: number, type: OscillatorType, g: number) => {
+
+  const lfo = ctx.createOscillator()
+  const lfoGain = ctx.createGain()
+  lfo.type = 'sine'
+  lfo.frequency.value = 0.07
+  lfoGain.gain.value = 90
+  lfo.connect(lfoGain)
+  lfoGain.connect(filter.frequency)
+  lfo.start()
+
+  const voices: OscillatorNode[] = []
+  const notes: [number, OscillatorType, number][] = [
+    [110, 'sine', 0.55],
+    [164.81, 'sine', 0.38],
+    [220, 'triangle', 0.12],
+    [261.63, 'sine', 0.1],
+    [329.63, 'sine', 0.06],
+  ]
+  notes.forEach(([freq, type, g]) => {
     const o = ctx.createOscillator()
     const gain = ctx.createGain()
     o.type = type
@@ -30,27 +50,30 @@ function startPad(ctx: AudioContext) {
     o.connect(gain)
     gain.connect(filter)
     o.start()
-    return o
-  }
-  const osc = [mk(110, 'sine', 0.35), mk(164.8, 'sine', 0.22), mk(196, 'triangle', 0.08)]
-  master.gain.exponentialRampToValueAtTime(0.045, ctx.currentTime + 1.4)
+    voices.push(o)
+  })
+
+  master.gain.linearRampToValueAtTime(0.14, ctx.currentTime + 1.8)
+
   return {
     stop() {
-      master.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.4)
+      try {
+        master.gain.cancelScheduledValues(ctx.currentTime)
+        master.gain.setValueAtTime(master.gain.value || 0.14, ctx.currentTime)
+        master.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.5)
+      } catch {
+        /* closed */
+      }
       window.setTimeout(() => {
-        osc.forEach((o) => {
+        voices.concat(lfo).forEach((o) => {
           try {
             o.stop()
           } catch {
-            /* already stopped */
+            /* stopped */
           }
         })
-        try {
-          ctx.close()
-        } catch {
-          /* closed */
-        }
-      }, 500)
+        void ctx.close()
+      }, 600)
     },
   }
 }
@@ -69,6 +92,10 @@ function Stage() {
       const AC = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
       const ctx = new AC()
       await ctx.resume()
+      if (!wantSound.current || !inView.current) {
+        void ctx.close()
+        return
+      }
       pad.current = startPad(ctx)
     }
     if ((!on || !inView.current) && pad.current) {
@@ -134,10 +161,10 @@ function Stage() {
     ro.observe(wrap)
     const io = new IntersectionObserver(
       (entries) => {
-        inView.current = entries.some((e) => e.isIntersecting && e.intersectionRatio > 0.35)
+        inView.current = entries.some((e) => e.isIntersecting)
         void syncPad(wantSound.current)
       },
-      { threshold: [0, 0.35, 0.7] },
+      { threshold: 0 },
     )
     io.observe(wrap)
 
@@ -149,6 +176,7 @@ function Stage() {
       pad.current?.stop()
       pad.current = null
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
@@ -156,7 +184,7 @@ function Stage() {
       <canvas ref={canvasRef} className="block w-full h-auto" aria-label="A slow short about looking inward" />
       <button
         type="button"
-        className="absolute bottom-3 right-3 rounded-full border border-current/30 bg-canvas/70 px-3 py-1.5 text-[0.65rem] tracking-[0.18em] uppercase text-fg backdrop-blur-sm"
+        className="absolute bottom-3 right-3 rounded-full border border-current/30 bg-canvas/80 px-3 py-1.5 text-[0.65rem] tracking-[0.18em] uppercase text-fg backdrop-blur-sm"
         aria-pressed={soundOn}
         onClick={() => {
           const next = !soundOn
