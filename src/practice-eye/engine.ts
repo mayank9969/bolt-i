@@ -95,9 +95,9 @@ function* script(S: State, R: () => number, api: Api): Generator<number> {
   const sign = () => (R() < 0.5 ? -1 : 1);
   S.sgx = 0;
   S.sgy = 0;
-  yield 1.4;
+  yield 0.3;
 
-  const beat = 3;
+  const beat = 2.5;
   while (true) {
     api.say("curious…");
     api.set({ pupil: 0.48, lid: 0.05, mood: 0.14, tension: 0.08 });
