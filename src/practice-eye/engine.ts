@@ -208,7 +208,7 @@ export function startEye(canvas: HTMLCanvasElement, onLabel: (s: string) => void
   let wait = 0;
 
   /* ----- assets ----- */
-  const texSize = 1024;
+  const texSize = 1536;
   let texA: HTMLCanvasElement | null = null;
   let texB: HTMLCanvasElement | null = null;
 
@@ -238,7 +238,7 @@ export function startEye(canvas: HTMLCanvasElement, onLabel: (s: string) => void
     grainTick = 0;
 
   // iris fibres (pre-rolled randomness so they don't flicker randomly)
-  const FIB = 260;
+  const FIB = 480;
   const fib = Array.from({ length: FIB }, (_, i) => ({
     a: (i / FIB) * Math.PI * 2 + (Math.random() - 0.5) * 0.04,
     len: Math.pow(Math.random(), 0.7),
@@ -252,7 +252,7 @@ export function startEye(canvas: HTMLCanvasElement, onLabel: (s: string) => void
     H = 0,
     dpr = 1;
   const resize = () => {
-    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    dpr = Math.min(window.devicePixelRatio || 1, 3);
     const box = canvas.getBoundingClientRect();
     W = Math.max(160, box.width || canvas.clientWidth || 280);
     H = Math.max(140, box.height || canvas.clientHeight || W * 0.7);
@@ -747,19 +747,6 @@ export function startEye(canvas: HTMLCanvasElement, onLabel: (s: string) => void
       ctx.restore();
     }
 
-    /* film grain ------------------------------------------------------ */
-    grainTick++;
-    if (grainTick % 3 === 0) {
-      grainOX = Math.floor(Math.random() * 320);
-      grainOY = Math.floor(Math.random() * 320);
-    }
-    ctx.save();
-    ctx.setTransform(1, 0, 0, 1, -grainOX, -grainOY);
-    ctx.globalCompositeOperation = "overlay";
-    ctx.globalAlpha = 0.08;
-    ctx.fillStyle = grainPattern;
-    ctx.fillRect(grainOX, grainOY, canvas.width + 320, canvas.height + 320);
-    ctx.restore();
     ctx.globalCompositeOperation = "source-over";
     ctx.globalAlpha = 1;
 
