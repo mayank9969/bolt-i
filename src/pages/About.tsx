@@ -5,7 +5,7 @@ import '@fontsource-variable/source-serif-4/wght-italic.css'
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import Reveal from '@/components/Reveal'
-import CarryInk from '@/components/CarryInk'
+import SelfReflection from '@/components/SelfReflection'
 import VeyraFlower from '@/components/VeyraFlower'
 import { useWorld } from '@/components/three/world'
 import { ArrowRight } from '@/components/ui/Icons'
@@ -22,13 +22,13 @@ export default function About() {
             <h1 className="ed-display ed-hero mt-6">
               A question is never the <em>end</em> of the story.
             </h1>
-            <p className="ed-prose mt-7">
+            <div className="mt-10 text-fg">
+              <SelfReflection />
+            </div>
+            <p className="ed-prose mt-8">
               I’m Mayank. VEYRA is a place I made to look closer at what I know, and to keep a{' '}
               <span className="ed-hit">truthful record</span> of what still needs another sitting.
             </p>
-            <div className="mt-10 text-fg">
-              <CarryInk />
-            </div>
           </header>
         </Reveal>
 

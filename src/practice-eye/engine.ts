@@ -195,31 +195,6 @@ export function startEye(canvas: HTMLCanvasElement, onLabel: (s: string) => void
   let texA: HTMLCanvasElement | null = null;
   let texB: HTMLCanvasElement | null = null;
 
-  // grain tile (chunky 2px grain)
-  const grainSmall = document.createElement("canvas");
-  grainSmall.width = grainSmall.height = 160;
-  {
-    const g = grainSmall.getContext("2d")!;
-    const id = g.createImageData(160, 160);
-    for (let i = 0; i < id.data.length; i += 4) {
-      const v = Math.random() * 255;
-      id.data[i] = id.data[i + 1] = id.data[i + 2] = v;
-      id.data[i + 3] = 255;
-    }
-    g.putImageData(id, 0, 0);
-  }
-  const grainTile = document.createElement("canvas");
-  grainTile.width = grainTile.height = 320;
-  {
-    const g = grainTile.getContext("2d")!;
-    g.imageSmoothingEnabled = false;
-    g.drawImage(grainSmall, 0, 0, 320, 320);
-  }
-  const grainPattern = ctx.createPattern(grainTile, "repeat")!;
-  let grainOX = 0,
-    grainOY = 0,
-    grainTick = 0;
-
   // iris fibres (pre-rolled randomness so they don't flicker randomly)
   const FIB = 480;
   const fib = Array.from({ length: FIB }, (_, i) => ({
