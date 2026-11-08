@@ -6,6 +6,7 @@ import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import Reveal from '@/components/Reveal'
 import SelfReflection from '@/components/SelfReflection'
+import MapQuotePoster from '@/components/MapQuotePoster'
 import VeyraFlower from '@/components/VeyraFlower'
 import { useWorld } from '@/components/three/world'
 import { ArrowRight } from '@/components/ui/Icons'
@@ -27,17 +28,6 @@ export default function About() {
             <div className="mt-10 text-fg w-full max-w-4xl">
               <SelfReflection />
             </div>
-            <blockquote className="ed-prose mt-10 max-w-2xl">
-              <p className="ed-display text-[1.65rem] sm:text-[1.9rem] leading-snug">
-                The map is not a <em>verdict</em>.
-              </p>
-              <p className="mt-5">
-                You are more than the turn you wish you could take back. Keep what it taught you; let go of the shame
-                that keeps you there. Yesterday cannot be redrawn, but the next mark is still yours to make. Begin where
-                you are—small, honest, unfinished. The future does not ask you to be flawless. It asks only that you
-                begin.
-              </p>
-            </blockquote>
             <p className="ed-prose mt-8 max-w-3xl">
               I’m Mayank. VEYRA is a place I made to look closer at what I know, and to keep a{' '}
               <span className="ed-hit">truthful record</span> of what still needs another sitting.
@@ -118,6 +108,7 @@ export default function About() {
 
       <div className="relative z-10 max-w-page mx-auto px-5 sm:px-6 lg:px-8 pb-16 pt-4">
         <Reveal>
+          <MapQuotePoster />
           <p className="ed-close mt-2">
             Made by Mayank Sarwal, for the pleasure of learning — for only the curiouser learners out there.
           </p>
