@@ -821,9 +821,9 @@ export function render(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement,
 
   const cream = rgba([240, 230, 208], 1);
   const dark = '#1a110a';
-  caption(ctx, 'SELF-REFLECTION', t, 7.3, 99, { y: 235, size: 82, weight: 700, track: 14, fill: dark, halo: cream, haloW: 14, stagger: 0.06, fade: 0 });
-  caption(ctx, 'turning the gaze inward —', t, 8.0, 99, { y: 305, size: 40, italic: true, weight: 500, fill: dark, halo: cream, haloW: 10, stagger: 0.03, fade: 0 });
-  caption(ctx, 'not to blame, but to understand.', t, 8.5, 99, { y: 352, size: 40, italic: true, weight: 500, fill: dark, halo: cream, haloW: 10, stagger: 0.03, fade: 0 });
+  caption(ctx, 'SELF-REFLECTION', t, 7.3, 99, { y: 235, size: 52, weight: 700, track: 4, fill: dark, halo: cream, haloW: 10, stagger: 0.05, fade: 0 });
+  caption(ctx, 'turning the gaze inward —', t, 8.0, 99, { y: 300, size: 32, italic: true, weight: 500, fill: dark, halo: cream, haloW: 8, stagger: 0.03, fade: 0 });
+  caption(ctx, 'not to blame, but to understand.', t, 8.5, 99, { y: 344, size: 32, italic: true, weight: 500, fill: dark, halo: cream, haloW: 8, stagger: 0.03, fade: 0 });
 
   /* post: vignette + grain + glitch */
   ctx.setTransform(1, 0, 0, 1, 0, 0);

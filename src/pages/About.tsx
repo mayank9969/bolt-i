@@ -17,15 +17,28 @@ export default function About() {
     <div className="relative flex-1 about-ed">
       <div className="relative z-10 max-w-page mx-auto px-5 sm:px-6 lg:px-8 py-10 md:py-16">
         <Reveal>
-          <header className="max-w-3xl">
-            <p className="ed-eyebrow">A personal learning project</p>
-            <h1 className="ed-display ed-hero mt-6">
-              A question is never the <em>end</em> of the story.
-            </h1>
-            <div className="mt-10 text-fg">
+          <header>
+            <div className="max-w-3xl">
+              <p className="ed-eyebrow">A personal learning project</p>
+              <h1 className="ed-display ed-hero mt-6">
+                A question is never the <em>end</em> of the story.
+              </h1>
+            </div>
+            <div className="mt-10 text-fg w-full max-w-4xl">
               <SelfReflection />
             </div>
-            <p className="ed-prose mt-8">
+            <blockquote className="ed-prose mt-10 max-w-2xl">
+              <p className="ed-display text-[1.65rem] sm:text-[1.9rem] leading-snug">
+                The map is not a <em>verdict</em>.
+              </p>
+              <p className="mt-5">
+                You are more than the turn you wish you could take back. Keep what it taught you; let go of the shame
+                that keeps you there. Yesterday cannot be redrawn, but the next mark is still yours to make. Begin where
+                you are—small, honest, unfinished. The future does not ask you to be flawless. It asks only that you
+                begin.
+              </p>
+            </blockquote>
+            <p className="ed-prose mt-8 max-w-3xl">
               I’m Mayank. VEYRA is a place I made to look closer at what I know, and to keep a{' '}
               <span className="ed-hit">truthful record</span> of what still needs another sitting.
             </p>
