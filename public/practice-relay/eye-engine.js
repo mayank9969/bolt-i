@@ -191,15 +191,15 @@
       api.look(tx * 0.9, ty * 0.85, 1.1);
       yield beat;
       api.say("is it safe?");
-      api.set({ pupil: 0.12, lid: 0.34, mood: 1, tension: 0.9 });
+      api.set({ pupil: 0.12, lid: 0.22, mood: 1, tension: 0.9 });
       api.look(-tx * 0.8, -ty * 0.3 + 0.25, 1.5);
       yield beat;
       api.say("hmm\u2026");
-      api.set({ pupil: 0.42, lid: 0.2, tension: 0.7 });
+      api.set({ pupil: 0.42, lid: 0.08, tension: 0.7 });
       api.look(tx * 0.25, ty * 0.25, 0.24);
       yield beat;
       api.say("maybe\u2026");
-      api.set({ pupil: 0.58, lid: 0.1, tension: 0.6 });
+      api.set({ pupil: 0.58, lid: 0.05, tension: 0.6 });
       api.look(tx * 0.6, ty * 0.6, 0.3);
       yield beat;
       if (R() < 0.65) {
@@ -214,7 +214,7 @@
       } else {
         api.say("never mind\u2026");
         api.look(-0.55, 0.7, 0.3);
-        api.set({ pupil: 0.24, lid: 0.42, mood: 0.78, tension: 0.4 });
+        api.set({ pupil: 0.24, lid: 0.12, mood: 0.78, tension: 0.4 });
         yield beat;
       }
     }
@@ -446,33 +446,26 @@
       g.addColorStop(1, "rgba(14,6,20,0.8)");
       ctx.fillStyle = g;
       ctx.fillRect(0, 0, W, H);
-      const rx = Math.min(W, H) * 0.46;
-      const ry = rx * 0.56;
-      const almond = () => {
-        ctx.beginPath();
-        ctx.moveTo(cx - rx, cy);
-        ctx.bezierCurveTo(cx - rx * 0.22, cy - ry, cx + rx * 0.22, cy - ry, cx + rx, cy);
-        ctx.bezierCurveTo(cx + rx * 0.22, cy + ry, cx - rx * 0.22, cy + ry, cx - rx, cy);
-        ctx.closePath();
-      };
-      almond();
-      g = ctx.createRadialGradient(cx - rx * 0.08, cy - ry * 0.15, 6, cx, cy, rx);
-      g.addColorStop(0, "#f7f3ea");
-      g.addColorStop(0.62, "#e8e2d6");
-      g.addColorStop(1, "#c9c0b4");
+      ctx.save();
+      ctx.shadowColor = rgba(cIn, 0.55);
+      ctx.shadowBlur = Rr * 0.12;
+      ctx.beginPath();
+      ctx.arc(cx, cy, Rr, 0, Math.PI * 2);
+      g = ctx.createRadialGradient(cx, cy, Rr * 0.6, cx, cy, Rr);
+      g.addColorStop(0, "#1c0f20");
+      g.addColorStop(1, "#0d060f");
       ctx.fillStyle = g;
       ctx.fill();
+      ctx.restore();
       if (texA && texB) {
-        const Ri = ry * 0.92 * (1 + 0.012 * breath + 0.01 * S.pupil);
-        const ix = cx + S.gx * rx * 0.16;
-        const iy = cy + S.gy * ry * 0.18;
+        const Ri = Rr * 0.88 * (1 + 0.012 * breath + 0.01 * S.pupil);
+        const ix = cx + S.gx * Rr * 0.1;
+        const iy = cy + S.gy * Rr * 0.085;
         const sx = 1 - 0.07 * Math.abs(S.gx);
         const sy = 1 - 0.06 * Math.abs(S.gy);
         ctx.save();
-        almond();
-        ctx.clip();
         ctx.beginPath();
-        ctx.arc(ix, iy, Ri * 1.02, 0, Math.PI * 2);
+        ctx.arc(cx, cy, Rr * 0.985, 0, Math.PI * 2);
         ctx.clip();
         ctx.translate(ix, iy);
         ctx.scale(sx, sy);
@@ -588,7 +581,8 @@
         ctx.restore();
       }
       ctx.save();
-      almond();
+      ctx.beginPath();
+      ctx.arc(cx, cy, Rr * 0.985, 0, Math.PI * 2);
       ctx.clip();
       ctx.globalCompositeOperation = "screen";
       const hx = cx - Rr * 0.34 + S.gx * Rr * 0.02;
@@ -619,27 +613,24 @@
       const closure = 1 - (1 - blink) * (1 - lidV);
       if (closure > 4e-3) {
         ctx.save();
-        almond();
-        ctx.clip();
-        const ey = cy + ry * closure * 0.12;
-        const open = Math.max(1e-4, ry * (1 - closure));
         ctx.beginPath();
-        ctx.rect(cx - rx - 4, cy - ry - 4, rx * 2 + 8, ry * 2 + 8);
-        ctx.moveTo(cx + rx, ey);
-        ctx.ellipse(cx, ey, rx, open, 0, 0, Math.PI * 2, true);
-        ctx.fillStyle = "#1c1612";
+        ctx.arc(cx, cy, Rr * 1.003, 0, Math.PI * 2);
+        ctx.clip();
+        const ey = cy + Rr * closure * 0.18;
+        const ry = Math.max(1e-4, Rr * (1 - closure) * 1);
+        ctx.beginPath();
+        ctx.rect(cx - Rr - 4, cy - Rr - 4, Rr * 2 + 8, Rr * 2 + 8);
+        ctx.moveTo(cx + Rr, ey);
+        ctx.ellipse(cx, ey, Rr, ry, 0, 0, Math.PI * 2, true);
+        ctx.fillStyle = "#0e0711";
         ctx.fill("evenodd");
         ctx.beginPath();
-        ctx.ellipse(cx, ey, rx, open, 0, 0, Math.PI * 2);
+        ctx.ellipse(cx, ey, Rr, ry, 0, 0, Math.PI * 2);
         ctx.strokeStyle = rgba(cIn, 0.28);
         ctx.lineWidth = 1.5;
         ctx.stroke();
         ctx.restore();
       }
-      almond();
-      ctx.strokeStyle = "rgba(40,32,28,0.45)";
-      ctx.lineWidth = 1.4;
-      ctx.stroke();
       {
         const fx = cx + Rr * 0.13 + S.gx * Rr * 0.025 + Math.sin(t * 0.4) * Rr * 0.01;
         const fy = cy - Rr * 1.21 + S.gy * Rr * 0.015;
