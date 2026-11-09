@@ -25,30 +25,40 @@
 
   apply(fromParent())
 
-  function placeMark() {
-    var a = document.querySelector('nav.sticky a[href="#home"]')
-    if (!a) return false
-    if (a.querySelector('.veyra-ui-mark')) {
-      Array.prototype.forEach.call(a.querySelectorAll('svg:not(.veyra-ui-mark)'), function (el) {
-        el.remove()
-      })
-      return true
-    }
+  function markImg() {
     var img = document.createElement('img')
     img.className = 'veyra-ui-mark'
     img.src = '/practice-relay/blade-mark.svg'
     img.alt = ''
     img.width = 36
     img.height = 42
-    a.insertBefore(img, a.firstChild)
-    Array.prototype.forEach.call(a.querySelectorAll('svg'), function (el) {
+    return img
+  }
+
+  function stripStars(host) {
+    Array.prototype.forEach.call(host.querySelectorAll('svg'), function (el) {
       el.remove()
     })
+  }
+
+  function placeIn(host, where) {
+    if (!host) return false
+    stripStars(host)
+    if (host.querySelector('.veyra-ui-mark')) return true
+    var img = markImg()
+    if (where === 'start') host.insertBefore(img, host.firstChild)
+    else host.appendChild(img)
     return true
   }
-  if (!placeMark()) {
+
+  function placeMarks() {
+    var nav = placeIn(document.querySelector('nav.sticky a[href="#home"]'), 'start')
+    var foot = placeIn(document.querySelector('footer .font-poster'), 'end')
+    return nav && foot
+  }
+  if (!placeMarks()) {
     var mo = new MutationObserver(function () {
-      if (placeMark()) mo.disconnect()
+      if (placeMarks()) mo.disconnect()
     })
     mo.observe(document.documentElement, { childList: true, subtree: true })
   }
