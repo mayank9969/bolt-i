@@ -38,19 +38,27 @@ export default function Play() {
       if (e.source !== ref.current?.contentWindow) return
       const d = e.data
       if (!d || d.type !== 'veyra-practice-action') return
-      if (d.action === 'daily') {
-        navigate('/setup', { state: { category: 'all', difficulty: 'mixed', questionCount: 5, daily: true } })
-        return
+      const go: Record<string, () => void> = {
+        daily: () =>
+          navigate('/setup', { state: { category: 'all', difficulty: 'mixed', questionCount: 5, daily: true } }),
+        focus: () => navigate('/setup'),
+        concepts: () => navigate('/concepts'),
+        take: () => navigate('/take'),
+        lab: () => navigate('/lab'),
+        history: () => navigate('/history'),
+        progress: () => navigate('/progress'),
+        missed: () => {
+          getHistory()
+            .then((h) => {
+              const next = reviewTopics(h)[0]
+              if (next) navigate('/setup', { state: { category: next.id, questionCount: 5 } })
+              else navigate('/history')
+            })
+            .catch(() => navigate('/history'))
+        },
       }
-      if (d.action === 'missed') {
-        getHistory()
-          .then((h) => {
-            const next = reviewTopics(h)[0]
-            if (next) navigate('/setup', { state: { category: next.id, questionCount: 5 } })
-            else navigate('/history')
-          })
-          .catch(() => navigate('/history'))
-      }
+      const run = go[d.action as string]
+      if (run) run()
     }
     window.addEventListener('message', onMsg)
     return () => window.removeEventListener('message', onMsg)
@@ -63,7 +71,7 @@ export default function Play() {
         title="VEYRA Practice — relay of curiosity"
         src={`/practice-relay/index.html?eye=3&theme=${theme}`}
         className="w-full border-0 block bg-canvas overflow-auto"
-        style={{ height: 'min(92dvh, 1100px)', minHeight: '28rem' }}
+        style={{ height: 'min(96dvh, 1400px)', minHeight: '32rem' }}
       />
     </div>
   )

@@ -173,6 +173,75 @@ footer .veyra-mark {
 }
 
 a[aria-label^='Daily challenge'],
-[data-veyra-act='missed'] {
+[data-veyra-act] {
   cursor: pointer;
+}
+
+#veyra-studio {
+  padding-top: 2.5rem;
+  padding-bottom: 2.75rem;
+  border-bottom: 1.5px solid var(--veyra-ui-line-strong, #161917);
+}
+.veyra-studio-h {
+  margin: 0.6rem 0 0.5rem;
+  font-size: clamp(2.2rem, 5vw, 3.4rem);
+  color: var(--veyra-ui-text, #161917);
+}
+.veyra-studio-lead {
+  max-width: 42ch;
+  margin: 0 0 1.5rem;
+  font-size: 0.95rem;
+  color: var(--veyra-ui-muted, #4a5262);
+}
+.veyra-studio-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+@media (min-width: 900px) {
+  .veyra-studio-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+.veyra-studio-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0.9rem 0.9rem 1rem;
+  border: 1.5px solid var(--veyra-ui-line-strong, #161917);
+  background: var(--veyra-ui-card, #fdfefd);
+  color: inherit;
+  text-align: left;
+  font: inherit;
+}
+.veyra-studio-tile:hover {
+  transform: translateY(-2px);
+}
+.veyra-studio-art {
+  display: block;
+  width: 100%;
+  aspect-ratio: 5 / 3;
+  margin-bottom: 0.45rem;
+  border: 1.5px dashed color-mix(in srgb, var(--veyra-ui-text, #161917) 28%, transparent);
+  background:
+    repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 6px,
+      color-mix(in srgb, var(--veyra-ui-text, #161917) 6%, transparent) 6px,
+      color-mix(in srgb, var(--veyra-ui-text, #161917) 6%, transparent) 7px
+    );
+}
+.veyra-studio-title {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-size: 1.35rem;
+  font-weight: 400;
+  color: var(--veyra-ui-text, #161917);
+}
+.veyra-studio-body {
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: var(--veyra-ui-muted, #4a5262);
 }
