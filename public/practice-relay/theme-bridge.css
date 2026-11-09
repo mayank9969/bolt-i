@@ -174,7 +174,9 @@ footer .veyra-mark {
 
 /* Story-architecture checklist and the five-plate strip — stripped */
 #home ol.bg-ink,
-.v-relay {
+.v-relay,
+#subject .mono-label.mt-10,
+#subject .relative.mt-4.grid {
   display: none !important;
 }
 
