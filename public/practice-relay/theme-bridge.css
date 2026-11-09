@@ -172,16 +172,7 @@ footer .veyra-mark {
   flex-shrink: 0;
 }
 
-/* Story-architecture list is an editorial panel, not an illustration */
+/* Story-architecture checklist — stripped; the illustrated relay below it stays */
 #home ol.bg-ink {
-  background: var(--veyra-ui-text) !important;
-  color: var(--veyra-ui-canvas) !important;
-  border-left-color: var(--veyra-ui-cta) !important;
-}
-#home ol.bg-ink .text-ochre,
-#home ol.bg-ink .text-vermilion {
-  color: var(--veyra-ui-cta) !important;
-}
-#home ol.bg-ink .border-parchment\/60 {
-  border-color: color-mix(in srgb, var(--veyra-ui-canvas) 55%, transparent) !important;
+  display: none !important;
 }
