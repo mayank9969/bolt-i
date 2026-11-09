@@ -87,14 +87,62 @@
   }
 
   var STUDIO = [
-    { act: 'daily', n: '01', title: 'Daily challenge', body: 'Five live questions, mixed from the bank.' },
-    { act: 'missed', n: '02', title: 'Missed questions', body: 'A region whose latest sitting still has misses.' },
-    { act: 'focus', n: '03', title: 'Focus skill', body: 'One island, one tier — scored on the server.' },
-    { act: 'concepts', n: '04', title: 'Concept studio', body: 'A rotating lesson. Not a scored sitting.' },
-    { act: 'take', n: '05', title: 'Today’s take', body: 'Private to this browser. No Gemini on the web.' },
-    { act: 'lab', n: '06', title: 'Four-day lab', body: 'A short sequence already on the site.' },
-    { act: 'history', n: '07', title: 'History', body: 'Every scored sitting the engine has stored.' },
-    { act: 'progress', n: '08', title: 'Progress', body: 'The same history, summarised.' },
+    {
+      act: 'daily',
+      n: '01',
+      title: 'Daily challenge',
+      body: 'A five-question sitting drawn now from the whole bank, mixed difficulty. The engine picks live items; nothing is stored as “today’s paper” in the browser. Confirm on Setup, then start — scoring stays on the server.',
+      cta: 'Start today’s five',
+    },
+    {
+      act: 'missed',
+      n: '02',
+      title: 'Missed questions',
+      body: 'If a region’s latest attempt still has wrong answers, this opens Setup on that island for a fresh five. History has no item-level keys, so we do not replay a stored miss list. If nothing is flagged, you go to History instead.',
+      cta: 'Revisit misses',
+    },
+    {
+      act: 'focus',
+      n: '03',
+      title: 'Focus skill',
+      body: 'Choose one island and one tier. Same quiz path as Home — questions and marks come from the server, never from a client key.',
+      cta: 'Pick a region',
+    },
+    {
+      act: 'concepts',
+      n: '04',
+      title: 'Concept studio',
+      body: 'A lesson that rotates with the day: analogy, idea, a small check. It is not scored by the quiz engine. Checks stay in this browser.',
+      cta: 'Open the studio',
+    },
+    {
+      act: 'take',
+      n: '05',
+      title: 'Today’s take',
+      body: 'A prompt for a view in your own words. Unscored and private to this device. Gemini reflection from the desktop tool is not connected here — there is no send.',
+      cta: 'Write today’s take',
+    },
+    {
+      act: 'lab',
+      n: '06',
+      title: 'Four-day lab',
+      body: 'Four short sittings already on the site, each opening the live quiz on one island. Not a new engine mode.',
+      cta: 'Open the lab',
+    },
+    {
+      act: 'history',
+      n: '07',
+      title: 'History',
+      body: 'Every sitting the engine has stored — category, tier, marks. Nothing is invented if the file is empty.',
+      cta: 'Read history',
+    },
+    {
+      act: 'progress',
+      n: '08',
+      title: 'Progress',
+      body: 'The same history, spoken as summaries rather than a ledger. Weakest region, when there is one, is a link back into Setup.',
+      cta: 'See progress',
+    },
   ]
 
   function insertStudio() {

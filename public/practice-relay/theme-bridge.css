@@ -188,60 +188,48 @@ a[aria-label^='Daily challenge'],
   color: var(--veyra-ui-text, #161917);
 }
 .veyra-studio-lead {
-  max-width: 42ch;
-  margin: 0 0 1.5rem;
-  font-size: 0.95rem;
+  max-width: 54ch;
+  margin: 0 0 1.75rem;
+  font-size: 1.02rem;
+  line-height: 1.55;
   color: var(--veyra-ui-muted, #4a5262);
 }
-.veyra-studio-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.85rem;
-}
-@media (min-width: 900px) {
-  .veyra-studio-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-}
-.veyra-studio-tile {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.35rem;
+.veyra-studio-list {
+  list-style: none;
   margin: 0;
-  padding: 0.9rem 0.9rem 1rem;
-  border: 1.5px solid var(--veyra-ui-line-strong, #161917);
-  background: var(--veyra-ui-card, #fdfefd);
-  color: inherit;
-  text-align: left;
-  font: inherit;
+  padding: 0;
+  display: grid;
+  gap: 0;
 }
-.veyra-studio-tile:hover {
-  transform: translateY(-2px);
+.veyra-studio-row {
+  display: grid;
+  grid-template-columns: 3.2rem minmax(0, 1fr);
+  gap: 0.75rem 1.1rem;
+  margin: 0;
+  padding: 1.15rem 0;
+  border-top: 1px solid var(--veyra-ui-line, rgba(22, 25, 23, 0.14));
 }
-.veyra-studio-art {
-  display: block;
-  width: 100%;
-  aspect-ratio: 5 / 3;
-  margin-bottom: 0.45rem;
-  border: 1.5px dashed color-mix(in srgb, var(--veyra-ui-text, #161917) 28%, transparent);
-  background:
-    repeating-linear-gradient(
-      -45deg,
-      transparent,
-      transparent 6px,
-      color-mix(in srgb, var(--veyra-ui-text, #161917) 6%, transparent) 6px,
-      color-mix(in srgb, var(--veyra-ui-text, #161917) 6%, transparent) 7px
-    );
+.veyra-studio-row:last-child {
+  border-bottom: 1px solid var(--veyra-ui-line, rgba(22, 25, 23, 0.14));
+}
+.veyra-studio-copy {
+  min-width: 0;
 }
 .veyra-studio-title {
+  margin: 0;
   font-family: 'Instrument Serif', Georgia, serif;
-  font-size: 1.35rem;
+  font-size: clamp(1.45rem, 2.4vw, 1.85rem);
   font-weight: 400;
   color: var(--veyra-ui-text, #161917);
 }
 .veyra-studio-body {
-  font-size: 0.82rem;
-  line-height: 1.45;
+  margin: 0.4rem 0 0.85rem;
+  max-width: 58ch;
+  font-size: 0.92rem;
+  line-height: 1.55;
   color: var(--veyra-ui-muted, #4a5262);
+}
+.veyra-studio-btn {
+  width: auto;
+  display: inline-flex;
 }
