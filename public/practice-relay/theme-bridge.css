@@ -172,15 +172,6 @@ footer .veyra-mark {
   flex-shrink: 0;
 }
 
-/* Story-architecture checklist and the five-plate strip — stripped */
-#home ol.bg-ink,
-.v-relay,
-#subject .mono-label.mt-10,
-#subject .relative.mt-4.grid,
-#subject .grid.items-center.gap-9 {
-  display: none !important;
-}
-
 a[aria-label^='Daily challenge'],
 [data-veyra-act='missed'] {
   cursor: pointer;
