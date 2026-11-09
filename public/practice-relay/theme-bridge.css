@@ -136,6 +136,27 @@ html[data-theme='ink'] :focus-visible {
   outline-color: var(--veyra-ui-cta);
 }
 
+/* Eye captions and closing copy — readable in Ink; art stays as-is */
+html[data-theme='ink'] .v-curious-eye-label {
+  color: #f4f1ea !important;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.55);
+}
+html[data-theme='paper'] .v-curious-eye-label {
+  color: #1b2230 !important;
+}
+html[data-theme='ink'] #leave-open .v-closing-eyebrow,
+html[data-theme='ink'] #leave-open .v-closing-first,
+html[data-theme='ink'] #leave-open .v-closing-lead,
+html[data-theme='ink'] #leave-open .v-closing-body,
+html[data-theme='ink'] #leave-open .v-closing-coda-copy,
+html[data-theme='ink'] #leave-open .mono-label {
+  color: var(--veyra-ui-text) !important;
+}
+html[data-theme='ink'] #leave-open .v-closing-body,
+html[data-theme='ink'] #leave-open .v-closing-eyebrow {
+  color: var(--veyra-ui-muted) !important;
+}
+
 /* Parent site already has Home/Practice/History — hide the inner chapter bar */
 nav.sticky {
   display: none !important;
