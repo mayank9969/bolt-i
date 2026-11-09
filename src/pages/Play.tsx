@@ -1,10 +1,11 @@
 import { useEffect, useRef } from 'react'
 import { useWorld } from '@/components/three/world'
 import { getTheme, onThemeChange, type ThemeId } from '@/lib/theme'
+import PracticeDesk from '@/components/PracticeDesk'
 
 /**
- * Practice is the VEYRA relay site in an iframe.
- * Paper/Ink is bridged from the parent; story artwork is not recolored.
+ * Practice = learning desk (real engine data) + the illustrated relay iframe.
+ * Paper/Ink is bridged; story artwork is not recolored.
  */
 export default function Play() {
   useWorld({ mode: 'quiet' })
@@ -29,12 +30,15 @@ export default function Play() {
   }, [])
 
   return (
-    <iframe
-      ref={ref}
-      title="VEYRA Practice"
-      src={`/practice-relay/index.html?eye=3&theme=${theme}`}
-      className="w-full border-0 block bg-canvas overflow-auto"
-      style={{ height: 'calc(100dvh - var(--veyra-header, 5.25rem))', minHeight: 0 }}
-    />
+    <div className="flex flex-col bg-canvas">
+      <PracticeDesk />
+      <iframe
+        ref={ref}
+        title="VEYRA Practice — relay of curiosity"
+        src={`/practice-relay/index.html?eye=3&theme=${theme}`}
+        className="w-full border-0 block bg-canvas overflow-auto"
+        style={{ height: 'min(92dvh, 1100px)', minHeight: '28rem' }}
+      />
+    </div>
   )
 }
