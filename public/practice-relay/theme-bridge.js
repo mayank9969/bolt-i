@@ -27,18 +27,23 @@
 
   function placeMark() {
     var a = document.querySelector('nav.sticky a[href="#home"]')
-    if (!a || a.querySelector('.veyra-ui-mark')) return !!a
-    var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
-    svg.setAttribute('class', 'veyra-ui-mark')
-    svg.setAttribute('viewBox', '0 0 48 48')
-    svg.setAttribute('aria-hidden', 'true')
-    svg.innerHTML =
-      '<path d="M10 7.5 L24 40 L38 7.5" fill="none" stroke="currentColor" stroke-width="5.2" stroke-linecap="round" stroke-linejoin="round"/>' +
-      '<path d="M24 14 C28 18 31 22 24 28 C17 22 20 18 24 14Z" fill="#16827e"/>' +
-      '<circle cx="24" cy="20" r="2.2" fill="#b3121b"/>'
-    a.insertBefore(svg, a.firstChild)
-    var star = a.querySelector('svg.text-cobalt, svg:not(.veyra-ui-mark)')
-    if (star && star !== svg) star.remove()
+    if (!a) return false
+    if (a.querySelector('.veyra-ui-mark')) {
+      Array.prototype.forEach.call(a.querySelectorAll('svg:not(.veyra-ui-mark)'), function (el) {
+        el.remove()
+      })
+      return true
+    }
+    var img = document.createElement('img')
+    img.className = 'veyra-ui-mark'
+    img.src = '/practice-relay/blade-mark.svg'
+    img.alt = ''
+    img.width = 36
+    img.height = 42
+    a.insertBefore(img, a.firstChild)
+    Array.prototype.forEach.call(a.querySelectorAll('svg'), function (el) {
+      el.remove()
+    })
     return true
   }
   if (!placeMark()) {

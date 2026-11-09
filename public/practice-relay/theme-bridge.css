@@ -145,17 +145,18 @@ nav.sticky a[href='#home'] {
   color: var(--veyra-ui-text) !important;
   gap: 0.55rem;
 }
+nav.sticky a[href='#home'] svg {
+  display: none !important;
+}
 nav.sticky .veyra-ui-mark {
-  width: 2rem;
-  height: 2rem;
+  width: 2.1rem;
+  height: 2.45rem;
   flex-shrink: 0;
-  color: var(--veyra-ui-text);
+  display: block;
+  object-fit: contain;
 }
-html[data-theme='ink'] nav.sticky .veyra-ui-mark path:nth-of-type(2) {
-  fill: #8ce0d8;
-}
-html[data-theme='ink'] nav.sticky .veyra-ui-mark circle {
-  fill: #e0262f;
+html[data-theme='ink'] nav.sticky .veyra-ui-mark {
+  filter: invert(1);
 }
 nav.sticky a[data-pill] {
   border-color: var(--veyra-ui-line-strong) !important;
