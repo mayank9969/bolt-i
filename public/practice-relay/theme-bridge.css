@@ -135,3 +135,62 @@ html[data-theme='paper'] :focus-visible,
 html[data-theme='ink'] :focus-visible {
   outline-color: var(--veyra-ui-cta);
 }
+
+/* Section nav — same chrome as the parent header */
+nav.sticky {
+  background: color-mix(in srgb, var(--veyra-ui-canvas) 92%, transparent) !important;
+  border-bottom: 1px solid var(--veyra-ui-line) !important;
+}
+nav.sticky a[href='#home'] {
+  color: var(--veyra-ui-text) !important;
+  gap: 0.55rem;
+}
+nav.sticky .veyra-ui-mark {
+  width: 2rem;
+  height: 2rem;
+  flex-shrink: 0;
+  color: var(--veyra-ui-text);
+}
+html[data-theme='ink'] nav.sticky .veyra-ui-mark path:nth-of-type(2) {
+  fill: #8ce0d8;
+}
+html[data-theme='ink'] nav.sticky .veyra-ui-mark circle {
+  fill: #e0262f;
+}
+nav.sticky a[data-pill] {
+  border-color: var(--veyra-ui-line-strong) !important;
+  border-radius: 999px !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+nav.sticky a[data-pill][aria-current='true'] {
+  background: var(--veyra-ui-text) !important;
+  color: var(--veyra-ui-canvas) !important;
+  border-color: var(--veyra-ui-text) !important;
+}
+nav.sticky a[data-pill]:not([aria-current='true']) {
+  background: transparent !important;
+  color: var(--veyra-ui-text) !important;
+}
+nav.sticky a[data-pill]:not([aria-current='true']):hover {
+  border-color: var(--veyra-ui-cta) !important;
+  color: var(--veyra-ui-cta) !important;
+  background: transparent !important;
+}
+nav.sticky .bg-vermilion {
+  background: var(--veyra-ui-cta) !important;
+}
+
+/* Story-architecture list is an editorial panel, not an illustration */
+#home ol.bg-ink {
+  background: var(--veyra-ui-text) !important;
+  color: var(--veyra-ui-canvas) !important;
+  border-left-color: var(--veyra-ui-cta) !important;
+}
+#home ol.bg-ink .text-ochre,
+#home ol.bg-ink .text-vermilion {
+  color: var(--veyra-ui-cta) !important;
+}
+#home ol.bg-ink .border-parchment\/60 {
+  border-color: color-mix(in srgb, var(--veyra-ui-canvas) 55%, transparent) !important;
+}
