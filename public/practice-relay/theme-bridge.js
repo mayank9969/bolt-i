@@ -68,10 +68,42 @@
     return true
   }
 
+  function sendAction(action) {
+    try {
+      window.parent.postMessage({ type: 'veyra-practice-action', action: action }, location.origin)
+    } catch (e) {
+      /* ignore */
+    }
+  }
+
+  function wire(el, action) {
+    if (!el || el.getAttribute('data-veyra-act')) return
+    el.setAttribute('data-veyra-act', action)
+    el.addEventListener('click', function (e) {
+      e.preventDefault()
+      sendAction(action)
+    })
+  }
+
+  function wireActions() {
+    wire(document.querySelector('a[aria-label^="Daily challenge"]'), 'daily')
+    var heads = document.querySelectorAll('h3')
+    for (var i = 0; i < heads.length; i++) {
+      if (!/Missed questions/i.test(heads[i].textContent || '')) continue
+      var box = heads[i].closest('div.mt-14') || heads[i]
+      box.style.cursor = 'pointer'
+      wire(box, 'missed')
+    }
+  }
+
   var mo = new MutationObserver(function () {
-    if (placeMarks()) mo.disconnect()
+    wireActions()
+    if (placeMarks()) {
+      /* footer mark is in; keep watching for late Daily badge */
+    }
   })
   mo.observe(document.documentElement, { childList: true, subtree: true })
+  wireActions()
 
   window.addEventListener('message', function (e) {
     if (e.source !== window.parent) return

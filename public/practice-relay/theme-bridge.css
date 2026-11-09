@@ -177,3 +177,8 @@ footer .veyra-mark {
 .v-relay {
   display: none !important;
 }
+
+a[aria-label^='Daily challenge'],
+[data-veyra-act='missed'] {
+  cursor: pointer;
+}
