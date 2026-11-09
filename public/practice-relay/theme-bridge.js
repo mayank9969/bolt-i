@@ -146,7 +146,9 @@
   ]
 
   function insertStudio() {
-    if (document.getElementById('veyra-studio')) return true
+    var existing = document.getElementById('veyra-studio')
+    if (existing && existing.querySelector('.veyra-studio-btn')) return true
+    if (existing) existing.remove()
     var main = document.querySelector('main')
     if (!main) return false
     var sec = document.createElement('section')
