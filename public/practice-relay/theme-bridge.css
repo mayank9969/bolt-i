@@ -176,7 +176,8 @@ footer .veyra-mark {
 #home ol.bg-ink,
 .v-relay,
 #subject .mono-label.mt-10,
-#subject .relative.mt-4.grid {
+#subject .relative.mt-4.grid,
+#subject .grid.items-center.gap-9 {
   display: none !important;
 }
 
