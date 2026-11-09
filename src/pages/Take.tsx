@@ -58,7 +58,7 @@ export default function Take() {
         </p>
         <h1 className="t-hero text-fg mt-6">Write a view.</h1>
         <p className="t-lead text-fg-2 mt-5 max-w-lg">
-          Subjective and unscored. A private line in this browser — the quiz engine never marks it.
+          Subjective and unscored. A private line in this browser — the quiz engine never marks it. Gemini reflection from the desktop tool is not connected here.
         </p>
       </Reveal>
       {prompt && (

@@ -1,11 +1,9 @@
 import { useEffect, useRef } from 'react'
 import { useWorld } from '@/components/three/world'
 import { getTheme, onThemeChange, type ThemeId } from '@/lib/theme'
-import PracticeDesk from '@/components/PracticeDesk'
 
 /**
- * Practice = learning desk (real engine data) + the illustrated relay iframe.
- * Paper/Ink is bridged; story artwork is not recolored.
+ * Practice is the illustrated relay. Paper/Ink is bridged; story art is not recolored.
  */
 export default function Play() {
   useWorld({ mode: 'quiet' })
@@ -30,8 +28,7 @@ export default function Play() {
   }, [])
 
   return (
-    <div className="flex flex-col bg-canvas">
-      <PracticeDesk />
+    <div className="bg-canvas">
       <iframe
         ref={ref}
         title="VEYRA Practice — relay of curiosity"

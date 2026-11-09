@@ -231,7 +231,7 @@ export default function Home() {
             <p className="t-label text-fg-3">Daily challenge</p>
             <h2 className="t-h3-lg text-fg mt-2">Five questions, mixed, for today.</h2>
             <p className="text-fg-2 mt-3 text-pretty">
-              A short sitting from the whole bank. Same length newest.py used for a daily five. The engine still picks live questions — nothing is invented in the browser.
+              A short sitting from the whole bank. The engine still picks live questions — nothing is invented in the browser.
             </p>
             <Link to="/setup" state={{ category: 'all', difficulty: 'mixed', questionCount: 5, daily: true }} className="link-rule text-sm mt-5">
               Start today’s five
@@ -241,19 +241,43 @@ export default function Home() {
             <p className="t-label text-fg-3">Today’s take</p>
             <h2 className="t-h3-lg text-fg mt-2">Write a view. Keep it here.</h2>
             <p className="text-fg-2 mt-3 text-pretty">
-              A prompt for the day and a place to answer in your own words. It stays on this device — the quiz API is not involved. Past takes sit on the same page.
+              Unscored and private to this browser. There is no Gemini send on the web — only the note you keep.
             </p>
             <Link to="/take" className="link-rule text-sm mt-5">
               Open today’s take
             </Link>
           </div>
+          <div>
+            <p className="t-label text-fg-3">Concept studio</p>
+            <h2 className="t-h3-lg text-fg mt-2">A lesson that rotates.</h2>
+            <p className="text-fg-2 mt-3 text-pretty">
+              Analogies and a check from the library already on the site. Not a scored sitting.
+            </p>
+            <Link to="/concepts" className="link-rule text-sm mt-5">
+              Open the studio
+            </Link>
+          </div>
+          <div>
+            <p className="t-label text-fg-3">Lab</p>
+            <h2 className="t-h3-lg text-fg mt-2">Four days, one thread.</h2>
+            <p className="text-fg-2 mt-3 text-pretty">
+              The existing sequence. History and progress stay the engine’s record of scored sittings.
+            </p>
+            <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2">
+              <Link to="/lab" className="link-rule text-sm">
+                Open the lab
+              </Link>
+              <Link to="/history" className="link-rule text-sm">
+                History
+              </Link>
+              <Link to="/progress" className="link-rule text-sm">
+                Progress
+              </Link>
+            </div>
+          </div>
         </div>
         <p className="t-meta text-fg-3 mt-10">
-          Daily five, review, lessons, and the archive live under{' '}
-          <Link to="/play" className="link-rule">
-            Practice
-          </Link>
-          .
+          Practice is the illustrated relay of curiosity — a story, not a menu of these sittings.
         </p>
       </section>
 

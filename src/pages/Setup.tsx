@@ -105,6 +105,11 @@ export default function Setup() {
             <h1 className="t-title text-fg mt-5 text-balance">
               Which island are you going ashore on?
             </h1>
+            {preset?.daily && (
+              <p className="t-lead text-fg-2 mt-4">
+                Today’s five is pre-set: mixed bank, five questions. Change region or tier if you want; scoring stays on the server.
+              </p>
+            )}
           </Reveal>
 
           {loadError ? (
