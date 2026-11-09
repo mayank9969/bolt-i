@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
 import { motion, useMotionValue, useSpring } from 'framer-motion'
 
-/** Subtle trailing ring on fine-pointer devices. Native cursor stays visible. */
+/** Trailing ring on fine pointers. Native cursor stays. */
 export default function CustomCursor() {
-  const x = useMotionValue(-100)
-  const y = useMotionValue(-100)
-  const rx = useSpring(x, { stiffness: 380, damping: 30, mass: 0.4 })
-  const ry = useSpring(y, { stiffness: 380, damping: 30, mass: 0.4 })
+  const x = useMotionValue(-80)
+  const y = useMotionValue(-80)
+  const rx = useSpring(x, { stiffness: 900, damping: 42, mass: 0.18 })
+  const ry = useSpring(y, { stiffness: 900, damping: 42, mass: 0.18 })
   const [hover, setHover] = useState(false)
   const [visible, setVisible] = useState(false)
   const [enabled, setEnabled] = useState(false)
@@ -20,9 +20,9 @@ export default function CustomCursor() {
     const move = (e: MouseEvent) => {
       x.set(e.clientX)
       y.set(e.clientY)
-      if (!visible) setVisible(true)
+      setVisible(true)
       const t = e.target as HTMLElement | null
-      setHover(!!t?.closest('a, button, input, textarea, [role="button"], [data-cursor]'))
+      setHover(!!t?.closest('a, button, input, textarea, [role="button"], [data-cursor], canvas'))
     }
     const leave = () => setVisible(false)
     window.addEventListener('mousemove', move, { passive: true })
@@ -31,23 +31,22 @@ export default function CustomCursor() {
       window.removeEventListener('mousemove', move)
       document.documentElement.removeEventListener('mouseleave', leave)
     }
-  }, [x, y, visible])
+  }, [x, y])
 
   if (!enabled) return null
 
   return (
     <motion.div
       style={{ x: rx, y: ry }}
-      className="pointer-events-none fixed left-0 top-0 z-[9999]"
+      className="pointer-events-none fixed left-0 top-0 z-[9999] mix-blend-difference"
       animate={{ opacity: visible ? 1 : 0 }}
+      transition={{ duration: 0.12 }}
       aria-hidden="true"
     >
       <motion.div
-        className={`rounded-full border -translate-x-1/2 -translate-y-1/2 transition-colors duration-200 ${
-          hover ? 'border-accent bg-accent/10' : 'border-line-strong bg-transparent'
-        }`}
-        animate={{ width: hover ? 40 : 26, height: hover ? 40 : 26 }}
-        transition={{ type: 'spring', stiffness: 420, damping: 28 }}
+        className="rounded-full border border-white -translate-x-1/2 -translate-y-1/2"
+        animate={{ width: hover ? 44 : 18, height: hover ? 44 : 18, opacity: hover ? 0.95 : 0.7 }}
+        transition={{ type: 'spring', stiffness: 520, damping: 32 }}
       />
     </motion.div>
   )

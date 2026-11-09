@@ -1625,7 +1625,7 @@ for(const index of[2,6,10,13]){
 const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();
 let lastPointerX=null,lastPointerY=null,lastTouchX=null,hovered=null,selectedIsland=null,pointerInsideStage=false,elapsed=0,last=performance.now(),lastTagUpdate=0,visible=true,active=true,frameRequest=0;
 let cycleEpoch=performance.now()-(performanceParams.get('time')==='night'?60000:0);const maxFrameInterval=1000/144;
-const cameraShift=new THREE.Vector2(startingCameraYaw,startingCameraPitch),autoCameraSpeed=.036;
+const cameraShift=new THREE.Vector2(startingCameraYaw,startingCameraPitch),lookGoal=new THREE.Vector2(startingCameraYaw,startingCameraPitch),autoCameraSpeed=.036;
 const focusShade=document.querySelector('#focusShade'),focusFlash=document.querySelector('#focusFlash');
 const focusStoryCue=document.querySelector('#focusStoryCue'),focusGraph=document.querySelector('#focusGraph'),focusGraphCanvas=document.querySelector('#focusGraphCanvas'),focusGraphLabel=document.querySelector('#focusGraphLabel');
 const focusPuzzle=document.querySelector('#focusPuzzle'),focusPuzzleFeedback=document.querySelector('#focusPuzzleFeedback');
@@ -1743,16 +1743,17 @@ subjectInfo.addEventListener('click',event=>event.stopPropagation());
 window.addEventListener('keydown',event=>{if(event.key==='Escape')closeSubjectFocus();});
 function onPointerMove(event){
   const rect=canvas.getBoundingClientRect();
-  const nx=((event.clientX-rect.left)/rect.width)*2-1;
-  const ny=-(((event.clientY-rect.top)/rect.height)*2-1);
+  const nx=((event.clientX-rect.left)/Math.max(1,rect.width))*2-1;
+  const ny=-(((event.clientY-rect.top)/Math.max(1,rect.height))*2-1);
   if(event.pointerType==='mouse'||event.pointerType==='pen'){
-    if(lastPointerX!==null&&selectedIsland===null){
-      cameraShift.x+=(nx-lastPointerX)*.78;
-      cameraShift.y=clamp(cameraShift.y+(ny-lastPointerY)*.36,-.82,.20);
-    }
+    lookGoal.x=startingCameraYaw+nx*0.85;
+    lookGoal.y=clamp(startingCameraPitch+ny*0.32,-.82,.20);
     lastPointerX=nx;lastPointerY=ny;
   }else if(event.pointerType==='touch'&&event.buttons&&lastTouchX!==null){
-    if(selectedIsland===null)cameraShift.x-=(event.clientX-lastTouchX)*.0075;
+    if(selectedIsland===null){
+      lookGoal.x-=(event.clientX-lastTouchX)*.0075;
+      cameraShift.x=lookGoal.x;
+    }
     lastTouchX=event.clientX;
   }
   pointer.set(nx,ny);pointerInsideStage=true;
@@ -1792,6 +1793,7 @@ function updateIslandTags(){
   }
 }
 canvas.addEventListener('pointermove',onPointerMove);
+stage.addEventListener('pointermove',onPointerMove);
 canvas.addEventListener('pointerdown',event=>{if(event.pointerType==='touch')lastTouchX=event.clientX;});
 canvas.addEventListener('pointerup',()=>{lastTouchX=null;});
 canvas.addEventListener('pointercancel',()=>{lastTouchX=null;});
@@ -1879,7 +1881,16 @@ function animate(now){
       }
     }
   }else{
-    if(selectedIsland===null&&!reducedMotion)cameraShift.x+=autoCameraSpeed*dt;
+    if(selectedIsland===null){
+      if(pointerInsideStage){
+        const k=1-Math.exp(-10*dt);
+        cameraShift.x+= (lookGoal.x-cameraShift.x)*k;
+        cameraShift.y+= (lookGoal.y-cameraShift.y)*k;
+      }else if(!reducedMotion){
+        cameraShift.x+=autoCameraSpeed*dt;
+        lookGoal.x=cameraShift.x;
+      }
+    }
     camera.position.copy(cameraHome);viewTarget.copy(getOrbitTarget());
   }
   camera.lookAt(viewTarget);
