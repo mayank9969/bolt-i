@@ -172,7 +172,8 @@ footer .veyra-mark {
   flex-shrink: 0;
 }
 
-/* Story-architecture checklist — stripped; the illustrated relay below it stays */
-#home ol.bg-ink {
+/* Story-architecture checklist and the five-plate strip — stripped */
+#home ol.bg-ink,
+.v-relay {
   display: none !important;
 }
