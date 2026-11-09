@@ -25,43 +25,53 @@
 
   apply(fromParent())
 
-  function markImg() {
-    var img = document.createElement('img')
-    img.className = 'veyra-ui-mark'
-    img.src = '/practice-relay/blade-mark.svg'
-    img.alt = ''
-    img.width = 36
-    img.height = 42
-    return img
+  if (!document.querySelector('link[href="/practice-relay/veyra-mark.css"]')) {
+    var link = document.createElement('link')
+    link.rel = 'stylesheet'
+    link.href = '/practice-relay/veyra-mark.css'
+    document.head.appendChild(link)
   }
 
-  function stripStars(host) {
-    Array.prototype.forEach.call(host.querySelectorAll('svg'), function (el) {
-      el.remove()
+  var markSvg = ''
+  fetch('/practice-relay/blade-mark-live.svg')
+    .then(function (r) {
+      return r.text()
     })
-  }
+    .then(function (t) {
+      markSvg = t
+      placeMarks()
+    })
+    .catch(function () {
+      /* keep wordmark */
+    })
 
-  function placeIn(host, where) {
-    if (!host) return false
-    stripStars(host)
-    if (host.querySelector('.veyra-ui-mark')) return true
-    var img = markImg()
-    if (where === 'start') host.insertBefore(img, host.firstChild)
-    else host.appendChild(img)
-    return true
+  function realMark(size) {
+    var wrap = document.createElement('div')
+    wrap.className = 'veyra-mark nofield is-settled veyra-ui-mark'
+    wrap.style.setProperty('--vm-size', size + 'px')
+    wrap.setAttribute('aria-hidden', 'true')
+    wrap.innerHTML = markSvg
+    return wrap
   }
 
   function placeMarks() {
-    var nav = placeIn(document.querySelector('nav.sticky a[href="#home"]'), 'start')
-    var foot = placeIn(document.querySelector('footer .font-poster'), 'end')
-    return nav && foot
-  }
-  if (!placeMarks()) {
-    var mo = new MutationObserver(function () {
-      if (placeMarks()) mo.disconnect()
+    if (!markSvg) return false
+    var foot = document.querySelector('footer .font-poster')
+    if (!foot) return false
+    Array.prototype.forEach.call(foot.querySelectorAll('svg'), function (el) {
+      if (el.closest('.veyra-mark')) return
+      el.remove()
     })
-    mo.observe(document.documentElement, { childList: true, subtree: true })
+    if (!foot.querySelector('.veyra-mark')) {
+      foot.insertBefore(realMark(56), foot.firstChild)
+    }
+    return true
   }
+
+  var mo = new MutationObserver(function () {
+    if (placeMarks()) mo.disconnect()
+  })
+  mo.observe(document.documentElement, { childList: true, subtree: true })
 
   window.addEventListener('message', function (e) {
     if (e.source !== window.parent) return
