@@ -183,6 +183,9 @@
 .veyra-mark.is-settled.is-rippling .flare {
   animation: msFlare calc(1.4s * var(--k)) ease-out both;
 }
+.veyra-mark.is-vanish {
+  animation: msVanish 0.7s ease both;
+}
 .veyra-mark.is-paused * {
   animation-play-state: paused !important;
 }
@@ -230,6 +233,10 @@
 @keyframes msBreathe {
   from { opacity: calc(var(--glow) * 0.68); }
   to { opacity: calc(var(--glow) * 0.95); }
+}
+@keyframes msVanish {
+  from { opacity: 1; }
+  to { opacity: 0; }
 }
 @keyframes msPulse {
   0% { stroke-dashoffset: 0.14; opacity: 0; }

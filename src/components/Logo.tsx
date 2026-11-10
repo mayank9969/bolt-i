@@ -28,18 +28,25 @@ export function LogoMark({ size = 36, className = '', animated = true }: LogoPro
 
     let busy = false
     let settleT = 0
-    let ripT = 0
+    let loopT = 0
+    let vanishT = 0
 
     const play = () => {
       window.clearTimeout(settleT)
-      window.clearTimeout(ripT)
+      window.clearTimeout(loopT)
+      window.clearTimeout(vanishT)
       busy = true
-      el.classList.remove('is-run', 'is-settled', 'is-rippling')
+      el.style.opacity = ''
+      el.classList.remove('is-run', 'is-settled', 'is-rippling', 'is-vanish')
       void el.offsetWidth
       el.classList.add('is-run')
       settleT = window.setTimeout(() => {
         el.classList.add('is-settled')
         busy = false
+        loopT = window.setTimeout(() => {
+          el.classList.add('is-vanish')
+          vanishT = window.setTimeout(() => play(), 720)
+        }, 4800)
       }, 3300)
     }
 
@@ -53,7 +60,7 @@ export function LogoMark({ size = 36, className = '', animated = true }: LogoPro
       (entries) => {
         entries.forEach((e) => {
           el.classList.toggle('is-paused', !e.isIntersecting)
-          if (e.isIntersecting) replay()
+          if (e.isIntersecting && !el.classList.contains('is-run')) replay()
         })
       },
       { threshold: 0.2 },
@@ -72,7 +79,8 @@ export function LogoMark({ size = 36, className = '', animated = true }: LogoPro
     return () => {
       io.disconnect()
       window.clearTimeout(settleT)
-      window.clearTimeout(ripT)
+      window.clearTimeout(loopT)
+      window.clearTimeout(vanishT)
       window.removeEventListener('pageshow', onShow)
       document.removeEventListener('visibilitychange', onVis)
       el.removeEventListener('pointerenter', replay)
