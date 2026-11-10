@@ -51,11 +51,14 @@ export function LogoMark({ size = 36, className = '', animated = true }: LogoPro
     }
 
     el.classList.add('is-armed')
+    const start = () => {
+      started = false
+      play()
+    }
     const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((e) => {
           el.classList.toggle('is-paused', !e.isIntersecting)
-          if (e.isIntersecting && !started) play()
         })
       },
       { threshold: 0.2 },
@@ -63,11 +66,17 @@ export function LogoMark({ size = 36, className = '', animated = true }: LogoPro
     io.observe(el)
     el.addEventListener('pointerenter', ripple)
     el.addEventListener('click', ripple)
+    const onShow = (ev: PageTransitionEvent) => {
+      if (ev.persisted) start()
+    }
+    window.addEventListener('pageshow', onShow)
+    requestAnimationFrame(() => requestAnimationFrame(start))
 
     return () => {
       io.disconnect()
       window.clearTimeout(settleT)
       window.clearTimeout(ripT)
+      window.removeEventListener('pageshow', onShow)
       el.removeEventListener('pointerenter', ripple)
       el.removeEventListener('click', ripple)
     }
