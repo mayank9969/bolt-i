@@ -153,7 +153,7 @@
     var img = document.createElement('img')
     img.className = 'v-leave-room-art'
     img.src = '/practice-relay/leave-room.png'
-    img.alt = 'Leave room for the next'
+    img.alt = 'Puzzle portrait — leave room for the next'
     svg.setAttribute('data-veyra-art', '1')
     svg.replaceWith(img)
     return true

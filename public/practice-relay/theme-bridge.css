@@ -279,6 +279,7 @@ a[aria-label^='Daily challenge'],
   display: block;
   width: 100%;
   height: auto;
+  object-fit: cover;
   image-rendering: auto;
 }
 
