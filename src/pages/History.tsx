@@ -42,7 +42,10 @@ export default function History() {
     const q = visible.reduce((s, h) => s + h.total_questions, 0)
     const c = visible.reduce((s, h) => s + h.correct_answers, 0)
     const best = n ? Math.max(...visible.map((h) => h.percentage)) : 0
-    return { n, avg, q, c, best, accuracy: q ? (c / q) * 100 : 0 }
+    const last = n ? visible[visible.length - 1] : null
+    const prev = n > 1 ? visible[visible.length - 2] : null
+    const delta = last && prev ? last.percentage - prev.percentage : null
+    return { n, avg, q, c, best, accuracy: q ? (c / q) * 100 : 0, last, delta }
   }, [visible])
 
   // HISTORY — accumulated: each region is "established" in proportion to real practice there.
@@ -59,7 +62,8 @@ export default function History() {
       categories
         .map((id) => {
           const items = (history ?? []).filter((h) => norm(h.category) === id)
-          return { id, n: items.length, w: establish(items) }
+          const avg = items.reduce((s, h) => s + h.percentage, 0) / items.length
+          return { id, n: items.length, w: establish(items), avg }
         })
         .sort((a, b) => b.n - a.n || b.w - a.w),
     [history, categories],
@@ -156,11 +160,21 @@ export default function History() {
           <>
             {/* ── Ledger of big numbers ─────────────────────── */}
             <Reveal delay={0.05}>
-              <dl className="mt-14 grid grid-cols-2 lg:grid-cols-4 gap-x-8">
+              <dl className="mt-14 grid grid-cols-2 lg:grid-cols-5 gap-x-8 gap-y-8 border-t border-line-strong pt-8">
                 <Big label="Quizzes taken" value={String(stats.n)} />
                 <Big label="Average score" value={formatPercent(stats.avg, 1)} tone={performanceTone(stats.avg)} />
                 <Big label="Overall accuracy" value={formatPercent(stats.accuracy, 0)} sub={`${stats.c} / ${stats.q} correct`} />
                 <Big label="Best result" value={formatPercent(stats.best, 1)} tone={performanceTone(stats.best)} />
+                <Big
+                  label="Last sitting"
+                  value={stats.last ? formatPercent(stats.last.percentage, 0) : '—'}
+                  tone={stats.last ? performanceTone(stats.last.percentage) : undefined}
+                  sub={
+                    stats.delta == null
+                      ? undefined
+                      : `${stats.delta >= 0 ? '+' : ''}${formatPercent(stats.delta, 0)} vs previous`
+                  }
+                />
               </dl>
             </Reveal>
 
@@ -174,22 +188,33 @@ export default function History() {
                 </div>
                 <ul className="lg:col-span-8 border-t border-line">
                   {[
-                    ...regions.map((r) => [labelCategory(r.id), r.w, r.n] as const),
-                    ...(mixedItems.length ? [['Mixed', weights[2], mixedItems.length] as const] : []),
-                  ].map(([name, w, n], i) => (
+                    ...regions.map((r) => [r.id, labelCategory(r.id), r.w, r.n, r.avg] as const),
+                    ...(mixedItems.length
+                      ? ([['mixed', 'Mixed', weights[2], mixedItems.length, mixedItems.reduce((s, h) => s + h.percentage, 0) / mixedItems.length] as const])
+                      : []),
+                  ].map(([id, name, w, n, avg], i) => (
                     <motion.li
-                      key={String(name)}
+                      key={String(id)}
                       initial={{ opacity: 0, y: 8 }}
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}
                       transition={{ delay: i * 0.08, duration: 0.45, ease }}
-                      className="grid grid-cols-[1fr_auto] sm:grid-cols-[10rem_1fr_auto] items-center gap-x-6 gap-y-2 py-5 border-b border-line"
                     >
-                      <span className="t-h3 text-fg">{String(name)}</span>
-                      <SubjectWave weight={Number(w)} delay={i * 0.1} />
-                      <span className="text-right t-caption text-fg-2 num sm:w-24">
-                        {Number(n)} {Number(n) === 1 ? 'sitting' : 'sittings'}
-                      </span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setFilter(id === 'mixed' ? 'all' : String(id))
+                          setShowAll(false)
+                        }}
+                        className="w-full grid grid-cols-[1fr_auto] sm:grid-cols-[10rem_1fr_auto] items-center gap-x-6 gap-y-2 py-5 border-b border-line text-left hover:bg-hover -mx-2 px-2 rounded-lg"
+                      >
+                        <span className="t-h3 text-fg">{String(name)}</span>
+                        <SubjectWave weight={Number(w)} delay={i * 0.1} />
+                        <span className="text-right t-caption text-fg-2 num sm:w-28">
+                          {Number(n)} {Number(n) === 1 ? 'sitting' : 'sittings'}
+                          <span className="block figcap mt-0.5">{formatPercent(Number(avg), 0)} avg</span>
+                        </span>
+                      </button>
                     </motion.li>
                   ))}
                 </ul>
@@ -227,6 +252,9 @@ export default function History() {
                 <span className="index">03 — Attempts</span>
                 <h2 className="ed-kicker" style={{ fontFamily: 'var(--ed-display)', fontSize: 'clamp(1.4rem,2.2vw,1.8rem)' }}>Each sitting</h2>
                 <p className="t-caption text-fg-3 mt-3 num">{newestFirst.length} · newest first</p>
+                <Link to="/progress" className="link-rule mt-4 inline-block text-sm">
+                  Open progress
+                </Link>
               </Reveal>
               <ol className="lg:col-span-8 border-t border-line-strong mt-6 lg:mt-0">
                 {(showAll ? newestFirst : newestFirst.slice(0, 10)).map((h, i) => {
@@ -247,8 +275,11 @@ export default function History() {
                       </div>
                       <span className="hidden sm:block text-sm text-fg-2 num">{h.correct_answers} / {h.total_questions} right</span>
                       <span className="hidden sm:block text-sm text-fg-2 num">{formatScore(h.score)} / {formatScore(h.total_marks)}</span>
-                      <span className="text-right">
+                      <span className="text-right min-w-[4.5rem]">
                         <span className={`t-h3 num ${toneText[tone]}`}>{formatPercent(h.percentage, 1)}</span>
+                        <span className="mt-1 block h-1 rounded-full bg-line overflow-hidden">
+                          <span className="block h-full bg-accent" style={{ width: `${Math.min(100, Math.max(0, h.percentage))}%` }} />
+                        </span>
                       </span>
                       <span className="col-start-2 col-span-2 sm:hidden t-caption text-fg-2 num">
                         {h.correct_answers} / {h.total_questions} right · {formatScore(h.score)} / {formatScore(h.total_marks)} marks
