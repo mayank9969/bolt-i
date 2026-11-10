@@ -31,11 +31,8 @@ export default function CustomCursor() {
     const fromFrame = (e: MessageEvent) => {
       const d = e.data
       if (!d || d.type !== 'veyra-cursor') return
-      const frames = document.querySelectorAll('iframe')
-      let frame: HTMLIFrameElement | null = null
-      frames.forEach((f) => {
-        if (f.contentWindow === e.source) frame = f
-      })
+      const frames = Array.from(document.querySelectorAll('iframe'))
+      const frame = frames.find((f) => f.contentWindow === e.source)
       if (!frame) return
       const r = frame.getBoundingClientRect()
       x.set(r.left + d.x)
