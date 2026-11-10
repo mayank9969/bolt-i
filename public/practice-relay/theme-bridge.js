@@ -179,10 +179,25 @@
     )
   }
 
+  function swapDaily() {
+    var daily = document.querySelector('a[aria-label^="Daily challenge"]')
+    if (!daily) return false
+    daily.setAttribute('data-veyra-act', 'daily')
+    if (daily.getAttribute('data-veyra-art')) return true
+    daily.setAttribute('data-veyra-art', '1')
+    daily.classList.add('v-daily-disc')
+    daily.innerHTML = ''
+    var img = document.createElement('img')
+    img.src = '/practice-relay/daily-elsewhere.png'
+    img.alt = 'Daily challenge — five questions, mixed subjects'
+    img.className = 'v-daily-moon'
+    daily.appendChild(img)
+    return true
+  }
+
   function wireActions() {
     insertStudio()
-    var daily = document.querySelector('a[aria-label^="Daily challenge"]')
-    if (daily) daily.setAttribute('data-veyra-act', 'daily')
+    swapDaily()
   }
 
   function swapLeaveRoom() {
@@ -213,6 +228,7 @@
   function boot() {
     wireActions()
     placeMarks()
+    swapDaily()
     swapLeaveRoom()
     swapEnding()
   }
@@ -226,6 +242,7 @@
   var mo = new MutationObserver(function () {
     if (!document.getElementById('veyra-studio')) insertStudio()
     placeMarks()
+    swapDaily()
     swapLeaveRoom()
     swapEnding()
     var acts = document.querySelectorAll('[data-veyra-act]')
