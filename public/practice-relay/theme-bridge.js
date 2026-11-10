@@ -223,7 +223,7 @@
     if (window.veyraMountContinue) go()
     else {
       var s = document.createElement('script')
-      s.src = '/practice-relay/continue-anim.js?v=1'
+      s.src = 'continue-anim.js?v=2'
       s.onload = go
       document.head.appendChild(s)
     }
