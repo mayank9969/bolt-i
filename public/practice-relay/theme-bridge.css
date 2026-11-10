@@ -260,6 +260,17 @@ a[aria-label^='Daily challenge'],
   font-size: 0.78rem;
   color: var(--veyra-ui-muted, #8a938c);
 }
+.v-ending-art {
+  overflow: hidden;
+  background: #f4efe6;
+}
+.v-ending-photo {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
 .v-leave-room-art {
   display: block;
   width: 100%;

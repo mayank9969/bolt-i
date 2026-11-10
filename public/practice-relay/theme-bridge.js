@@ -155,10 +155,24 @@
     return true
   }
 
+  function swapEnding() {
+    var art = document.querySelector('.v-ending-art')
+    if (!art || art.getAttribute('data-veyra-art')) return !!art
+    art.setAttribute('data-veyra-art', '1')
+    art.innerHTML = ''
+    var img = document.createElement('img')
+    img.src = '/practice-relay/question-continues.png'
+    img.alt = 'The question continues'
+    img.className = 'v-ending-photo'
+    art.appendChild(img)
+    return true
+  }
+
   function boot() {
     wireActions()
     placeMarks()
     swapLeaveRoom()
+    swapEnding()
   }
 
   if (document.readyState === 'loading') {
@@ -171,6 +185,7 @@
     if (!document.getElementById('veyra-studio')) insertStudio()
     placeMarks()
     swapLeaveRoom()
+    swapEnding()
     var acts = document.querySelectorAll('[data-veyra-act]')
     for (var j = 0; j < acts.length; j++) wire(acts[j])
   })
