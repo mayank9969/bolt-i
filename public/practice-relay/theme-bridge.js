@@ -214,14 +214,19 @@
 
   function swapEnding() {
     var art = document.querySelector('.v-ending-art')
-    if (!art || art.getAttribute('data-veyra-art')) return !!art
-    art.setAttribute('data-veyra-art', '1')
-    art.innerHTML = ''
-    var img = document.createElement('img')
-    img.src = '/practice-relay/question-continues.png'
-    img.alt = 'The question continues'
-    img.className = 'v-ending-photo'
-    art.appendChild(img)
+    if (!art) return false
+    if (art.getAttribute('data-veyra-art') === 'anim') return true
+    art.setAttribute('data-veyra-art', 'anim')
+    function go() {
+      if (window.veyraMountContinue) window.veyraMountContinue(art)
+    }
+    if (window.veyraMountContinue) go()
+    else {
+      var s = document.createElement('script')
+      s.src = '/practice-relay/continue-anim.js?v=1'
+      s.onload = go
+      document.head.appendChild(s)
+    }
     return true
   }
 

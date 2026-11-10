@@ -288,7 +288,78 @@ a[aria-label^='Daily challenge'],
 }
 .v-ending-art {
   overflow: hidden;
-  background: #f4efe6;
+  background: #f1e8d5;
+}
+.v-continue-host { position: relative; }
+.v-continue-frame {
+  border: 1px solid #111;
+  background: #f8f1df;
+  padding: 10px;
+  box-shadow: 10px 10px 0 #c8382c;
+}
+.v-continue-stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  background: #f1e8d5;
+  cursor: pointer;
+  container-type: inline-size;
+}
+.v-continue-rig, .v-sc, .v-crowd, .v-ring, .v-glow, .v-dust, .v-grain, .v-vig, .v-cover {
+  position: absolute;
+  inset: 0;
+}
+.v-sc { transform-origin: 85% 55%; }
+.v-sc-img, .v-crowd-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.v-mist { position: absolute; top: 30%; width: 80%; height: 30%; filter: blur(18px); pointer-events: none; }
+.v-mist-a { background: radial-gradient(ellipse at center, rgba(255,252,243,.55), transparent 65%); }
+.v-mist-b { top: 38%; width: 70%; height: 24%; filter: blur(22px); background: radial-gradient(ellipse at center, rgba(255,252,243,.45), transparent 65%); }
+.v-man {
+  position: absolute;
+  aspect-ratio: 1 / 2;
+  transform-origin: 50% 100%;
+  mix-blend-mode: multiply;
+  -webkit-mask-image: radial-gradient(ellipse 66% 62% at 50% 50%, #000 62%, transparent 100%);
+  mask-image: radial-gradient(ellipse 66% 62% at 50% 50%, #000 62%, transparent 100%);
+}
+.v-man-img, .v-orange-img { width: 100%; height: 100%; display: block; filter: brightness(1.08) url(#v-boil); }
+.v-q-draw { position: absolute; inset: 0; width: 100%; height: 100%; }
+.v-crowd-in { position: absolute; inset: 0; transform-origin: 50% 64%; }
+.v-crowd-img { filter: url(#v-boil); }
+.v-orange {
+  position: absolute;
+  bottom: 1%;
+  height: 96%;
+  aspect-ratio: 2 / 3;
+  transform-origin: 50% 100%;
+  mix-blend-mode: multiply;
+  display: none;
+  -webkit-mask-image: radial-gradient(ellipse 62% 60% at 50% 50%, #000 66%, transparent 100%);
+  mask-image: radial-gradient(ellipse 62% 60% at 50% 50%, #000 66%, transparent 100%);
+}
+.v-copy { position: absolute; pointer-events: none; opacity: 0; }
+.v-copy-a { left: 4.2%; top: 5.5%; }
+.v-copy-b { left: 52.5%; top: 17%; width: 44%; }
+.v-kicker { font-family: var(--font-mono, ui-monospace, monospace); text-transform: uppercase; letter-spacing: 0.28em; font-size: 1.15cqw; color: #7b1f1a; margin: 0 0 0.8cqw; }
+.v-line { font-family: var(--font-display, Georgia, serif); font-style: italic; font-size: 4.6cqw; line-height: 1.02; color: #1b1a19; margin: 0; }
+.v-stand { font-family: var(--font-display, Georgia, serif); font-style: italic; font-weight: 800; font-size: 12.5cqw; line-height: 0.86; letter-spacing: -0.04em; color: #1b1a19; margin: 0; }
+.v-out { color: #f26a1b; }
+.v-blank { font-family: var(--font-display, Georgia, serif); font-style: italic; font-size: 1.9cqw; color: #4a463f; margin: 2.2cqw 0 0; }
+.v-cover { background: #f1e8d5; pointer-events: none; }
+.v-vig { pointer-events: none; background: radial-gradient(ellipse at center, transparent 55%, rgba(60,40,20,.22) 100%); }
+.v-bar { position: absolute; left: 0; bottom: 0; height: 3px; width: 0; background: #c8382c; pointer-events: none; }
+.v-continue-cap {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: clamp(8px, 1.05vw, 12px);
+  font-weight: 700;
+  color: #111;
+  padding: 12px 6px 4px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
 }
 .v-ending-photo {
   display: block;
