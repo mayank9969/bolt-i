@@ -24,13 +24,11 @@ export function LogoMark({ size = 36, className = '', animated = true }: LogoPro
       return
     }
 
-    let started = false
     let busy = false
     let settleT = 0
     let ripT = 0
 
     const play = () => {
-      started = true
       window.clearTimeout(settleT)
       window.clearTimeout(ripT)
       busy = false
@@ -51,10 +49,7 @@ export function LogoMark({ size = 36, className = '', animated = true }: LogoPro
     }
 
     el.classList.add('is-armed')
-    const start = () => {
-      started = false
-      play()
-    }
+    const start = () => play()
     const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((e) => {
