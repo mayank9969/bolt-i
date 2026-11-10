@@ -30,8 +30,7 @@
 .veyra-flower .inner.i2{--o:.4;stroke-width:.75}
 .veyra-flower .rimglow{--o:.16;stroke-width:5;stroke:var(--c2,var(--vf-tint-a))}
 .veyra-flower .vein{--o:.5;stroke-width:.7;stroke:var(--vf-line-soft)}
-.veyra-flower .mesh{--o:.22;stroke-width:.5;stroke:var(--vf-line-soft)}
-.veyra-flower .mesh.m2{--o:.17}
+.veyra-flower .mesh,.veyra-flower .mesh.m2{display:none}
 .veyra-flower .glint{--o:.5;stroke-width:.8;stroke:var(--vf-core)}
 /* echo: a faint, slightly rotated second rim, so each petal reads as layered glass */
 .veyra-flower .echo{--o:.3;stroke-width:.65;stroke:var(--c2,var(--vf-tint-a))}

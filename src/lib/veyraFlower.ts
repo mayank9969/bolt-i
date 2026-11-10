@@ -226,22 +226,6 @@ function initVeyraFlower(root){
       wire(g,cc(0,-.6,.6),'band ba',base+.4,1.1);
     }
 
-    /* fine wire mesh */
-    var cross=[],rows=inner?8:14;
-    for(var k=0;k<rows;k++){
-      var t=.1+k*(.8/(rows-1))*.97,l=[];
-      for(var j=0;j<=12;j++){var u=-1+2*j/12;l.push(P(s,t+.035*(1-u*u),u,1,1,0));}
-      cross.push(l);
-    }
-    wireM(g,cross,'mesh',base+.5,1.5);
-    var lng=[],nl=inner?4:7;
-    for(var k=-nl;k<=nl;k++){
-      var u=k/(nl+.6),tEnd=.95-.22*Math.pow(Math.abs(u),2.2),l=[];
-      for(var j=0;j<=18;j++){var t=.04+(tEnd-.04)*j/18;l.push(P(s,t,u*(1+.03*Math.sin(t*9+k)),1,1,0));}
-      lng.push(l);
-    }
-    wireM(g,lng,'mesh m2',base+.6,1.5);
-
     /* main veins (+ their pulses) */
     var us=inner?[-.6,0,.6]:[-.82,-.55,-.28,0,.28,.55,.82];
     us.forEach(function(u,k){
