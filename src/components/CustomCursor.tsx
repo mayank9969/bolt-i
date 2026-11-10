@@ -17,18 +17,40 @@ export default function CustomCursor() {
     if (!fine || reduce) return
     setEnabled(true)
 
-    const move = (e: MouseEvent) => {
+    const hit = (t: EventTarget | null) => {
+      const el = t as HTMLElement | null
+      return !!el?.closest?.('a, button, input, textarea, [role="button"], [data-cursor], canvas, [data-veyra-act]')
+    }
+    const move = (e: PointerEvent | MouseEvent) => {
       x.set(e.clientX)
       y.set(e.clientY)
       setVisible(true)
-      const t = e.target as HTMLElement | null
-      setHover(!!t?.closest('a, button, input, textarea, [role="button"], [data-cursor], canvas'))
+      setHover(hit(e.target))
     }
     const leave = () => setVisible(false)
+    const fromFrame = (e: MessageEvent) => {
+      const d = e.data
+      if (!d || d.type !== 'veyra-cursor') return
+      const frames = document.querySelectorAll('iframe')
+      let frame: HTMLIFrameElement | null = null
+      frames.forEach((f) => {
+        if (f.contentWindow === e.source) frame = f
+      })
+      if (!frame) return
+      const r = frame.getBoundingClientRect()
+      x.set(r.left + d.x)
+      y.set(r.top + d.y)
+      setVisible(true)
+      setHover(!!d.hover)
+    }
+    window.addEventListener('pointermove', move, { passive: true })
     window.addEventListener('mousemove', move, { passive: true })
+    window.addEventListener('message', fromFrame)
     document.documentElement.addEventListener('mouseleave', leave)
     return () => {
+      window.removeEventListener('pointermove', move)
       window.removeEventListener('mousemove', move)
+      window.removeEventListener('message', fromFrame)
       document.documentElement.removeEventListener('mouseleave', leave)
     }
   }, [x, y])

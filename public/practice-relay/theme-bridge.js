@@ -25,6 +25,21 @@
 
   apply(fromParent())
 
+  document.addEventListener(
+    'pointermove',
+    function (e) {
+      var t = e.target
+      var hover = false
+      try {
+        hover = !!(t && t.closest && t.closest('a, button, input, textarea, [role="button"], [data-veyra-act], canvas'))
+      } catch (err) {}
+      try {
+        window.parent.postMessage({ type: 'veyra-cursor', x: e.clientX, y: e.clientY, hover: hover }, '*')
+      } catch (err2) {}
+    },
+    { passive: true },
+  )
+
   if (!document.querySelector('link[href="/practice-relay/veyra-mark.css"]')) {
     var link = document.createElement('link')
     link.rel = 'stylesheet'
