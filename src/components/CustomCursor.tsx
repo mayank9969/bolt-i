@@ -38,14 +38,19 @@ export default function CustomCursor() {
   return (
     <motion.div
       style={{ x: rx, y: ry }}
-      className="pointer-events-none fixed left-0 top-0 z-[9999] mix-blend-difference"
+      className="pointer-events-none fixed left-0 top-0 z-[9999]"
       animate={{ opacity: visible ? 1 : 0 }}
       transition={{ duration: 0.12 }}
       aria-hidden="true"
     >
       <motion.div
-        className="rounded-full border border-white -translate-x-1/2 -translate-y-1/2"
-        animate={{ width: hover ? 44 : 18, height: hover ? 44 : 18, opacity: hover ? 0.95 : 0.7 }}
+        className="rounded-full -translate-x-1/2 -translate-y-1/2 border-2"
+        style={{
+          borderColor: 'var(--nx-accent, #16827e)',
+          background: hover ? 'color-mix(in srgb, var(--nx-accent, #16827e) 22%, transparent)' : 'transparent',
+          boxShadow: '0 0 0 1px color-mix(in srgb, var(--nx-accent, #8ce0d8) 35%, transparent)',
+        }}
+        animate={{ width: hover ? 44 : 18, height: hover ? 44 : 18, opacity: hover ? 1 : 0.85 }}
         transition={{ type: 'spring', stiffness: 520, damping: 32 }}
       />
     </motion.div>
