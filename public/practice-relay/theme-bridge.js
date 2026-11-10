@@ -143,9 +143,22 @@
     for (var j = 0; j < acts.length; j++) wire(acts[j])
   }
 
+  function swapLeaveRoom() {
+    var svg = document.querySelector('svg[aria-label*="geometric tiles"]')
+    if (!svg || svg.getAttribute('data-veyra-art')) return !!document.querySelector('.v-leave-room-art')
+    var img = document.createElement('img')
+    img.className = 'v-leave-room-art'
+    img.src = '/practice-relay/leave-room.png'
+    img.alt = 'Leave room for the next'
+    svg.setAttribute('data-veyra-art', '1')
+    svg.replaceWith(img)
+    return true
+  }
+
   function boot() {
     wireActions()
     placeMarks()
+    swapLeaveRoom()
   }
 
   if (document.readyState === 'loading') {
@@ -157,6 +170,7 @@
   var mo = new MutationObserver(function () {
     if (!document.getElementById('veyra-studio')) insertStudio()
     placeMarks()
+    swapLeaveRoom()
     var acts = document.querySelectorAll('[data-veyra-act]')
     for (var j = 0; j < acts.length; j++) wire(acts[j])
   })

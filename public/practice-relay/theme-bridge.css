@@ -260,6 +260,13 @@ a[aria-label^='Daily challenge'],
   font-size: 0.78rem;
   color: var(--veyra-ui-muted, #8a938c);
 }
+.v-leave-room-art {
+  display: block;
+  width: 100%;
+  height: auto;
+  image-rendering: auto;
+}
+
 @media (max-width: 640px) {
   #veyra-studio .veyra-studio-head,
   #veyra-studio .veyra-studio-collage {
