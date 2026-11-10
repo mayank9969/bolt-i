@@ -12,7 +12,7 @@ import { reviewTopics } from '@/lib/review'
 import { difficultyLevel, labelCategory } from '@/lib/format'
 import ArchipelagoStage from '@/components/three/ArchipelagoStage'
 import { getWorld, setWorld, useWorld, useWorldSlice } from '@/components/three/world'
-import { exhibitFor, exhibitIds, hasExhibit } from '@/lib/exhibits'
+import { hasExhibit } from '@/lib/exhibits'
 
 const ease = [0.22, 1, 0.36, 1] as const
 const enter = (i: number) => ({ duration: 0.9, delay: 0.15 + i * 0.1, ease })
@@ -182,42 +182,6 @@ export default function Home() {
             </ul>
           </div>
         </motion.nav>
-      </section>
-
-      {/* ── Two exhibits: always visible, never depend on 3D ───────── */}
-      <section className="relative z-10 max-w-page mx-auto w-full px-5 sm:px-6 lg:px-8 pb-8 md:pb-12 pointer-events-auto">
-        <div className="flex items-center justify-between gap-6 figcap mb-4">
-          <span className="inline-flex items-center gap-3">
-            <span className="w-8 h-px bg-line-strong" />
-            Fig. 02 — Open exhibits
-          </span>
-        </div>
-        <ul className="grid md:grid-cols-2 gap-4 md:gap-6">
-          {(catalog ? cats.filter((c) => hasExhibit(c.id)) : exhibitIds().map((id) => ({ id }))).map((c) => {
-            const ex = exhibitFor(c.id)
-            if (!ex) return null
-            const Icon = categoryIcon(c.id)
-            return (
-              <li key={c.id}>
-                <button
-                  type="button"
-                  className="exhibit-poster group w-full text-left"
-                  onClick={() => setWorld({ selected: c.id, hover: c.id, beat: 0 })}
-                  aria-haspopup="dialog"
-                >
-                  <span className="eyebrow">Exhibit · {categoryLabel(c.id)}</span>
-                  <span className="t-h3-lg text-fg mt-3 block text-balance">{ex.title}</span>
-                  <span className="text-fg-2 mt-2 block text-pretty">{ex.subtitle}</span>
-                  <span className="mt-5 inline-flex items-center gap-2 text-sm text-accent">
-                    <Icon className="w-4 h-4" />
-                    Step into the exhibit
-                    <ArrowRight className="w-4 h-4" />
-                  </span>
-                </button>
-              </li>
-            )
-          })}
-        </ul>
       </section>
 
       {/* ── Key sittings (not the full Practice list) ─────────────── */}
