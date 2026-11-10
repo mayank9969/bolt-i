@@ -67,9 +67,15 @@
   }
 
   function sendAction(action) {
+    if (!action) return
+    var msg = { type: 'veyra-practice-action', action: action }
     try {
-      window.parent.postMessage({ type: 'veyra-practice-action', action: action }, location.origin)
-    } catch (e) {}
+      window.parent.postMessage(msg, '*')
+    } catch (e) {
+      try {
+        window.parent.postMessage(msg, location.origin)
+      } catch (e2) {}
+    }
   }
 
   function wire(el) {
@@ -142,15 +148,26 @@
     return true
   }
 
+  if (!window.__veyraStudioClick) {
+    window.__veyraStudioClick = true
+    document.addEventListener(
+      'click',
+      function (e) {
+        var t = e.target
+        if (!t || !t.closest) return
+        var el = t.closest('[data-veyra-act]')
+        if (!el) return
+        e.preventDefault()
+        sendAction(el.getAttribute('data-veyra-act'))
+      },
+      true,
+    )
+  }
+
   function wireActions() {
     insertStudio()
     var daily = document.querySelector('a[aria-label^="Daily challenge"]')
-    if (daily) {
-      daily.setAttribute('data-veyra-act', 'daily')
-      wire(daily)
-    }
-    var acts = document.querySelectorAll('[data-veyra-act]')
-    for (var j = 0; j < acts.length; j++) wire(acts[j])
+    if (daily) daily.setAttribute('data-veyra-act', 'daily')
   }
 
   function swapLeaveRoom() {

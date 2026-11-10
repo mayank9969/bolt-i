@@ -2,24 +2,27 @@ import { useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useWorld } from '@/components/three/world'
 import { getTheme, onThemeChange, type ThemeId } from '@/lib/theme'
-import { getHistory } from '@/api/quizApi'
+import { getHistory, startQuiz } from '@/api/quizApi'
 import { reviewTopics } from '@/lib/review'
+import { useQuiz } from '@/context/QuizContext'
+import type { DifficultyChoice } from '@/types/quiz'
 
 /**
  * Practice is the illustrated relay. Paper/Ink is bridged; story art is not recolored.
- * Daily / missed controls inside the iframe open the live quiz engine via Setup.
+ * Collage Play buttons open the live quiz engine / studio pages via /api.
  */
 export default function Play() {
   useWorld({ mode: 'quiet' })
   const ref = useRef<HTMLIFrameElement>(null)
   const navigate = useNavigate()
+  const { beginSession } = useQuiz()
   const theme = getTheme()
 
   useEffect(() => {
     const send = (id: ThemeId) => {
       const win = ref.current?.contentWindow
       if (!win) return
-      win.postMessage({ type: 'veyra-theme', theme: id }, window.location.origin)
+      win.postMessage({ type: 'veyra-theme', theme: id }, '*')
     }
     const onLoad = () => send(getTheme())
     const el = ref.current
@@ -33,14 +36,25 @@ export default function Play() {
   }, [])
 
   useEffect(() => {
+    const launch = async (category: string, difficulty: DifficultyChoice, questionCount: number) => {
+      try {
+        const config = { category, difficulty, questionCount }
+        const session = await startQuiz(config)
+        beginSession(config, session)
+        navigate('/quiz')
+      } catch {
+        navigate('/setup', { state: { category, difficulty, questionCount } })
+      }
+    }
+
     const onMsg = (e: MessageEvent) => {
-      if (e.origin !== window.location.origin) return
       if (e.source !== ref.current?.contentWindow) return
       const d = e.data
       if (!d || d.type !== 'veyra-practice-action') return
       const go: Record<string, () => void> = {
-        daily: () =>
-          navigate('/setup', { state: { category: 'all', difficulty: 'mixed', questionCount: 5, daily: true } }),
+        daily: () => {
+          void launch('all', 'mixed', 5)
+        },
         focus: () => navigate('/setup'),
         concepts: () => navigate('/concepts'),
         take: () => navigate('/take'),
@@ -51,7 +65,7 @@ export default function Play() {
           getHistory()
             .then((h) => {
               const next = reviewTopics(h)[0]
-              if (next) navigate('/setup', { state: { category: next.id, questionCount: 5 } })
+              if (next) void launch(next.id, 'mixed', 5)
               else navigate('/history')
             })
             .catch(() => navigate('/history'))
@@ -62,7 +76,7 @@ export default function Play() {
     }
     window.addEventListener('message', onMsg)
     return () => window.removeEventListener('message', onMsg)
-  }, [navigate])
+  }, [navigate, beginSession])
 
   return (
     <div className="bg-canvas">
