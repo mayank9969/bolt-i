@@ -1,8 +1,11 @@
 import { useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import prompts from '@/lib/opinionPrompts.json'
 import { useWorld } from '@/components/three/world'
 import Reveal from '@/components/Reveal'
+import { useQuiz } from '@/context/QuizContext'
+import { launchSitting, mixedFive } from '@/lib/launchSitting'
 
 const KEY = 'veyra.todays-take'
 
@@ -20,6 +23,9 @@ function load(): Entry[] {
 
 export default function Take() {
   useWorld({ mode: 'quiet' })
+  const navigate = useNavigate()
+  const { beginSession } = useQuiz()
+  const [starting, setStarting] = useState(false)
   const list = prompts as [string, string][]
   const day = new Date().toISOString().slice(0, 10)
   const prompt = useMemo(() => {
@@ -107,6 +113,23 @@ export default function Take() {
         ))}
         {entries.length === 0 && <li className="text-fg-3">None yet.</li>}
       </ul>
+      <button
+        type="button"
+        className="btn-secondary mt-10"
+        disabled={starting}
+        onClick={async () => {
+          setStarting(true)
+          await launchSitting(
+            mixedFive('all'),
+            beginSession,
+            () => navigate('/quiz'),
+            (config) => navigate('/setup', { state: config }),
+          )
+          setStarting(false)
+        }}
+      >
+        {starting ? 'Opening…' : 'Scored sitting instead'}
+      </button>
     </div>
   )
 }

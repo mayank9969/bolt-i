@@ -1,9 +1,12 @@
 import { useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import library from '@/lib/conceptLibrary.json'
 import { useWorld } from '@/components/three/world'
 import Reveal from '@/components/Reveal'
 import { labelCategory } from '@/lib/format'
+import { useQuiz } from '@/context/QuizContext'
+import { launchSitting, mixedFive } from '@/lib/launchSitting'
 
 type Lesson = {
   id: string
@@ -19,6 +22,9 @@ const LIB = library as Record<string, Lesson[]>
 
 export default function Concepts() {
   useWorld({ mode: 'quiet' })
+  const navigate = useNavigate()
+  const { beginSession } = useQuiz()
+  const [starting, setStarting] = useState(false)
   const cats = Object.keys(LIB)
   const [cat, setCat] = useState(cats[0] ?? 'maths')
   const daily = useMemo(() => {
@@ -99,6 +105,23 @@ export default function Concepts() {
                 {lesson.check.why}
               </motion.p>
             )}
+            <button
+              type="button"
+              className="btn-primary mt-6"
+              disabled={starting}
+              onClick={async () => {
+                setStarting(true)
+                await launchSitting(
+                  mixedFive(cat),
+                  beginSession,
+                  () => navigate('/quiz'),
+                  (config) => navigate('/setup', { state: config }),
+                )
+                setStarting(false)
+              }}
+            >
+              {starting ? 'Opening…' : 'Sit five on this island'}
+            </button>
           </div>
           </motion.article>
         </AnimatePresence>

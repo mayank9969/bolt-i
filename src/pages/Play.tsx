@@ -2,10 +2,10 @@ import { useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useWorld } from '@/components/three/world'
 import { getTheme, onThemeChange, type ThemeId } from '@/lib/theme'
-import { getHistory, startQuiz } from '@/api/quizApi'
+import { getHistory } from '@/api/quizApi'
 import { reviewTopics } from '@/lib/review'
 import { useQuiz } from '@/context/QuizContext'
-import type { DifficultyChoice } from '@/types/quiz'
+import { launchSitting, mixedFive } from '@/lib/launchSitting'
 
 /**
  * Practice is the illustrated relay. Paper/Ink is bridged; story art is not recolored.
@@ -36,16 +36,13 @@ export default function Play() {
   }, [])
 
   useEffect(() => {
-    const launch = async (category: string, difficulty: DifficultyChoice, questionCount: number) => {
-      try {
-        const config = { category, difficulty, questionCount }
-        const session = await startQuiz(config)
-        beginSession(config, session)
-        navigate('/quiz')
-      } catch {
-        navigate('/setup', { state: { category, difficulty, questionCount } })
-      }
-    }
+    const launch = (category: string, difficulty: 'mixed', questionCount: number) =>
+      launchSitting(
+        { category, difficulty, questionCount },
+        beginSession,
+        () => navigate('/quiz'),
+        (config) => navigate('/setup', { state: config }),
+      )
 
     const onMsg = (e: MessageEvent) => {
       if (e.source !== ref.current?.contentWindow) return
@@ -53,7 +50,12 @@ export default function Play() {
       if (!d || d.type !== 'veyra-practice-action') return
       const go: Record<string, () => void> = {
         daily: () => {
-          void launch('all', 'mixed', 5)
+          void launchSitting(
+            mixedFive('all'),
+            beginSession,
+            () => navigate('/quiz'),
+            (config) => navigate('/setup', { state: config }),
+          )
         },
         focus: () => navigate('/setup'),
         concepts: () => navigate('/concepts'),

@@ -1,16 +1,21 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { getHistory } from '@/api/quizApi'
 import type { HistoryEntry } from '@/types/quiz'
 import { useWorld } from '@/components/three/world'
 import Reveal from '@/components/Reveal'
 import { formatPercent, labelCategory } from '@/lib/format'
 import { normaliseCategoryId } from '@/lib/categories'
+import { useQuiz } from '@/context/QuizContext'
+import { launchSitting, mixedFive } from '@/lib/launchSitting'
 
 export default function Progress() {
   useWorld({ mode: 'quiet' })
+  const navigate = useNavigate()
+  const { beginSession } = useQuiz()
   const [history, setHistory] = useState<HistoryEntry[] | null>(null)
   const [error, setError] = useState('')
+  const [busy, setBusy] = useState(false)
 
   useEffect(() => {
     getHistory()
@@ -22,34 +27,48 @@ export default function Progress() {
     const h = history ?? []
     const score = h.reduce((s, x) => s + x.score, 0)
     const marks = h.reduce((s, x) => s + x.total_marks, 0)
-    const byCat: Record<string, { score: number; marks: number }> = {}
+    const byCat: Record<string, { score: number; marks: number; pcts: number[] }> = {}
     const cats = new Set<string>()
     let perfect = false
     h.forEach((a) => {
       const id = normaliseCategoryId(a.category)
       if (id && id !== 'all' && id !== 'mixed') cats.add(id)
-      const slot = (byCat[id] ??= { score: 0, marks: 0 })
+      const slot = (byCat[id] ??= { score: 0, marks: 0, pcts: [] })
       slot.score += a.score
       slot.marks += a.total_marks
+      slot.pcts.push(a.percentage)
       if (a.total_marks > 0 && a.score >= a.total_marks) perfect = true
     })
     const weakest = Object.entries(byCat)
       .filter(([, v]) => v.marks > 0)
       .sort((a, b) => a[1].score / a[1].marks - b[1].score / b[1].marks)[0]
+    const comeback = Object.values(byCat).some((v) => v.pcts.length >= 2 && v.pcts[v.pcts.length - 1] > v.pcts[0])
     return {
       n: h.length,
       overall: marks ? (score / marks) * 100 : 0,
       byCat,
       weakest: weakest?.[0] ?? null,
       milestones: [
-        { name: 'First quiz', detail: 'Complete your first quiz.', achieved: h.length > 0 },
-        { name: 'Perfect round', detail: 'Finish a quiz with full marks.', achieved: perfect },
-        { name: 'Subject explorer', detail: 'Answer questions in three categories.', achieved: cats.size >= 3 },
-        { name: 'Comeback', detail: 'Needs per-question review from the engine.', achieved: false },
-        { name: 'Three-day challenge streak', detail: 'Complete daily challenges on three consecutive days.', achieved: false },
+        { name: 'First quiz', detail: 'A scored sitting in the engine.', achieved: h.length > 0 },
+        { name: 'Perfect round', detail: 'Full marks on one sitting.', achieved: perfect },
+        { name: 'Subject explorer', detail: 'Scored sittings in three islands.', achieved: cats.size >= 3 },
+        { name: 'Comeback', detail: 'Later sitting on an island beat an earlier one.', achieved: comeback },
+        { name: 'Ten sittings', detail: 'Ten scored attempts in History.', achieved: h.length >= 10 },
       ],
     }
   }, [history])
+
+  const sitWeak = async () => {
+    if (!stats.weakest) return
+    setBusy(true)
+    await launchSitting(
+      mixedFive(stats.weakest),
+      beginSession,
+      () => navigate('/quiz'),
+      (config) => navigate('/setup', { state: config }),
+    )
+    setBusy(false)
+  }
 
   return (
     <div className="relative z-10 max-w-page mx-auto px-5 sm:px-6 lg:px-8 pt-16 pb-24 md:pt-24">
@@ -67,9 +86,9 @@ export default function Progress() {
       {stats.weakest && (
         <p className="mt-4 text-fg-2">
           Recommended next:{' '}
-          <Link className="link-rule" to="/setup" state={{ category: stats.weakest }}>
-            {labelCategory(stats.weakest)}
-          </Link>
+          <button type="button" className="link-rule" disabled={busy} onClick={() => void sitWeak()}>
+            {busy ? 'Opening…' : `Sit five · ${labelCategory(stats.weakest)}`}
+          </button>
         </p>
       )}
       <ul className="mt-8 grid gap-2">
