@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef } from 'react'
+import { useLocation } from 'react-router-dom'
 import '@/styles/veyra-mark.css'
 
 interface LogoProps {
@@ -14,6 +15,7 @@ interface LogoProps {
 export function LogoMark({ size = 36, className = '', animated = true }: LogoProps) {
   const rootRef = useRef<HTMLDivElement>(null)
   const uid = useId().replace(/:/g, '')
+  const path = useLocation().pathname
 
   useEffect(() => {
     const el = rootRef.current
@@ -31,51 +33,52 @@ export function LogoMark({ size = 36, className = '', animated = true }: LogoPro
     const play = () => {
       window.clearTimeout(settleT)
       window.clearTimeout(ripT)
-      busy = false
+      busy = true
       el.classList.remove('is-run', 'is-settled', 'is-rippling')
       void el.offsetWidth
       el.classList.add('is-run')
-      settleT = window.setTimeout(() => el.classList.add('is-settled'), 3300)
+      settleT = window.setTimeout(() => {
+        el.classList.add('is-settled')
+        busy = false
+      }, 3300)
     }
 
-    const ripple = () => {
-      if (busy || !el.classList.contains('is-settled')) return
-      busy = true
-      el.classList.add('is-rippling')
-      ripT = window.setTimeout(() => {
-        el.classList.remove('is-rippling')
-        busy = false
-      }, 2100)
+    const replay = () => {
+      if (busy) return
+      play()
     }
 
     el.classList.add('is-armed')
-    const start = () => play()
     const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((e) => {
           el.classList.toggle('is-paused', !e.isIntersecting)
+          if (e.isIntersecting) replay()
         })
       },
       { threshold: 0.2 },
     )
     io.observe(el)
-    el.addEventListener('pointerenter', ripple)
-    el.addEventListener('click', ripple)
-    const onShow = (ev: PageTransitionEvent) => {
-      if (ev.persisted) start()
+    el.addEventListener('pointerenter', replay)
+    el.addEventListener('click', replay)
+    const onShow = () => replay()
+    const onVis = () => {
+      if (document.visibilityState === 'visible') replay()
     }
     window.addEventListener('pageshow', onShow)
-    requestAnimationFrame(() => requestAnimationFrame(start))
+    document.addEventListener('visibilitychange', onVis)
+    requestAnimationFrame(() => requestAnimationFrame(play))
 
     return () => {
       io.disconnect()
       window.clearTimeout(settleT)
       window.clearTimeout(ripT)
       window.removeEventListener('pageshow', onShow)
-      el.removeEventListener('pointerenter', ripple)
-      el.removeEventListener('click', ripple)
+      document.removeEventListener('visibilitychange', onVis)
+      el.removeEventListener('pointerenter', replay)
+      el.removeEventListener('click', replay)
     }
-  }, [animated])
+  }, [animated, path])
 
   const halo = `${uid}-halo`
   const ml = `${uid}-ml`
