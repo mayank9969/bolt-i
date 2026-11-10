@@ -5,8 +5,8 @@ import { motion, useMotionValue, useSpring } from 'framer-motion'
 export default function CustomCursor() {
   const x = useMotionValue(-80)
   const y = useMotionValue(-80)
-  const rx = useSpring(x, { stiffness: 900, damping: 42, mass: 0.18 })
-  const ry = useSpring(y, { stiffness: 900, damping: 42, mass: 0.18 })
+  const rx = useSpring(x, { stiffness: 280, damping: 28, mass: 0.35 })
+  const ry = useSpring(y, { stiffness: 280, damping: 28, mass: 0.35 })
   const [hover, setHover] = useState(false)
   const [visible, setVisible] = useState(false)
   const [enabled, setEnabled] = useState(false)
@@ -63,14 +63,13 @@ export default function CustomCursor() {
       aria-hidden="true"
     >
       <motion.div
-        className="rounded-full -translate-x-1/2 -translate-y-1/2 border-2"
+        className="rounded-full -translate-x-1/2 -translate-y-1/2 border"
         style={{
           borderColor: 'var(--nx-accent, #16827e)',
-          background: hover ? 'color-mix(in srgb, var(--nx-accent, #16827e) 22%, transparent)' : 'transparent',
-          boxShadow: '0 0 0 1px color-mix(in srgb, var(--nx-accent, #8ce0d8) 35%, transparent)',
+          background: hover ? 'color-mix(in srgb, var(--nx-accent, #16827e) 14%, transparent)' : 'transparent',
         }}
-        animate={{ width: hover ? 72 : 36, height: hover ? 72 : 36, opacity: hover ? 1 : 0.9 }}
-        transition={{ type: 'spring', stiffness: 520, damping: 32 }}
+        animate={{ width: hover ? 28 : 14, height: hover ? 28 : 14, opacity: hover ? 1 : 0.8 }}
+        transition={{ type: 'spring', stiffness: 220, damping: 22, mass: 0.4 }}
       />
     </motion.div>
   )
