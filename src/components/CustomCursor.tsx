@@ -69,7 +69,7 @@ export default function CustomCursor() {
           background: hover ? 'color-mix(in srgb, var(--nx-accent, #16827e) 22%, transparent)' : 'transparent',
           boxShadow: '0 0 0 1px color-mix(in srgb, var(--nx-accent, #8ce0d8) 35%, transparent)',
         }}
-        animate={{ width: hover ? 44 : 18, height: hover ? 44 : 18, opacity: hover ? 1 : 0.85 }}
+        animate={{ width: hover ? 72 : 36, height: hover ? 72 : 36, opacity: hover ? 1 : 0.9 }}
         transition={{ type: 'spring', stiffness: 520, damping: 32 }}
       />
     </motion.div>
