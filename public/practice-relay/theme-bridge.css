@@ -178,108 +178,93 @@ a[aria-label^='Daily challenge'],
 }
 
 #veyra-studio {
-  padding-top: 2.75rem !important;
-  padding-bottom: 3.25rem !important;
-  border-bottom: 1.5px solid var(--veyra-ui-line-strong, #161917);
+  padding-top: 1.75rem !important;
+  padding-bottom: 1.75rem !important;
+  border-bottom: 1px solid var(--veyra-ui-line, rgba(22, 25, 23, 0.14));
   text-align: left !important;
 }
-#veyra-studio * {
-  box-sizing: border-box;
+#veyra-studio * { box-sizing: border-box; }
+#veyra-studio .veyra-studio-head {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem 1.5rem;
+  margin-bottom: 0.85rem;
 }
-#veyra-studio .veyra-studio-h {
-  display: block !important;
-  margin: 0.75rem 0 1rem !important;
-  font-family: 'Instrument Serif', Georgia, serif !important;
-  font-size: clamp(2.4rem, 5.5vw, 3.6rem) !important;
-  font-weight: 400 !important;
-  line-height: 1.12 !important;
-  color: var(--veyra-ui-text, #f7f7f4) !important;
-}
-#veyra-studio .veyra-studio-lead {
-  display: block !important;
-  max-width: 40rem !important;
-  margin: 0 0 2.25rem !important;
-  font-family: Inter, system-ui, sans-serif !important;
-  font-size: 1.08rem !important;
-  font-weight: 400 !important;
-  line-height: 1.65 !important;
-  color: var(--veyra-ui-muted, #c5d0c8) !important;
-}
-#veyra-studio .veyra-studio-list {
-  display: block !important;
+#veyra-studio .veyra-studio-aside { text-align: right; }
+#veyra-studio .veyra-studio-collage {
   list-style: none !important;
   margin: 0 !important;
   padding: 0 !important;
+  display: grid !important;
+  grid-template-columns: 1fr 1fr;
+  border-top: 1px solid var(--veyra-ui-line, rgba(22, 25, 23, 0.14));
 }
-#veyra-studio .veyra-studio-row {
-  display: block !important;
-  margin: 0 !important;
-  padding: 1.75rem 0 2rem !important;
-  border-top: 1px solid var(--veyra-ui-line, rgba(247, 247, 244, 0.16)) !important;
-  text-align: left !important;
+#veyra-studio .veyra-studio-collage li {
+  margin: 0;
+  border-bottom: 1px solid var(--veyra-ui-line, rgba(22, 25, 23, 0.14));
 }
-#veyra-studio .veyra-studio-row:last-child {
-  border-bottom: 1px solid var(--veyra-ui-line, rgba(247, 247, 244, 0.16)) !important;
+#veyra-studio .veyra-studio-collage li:nth-child(odd) {
+  border-right: 1px solid var(--veyra-ui-line, rgba(22, 25, 23, 0.14));
 }
-#veyra-studio .veyra-studio-row > .mono-label {
-  display: block !important;
-  margin: 0 0 0.55rem !important;
-  letter-spacing: 0.16em !important;
+#veyra-studio .veyra-studio-cell {
+  display: grid !important;
+  grid-template-columns: 2.4rem minmax(0, 1fr);
+  grid-template-rows: auto auto auto;
+  column-gap: 0.65rem;
+  width: 100%;
+  margin: 0;
+  padding: 1rem 1rem 1.05rem;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
 }
-#veyra-studio .veyra-studio-copy {
-  display: block !important;
-  max-width: 42rem !important;
+#veyra-studio .veyra-studio-cell:hover {
+  background: color-mix(in srgb, var(--veyra-ui-text, #161917) 5%, transparent);
+}
+#veyra-studio .veyra-studio-num {
+  grid-row: 1 / span 3;
+  align-self: start;
+  width: 2rem;
+  height: 2rem;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--veyra-ui-line-strong, currentColor);
+  border-radius: 999px;
+  font-family: ui-monospace, 'Space Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+}
+#veyra-studio .veyra-studio-kicker {
+  grid-column: 2;
+  font-family: ui-monospace, 'Space Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--veyra-ui-muted, #8a938c);
 }
 #veyra-studio .veyra-studio-title {
-  display: block !important;
-  margin: 0 0 0.65rem !important;
-  font-family: 'Instrument Serif', Georgia, serif !important;
-  font-size: clamp(1.7rem, 3vw, 2.15rem) !important;
-  font-weight: 400 !important;
-  font-style: italic !important;
-  line-height: 1.2 !important;
-  color: var(--veyra-ui-text, #f7f7f4) !important;
+  grid-column: 2;
+  margin: 0.15rem 0 0;
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 0.98rem;
+  font-weight: 650;
+  font-style: normal;
+  color: var(--veyra-ui-text, #161917);
 }
-#veyra-studio .veyra-studio-body {
-  display: block !important;
-  margin: 0 0 1.1rem !important;
-  font-family: Inter, system-ui, sans-serif !important;
-  font-size: 1.05rem !important;
-  font-weight: 400 !important;
-  line-height: 1.7 !important;
-  color: var(--veyra-ui-muted, #c5d0c8) !important;
+#veyra-studio .veyra-studio-meta {
+  grid-column: 2;
+  margin-top: 0.15rem;
+  font-size: 0.78rem;
+  color: var(--veyra-ui-muted, #8a938c);
 }
-#veyra-studio .veyra-studio-btn {
-  display: inline-flex !important;
-  width: auto !important;
-  margin: 0 !important;
-  padding: 0.7rem 1.15rem !important;
-  font-size: 0.85rem !important;
-  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
-}
-#veyra-studio .veyra-studio-btn:hover {
-  transform: translateY(-2px);
-}
-@media (prefers-reduced-motion: no-preference) {
-  #veyra-studio .veyra-studio-h {
-    animation: veyra-studio-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+@media (max-width: 640px) {
+  #veyra-studio .veyra-studio-head,
+  #veyra-studio .veyra-studio-collage {
+    grid-template-columns: 1fr;
   }
-  #veyra-studio .veyra-studio-lead {
-    animation: veyra-studio-in 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.08s both;
-  }
-  #veyra-studio .veyra-studio-row {
-    animation: veyra-studio-in 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
-  }
-  #veyra-studio .veyra-studio-row:nth-child(1) { animation-delay: 0.1s; }
-  #veyra-studio .veyra-studio-row:nth-child(2) { animation-delay: 0.16s; }
-  #veyra-studio .veyra-studio-row:nth-child(3) { animation-delay: 0.22s; }
-  #veyra-studio .veyra-studio-row:nth-child(4) { animation-delay: 0.28s; }
-  #veyra-studio .veyra-studio-row:nth-child(5) { animation-delay: 0.34s; }
-  #veyra-studio .veyra-studio-row:nth-child(6) { animation-delay: 0.4s; }
-  #veyra-studio .veyra-studio-row:nth-child(7) { animation-delay: 0.46s; }
-  #veyra-studio .veyra-studio-row:nth-child(8) { animation-delay: 0.52s; }
-}
-@keyframes veyra-studio-in {
-  from { opacity: 0; transform: translateY(14px); }
-  to { opacity: 1; transform: none; }
+  #veyra-studio .veyra-studio-aside { text-align: left; }
+  #veyra-studio .veyra-studio-collage li:nth-child(odd) { border-right: 0; }
 }

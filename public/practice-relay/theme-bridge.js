@@ -82,98 +82,49 @@
   }
 
   var STUDIO = [
-    {
-      act: 'daily',
-      n: '01',
-      title: 'Daily challenge',
-      body: 'A five-question sitting drawn now from the whole bank, mixed difficulty. The engine picks live items. Confirm on Setup, then start — scoring stays on the server.',
-      cta: "Start today's five",
-    },
-    {
-      act: 'missed',
-      n: '02',
-      title: 'Missed questions',
-      body: "If a region's latest attempt still has wrong answers, this opens Setup on that island for a fresh five. If nothing is flagged, you go to History instead.",
-      cta: 'Revisit misses',
-    },
-    {
-      act: 'focus',
-      n: '03',
-      title: 'Focus skill',
-      body: 'Choose one island and one tier. Questions and marks come from the server, never from a client key.',
-      cta: 'Pick a region',
-    },
-    {
-      act: 'concepts',
-      n: '04',
-      title: 'Concept studio',
-      body: 'A lesson that rotates with the day: analogy, idea, a small check. It is not scored by the quiz engine.',
-      cta: 'Open the studio',
-    },
-    {
-      act: 'take',
-      n: '05',
-      title: "Today's take",
-      body: 'A prompt for a view in your own words. Unscored and private to this device. Gemini is not connected here.',
-      cta: "Write today's take",
-    },
-    {
-      act: 'lab',
-      n: '06',
-      title: 'Four-day lab',
-      body: 'Four short sittings already on the site, each opening the live quiz on one island.',
-      cta: 'Open the lab',
-    },
-    {
-      act: 'history',
-      n: '07',
-      title: 'History',
-      body: 'Every sitting the engine has stored. Nothing is invented if the file is empty.',
-      cta: 'Read history',
-    },
-    {
-      act: 'progress',
-      n: '08',
-      title: 'Progress',
-      body: 'The same history, spoken as summaries. Weakest region, when there is one, links back into Setup.',
-      cta: 'See progress',
-    },
+    { act: 'daily', n: '01', kicker: 'Begin', title: 'Try five', meta: 'Mixed subjects' },
+    { act: 'concepts', n: '02', kicker: 'Follow', title: 'Open a thread', meta: 'Concept studio' },
+    { act: 'take', n: '03', kicker: 'Keep', title: 'Write a take', meta: 'Private · unscored' },
+    { act: 'history', n: '04', kicker: 'Return', title: 'Find your trail', meta: 'History + progress' },
   ]
 
   function insertStudio() {
-    if (document.getElementById('veyra-studio')) return true
+    var existing = document.getElementById('veyra-studio')
+    if (existing && existing.querySelector('.veyra-studio-collage')) return true
+    if (existing) existing.remove()
     var main = document.querySelector('main')
     if (!main) return false
     var sec = document.createElement('section')
     sec.id = 'veyra-studio'
     sec.className = 'container-v'
-    var rows = ''
+    var cells = ''
     for (var i = 0; i < STUDIO.length; i++) {
       var item = STUDIO[i]
-      rows +=
-        '<li class="veyra-studio-row">' +
-        '<span class="mono-label">' +
-        item.n +
-        '</span>' +
-        '<div class="veyra-studio-copy">' +
-        '<h3 class="veyra-studio-title">' +
-        item.title +
-        '</h3>' +
-        '<p class="veyra-studio-body">' +
-        item.body +
-        '</p>' +
-        '<button type="button" class="btn-block veyra-studio-btn" data-veyra-act="' +
+      cells +=
+        '<li>' +
+        '<button type="button" class="veyra-studio-cell" data-veyra-act="' +
         item.act +
         '">' +
-        item.cta +
-        '</button></div></li>'
+        '<span class="veyra-studio-num">' +
+        item.n +
+        '</span>' +
+        '<span class="veyra-studio-kicker">' +
+        item.kicker +
+        '</span>' +
+        '<strong class="veyra-studio-title">' +
+        item.title +
+        '</strong>' +
+        '<span class="veyra-studio-meta">' +
+        item.meta +
+        '</span></button></li>'
     }
     sec.innerHTML =
-      '<div class="mono-label">The sitting</div>' +
-      '<h2 class="serif-display veyra-studio-h">What you can do here.</h2>' +
-      '<p class="veyra-studio-lead">Eight doors into work that already exists on VEYRA. Each button opens a real page or a live quiz.</p>' +
-      '<ol class="veyra-studio-list">' +
-      rows +
+      '<div class="veyra-studio-head">' +
+      '<p class="mono-label">The question has four exits</p>' +
+      '<p class="mono-label veyra-studio-aside">Start anywhere · return when you like</p>' +
+      '</div>' +
+      '<ol class="veyra-studio-collage">' +
+      cells +
       '</ol>'
     var home = document.getElementById('home')
     if (home && home.parentNode === main) main.insertBefore(sec, home.nextSibling)
