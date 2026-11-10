@@ -154,35 +154,54 @@ function RangePlot({
   q3: number
   points: number[]
 }) {
-  const x = (v: number) => 16 + (Math.min(100, Math.max(0, v)) / 100) * 268
+  const x = (v: number) => 20 + (Math.min(100, Math.max(0, v)) / 100) * 300
+  const bins = new Map<number, number>()
+  const laid = points.map((p) => {
+    const key = Math.round(p / 4)
+    const n = bins.get(key) ?? 0
+    bins.set(key, n + 1)
+    const stack = n % 2 === 0 ? n / 2 : -Math.ceil(n / 2)
+    return { p, cy: 50 + stack * 12 }
+  })
+  const midX = x(median)
+  const midAnchor = median > 82 ? 'end' : median < 18 ? 'start' : 'middle'
+
   return (
-    <svg viewBox="0 0 300 64" className="w-full h-auto" role="img" aria-label="Each sitting on a 0 to 100 percent line">
-      <line x1="16" x2="284" y1="32" y2="32" stroke="var(--nx-line-strong)" strokeWidth="1" />
-      {[0, 50, 100].map((t) => (
-        <text key={t} x={x(t)} y="58" textAnchor="middle" fontSize="11" fill="var(--nx-text-3)">
-          {t}%
+    <div>
+      <svg viewBox="0 0 340 100" className="w-full h-auto" role="img" aria-label="Each sitting on a 0 to 100 percent line">
+        <rect
+          x={x(q1)}
+          y="26"
+          width={Math.max(6, x(q3) - x(q1))}
+          height="48"
+          fill="var(--nx-accent)"
+          fillOpacity="0.16"
+          rx="4"
+        />
+        <line x1="20" x2="320" y1="50" y2="50" stroke="var(--nx-line-strong)" strokeWidth="1.2" />
+        {laid.map((pt, i) => (
+          <circle
+            key={i}
+            cx={x(pt.p)}
+            cy={pt.cy}
+            r="5.5"
+            fill="var(--nx-canvas)"
+            stroke="var(--nx-text)"
+            strokeWidth="1.7"
+          />
+        ))}
+        <line x1={midX} x2={midX} y1="20" y2="80" stroke="var(--nx-accent)" strokeWidth="2.5" />
+        <text x={midX} y="14" textAnchor={midAnchor} fontSize="11" fontWeight="600" fill="var(--nx-text)">
+          middle {Math.round(median)}%
         </text>
-      ))}
-      <rect
-        x={x(q1)}
-        y="20"
-        width={Math.max(4, x(q3) - x(q1))}
-        height="24"
-        fill="var(--nx-accent)"
-        fillOpacity="0.22"
-        rx="2"
-      />
-      <text x={x((q1 + q3) / 2)} y="14" textAnchor="middle" fontSize="10" fill="var(--nx-text-3)">
-        typical half
-      </text>
-      {points.map((p, i) => (
-        <circle key={i} cx={x(p)} cy="32" r="5" fill="var(--nx-canvas)" stroke="var(--nx-text)" strokeWidth="1.6" />
-      ))}
-      <line x1={x(median)} x2={x(median)} y1="16" y2="48" stroke="var(--nx-accent)" strokeWidth="2.5" />
-      <text x={x(median)} y="12" textAnchor={median > 70 ? 'end' : 'start'} fontSize="11" fill="var(--nx-text)">
-        middle {Math.round(median)}%
-      </text>
-    </svg>
+        {[0, 50, 100].map((t) => (
+          <text key={t} x={x(t)} y="96" textAnchor="middle" fontSize="11" fill="var(--nx-text-3)">
+            {t}%
+          </text>
+        ))}
+      </svg>
+      <p className="t-caption text-fg-3 mt-2">Teal band = typical half of sittings</p>
+    </div>
   )
 }
 
