@@ -255,4 +255,31 @@ a[aria-label^='Daily challenge'],
   margin: 0 !important;
   padding: 0.7rem 1.15rem !important;
   font-size: 0.85rem !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+#veyra-studio .veyra-studio-btn:hover {
+  transform: translateY(-2px);
+}
+@media (prefers-reduced-motion: no-preference) {
+  #veyra-studio .veyra-studio-h {
+    animation: veyra-studio-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  #veyra-studio .veyra-studio-lead {
+    animation: veyra-studio-in 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.08s both;
+  }
+  #veyra-studio .veyra-studio-row {
+    animation: veyra-studio-in 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  #veyra-studio .veyra-studio-row:nth-child(1) { animation-delay: 0.1s; }
+  #veyra-studio .veyra-studio-row:nth-child(2) { animation-delay: 0.16s; }
+  #veyra-studio .veyra-studio-row:nth-child(3) { animation-delay: 0.22s; }
+  #veyra-studio .veyra-studio-row:nth-child(4) { animation-delay: 0.28s; }
+  #veyra-studio .veyra-studio-row:nth-child(5) { animation-delay: 0.34s; }
+  #veyra-studio .veyra-studio-row:nth-child(6) { animation-delay: 0.4s; }
+  #veyra-studio .veyra-studio-row:nth-child(7) { animation-delay: 0.46s; }
+  #veyra-studio .veyra-studio-row:nth-child(8) { animation-delay: 0.52s; }
+}
+@keyframes veyra-studio-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
 }

@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
 import library from '@/lib/conceptLibrary.json'
 import { useWorld } from '@/components/three/world'
 import Reveal from '@/components/Reveal'
@@ -60,7 +61,15 @@ export default function Concepts() {
         ))}
       </div>
       {lesson && (
-        <article className="mt-10 pt-8 border-t border-line">
+        <AnimatePresence mode="wait">
+          <motion.article
+            key={lesson.id}
+            className="studio-ink-card mt-10 pt-8 border-t border-line"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+          >
           <p className="eyebrow">{open ? 'Library' : 'Today’s pick'}</p>
           <h2 className="t-title text-fg mt-2">{lesson.title}</h2>
           <p className="text-fg-2 mt-4 text-pretty">{lesson.analogy}</p>
@@ -73,7 +82,7 @@ export default function Concepts() {
                 <button
                   key={c}
                   type="button"
-                  className="text-left rounded-xl border border-line px-4 py-3 hover:border-line-strong"
+                  className="studio-choice text-left rounded-xl border border-line px-4 py-3 hover:border-line-strong"
                   onClick={() => setPicked(i)}
                 >
                   {c}
@@ -81,13 +90,18 @@ export default function Concepts() {
               ))}
             </div>
             {picked !== null && (
-              <p className="mt-4 text-fg-2">
+              <motion.p
+                className="mt-4 text-fg-2"
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+              >
                 {picked === lesson.check.answer ? 'Yes. ' : 'Not that one. '}
                 {lesson.check.why}
-              </p>
+              </motion.p>
             )}
           </div>
-        </article>
+          </motion.article>
+        </AnimatePresence>
       )}
       <ul className="mt-8 grid gap-2">
         {(LIB[cat] ?? []).map((l) => (

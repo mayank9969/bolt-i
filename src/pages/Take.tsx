@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { motion } from 'framer-motion'
 import prompts from '@/lib/opinionPrompts.json'
 import { useWorld } from '@/components/three/world'
 import Reveal from '@/components/Reveal'
@@ -62,7 +63,12 @@ export default function Take() {
         </p>
       </Reveal>
       {prompt && (
-        <section className="mt-8 rounded-2xl border border-line bg-card p-6">
+        <motion.section
+          className="studio-ink-card mt-8 rounded-2xl border border-line bg-card p-6"
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+        >
           <p className="eyebrow">{prompt[0]}</p>
           <p className="text-fg mt-2 text-pretty">{prompt[1]}</p>
           {today ? (
@@ -86,7 +92,7 @@ export default function Take() {
               </button>
             </>
           )}
-        </section>
+        </motion.section>
       )}
       <h2 className="t-title text-fg mt-12">Past takes</h2>
       <ul className="mt-4 grid gap-4">
