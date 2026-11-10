@@ -1,7 +1,3 @@
-import '@fontsource-variable/fraunces/wght.css'
-import '@fontsource-variable/fraunces/wght-italic.css'
-import '@fontsource-variable/source-serif-4/wght.css'
-import '@fontsource-variable/source-serif-4/wght-italic.css'
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
@@ -26,6 +22,7 @@ export default function History() {
   const [history, setHistory] = useState<HistoryEntry[] | null>(null)
   const [error, setError] = useState('')
   const [filter, setFilter] = useState<Filter>('all')
+  const [showAll, setShowAll] = useState(false)
 
   useEffect(() => {
     getHistory()
@@ -107,8 +104,8 @@ export default function History() {
               )}
             </div>
             {categories.length > 0 && (
-              <div className="lg:col-span-4 flex lg:justify-end">
-                <div role="tablist" aria-label="Filter by region" className="flex flex-wrap items-center gap-1 lg:justify-end">
+              <div className="lg:col-span-4 flex lg:justify-end min-w-0">
+                <div role="tablist" aria-label="Filter by region" className="flex flex-nowrap items-center gap-1 lg:justify-end overflow-x-auto max-w-full pb-1 [scrollbar-width:none]">
                   {(['all', ...categories] as Filter[]).map((f) => (
                     <button
                       key={f}
@@ -178,7 +175,7 @@ export default function History() {
                 <ul className="lg:col-span-8 border-t border-line">
                   {[
                     ...regions.map((r) => [labelCategory(r.id), r.w, r.n] as const),
-                    ['Mixed', weights[2], mixedItems.length] as const,
+                    ...(mixedItems.length ? [['Mixed', weights[2], mixedItems.length] as const] : []),
                   ].map(([name, w, n], i) => (
                     <motion.li
                       key={String(name)}
@@ -189,10 +186,9 @@ export default function History() {
                       className="grid grid-cols-[1fr_auto] sm:grid-cols-[10rem_1fr_auto] items-center gap-x-6 gap-y-2 py-5 border-b border-line"
                     >
                       <span className="t-h3 text-fg">{String(name)}</span>
-                      <SubjectWave weight={Number(w)} sittings={Number(n)} delay={i * 0.1} />
+                      <SubjectWave weight={Number(w)} delay={i * 0.1} />
                       <span className="text-right t-caption text-fg-2 num sm:w-24">
-                        {Number(n)} {Number(n) === 1 ? 'attempt' : 'attempts'}
-                        <span className="block figcap mt-0.5">{Math.round(Number(w) * 100)}% set</span>
+                        {Number(n)} {Number(n) === 1 ? 'sitting' : 'sittings'}
                       </span>
                     </motion.li>
                   ))}
@@ -230,10 +226,10 @@ export default function History() {
               <Reveal className="lg:col-span-4">
                 <span className="index">03 — Attempts</span>
                 <h2 className="ed-kicker" style={{ fontFamily: 'var(--ed-display)', fontSize: 'clamp(1.4rem,2.2vw,1.8rem)' }}>Each sitting</h2>
-                <p className="t-caption text-fg-3 mt-3 num">{newestFirst.length} shown · newest first</p>
+                <p className="t-caption text-fg-3 mt-3 num">{newestFirst.length} · newest first</p>
               </Reveal>
               <ol className="lg:col-span-8 border-t border-line-strong mt-6 lg:mt-0">
-                {newestFirst.map((h, i) => {
+                {(showAll ? newestFirst : newestFirst.slice(0, 10)).map((h, i) => {
                   const tone = performanceTone(h.percentage)
                   return (
                     <motion.li
@@ -261,6 +257,13 @@ export default function History() {
                   )
                 })}
               </ol>
+              {newestFirst.length > 10 && (
+                <div className="lg:col-start-5 lg:col-span-8 mt-4">
+                  <button type="button" className="btn-secondary btn-sm" onClick={() => setShowAll((s) => !s)}>
+                    {showAll ? 'Show fewer' : `Show all ${newestFirst.length}`}
+                  </button>
+                </div>
+              )}
             </div>
           </>
         )}
@@ -269,10 +272,10 @@ export default function History() {
   )
 }
 
-function SubjectWave({ weight, sittings, delay }: { weight: number; sittings: number; delay: number }) {
+function SubjectWave({ weight, delay }: { weight: number; delay: number }) {
   return (
     <div className="col-span-2 sm:col-span-1">
-      <div className="h-2.5 rounded-sm bg-line overflow-hidden">
+      <div className="h-2 rounded-sm bg-line overflow-hidden">
         <motion.div
           className="h-full bg-accent"
           initial={{ width: 0 }}
@@ -281,7 +284,6 @@ function SubjectWave({ weight, sittings, delay }: { weight: number; sittings: nu
           transition={{ delay, duration: 0.8, ease }}
         />
       </div>
-      <p className="t-caption text-fg-3 mt-1">{sittings} sitting{sittings === 1 ? '' : 's'}</p>
     </div>
   )
 }

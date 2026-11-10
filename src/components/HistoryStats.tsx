@@ -16,10 +16,8 @@ export default function HistoryStats({ history }: { history: HistoryEntry[] }) {
   const ctt = cttByDifficulty(history)
   const irt = irtReady(history)
   const d = series.describe
-  const lastRoll = series.roll[series.roll.length - 1]
-
   return (
-    <div className="mt-20 space-y-20">
+    <div className="mt-16 space-y-12">
       {d && (
         <Chapter
           kicker="The shape of your scores"
@@ -36,25 +34,6 @@ export default function HistoryStats({ history }: { history: HistoryEntry[] }) {
           }
         >
           <RangePlot q1={d.q1} median={d.median} q3={d.q3} points={series.pct} />
-        </Chapter>
-      )}
-
-      {lastRoll != null && series.pct.length > 1 && (
-        <Chapter
-          kicker="Recent form"
-          title={
-            <>
-              The last five sittings average <span className="ed-hit">{formatPercent(lastRoll, 0)}</span>
-            </>
-          }
-          meaning={
-            <>
-              Each point is a sitting. The smoother line is a <span className="ed-soft">rolling mean</span> of the last
-              five, so one bad paper does not rewrite the whole story.
-            </>
-          }
-        >
-          <Spark series={series.pct} roll={series.roll} attempts={series.chronological.map((h) => h.attempt)} />
         </Chapter>
       )}
 
@@ -205,61 +184,25 @@ function RangePlot({
   )
 }
 
-function Spark({ series, roll, attempts }: { series: number[]; roll: number[]; attempts: number[] }) {
-  const w = 340
-  const h = 160
-  const pad = { l: 28, r: 8, t: 12, b: 24 }
-  const n = series.length
-  const X = (i: number) => pad.l + (n <= 1 ? 0 : (i / (n - 1)) * (w - pad.l - pad.r))
-  const Y = (v: number) => pad.t + (1 - Math.min(100, Math.max(0, v)) / 100) * (h - pad.t - pad.b)
-  const poly = (arr: number[]) => arr.map((v, i) => `${i === 0 ? 'M' : 'L'}${X(i)} ${Y(v)}`).join(' ')
-  return (
-    <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-auto" role="img" aria-label="Sitting scores and five-sitting rolling mean">
-      {[0, 50, 100].map((t) => (
-        <g key={t}>
-          <line x1={pad.l} x2={w - pad.r} y1={Y(t)} y2={Y(t)} stroke="var(--nx-line)" />
-          <text x={pad.l - 4} y={Y(t) + 3} textAnchor="end" fontSize="9" fill="var(--nx-text-3)">
-            {t}
-          </text>
-        </g>
-      ))}
-      <path d={poly(series)} fill="none" stroke="var(--nx-text-3)" strokeWidth="1.5" />
-      <path d={poly(roll)} fill="none" stroke="var(--nx-accent)" strokeWidth="2.4" />
-      {series.map((v, i) => (
-        <circle key={i} cx={X(i)} cy={Y(v)} r="3.2" fill="var(--nx-canvas)" stroke="var(--nx-text)" strokeWidth="1.4" />
-      ))}
-      {attempts.map((a, i) =>
-        i % Math.ceil(n / 6) === 0 || i === n - 1 ? (
-          <text key={a} x={X(i)} y={h - 6} textAnchor="middle" fontSize="9" fill="var(--nx-text-3)">
-            #{a}
-          </text>
-        ) : null,
-      )}
-      <text x={pad.l} y="10" fontSize="9" fill="var(--nx-text-3)">
-        grey: sitting · teal: rolling mean of 5
-      </text>
-    </svg>
-  )
-}
-
 function IntervalBar({ lo, hi, p }: { lo: number; hi: number; p: number }) {
   const x = (v: number) => 28 + v * 250
-  const y = 28
+  const y = 36
+  const pAnchor = p > 0.82 ? 'end' : p < 0.18 ? 'start' : 'middle'
   return (
-    <svg viewBox="0 0 300 56" className="w-full h-auto" role="img" aria-label="95 percent Wilson confidence interval">
-      {[0, 25, 50, 75, 100].map((t) => (
+    <svg viewBox="0 0 300 72" className="w-full h-auto" role="img" aria-label="95 percent Wilson confidence interval">
+      {[0, 50, 100].map((t) => (
         <g key={t}>
-          <line x1={x(t / 100)} x2={x(t / 100)} y1="10" y2="42" stroke="var(--nx-line)" />
-          <text x={x(t / 100)} y="54" textAnchor="middle" fontSize="9" fill="var(--nx-text-3)">
+          <line x1={x(t / 100)} x2={x(t / 100)} y1="18" y2="54" stroke="var(--nx-line)" />
+          <text x={x(t / 100)} y="68" textAnchor="middle" fontSize="10" fill="var(--nx-text-3)">
             {t}%
           </text>
         </g>
       ))}
-      <line x1={x(lo)} x2={x(hi)} y1={y} y2={y} stroke="var(--nx-accent)" strokeWidth="4" />
-      <line x1={x(lo)} x2={x(lo)} y1={y - 8} y2={y + 8} stroke="var(--nx-accent)" strokeWidth="2" />
-      <line x1={x(hi)} x2={x(hi)} y1={y - 8} y2={y + 8} stroke="var(--nx-accent)" strokeWidth="2" />
+      <line x1={x(lo)} x2={x(hi)} y1={y} y2={y} stroke="var(--nx-accent)" strokeWidth="5" strokeLinecap="round" />
+      <line x1={x(lo)} x2={x(lo)} y1={y - 9} y2={y + 9} stroke="var(--nx-accent)" strokeWidth="2" />
+      <line x1={x(hi)} x2={x(hi)} y1={y - 9} y2={y + 9} stroke="var(--nx-accent)" strokeWidth="2" />
       <rect x={x(p) - 5} y={y - 5} width="10" height="10" fill="var(--nx-text)" />
-      <text x={x(p)} y="14" textAnchor="middle" fontSize="10" fill="var(--nx-text)">
+      <text x={x(p)} y="14" textAnchor={pAnchor} fontSize="11" fontWeight="600" fill="var(--nx-text)">
         {Math.round(p * 100)}% observed
       </text>
     </svg>
