@@ -231,11 +231,33 @@ a[aria-label^='Daily challenge'],
   height: 2rem;
   display: grid;
   place-items: center;
-  border: 1px solid var(--veyra-ui-line-strong, currentColor);
+  border: 1.5px solid var(--veyra-ui-cta, #16827e);
+  color: var(--veyra-ui-cta, #16827e);
+  background: color-mix(in srgb, var(--veyra-ui-cta, #16827e) 10%, transparent);
   border-radius: 999px;
   font-family: var(--font-mono, ui-monospace, monospace);
   font-size: 0.68rem;
   letter-spacing: 0.08em;
+}
+#veyra-studio .veyra-studio-play {
+  grid-column: 3;
+  grid-row: 1 / span 3;
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.42rem 0.95rem;
+  border-radius: 999px;
+  background: var(--veyra-ui-cta, #16827e);
+  color: var(--veyra-ui-cta-text, #fafbfa);
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+#veyra-studio .veyra-studio-cell:hover .veyra-studio-play {
+  background: var(--veyra-ui-cta-hover, #12706d);
 }
 #veyra-studio .veyra-studio-kicker {
   grid-column: 2;

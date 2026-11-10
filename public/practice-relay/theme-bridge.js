@@ -94,7 +94,12 @@
 
   function insertStudio() {
     var existing = document.getElementById('veyra-studio')
-    if (existing && existing.querySelectorAll('.veyra-studio-cell').length === STUDIO.length) return true
+    if (
+      existing &&
+      existing.querySelectorAll('.veyra-studio-cell').length === STUDIO.length &&
+      existing.querySelector('.veyra-studio-play')
+    )
+      return true
     if (existing) existing.remove()
     var main = document.querySelector('main')
     if (!main) return false
@@ -120,7 +125,8 @@
         '</strong>' +
         '<span class="veyra-studio-meta">' +
         item.meta +
-        '</span></button></li>'
+        '</span>' +
+        '<span class="veyra-studio-play">Play</span></button></li>'
     }
     sec.innerHTML =
       '<div class="veyra-studio-head">' +
