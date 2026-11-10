@@ -28,8 +28,8 @@ export default function HistoryStats({ history }: { history: HistoryEntry[] }) {
           }
           meaning={
             <>
-              Each mark is one quiz. The teal band is where the <span className="ed-soft">middle half</span> of your
-              scores sit. The labeled line is the <span className="ed-soft">median</span> — the middle sitting.
+              Imagine lining up every quiz from lowest score to highest. The teal band is the middle half of that line.
+              The upright mark is the sitting in the very middle — half of your papers scored below it, half above.
             </>
           }
         >
@@ -50,10 +50,9 @@ export default function HistoryStats({ history }: { history: HistoryEntry[] }) {
           }
           meaning={
             <>
-              You answered {series.correct} of {series.total} items correctly ({pct01(series.wilson.p)}). A{' '}
-              <span className="ed-soft">Wilson interval</span> is a cautious band around that rate: if you kept working
-              in the same way, the long-run share of correct answers would usually fall inside it. Narrower as you
-              answer more.
+              You got {series.correct} of {series.total} questions right ({pct01(series.wilson.p)}). The teal bar is a
+              cautious guess at your true rate if you kept sitting the same way. It gets shorter as you answer more —
+              we become surer.
             </>
           }
         >
@@ -69,14 +68,13 @@ export default function HistoryStats({ history }: { history: HistoryEntry[] }) {
             sittings
           </>
         }
-        meaning={
-          <>
-            In Classical Test Theory, <span className="ed-soft">p</span> is how often that difficulty was answered
-            correctly (higher means easier for you). <span className="ed-soft">Discrimination</span> is the gap between
-            your stronger and weaker sittings in that band. It only appears after four sittings so it is not a fluke.
-            Mixed papers are left out.
-          </>
-        }
+          meaning={
+            <>
+              Easy, medium, and hard are counted separately. The first bar is how often you were right in that band
+              (higher means it felt easier). The second is the gap between your stronger and weaker papers there — it
+              waits until you have four sittings so a single quiz cannot fake it. Mixed papers are left out.
+            </>
+          }
       >
         {ctt.length ? (
           <div className="space-y-8">
@@ -110,7 +108,7 @@ function Chapter({
       initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-40px' }}
-      transition={{ duration: 0.55, ease }}
+      transition={{ duration: 0.7, ease }}
     >
       <div className="lg:col-span-5">
         <p className="ed-eyebrow">{kicker}</p>
@@ -179,7 +177,7 @@ function RangePlot({
           </text>
         ))}
       </svg>
-      <p className="t-caption text-fg-3 mt-2">Teal band = typical half of sittings</p>
+      <p className="t-caption text-fg-3 mt-2">Circles = sittings · teal band = typical half · line = middle score</p>
     </div>
   )
 }
@@ -233,7 +231,7 @@ function CttRow({
       </p>
       <div className="grid grid-cols-2 gap-6 mt-3">
         <div>
-          <p className="t-caption text-fg-3 mb-1">Difficulty p (share correct)</p>
+          <p className="t-caption text-fg-3 mb-1">How often you were right</p>
           <div className="h-3 rounded-sm bg-line overflow-hidden">
             <motion.div
               className="h-full bg-accent origin-left"
@@ -247,9 +245,9 @@ function CttRow({
           <p className="num text-sm mt-1">{pct01(p)}</p>
         </div>
         <div>
-          <p className="t-caption text-fg-3 mb-1">Discrimination D</p>
+          <p className="t-caption text-fg-3 mb-1">Gap, strong vs weak</p>
           {discrimination == null ? (
-            <p className="text-sm text-fg-2">Need 4 sittings</p>
+            <p className="text-sm text-fg-2">Shows after four sittings</p>
           ) : (
             <>
               <div className="h-3 rounded-sm bg-line overflow-hidden">

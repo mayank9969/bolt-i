@@ -96,8 +96,8 @@ export default function History() {
               </h1>
               <p className="ed-lede mt-5">
                 {history && history.length
-                  ? `${history.length} scored attempt${history.length === 1 ? '' : 's'} kept by the engine. Each sitting is one moment; together they are the longer story.`
-                  : 'Completed quizzes will sit here as a personal record — not a verdict.'}
+                  ? `${history.length} scored sitting${history.length === 1 ? '' : 's'} from the quiz engine. Read top to bottom: totals, where you practised, how scores moved, then each attempt.`
+                  : 'When you finish a quiz, the engine stores it here. Nothing is guessed.'}
               </p>
               {history && history.length > 0 && (
                 <p className="flex flex-wrap gap-1.5 mt-4" aria-hidden="true">
@@ -161,10 +161,10 @@ export default function History() {
             {/* ── Ledger of big numbers ─────────────────────── */}
             <Reveal delay={0.05}>
               <dl className="mt-14 grid grid-cols-2 lg:grid-cols-5 gap-x-8 gap-y-8 border-t border-line-strong pt-8">
-                <Big label="Quizzes taken" value={String(stats.n)} />
-                <Big label="Average score" value={formatPercent(stats.avg, 1)} tone={performanceTone(stats.avg)} />
-                <Big label="Overall accuracy" value={formatPercent(stats.accuracy, 0)} sub={`${stats.c} / ${stats.q} correct`} />
-                <Big label="Best result" value={formatPercent(stats.best, 1)} tone={performanceTone(stats.best)} />
+                <Big label="Quizzes taken" value={String(stats.n)} sub="How many sittings the engine stored" />
+                <Big label="Average score" value={formatPercent(stats.avg, 1)} tone={performanceTone(stats.avg)} sub="Mean of those sitting percents" />
+                <Big label="Overall accuracy" value={formatPercent(stats.accuracy, 0)} sub={`${stats.c} of ${stats.q} questions right`} />
+                <Big label="Best result" value={formatPercent(stats.best, 1)} tone={performanceTone(stats.best)} sub="Highest single sitting" />
                 <Big
                   label="Last sitting"
                   value={stats.last ? formatPercent(stats.last.percentage, 0) : '—'}
@@ -184,7 +184,9 @@ export default function History() {
                 <div className="lg:col-span-4">
                   <span className="index">01 — Subjects</span>
                   <h2 className="ed-kicker" style={{ fontFamily: 'var(--ed-display)', fontSize: 'clamp(1.4rem,2.2vw,1.8rem)' }}>Where you sat</h2>
-                  <p className="text-sm text-fg-2 mt-3 max-w-sm text-pretty">Each line is a subject you have already attempted. Length follows real sittings and their scores — nothing is added that the engine did not store.</p>
+                  <p className="text-sm text-fg-2 mt-3 max-w-sm text-pretty">
+                    One line per island. The bar grows with how often you sat there and how those sittings scored. Tap a line to show only that subject.
+                  </p>
                 </div>
                 <ul className="lg:col-span-8 border-t border-line">
                   {[
@@ -227,6 +229,9 @@ export default function History() {
                 <div className="lg:col-span-4">
                   <span className="index">02 — Trend</span>
                   <h2 className="ed-kicker" style={{ fontFamily: 'var(--ed-display)', fontSize: 'clamp(1.4rem,2.2vw,1.8rem)' }}>How scores moved</h2>
+                  <p className="text-sm text-fg-2 mt-3 max-w-sm text-pretty">
+                    Left to right is time. Each point is one quiz. The dashed line is your average so far. Hover a point to read that sitting.
+                  </p>
                 </div>
                 <div className="lg:col-span-8 grid md:grid-cols-5 gap-x-10 gap-y-10 column-paper lg:before:hidden">
                   <div className="md:col-span-3 border-t border-line">
@@ -251,6 +256,9 @@ export default function History() {
               <Reveal className="lg:col-span-4">
                 <span className="index">03 — Attempts</span>
                 <h2 className="ed-kicker" style={{ fontFamily: 'var(--ed-display)', fontSize: 'clamp(1.4rem,2.2vw,1.8rem)' }}>Each sitting</h2>
+                <p className="text-sm text-fg-2 mt-3 max-w-sm text-pretty">
+                  Newest first. The teal bar under the percent is that sitting’s score. Ten show at a time so the page stays light.
+                </p>
                 <p className="t-caption text-fg-3 mt-3 num">{newestFirst.length} · newest first</p>
                 <Link to="/progress" className="link-rule mt-4 inline-block text-sm">
                   Open progress
