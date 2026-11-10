@@ -233,13 +233,13 @@ a[aria-label^='Daily challenge'],
   place-items: center;
   border: 1px solid var(--veyra-ui-line-strong, currentColor);
   border-radius: 999px;
-  font-family: ui-monospace, 'Space Mono', monospace;
+  font-family: var(--font-mono, ui-monospace, monospace);
   font-size: 0.68rem;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
 }
 #veyra-studio .veyra-studio-kicker {
   grid-column: 2;
-  font-family: ui-monospace, 'Space Mono', monospace;
+  font-family: var(--font-mono, ui-monospace, monospace);
   font-size: 0.62rem;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -247,17 +247,21 @@ a[aria-label^='Daily challenge'],
 }
 #veyra-studio .veyra-studio-title {
   grid-column: 2;
-  margin: 0.15rem 0 0;
-  font-family: Inter, system-ui, sans-serif;
-  font-size: 0.98rem;
-  font-weight: 650;
+  margin: 0.12rem 0 0;
+  font-family: var(--font-poster, var(--font-display, Georgia, serif));
+  font-size: 1.15rem;
+  font-weight: 800;
   font-style: normal;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
   color: var(--veyra-ui-text, #161917);
 }
 #veyra-studio .veyra-studio-meta {
   grid-column: 2;
-  margin-top: 0.15rem;
-  font-size: 0.78rem;
+  margin-top: 0.18rem;
+  font-family: var(--font-serif, Georgia, serif);
+  font-size: 0.84rem;
+  font-style: italic;
   color: var(--veyra-ui-muted, #8a938c);
 }
 .v-ending-art {

@@ -85,12 +85,16 @@
     { act: 'daily', n: '01', kicker: 'Begin', title: 'Try five', meta: 'Mixed subjects' },
     { act: 'concepts', n: '02', kicker: 'Follow', title: 'Open a thread', meta: 'Concept studio' },
     { act: 'take', n: '03', kicker: 'Keep', title: 'Write a take', meta: 'Private · unscored' },
-    { act: 'history', n: '04', kicker: 'Return', title: 'Find your trail', meta: 'History + progress' },
+    { act: 'history', n: '04', kicker: 'Return', title: 'Find your trail', meta: 'Sittings so far' },
+    { act: 'lab', n: '05', kicker: 'Work', title: 'Open the lab', meta: 'Form and scores' },
+    { act: 'missed', n: '06', kicker: 'Repair', title: 'Missed topics', meta: 'What still slips' },
+    { act: 'focus', n: '07', kicker: 'Aim', title: 'A longer sitting', meta: 'Pick subject and length' },
+    { act: 'progress', n: '08', kicker: 'Chart', title: 'See the line', meta: 'Progress over time' },
   ]
 
   function insertStudio() {
     var existing = document.getElementById('veyra-studio')
-    if (existing && existing.querySelector('.veyra-studio-collage')) return true
+    if (existing && existing.querySelectorAll('.veyra-studio-cell').length === STUDIO.length) return true
     if (existing) existing.remove()
     var main = document.querySelector('main')
     if (!main) return false
@@ -120,7 +124,7 @@
     }
     sec.innerHTML =
       '<div class="veyra-studio-head">' +
-      '<p class="mono-label">The question has four exits</p>' +
+      '<p class="mono-label">The question has eight exits</p>' +
       '<p class="mono-label veyra-studio-aside">Start anywhere · return when you like</p>' +
       '</div>' +
       '<ol class="veyra-studio-collage">' +
