@@ -64,11 +64,10 @@ export default function FilmPlayer() {
       idleRef.current += dt;
 
       if (playingRef.current) {
-        const fromVo = audioRef.current?.mediaTime();
-        if (fromVo != null) tRef.current = Math.min(DURATION, fromVo);
-        else tRef.current = Math.min(DURATION, tRef.current + dt * FilmAudio.VO_RATE);
+        tRef.current = Math.min(DURATION, tRef.current + dt);
+        audioRef.current?.sync(tRef.current);
         syncUi(tRef.current);
-        if (tRef.current >= DURATION - 0.05) {
+        if (tRef.current >= DURATION) {
           playingRef.current = false;
           setPlaying(false);
           setEnded(true);

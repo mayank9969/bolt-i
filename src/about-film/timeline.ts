@@ -27,6 +27,23 @@ export interface Caption {
   text: string;
 }
 
+/** Cut the recording into these windows on the 40s picture, like a timeline. */
+export type VoiceClip = Caption & { srcStart: number; srcEnd: number }
+
+export function voiceClips(fileSeconds: number): VoiceClip[] {
+  const weights = CAPTIONS.map((c) => Math.max(8, c.text.length))
+  const sum = weights.reduce((a, b) => a + b, 0)
+  let cursor = 0.12
+  const usable = Math.max(0.5, fileSeconds - 0.24)
+  return CAPTIONS.map((c, i) => {
+    const slice = (weights[i] / sum) * usable
+    const srcStart = cursor
+    const srcEnd = Math.min(fileSeconds, cursor + slice)
+    cursor = srcEnd
+    return { ...c, srcStart, srcEnd }
+  })
+}
+
 export const CAPTIONS: Caption[] = [
   { at: 2.6, until: 5.8, text: "Some evenings hold everything you will ever need." },
   { at: 7.2, until: 10.2, text: "He was here. Almost." },

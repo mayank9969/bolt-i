@@ -1,4 +1,4 @@
-import { CAPTIONS, DURATION } from "./timeline";
+import { CAPTIONS, DURATION, voiceClips, type VoiceClip } from "./timeline";
 
 /**
  * FilmAudio
@@ -17,27 +17,56 @@ export class FilmAudio {
   private timers: number[] = [];
   private vo: HTMLAudioElement | null = null;
   private hasVoiceover = false;
-  /** Speak a little slower so the lines sit on the picture. */
-  static readonly VO_RATE = 0.86;
+  private clips: VoiceClip[] = [];
+  private clipI = -1;
   muted = false;
   tts = false;
 
-  mediaTime(): number | null {
-    if (!this.vo || this.vo.paused) return null;
-    const dur = this.vo.duration;
-    if (!dur || !isFinite(dur) || dur <= 0) return this.vo.currentTime;
-    return (this.vo.currentTime / dur) * DURATION;
-  }
-
   async probeVoiceover() {
     try {
-      const res = await fetch("/about-film/voiceover.mp3", { method: "HEAD" });
-      const type = res.headers.get("content-type") || "";
-      this.hasVoiceover = res.ok && (type.includes("audio") || type === "");
+      const el = new Audio("/about-film/voiceover.mp3");
+      el.preload = "auto";
+      await new Promise<void>((resolve, reject) => {
+        el.addEventListener("loadedmetadata", () => resolve(), { once: true });
+        el.addEventListener("error", () => reject(), { once: true });
+        el.load();
+      });
+      const dur = el.duration;
+      if (!dur || !isFinite(dur) || dur < 1) {
+        this.hasVoiceover = false;
+        return false;
+      }
+      this.vo = el;
+      this.clips = voiceClips(dur);
+      this.hasVoiceover = true;
     } catch {
       this.hasVoiceover = false;
     }
     return this.hasVoiceover;
+  }
+
+  /** Play the take that belongs on this frame of the picture. */
+  sync(t: number) {
+    if (!this.vo || !this.hasVoiceover || this.muted) return;
+    const i = this.clips.findIndex((c) => t >= c.at && t < c.until);
+    if (i < 0) {
+      this.clipI = -1;
+      this.vo.pause();
+      return;
+    }
+    const c = this.clips[i];
+    const window = Math.max(0.2, c.until - c.at);
+    const srcDur = Math.max(0.2, c.srcEnd - c.srcStart);
+    if (this.clipI !== i) {
+      this.clipI = i;
+      this.vo.playbackRate = Math.min(1.15, Math.max(0.78, srcDur / window));
+      this.vo.preservesPitch = true;
+      this.vo.currentTime = c.srcStart;
+      this.vo.volume = this.muted ? 0 : 1;
+      void this.vo.play().catch(() => {});
+    } else if (this.vo.currentTime >= c.srcEnd - 0.04) {
+      this.vo.pause();
+    }
   }
 
   private ensure() {
@@ -170,15 +199,7 @@ export class FilmAudio {
     bell(35.6, 659.25, 0.045);
     bell(39.0, 440.0, 0.04);
 
-    /* --- real human voiceover if provided --- */
-    if (this.hasVoiceover) {
-      this.vo = new Audio("/about-film/voiceover.mp3");
-      this.vo.volume = this.muted ? 0 : 1;
-      this.vo.playbackRate = FilmAudio.VO_RATE;
-      this.vo.preservesPitch = true;
-      this.vo.currentTime = 0;
-      this.vo.play().catch(() => {});
-    }
+    this.clipI = -1;
 
     /* --- optional device narration stand-in --- */
     if (this.tts && "speechSynthesis" in window) {
@@ -240,11 +261,12 @@ export class FilmAudio {
   pause() {
     this.ctx?.suspend();
     this.vo?.pause();
+    this.clipI = -1;
   }
 
   resume() {
     if (this.ctx && this.ctx.state === "suspended") this.ctx.resume();
-    if (this.hasVoiceover && this.vo) this.vo.play().catch(() => {});
+    this.clipI = -1;
   }
 
   private stopNodes() {
@@ -265,8 +287,9 @@ export class FilmAudio {
     this.timers = [];
     if (this.vo) {
       this.vo.pause();
-      this.vo = null;
+      this.vo.currentTime = 0;
     }
+    this.clipI = -1;
     if ("speechSynthesis" in window) window.speechSynthesis.cancel();
   }
 
