@@ -164,11 +164,13 @@ export default function About() {
         <div className="about-quote-bloom relative z-10 mx-auto mt-8 pointer-events-auto">
           <VeyraFlower />
         </div>
-        <p className="about-for-you">this for you my love</p>
+        <p className="about-for-you">
+          this for you <em>my love</em>
+        </p>
         <p className="about-for-you-rule" aria-hidden="true">
-          <span>— — — —</span>
+          <span className="about-for-you-dash" />
           <span className="about-for-you-mid">a</span>
-          <span>— — — —</span>
+          <span className="about-for-you-dash" />
         </p>
       </section>
 
