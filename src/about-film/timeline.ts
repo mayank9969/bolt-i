@@ -31,28 +31,30 @@ export interface Caption {
 export type VoiceClip = Caption & { srcStart: number; srcEnd: number }
 
 export function voiceClips(fileSeconds: number): VoiceClip[] {
-  const weights = CAPTIONS.map((c) => Math.max(8, c.text.length))
+  const weights = CAPTIONS.map((c) => Math.max(12, c.text.length))
   const sum = weights.reduce((a, b) => a + b, 0)
-  let cursor = 0.12
-  const usable = Math.max(0.5, fileSeconds - 0.24)
+  let cursor = 0.08
+  const usable = Math.max(0.5, fileSeconds - 0.16)
   return CAPTIONS.map((c, i) => {
     const slice = (weights[i] / sum) * usable
     const srcStart = cursor
     const srcEnd = Math.min(fileSeconds, cursor + slice)
     cursor = srcEnd
-    return { ...c, srcStart, srcEnd }
+    const nextAt = CAPTIONS[i + 1]?.at ?? DURATION - 0.2
+    const until = Math.min(c.until, nextAt - 0.12)
+    return { ...c, until, srcStart, srcEnd }
   })
 }
 
 export const CAPTIONS: Caption[] = [
-  { at: 2.6, until: 5.8, text: "Some evenings hold everything you will ever need." },
-  { at: 7.2, until: 10.2, text: "He was here. Almost." },
-  { at: 11.6, until: 15.2, text: "But his mind had already left the bench — chasing a somewhere that was never real." },
-  { at: 16.2, until: 20.2, text: "Out here, the light was real. In there, it was only louder." },
-  { at: 21.2, until: 25.2, text: "She stayed. Close enough to touch… too far to reach." },
-  { at: 26.2, until: 29.8, text: "Until the noise inside got so bright, he couldn't hear the quiet holding him." },
-  { at: 30.8, until: 34.6, text: "She said his name. He smiled at somewhere else." },
-  { at: 35.6, until: 38.8, text: "And the moment passed — the way they always do. Without him." },
+  { at: 2.2, until: 6.6, text: "Some evenings hold everything you will ever need." },
+  { at: 7.0, until: 10.8, text: "He was here. Almost." },
+  { at: 11.2, until: 15.8, text: "But his mind had already left the bench — chasing a somewhere that was never real." },
+  { at: 16.0, until: 20.6, text: "Out here, the light was real. In there, it was only louder." },
+  { at: 20.9, until: 25.6, text: "She stayed. Close enough to touch… too far to reach." },
+  { at: 25.9, until: 30.4, text: "Until the noise inside got so bright, he couldn't hear the quiet holding him." },
+  { at: 30.7, until: 35.0, text: "She said his name. He smiled at somewhere else." },
+  { at: 35.3, until: 39.4, text: "And the moment passed — the way they always do. Without him." },
 ];
 
 export const QUOTE = {

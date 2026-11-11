@@ -1,4 +1,4 @@
-import { CAPTIONS, DURATION } from "./timeline";
+import { CAPTIONS, DURATION, voiceClips, type VoiceClip } from "./timeline";
 
 /**
  * FilmAudio
@@ -17,6 +17,8 @@ export class FilmAudio {
   private timers: number[] = [];
   private vo: HTMLAudioElement | null = null;
   private hasVoiceover = false;
+  private clips: VoiceClip[] = [];
+  private clipI = -1;
   muted = false;
   tts = false;
 
@@ -35,6 +37,7 @@ export class FilmAudio {
         return false;
       }
       this.vo = el;
+      this.clips = voiceClips(dur);
       this.hasVoiceover = true;
     } catch {
       this.hasVoiceover = false;
@@ -42,27 +45,41 @@ export class FilmAudio {
     return this.hasVoiceover;
   }
 
-  /** Keep the recording running with the picture. One take, natural pace. */
+  /** One spoken line per caption. Never rush — stretch the take to the caption. */
   sync(t: number) {
     const el = this.vo;
     if (!el || !this.hasVoiceover) return;
     if (this.muted || t < 0 || t >= DURATION) {
+      this.clipI = -1;
       if (!el.paused) el.pause();
       return;
     }
-    el.playbackRate = 1;
+    const i = this.clips.findIndex((c) => t >= c.at && t < c.until);
+    if (i < 0) {
+      this.clipI = -1;
+      if (!el.paused) el.pause();
+      return;
+    }
+    const c = this.clips[i];
+    const window = Math.max(0.35, c.until - c.at);
+    const srcDur = Math.max(0.35, c.srcEnd - c.srcStart);
+    // Slow to fill the caption. Never speed up, so words are not skipped.
+    const rate = Math.min(1, Math.max(0.78, srcDur / window));
     el.preservesPitch = true;
     el.volume = 1;
-    const fileDur = el.duration;
-    if (!fileDur || !isFinite(fileDur)) return;
-    const target = Math.min(fileDur - 0.05, Math.max(0, t));
-    if (el.paused) {
-      el.currentTime = target;
+    if (this.clipI !== i) {
+      this.clipI = i;
+      el.playbackRate = rate;
+      el.currentTime = c.srcStart;
       void el.play().catch(() => {});
       return;
     }
-    if (Math.abs(el.currentTime - target) > 0.45) {
-      el.currentTime = target;
+    if (el.paused) {
+      el.playbackRate = rate;
+      void el.play().catch(() => {});
+    }
+    if (el.currentTime >= c.srcEnd - 0.03) {
+      el.pause();
     }
   }
 
@@ -256,6 +273,7 @@ export class FilmAudio {
   pause() {
     this.ctx?.suspend();
     this.vo?.pause();
+    this.clipI = -1;
   }
 
   resume() {
@@ -282,6 +300,7 @@ export class FilmAudio {
       this.vo.pause();
       this.vo.currentTime = 0;
     }
+    this.clipI = -1;
     if ("speechSynthesis" in window) window.speechSynthesis.cancel();
   }
 
