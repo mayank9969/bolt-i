@@ -17,8 +17,13 @@ export default function MapQuotePoster() {
           <FilmPlayer />
         </div>
       </section>
-      <section className="map-quote-band map-quote-band--foot">
+      <section className="quote-band map-quote-band map-quote-band--foot" aria-label="Map quote">
         <blockquote className="map-quote-copy">
+          <p className="map-quote-hed">The map is not a verdict.</p>
+          <p className="map-quote-body">
+            You are more than the turn you wish you could take back. Keep what it taught you; let go of the shame that
+            keeps you there.
+          </p>
           <p className="map-quote-body map-quote-split">Yesterday cannot be redrawn, but</p>
           <p className="map-quote-mark-line">the next mark is still yours to make.</p>
           <p className="map-quote-body">
