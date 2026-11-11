@@ -386,15 +386,15 @@ export default function Home() {
               <div className="lg:col-span-4">
                 <span className="eyebrow">The path</span>
                 <h2 className="t-section mt-4 text-balance">One world, five views.</h2>
-                <p className="muted text-sm mt-5 max-w-sm leading-relaxed">The same archipelago follows you through the product and frames what you are doing — never in the way of a question.</p>
+                <p className="muted text-sm mt-5 max-w-sm leading-relaxed">Home keeps the islands. Practice, a sitting, History and About are the rest of the path — the map never sits on a question.</p>
               </div>
               <ol className="lg:col-span-8 grid sm:grid-cols-2 gap-x-10">
                 {[
-                  ['Home', 'Explore', 'The whole archipelago, close enough to touch; scrolling moves you in.'],
-                  ['Setup', 'Approach', 'Choose an island and the camera settles beside it.'],
-                  ['Quiz', 'Ashore', 'The map is put away so the question owns the page.'],
-                  ['Result', 'Return', 'The island you quizzed on waits behind your printed score.'],
-                  ['History', 'Chart', 'Islands your latest attempt left unfinished carry a terracotta marker.'],
+                  ['Home', 'Explore', 'The 3D archipelago: fifteen islands, a sound chip, and a field you can actually look at.'],
+                  ['Practice', 'Studio', 'Play, Lab, Concepts, Daily and Take. Play starts a live sitting through the same /api as the rest of the site.'],
+                  ['Quiz', 'Ashore', 'A sitting from Play or Setup. The engine scores; the browser never sees a key before you finish.'],
+                  ['History', 'Chart', 'Only engine sittings. Bands, boxes and a strip you can read — marks do not pile, labels do not overlap.'],
+                  ['About', 'Record', 'Short editorial. Self-reflection is opt-in and quiet. Made by Mayank Sarwal.'],
                 ].map(([page, state, desc], i) => (
                   <li key={page} className="py-5 border-b" style={{ borderColor: 'rgb(var(--nx-panel-text-rgb) / 0.14)' }}>
                     <div className="flex items-baseline justify-between gap-4">
