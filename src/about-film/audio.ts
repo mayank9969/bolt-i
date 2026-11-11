@@ -63,8 +63,8 @@ export class FilmAudio {
     const c = this.clips[i];
     const window = Math.max(0.35, c.until - c.at);
     const srcDur = Math.max(0.35, c.srcEnd - c.srcStart);
-    // Slow to fill the caption. Never speed up, so words are not skipped.
-    const rate = Math.min(1, Math.max(0.78, srcDur / window));
+    // Fit the whole line in the caption: natural pace, or a little faster — never slower.
+    const rate = Math.min(1.22, Math.max(1, srcDur / window));
     el.preservesPitch = true;
     el.volume = 1;
     if (this.clipI !== i) {
