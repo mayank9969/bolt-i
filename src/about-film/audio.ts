@@ -17,8 +17,17 @@ export class FilmAudio {
   private timers: number[] = [];
   private vo: HTMLAudioElement | null = null;
   private hasVoiceover = false;
+  /** Speak a little slower so the lines sit on the picture. */
+  static readonly VO_RATE = 0.86;
   muted = false;
   tts = false;
+
+  mediaTime(): number | null {
+    if (!this.vo || this.vo.paused) return null;
+    const dur = this.vo.duration;
+    if (!dur || !isFinite(dur) || dur <= 0) return this.vo.currentTime;
+    return (this.vo.currentTime / dur) * DURATION;
+  }
 
   async probeVoiceover() {
     try {
@@ -165,6 +174,8 @@ export class FilmAudio {
     if (this.hasVoiceover) {
       this.vo = new Audio("/about-film/voiceover.mp3");
       this.vo.volume = this.muted ? 0 : 1;
+      this.vo.playbackRate = FilmAudio.VO_RATE;
+      this.vo.preservesPitch = true;
       this.vo.currentTime = 0;
       this.vo.play().catch(() => {});
     }
