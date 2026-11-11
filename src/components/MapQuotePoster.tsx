@@ -10,7 +10,9 @@ export default function MapQuotePoster() {
           You are more than the turn you wish you could take back. Keep what it taught you; let go of the shame that
           keeps you there.
         </p>
-        <QuoteFilm />
+      </blockquote>
+      <QuoteFilm />
+      <blockquote className="map-quote-copy">
         <p className="map-quote-body map-quote-split">Yesterday cannot be redrawn, but</p>
         <p className="map-quote-mark-line">the next mark is still yours to make.</p>
         <p className="map-quote-body">

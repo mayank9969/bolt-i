@@ -318,29 +318,18 @@
   color: #f4f6f5;
 }
 .about-ed .quote-film {
-  margin: 1.6rem auto 2rem;
-  max-width: 42rem;
+  margin: 1.75rem auto 2.1rem;
+  max-width: min(52rem, 92vw);
+  text-align: center;
 }
-.about-ed .quote-film-stage {
-  position: relative;
-  aspect-ratio: 16 / 9;
-  overflow: hidden;
-  border-radius: 2px;
-  background: #0a0a0c;
-}
-.about-ed .quote-film-stage img {
-  position: absolute;
-  inset: 0;
+.about-ed .quote-film img {
+  display: block;
   width: 100%;
-  height: 100%;
+  height: auto;
+  min-height: 12rem;
   object-fit: cover;
-  opacity: 0;
-  transform: scale(1.06);
-  transition: opacity 1.4s ease, transform 5s ease;
-}
-.about-ed .quote-film-stage img.is-on {
-  opacity: 1;
-  transform: scale(1);
+  aspect-ratio: 16 / 9;
+  background: #1a1020;
 }
 .about-ed .quote-film-vo {
   margin-top: 0.75rem;

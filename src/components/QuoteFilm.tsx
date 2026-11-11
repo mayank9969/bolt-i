@@ -9,25 +9,24 @@ const FRAMES = [
 const HOLD = 5000
 const VOICE = '/about-film/voiceover.mp3'
 
-/** Ken-burns stills between the map quotes. Drop an mp3 at public/about-film/voiceover.mp3 */
 export default function QuoteFilm() {
   const [i, setI] = useState(0)
   const [hasVo, setHasVo] = useState(false)
   const [on, setOn] = useState(false)
   const audio = useRef<HTMLAudioElement | null>(null)
-  const reduce = useRef(false)
 
   useEffect(() => {
-    reduce.current = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    fetch(VOICE, { method: 'HEAD' })
-      .then((r) => setHasVo(r.ok))
-      .catch(() => setHasVo(false))
-  }, [])
-
-  useEffect(() => {
-    if (reduce.current) return
+    const probe = new Audio(VOICE)
+    probe.addEventListener('canplaythrough', () => setHasVo(true), { once: true })
+    probe.addEventListener('error', () => setHasVo(false), { once: true })
+    probe.load()
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (reduce) return
     const id = window.setInterval(() => setI((n) => (n + 1) % FRAMES.length), HOLD)
-    return () => window.clearInterval(id)
+    return () => {
+      window.clearInterval(id)
+      probe.src = ''
+    }
   }, [])
 
   const toggleVoice = () => {
@@ -37,31 +36,24 @@ export default function QuoteFilm() {
       el.loop = true
       audio.current = el
     }
-    const el = audio.current
     if (on) {
-      el.pause()
+      audio.current.pause()
       setOn(false)
     } else {
-      void el.play().then(() => setOn(true)).catch(() => setOn(false))
+      void audio.current.play().then(() => setOn(true)).catch(() => setOn(false))
     }
   }
 
   useEffect(() => () => { audio.current?.pause() }, [])
 
   return (
-    <figure className="quote-film" aria-label="Four stills between the quotes">
-      <div className="quote-film-stage">
-        {FRAMES.map((src, n) => (
-          <img key={src} src={src} alt="" className={n === i ? 'is-on' : ''} />
-        ))}
-      </div>
+    <figure className="quote-film">
+      <img src={FRAMES[i]} alt="Still from the quote film" width={1280} height={720} />
       {hasVo ? (
         <button type="button" className="quote-film-vo" onClick={toggleVoice} aria-pressed={on}>
           {on ? 'Voice off' : 'Voice on'}
         </button>
-      ) : (
-        <p className="quote-film-hint">To add your recording, put it at public/about-film/voiceover.mp3</p>
-      )}
+      ) : null}
     </figure>
   )
 }
