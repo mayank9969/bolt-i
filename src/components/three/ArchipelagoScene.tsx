@@ -88,7 +88,7 @@ function IslandMesh({
   const [review, setReview] = useState(false)
   const [exhibitOpen, setExhibitOpen] = useState(false) // this island's exhibit is open
   const propGroup = useRef<THREE.Group>(null)
-  const rockMat = useMemo(() => new THREE.MeshStandardMaterial({ color: palette.rock, roughness: 0.92, flatShading: true }), [])
+  const rockMat = useMemo(() => new THREE.MeshStandardMaterial({ color: palette.rock, roughness: 0.88, flatShading: false }), [])
   const landMats = useMemo(() => palette.land.map((c) => new THREE.MeshStandardMaterial({ color: c, roughness: 0.82, flatShading: false })), [])
   const propMat = useMemo(() => new THREE.MeshStandardMaterial({ color: palette.ink, roughness: 0.6, metalness: 0.05 }), [])
   const tealMat = useMemo(() => new THREE.MeshStandardMaterial({ color: palette.accent, roughness: 0.55 }), [])
@@ -795,13 +795,13 @@ function Lights({ palette, quality }: { palette: Palette; quality: Quality }) {
         intensity={palette.dark ? 1.5 : 1.8}
         color={palette.key}
         castShadow={quality === 'high'}
-        shadow-mapSize={[1024, 1024]}
-        shadow-camera-left={-9}
-        shadow-camera-right={9}
-        shadow-camera-top={9}
-        shadow-camera-bottom={-9}
-        shadow-bias={-0.0006}
-        shadow-radius={5}
+        shadow-mapSize={[2048, 2048]}
+        shadow-camera-left={-12}
+        shadow-camera-right={12}
+        shadow-camera-top={12}
+        shadow-camera-bottom={-12}
+        shadow-bias={-0.0004}
+        shadow-radius={4}
       />
       <directionalLight position={[6, 3, -6]} intensity={palette.dark ? 0.7 : 0.5} color={palette.dark ? '#f0dcc4' : '#fff6e8'} />
     </>
@@ -1012,16 +1012,20 @@ export default function ArchipelagoScene() {
   const { islands, bridges } = useMemo(() => buildIslands(categories), [categories])
   const worldRef = useRef<THREE.Group>(null)
   const mobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 767px)').matches
-  const dpr = Math.min(
-    mobile ? 1.15 : quality === 'high' ? 2 : 1.5,
-    typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1,
-  )
+  const dpr: [number, number] = mobile ? [1, 1.5] : [1, 2]
   return (
     <Canvas
       dpr={dpr}
-      shadows={quality === 'high' && !mobile}
+      shadows={quality === 'high' && !mobile ? 'soft' : false}
       frameloop={visible && onScreen ? 'always' : 'never'}
-      gl={{ antialias: !mobile, alpha: false, powerPreference: mobile ? 'low-power' : 'high-performance', toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.05 }}
+      gl={{
+        antialias: true,
+        alpha: false,
+        powerPreference: mobile ? 'low-power' : 'high-performance',
+        toneMapping: THREE.ACESFilmicToneMapping,
+        toneMappingExposure: 1.12,
+        outputColorSpace: THREE.SRGBColorSpace,
+      }}
       camera={{ position: CAM.hero.pos as unknown as [number, number, number], fov: 36, near: 0.2, far: 240 }}
       onPointerMissed={() => {
         setWorld({ hover: null })
