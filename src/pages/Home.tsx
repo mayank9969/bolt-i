@@ -44,8 +44,8 @@ export default function Home() {
     <div className="relative">
       {/* ── Hero: copy on the left, framed map on the right (stacked on phones) ── */}
       <section ref={heroRef} className="relative pt-4 pb-4">
-        <div className="relative z-10 max-w-page mx-auto w-full px-5 sm:px-6 lg:px-8">
-          <div className="home-intro max-w-2xl mx-auto text-center">
+        <div className="relative z-10 max-w-page mx-auto w-full px-5 sm:px-8 lg:px-12">
+          <div className="home-intro max-w-3xl mx-auto text-center">
             <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={enter(0)} className="opener justify-center">
               <span>The Knowledge Archipelago</span>
             </motion.p>
@@ -108,7 +108,7 @@ export default function Home() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6, duration: 0.8 }}
-          className="relative z-10 max-w-page mx-auto w-full px-5 sm:px-6 lg:px-8 mt-6"
+          className="relative z-10 max-w-page mx-auto w-full px-5 sm:px-8 lg:px-12 mt-6"
           aria-label="Categories"
         >
           <div className="category-dock">
@@ -185,7 +185,7 @@ export default function Home() {
       </section>
 
       {/* ── Key sittings (not the full Practice list) ─────────────── */}
-      <section className="relative z-10 max-w-page mx-auto w-full px-5 sm:px-6 lg:px-8 pt-16 md:pt-24">
+      <section className="relative z-10 max-w-page mx-auto w-full px-5 sm:px-8 lg:px-12 pt-16 md:pt-24">
         <div className="flex items-center gap-3 figcap mb-8">
           <span className="w-8 h-px bg-line-strong" />
           Besides the map
@@ -246,7 +246,7 @@ export default function Home() {
       </section>
 
       {/* ── Manifesto: one line, huge, ruled ───────────────────────── */}
-      <section className="relative max-w-page mx-auto px-5 sm:px-6 lg:px-8 pt-24 md:pt-36 pb-16 md:pb-24">
+      <section className="relative max-w-page mx-auto px-5 sm:px-8 lg:px-12 pt-24 md:pt-36 pb-16 md:pb-24">
         <Reveal>
           <div className="grid lg:grid-cols-12 gap-8 items-start">
             <span className="lg:col-span-2 index">01 — Idea</span>
@@ -273,7 +273,7 @@ export default function Home() {
       </section>
 
       {/* ── Regions: real catalogue, ruled rows not cards ──────────── */}
-      <section className="relative max-w-page mx-auto px-5 sm:px-6 lg:px-8 pb-24 md:pb-36">
+      <section className="relative max-w-page mx-auto px-5 sm:px-8 lg:px-12 pb-24 md:pb-36">
         <Reveal>
           <div className="grid lg:grid-cols-12 gap-8 items-baseline mb-6">
             <span className="lg:col-span-2 index">02 — Islands</span>
@@ -341,7 +341,7 @@ export default function Home() {
       </section>
 
       {/* ── How it scores: asymmetric editorial band ───────────────── */}
-      <section className="relative max-w-page mx-auto px-5 sm:px-6 lg:px-8 pb-24 md:pb-36">
+      <section className="relative max-w-page mx-auto px-5 sm:px-8 lg:px-12 pb-24 md:pb-36">
         <div className="grid lg:grid-cols-12 gap-x-10 gap-y-12">
           <Reveal className="lg:col-span-5">
             <span className="index">03 — Scoring</span>
@@ -379,7 +379,7 @@ export default function Home() {
       </section>
 
       {/* ── Ink band: the journey through the pages ────────────────── */}
-      <section className="relative max-w-page mx-auto px-5 sm:px-6 lg:px-8 pb-24 md:pb-36">
+      <section className="relative max-w-page mx-auto px-5 sm:px-8 lg:px-12 pb-24 md:pb-36">
         <Reveal>
           <div className="panel-ink rounded-2xl md:rounded-3xl p-7 sm:p-10 md:p-14 relative overflow-hidden">
             <div className="grid lg:grid-cols-12 gap-10">
@@ -411,7 +411,7 @@ export default function Home() {
       </section>
 
       {/* ── Closing CTA ────────────────────────────────────────────── */}
-      <section className="relative max-w-page mx-auto px-5 sm:px-6 lg:px-8 pb-28 md:pb-40">
+      <section className="relative max-w-page mx-auto px-5 sm:px-8 lg:px-12 pb-28 md:pb-40">
         <Reveal>
           <div className="grid lg:grid-cols-12 gap-8 items-end border-t border-line-strong pt-10">
             <h2 className="lg:col-span-8 t-title text-fg text-balance">

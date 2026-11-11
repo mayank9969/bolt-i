@@ -93,7 +93,9 @@
   font-size: clamp(2.8rem, 8vw, 5.4rem);
   font-weight: 700;
   line-height: 0.98;
-  max-width: 12ch;
+  max-width: 14ch;
+  margin-inline: auto;
+  text-align: center;
 }
 .about-ed .ed-hero em {
   display: inline;
@@ -480,8 +482,22 @@
   color: #f4f0e4;
 }
 
+.about-ed header,
 .about-ed .ed-article {
-  max-width: 38rem;
+  max-width: 44rem;
+  margin-inline: auto;
+}
+.about-ed .ed-eyebrow {
+  text-align: center;
+}
+.about-ed .ed-prose {
+  margin-inline: auto;
+}
+.about-ed .ed-rainbow {
+  margin-inline: auto;
+}
+.about-ed .ed-article {
+  max-width: 42rem;
 }
 .about-ed .ed-section {
   margin-top: 3.75rem;
@@ -498,6 +514,7 @@
   line-height: 1.7;
   color: rgb(var(--nx-text-2-rgb));
   max-width: 38rem;
+  margin-inline: auto;
 }
 .archive-ed .ed-prose {
   font-size: 1.32rem;

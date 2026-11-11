@@ -632,6 +632,18 @@
   .safe-bottom { padding-bottom: max(1rem, env(safe-area-inset-bottom)); }
 }
 
+/* Tablet / PC: reading blocks sit in the middle, not the left gutter */
+@media (min-width: 768px) {
+  .column-paper {
+    margin-inline: auto;
+    width: 100%;
+  }
+  .page-reading {
+    margin-inline: auto;
+    max-width: 42rem;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;

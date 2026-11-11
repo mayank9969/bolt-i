@@ -81,12 +81,12 @@ export default function Play() {
   }, [navigate, beginSession])
 
   return (
-    <div className="bg-canvas">
+    <div className="bg-canvas w-full flex justify-center">
       <iframe
         ref={ref}
         title="VEYRA Practice — relay of curiosity"
         src={`/practice-relay/index.html?eye=3&theme=${theme}`}
-        className="w-full border-0 block bg-canvas overflow-auto"
+        className="w-full max-w-[90rem] border-0 block bg-canvas overflow-auto"
         style={{ height: 'min(96dvh, 1400px)', minHeight: '32rem' }}
       />
     </div>
