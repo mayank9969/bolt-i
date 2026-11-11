@@ -17,7 +17,7 @@ export default function MapQuotePoster() {
           <FilmPlayer />
         </div>
       </section>
-      <section className="map-quote-band map-quote-band--foot" hidden aria-hidden="true">
+      <section className="map-quote-band map-quote-band--foot">
         <blockquote className="map-quote-copy">
           <p className="map-quote-body map-quote-split">Yesterday cannot be redrawn, but</p>
           <p className="map-quote-mark-line">the next mark is still yours to make.</p>
