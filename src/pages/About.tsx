@@ -72,22 +72,32 @@ export default function About() {
             </p>
           </Section>
 
-          <Section n="02" title="A first product">
+          <Section n="02" title="The rush of a first product">
             <p>
-              This is the first thing I have put in the world as a whole. Not a sketch I kept in a folder. A room other
-              people can walk into. That feeling is specific: pride and exposure in the same breath. I keep asking
-              whether the jewel is bright enough, whether the puzzle plays, whether the sentence tells the truth —
-              because once it is public, <span className="ed-weight">almost</span> is not a place I can hide.
+              This is the first thing I have put in the world as a whole. Not a sketch in a folder. A room other people
+              can walk into. The feeling is not calm. It is a <span className="ed-weight">rush</span> — the kind that
+              sits in the chest when the islands load, when a sitting actually starts, when History writes a line that
+              is mine. Pride and exposure in the same breath. Hands a little too awake. I keep asking whether the jewel
+              is bright enough, whether the puzzle plays, whether the sentence tells the truth, because once it is
+              public, <span className="ed-soft">almost</span> is not a place I can hide.
+            </p>
+            <p>
+              Imagine the first time you show someone a thing you made and you cannot take it back. That is this. The
+              excitement is not fireworks. It is quieter and worse and better: waiting to see if a stranger will sit
+              with a question the way I sit with one. Wanting them to feel the field at sunset, the click of a piece,
+              the small heat of getting something right without being lied to. Wanting them not to bounce. That want is
+              the rush.
             </p>
             <p>
               A first product is also a decision about who I am willing to be seen as. I could have shipped a quiz with
               a leaderboard and called it done. I did not. I built a field of islands, a relay of curiosity, History
               that only believes the engine, a Take no one grades. That is the person I am trying to be: someone who
-              will not flatten a question to look finished.
+              will not flatten a question to look finished — even when finishing would feel safer.
             </p>
             <p>
-              It feels like standing on the first island with the rest of the map still in fog — and going ashore
-              anyway. If you are here, you are walking through that decision with me.
+              It feels like standing on the first island with the rest of the map still in fog, pulse up, and going
+              ashore anyway. If you are here, you are walking through that decision with me. Welcome. Stay long enough
+              to find out whether the picture holds.
             </p>
           </Section>
 
