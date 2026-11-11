@@ -28,8 +28,9 @@ export default function HistoryStats({ history }: { history: HistoryEntry[] }) {
           }
           meaning={
             <>
-              Imagine lining up every quiz from lowest score to highest. The teal band is the middle half of that line.
-              The upright mark is the sitting in the very middle — half of your papers scored below it, half above.
+              Imagine lining up every quiz from lowest score to highest. The{' '}
+              <span className="ed-soft">teal band</span> is the middle half of that line. The upright mark is the
+              sitting in the very middle — half of your papers scored below it, half above.
             </>
           }
         >
@@ -50,9 +51,9 @@ export default function HistoryStats({ history }: { history: HistoryEntry[] }) {
           }
           meaning={
             <>
-              You got {series.correct} of {series.total} questions right ({pct01(series.wilson.p)}). The teal bar is a
-              cautious guess at your true rate if you kept sitting the same way. It gets shorter as you answer more —
-              we become surer.
+              You got {series.correct} of {series.total} questions right ({pct01(series.wilson.p)}). The{' '}
+              <span className="ed-soft">teal bar</span> is a cautious guess at your true rate if you kept sitting the
+              same way. It gets shorter as you answer more — we become <span className="ed-hit">surer</span>.
             </>
           }
         >
@@ -70,9 +71,10 @@ export default function HistoryStats({ history }: { history: HistoryEntry[] }) {
         }
           meaning={
             <>
-              Easy, medium, and hard are counted separately. The first bar is how often you were right in that band
-              (higher means it felt easier). The second is the gap between your stronger and weaker papers there — it
-              waits until you have four sittings so a single quiz cannot fake it. Mixed papers are left out.
+              <span className="ed-soft">Easy, medium, and hard</span> are counted separately. The first bar is how often
+              you were right in that band (higher means it felt easier). The second is the gap between your stronger
+              and weaker papers there — it waits until you have four sittings so a single quiz cannot fake it.{' '}
+              Mixed papers are left out.
             </>
           }
       >

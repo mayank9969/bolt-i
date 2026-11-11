@@ -364,10 +364,35 @@
   font-size: clamp(2rem, 5vw, 3.1rem);
 }
 .archive-ed .ed-lede {
-  font-size: 1.05rem;
-  line-height: 1.65;
+  font-family: var(--ed-serif);
+  font-size: 1.28rem;
+  line-height: 1.7;
   color: rgb(var(--nx-text-2-rgb));
-  max-width: 36rem;
+  max-width: 38rem;
+}
+.archive-ed .ed-prose {
+  font-size: 1.32rem;
+  line-height: 1.76;
+  max-width: 38rem;
+}
+.archive-ed .ed-hit {
+  font-family: var(--ed-display);
+  font-style: italic;
+  font-weight: 600;
+  font-size: 1.05em;
+  letter-spacing: -0.03em;
+  background-image: none;
+}
+.archive-ed .ed-soft {
+  font-family: var(--ed-display);
+  font-style: italic;
+  font-weight: 500;
+}
+.archive-ed .ed-kicker {
+  font-size: clamp(1.55rem, 3vw, 2.05rem);
+  letter-spacing: -0.03em;
+  text-transform: none;
+}
 }
 
 .archive-ed .arch-stat {

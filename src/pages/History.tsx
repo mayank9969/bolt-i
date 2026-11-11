@@ -95,9 +95,18 @@ export default function History() {
                 )}
               </h1>
               <p className="ed-lede mt-5">
-                {history && history.length
-                  ? `${history.length} scored sitting${history.length === 1 ? '' : 's'} from the quiz engine. Read top to bottom: totals, where you practised, how scores moved, then each attempt.`
-                  : 'When you finish a quiz, the engine stores it here. Nothing is guessed.'}
+                {history && history.length ? (
+                  <>
+                    {history.length} scored sitting{history.length === 1 ? '' : 's'} from the quiz engine. Read top to
+                    bottom: <span className="ed-hit">totals</span>, where you practised,{' '}
+                    <span className="ed-soft">how scores moved</span>, then each attempt.
+                  </>
+                ) : (
+                  <>
+                    When you finish a quiz, the engine stores it here.{' '}
+                    <span className="ed-soft">Nothing is guessed.</span>
+                  </>
+                )}
               </p>
               {history && history.length > 0 && (
                 <p className="flex flex-wrap gap-1.5 mt-4" aria-hidden="true">
