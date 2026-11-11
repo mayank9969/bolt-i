@@ -152,6 +152,11 @@
   max-width: 36rem;
   text-wrap: pretty;
 }
+.about-ed .ed-prose {
+  font-size: clamp(1.28rem, 2.1vw, 1.5rem);
+  line-height: 1.72;
+  max-width: 40rem;
+}
 .about-ed .ed-hit,
 .archive-ed .ed-hit {
   font-family: var(--ed-serif);
@@ -167,12 +172,25 @@
   background-repeat: no-repeat;
   background-position: 0 94%;
 }
+.about-ed .ed-hit {
+  font-family: var(--ed-display);
+  font-size: 1.08em;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
 .about-ed .ed-soft,
 .archive-ed .ed-soft {
   font-family: var(--ed-serif);
   font-style: italic;
   font-weight: 400;
   color: rgb(var(--nx-text-rgb));
+}
+.about-ed .ed-soft {
+  font-family: var(--ed-display);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 1.04em;
+  letter-spacing: -0.02em;
 }
 .about-ed .ed-prose p + p {
   margin-top: 1.35rem;
@@ -392,7 +410,6 @@
   font-size: clamp(1.55rem, 3vw, 2.05rem);
   letter-spacing: -0.03em;
   text-transform: none;
-}
 }
 
 .archive-ed .arch-stat {

@@ -29,10 +29,10 @@ export default function About() {
               <SelfReflection />
             </div>
             <p className="ed-prose mt-8 max-w-3xl">
-              I’m <span className="ed-hit">Mayank Sarwal</span>. VEYRA is a personal learning project I made to look
-              closer at what I know — and to keep a <span className="ed-soft">truthful record</span> of what still
-              needs another sitting. It is for the pleasure of learning, and for the curiouser learners who will sit
-              with a question instead of skimming past it.
+              I am the person who would rather rebuild an island than leave it looking almost right. I made VEYRA
+              because I was tired of learning that vanished the moment a score appeared — I wanted a room where a
+              question could <span className="ed-hit">stay open</span>, and where I could see, later, how an hour
+              actually went.
             </p>
           </header>
         </Reveal>
@@ -40,27 +40,34 @@ export default function About() {
         <article className="ed-article mt-2">
           <Section n="01" title="Who this is">
             <p>
-              I wanted a place that would not pretend. A sitting is scored on the server; the browser never holds the
-              key. History only stores what the engine saw. Take, if you write one, stays private and unscored. I would
-              rather leave a gap than fill it with a story.
+              I work like someone assembling a picture <span className="ed-soft">piece by piece</span> — the
+              archipelago, the relay, the jewel of an eye, a sitting that must be scored in truth. If a mark is muddy, I
+              ask for more light. If a puzzle does not play, it is not a puzzle. That is not decoration. That is how I
+              think: finish the thing in front of you, then look again.
             </p>
             <p>
-              The archipelago on Home is the map I keep returning to — fifteen subjects, two thousand questions,
-              nothing locked. Practice, a quiz, History, and this page are the rest of the path. I am not building a
-              company profile. I am building a room where a later me can see how an hour actually went.
+              I do not want a version of myself I never chose. The line under the flower is the one I keep: the mind can
+              build a universe and still live inside a habit. VEYRA is my way of interrupting that — a map I return to,
+              fifteen islands, two thousand questions, <span className="ed-hit">nothing locked</span>, so curiosity can
+              choose instead of a script.
+            </p>
+            <p>
+              I am not writing a company. I am keeping a record for a later me, and for anyone who still likes to sit
+              with a question. Take is private if you write one. History only believes the engine. I would rather leave
+              a gap than invent a key.
             </p>
           </Section>
 
           <Section n="02" title="What we are trying">
             <p>
-              The goal is to <span className="ed-hit">look closer</span>. A question asks you to stop guessing in the
-              dark. You pick an island, a difficulty, a length. You go ashore. The score is a moment, not a verdict —
-              it is there so you can come back, not so one percentage can stand in for everything you understand.
+              Our goal is not a higher number. It is to <span className="ed-hit">look closer</span> — to stop guessing
+              in the dark, go ashore, and find out what we actually know. A percentage is a moment. It is not a
+              verdict. We come back.
             </p>
             <p>
-              Between people, a question is the same motion: someone asks, someone tests, someone carries it a little
-              further. VEYRA is a small version of that. <span className="ed-soft">Learning stays unfinished on
-              purpose.</span> Curiosity chooses the island.
+              Between people, a question travels: someone asks, someone tests, someone carries it a little further.
+              That is the whole project. Paper and ink. A sitting on the server. A chart you can read. Learning that{' '}
+              <span className="ed-soft">stays unfinished on purpose</span>, for the curiouser learners out there.
             </p>
           </Section>
 
