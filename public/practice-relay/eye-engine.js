@@ -52,12 +52,12 @@
     a[2] + (b[2] - a[2]) * t
   ];
   var PAL = [
-    { at: 0, c: [22, 14, 10] },
-    { at: 0.22, c: [58, 36, 22] },
-    { at: 0.45, c: [102, 68, 38] },
-    { at: 0.68, c: [140, 96, 52] },
-    { at: 0.86, c: [88, 58, 34] },
-    { at: 1, c: [32, 20, 12] }
+    { at: 0, c: [20, 240, 255] },
+    { at: 0.2, c: [140, 255, 250] },
+    { at: 0.38, c: [255, 248, 245] },
+    { at: 0.55, c: [255, 110, 190] },
+    { at: 0.75, c: [210, 140, 255] },
+    { at: 1, c: [255, 150, 70] }
   ];
   function pal(v) {
     v = clamp01(v);
@@ -491,7 +491,7 @@
         ctx.globalAlpha = 0.55 * m;
         ctx.beginPath();
         ctx.arc(0, 0, Ri * 0.96, 0, Math.PI * 2);
-        ctx.fillStyle = "rgb(180,90,30)";
+        ctx.fillStyle = "rgb(110,90,255)";
         ctx.fill();
         ctx.restore();
         g = ctx.createRadialGradient(0, 0, Ri * 0.72, 0, 0, Ri * 1);
