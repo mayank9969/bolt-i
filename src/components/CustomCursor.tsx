@@ -7,7 +7,7 @@ export default function CustomCursor() {
   const y = useMotionValue(-80)
   const rx = useSpring(x, { stiffness: 280, damping: 28, mass: 0.35 })
   const ry = useSpring(y, { stiffness: 280, damping: 28, mass: 0.35 })
-  const [hover, setHover] = useState(false)
+  const [hover, setHover] = useState<'off' | 'nav' | 'ui'>('off')
   const [visible, setVisible] = useState(false)
   const [enabled, setEnabled] = useState(false)
 
@@ -17,9 +17,12 @@ export default function CustomCursor() {
     if (!fine || reduce) return
     setEnabled(true)
 
-    const hit = (t: EventTarget | null) => {
+    const hit = (t: EventTarget | null): 'off' | 'nav' | 'ui' => {
       const el = t as HTMLElement | null
-      return !!el?.closest?.('a, button, input, textarea, [role="button"], [data-cursor], canvas, [data-veyra-act]')
+      if (!el?.closest) return 'off'
+      if (el.closest('header nav, .veyra-nav, header .btn-primary, header .btn-sm')) return 'nav'
+      if (el.closest('a, button, input, textarea, [role="button"], [data-cursor], canvas, [data-veyra-act]')) return 'ui'
+      return 'off'
     }
     const move = (e: PointerEvent | MouseEvent) => {
       x.set(e.clientX)
@@ -38,7 +41,7 @@ export default function CustomCursor() {
       x.set(r.left + d.x)
       y.set(r.top + d.y)
       setVisible(true)
-      setHover(!!d.hover)
+      setHover(d.hover ? 'ui' : 'off')
     }
     window.addEventListener('pointermove', move, { passive: true })
     window.addEventListener('mousemove', move, { passive: true })
@@ -66,9 +69,13 @@ export default function CustomCursor() {
         className="rounded-full -translate-x-1/2 -translate-y-1/2 border"
         style={{
           borderColor: 'var(--nx-accent, #16827e)',
-          background: hover ? 'color-mix(in srgb, var(--nx-accent, #16827e) 14%, transparent)' : 'transparent',
+          background: hover !== 'off' ? 'color-mix(in srgb, var(--nx-accent, #16827e) 14%, transparent)' : 'transparent',
         }}
-        animate={{ width: hover ? 52 : 32, height: hover ? 52 : 32, opacity: hover ? 1 : 0.88 }}
+        animate={{
+          width: hover === 'nav' ? 28 : hover === 'ui' ? 52 : 32,
+          height: hover === 'nav' ? 28 : hover === 'ui' ? 52 : 32,
+          opacity: hover !== 'off' ? 1 : 0.88,
+        }}
         transition={{ type: 'spring', stiffness: 220, damping: 22, mass: 0.4 }}
       />
     </motion.div>
