@@ -8,7 +8,7 @@ function initVeyraFlower(root){
 
   /* ---------- helpers ---------- */
   var rad=function(d){return d*Math.PI/180;};
-  var f1=function(n){return Math.round(n*10)/10;};
+  var f1=function(n){return Math.round(n*100)/100;};
   var clamp=function(x,a,b){return Math.min(b,Math.max(a,x));};
   var sm=function(a,b,x){x=clamp((x-a)/(b-a),0,1);return x*x*(3-2*x);};
   var toPath=function(p){return 'M'+p.map(function(q){return f1(q[0])+' '+f1(q[1]);}).join('L');};
@@ -68,7 +68,7 @@ function initVeyraFlower(root){
          inner:5.0,istep:.25,pulseStem:6.7,pulseVein:7.7,motes:9.2};
 
   /* ---------- stem: glassy tube with cross-section rungs ---------- */
-  var sc=spline([[300,342],[297,430],[304,520],[293,615],[295,705],[302,790]],10);
+  var sc=spline([[300,342],[297,430],[304,520],[293,615],[295,705],[302,790]],20);
   var stemW=function(s){return 2.6+4.4*Math.pow(s,1.1);};
   var stemAt=function(s){return sc[Math.round(s*(sc.length-1))];};
   var e1=offsetLine(sc,stemW,1),e2=offsetLine(sc,stemW,-1);
@@ -86,7 +86,7 @@ function initVeyraFlower(root){
   /* ---------- leaves: lance blades with iridescent streaks ---------- */
   function leaf(sPos,ang,len,w,bs,dur){
     var d=T.stem+T.stemDur*sPos*.9+.1;
-    var p0=stemAt(sPos),A=rad(ang),N=36;
+    var p0=stemAt(sPos),A=rad(ang),N=64;
     var p1=[p0[0]+len*.55*Math.cos(A+bs*.55),p0[1]+len*.55*Math.sin(A+bs*.55)];
     var p2=[p0[0]+len*Math.cos(A),p0[1]+len*Math.sin(A)];
     var B=function(t){var u=1-t;return [u*u*p0[0]+2*u*t*p1[0]+t*t*p2[0],u*u*p0[1]+2*u*t*p1[1]+t*t*p2[1]];};
@@ -185,7 +185,7 @@ function initVeyraFlower(root){
     var a=rad(s.a),c=Math.cos(a),si=Math.sin(a);
     return [CX+x*c-y*si,CY+(x*si+y*c)*SQ];
   }
-  var edgePts=function(s,u,sl,sw,ph,N){var o=[];N=N||52;for(var k=0;k<=N;k++)o.push(P(s,k/N,u,sl,sw,ph));return o;};
+  var edgePts=function(s,u,sl,sw,ph,N){var o=[];N=N||96;for(var k=0;k<=N;k++)o.push(P(s,k/N,u,sl,sw,ph));return o;};
   var loopPts=function(s,sl,sw,ph){return edgePts(s,1,sl,sw,ph).concat(edgePts(s,-1,sl,sw,ph).reverse().slice(1));};
   var petalEls=[];
 
@@ -208,14 +208,11 @@ function initVeyraFlower(root){
     /* iridescent light bands: dispersed in three colours across the petal */
     var cc=function(dt,u0,u1){
       var o=[];
-      for(var j=0;j<=14;j++){var u=u0+(u1-u0)*j/14;o.push(P(s,clamp(s.bt+dt+.07*(1-u*u)+s.sk*u,.12,.95),u,1,1,0));}
+      for(var j=0;j<=28;j++){var u=u0+(u1-u0)*j/28;o.push(P(s,clamp(s.bt+dt+.07*(1-u*u)+s.sk*u,.12,.95),u,1,1,0));}
       return o;
     };
     var bandPath=cc(0,-.8,.66);
     if(!inner){
-      wire(g,cc(.01,-.62,.5),'soft',base+.4,1.6);
-      wire(g,cc(-.06,-.55,.45),'soft s2',base+.45,1.6);
-      wire(g,cc(.07,-.5,.4),'soft s3',base+.5,1.6);
       wire(g,cc(-.055,-.78,.62),'band bc',base+.5,1.3);
       wire(g,bandPath,'band ba',base+.55,1.3);
       wire(g,cc(.055,-.7,.55),'band bb',base+.6,1.3);
@@ -314,8 +311,9 @@ function initVeyraFlower(root){
       busy=false;
       petalEls.forEach(function(g){g.classList.remove('is-rippling');});
       root.classList.remove('is-run','is-settled');
-      void root.offsetWidth;
-      requestAnimationFrame(function(){root.classList.add('is-run');});
+      requestAnimationFrame(function(){
+        requestAnimationFrame(function(){root.classList.add('is-run');});
+      });
     }
   };
 
