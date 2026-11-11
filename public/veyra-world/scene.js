@@ -28,27 +28,27 @@ const clamp = THREE.MathUtils.clamp;
 const smooth = (a,b,x) => { const t=clamp((x-a)/(b-a),0,1); return t*t*(3-2*t); };
 
 const renderer = new THREE.WebGLRenderer({canvas,antialias:true,alpha:true,powerPreference:'high-performance'});
-const maxResolutionScale=Math.min(devicePixelRatio||1,1.2);
+const maxResolutionScale=Math.min(devicePixelRatio||1,2);
 let resolutionScale=maxResolutionScale;
-const minResolutionScale=Math.min(maxResolutionScale,.62);
+const minResolutionScale=Math.min(maxResolutionScale,1);
 renderer.setPixelRatio(resolutionScale);
 function adaptResolutionToFps(fps){
   let next=resolutionScale;
-  if(fps<60)next-=fps<45?.10:.06;
-  else if(fps<72)next-=.025;
-  else if(fps>96)next+=.025;
+  if(fps<32)next-=.08;
+  else if(fps<42)next-=.03;
+  else if(fps>70)next+=.04;
   next=clamp(next,minResolutionScale,maxResolutionScale);
-  if(Math.abs(next-resolutionScale)>.014){
+  if(Math.abs(next-resolutionScale)>.02){
     resolutionScale=Number(next.toFixed(2));
     renderer.setPixelRatio(resolutionScale);
   }
 }
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.04;
+renderer.toneMappingExposure = 1.14;
 const performanceParams=new URLSearchParams(location.search);
 renderer.shadowMap.enabled=performanceParams.get('shadows')!=='off';
-renderer.shadowMap.type=THREE.PCFShadowMap;
+renderer.shadowMap.type=THREE.PCFSoftShadowMap;
 renderer.shadowMap.autoUpdate=false;renderer.shadowMap.needsUpdate=true;
 
 const scene = new THREE.Scene();
@@ -148,7 +148,7 @@ scene.add(hemi);
 const sun = new THREE.DirectionalLight(0xf3e7cd,2.22);
 sun.position.set(-48,80,42);
 sun.castShadow=renderer.shadowMap.enabled;
-sun.shadow.mapSize.set(512,512);
+sun.shadow.mapSize.set(2048,2048);
 sun.shadow.camera.left=-105;sun.shadow.camera.right=105;
 sun.shadow.camera.top=105;sun.shadow.camera.bottom=-105;
 sun.shadow.bias=-0.00025;
