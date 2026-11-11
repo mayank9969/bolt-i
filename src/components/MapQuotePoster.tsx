@@ -13,7 +13,11 @@ export default function MapQuotePoster() {
           </p>
         </blockquote>
       </section>
-      <section className="quote-film-band" aria-label="Quote film">
+      <section
+        className="quote-film-band"
+        aria-label="Quote film"
+        style={{ paddingTop: '5.5rem', paddingBottom: '5.5rem', background: '#080808' }}
+      >
         <div className="quote-film">
           <FilmPlayer />
         </div>
