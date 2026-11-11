@@ -52,12 +52,12 @@
     a[2] + (b[2] - a[2]) * t
   ];
   var PAL = [
-    { at: 0, c: [28, 12, 8] },
-    { at: 0.18, c: [92, 38, 14] },
-    { at: 0.4, c: [168, 82, 22] },
-    { at: 0.62, c: [214, 132, 42] },
-    { at: 0.82, c: [232, 176, 88] },
-    { at: 1, c: [74, 32, 12] }
+    { at: 0, c: [22, 14, 10] },
+    { at: 0.22, c: [58, 36, 22] },
+    { at: 0.45, c: [102, 68, 38] },
+    { at: 0.68, c: [140, 96, 52] },
+    { at: 0.86, c: [88, 58, 34] },
+    { at: 1, c: [32, 20, 12] }
   ];
   function pal(v) {
     v = clamp01(v);
@@ -160,8 +160,9 @@
     interest: 0,
     startleT: 99,
     blinkT: -1,
-    nextBlink: 2,
+    nextBlink: 3,
     doubleBlink: false,
+    burstLeft: 0,
     mx: 0,
     my: 0,
     nextMicro: 1,
@@ -375,17 +376,20 @@
       S.nextBlink -= dt;
       if (S.nextBlink <= 0 && S.blinkT < 0) {
         S.blinkT = 0;
-        S.doubleBlink = rnd() < 0.2 + S.tension * 0.4;
-        S.nextBlink = 2.5 + rnd() * 3.5 - S.tension * 1.5;
+        if (S.burstLeft <= 0) {
+          const idle = now - S.lastPointer > 2.8;
+          const n = idle ? (rnd() < 0.12 ? 4 : 1 + Math.floor(rnd() * 3)) : 1;
+          S.burstLeft = Math.min(4, n);
+        }
+        S.burstLeft -= 1;
+        S.nextBlink = 99;
       }
       if (S.blinkT >= 0) {
         S.blinkT += dt;
-        if (S.blinkT > 0.3) {
+        if (S.blinkT > 0.16) {
           S.blinkT = -1;
-          if (S.doubleBlink) {
-            S.doubleBlink = false;
-            S.nextBlink = 0.05;
-          }
+          if (S.burstLeft > 0) S.nextBlink = 0.22;
+          else S.nextBlink = 2.8 + rnd() * 2.2;
         }
       }
       const lab = pointerActive && S.startleT > 1.8 ? "who's there?" : S.label;

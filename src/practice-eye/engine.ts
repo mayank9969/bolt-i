@@ -47,6 +47,7 @@ interface State {
   blinkT: number; // <0 = idle, else time into blink
   nextBlink: number;
   doubleBlink: boolean;
+  burstLeft: number;
   // micro saccades
   mx: number;
   my: number;
@@ -79,8 +80,9 @@ const makeState = (): State => ({
   interest: 0,
   startleT: 99,
   blinkT: -1,
-  nextBlink: 2,
+  nextBlink: 3,
   doubleBlink: false,
+  burstLeft: 0,
   mx: 0,
   my: 0,
   nextMicro: 1,
@@ -332,21 +334,24 @@ export function startEye(canvas: HTMLCanvasElement, onLabel: (s: string) => void
     S.tension = lerp(S.tension, S.tensionT, 1 - Math.exp(-dt * 2.2));
     S.sparkle = lerp(S.sparkle, pointerActive ? 0.45 : 0.2, 1 - Math.exp(-dt * 0.9));
 
-    // blinks
+    // blinks — about every 3s; 1–3 in a row, 4 at most when idle
     S.nextBlink -= dt;
     if (S.nextBlink <= 0 && S.blinkT < 0) {
       S.blinkT = 0;
-      S.doubleBlink = rnd() < 0.2 + S.tension * 0.4;
-      S.nextBlink = 2.5 + rnd() * 3.5 - S.tension * 1.5;
+      if (S.burstLeft <= 0) {
+        const idle = now - S.lastPointer > 2.8;
+        const n = idle ? (rnd() < 0.12 ? 4 : 1 + Math.floor(rnd() * 3)) : 1;
+        S.burstLeft = Math.min(4, n);
+      }
+      S.burstLeft -= 1;
+      S.nextBlink = 99;
     }
     if (S.blinkT >= 0) {
       S.blinkT += dt;
-      if (S.blinkT > 0.3) {
+      if (S.blinkT > 0.16) {
         S.blinkT = -1;
-        if (S.doubleBlink) {
-          S.doubleBlink = false;
-          S.nextBlink = 0.05;
-        }
+        if (S.burstLeft > 0) S.nextBlink = 0.22;
+        else S.nextBlink = 2.8 + rnd() * 2.2;
       }
     }
 
