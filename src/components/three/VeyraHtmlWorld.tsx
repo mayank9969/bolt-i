@@ -76,7 +76,7 @@ export default function VeyraHtmlWorld() {
     ;(async () => {
       try {
         await loadScript('/veyra-world/assets/veyra-models/veyra-three.bundle.js')
-        await loadScript('/veyra-world/scene.js?v=2')
+        await loadScript('/veyra-world/scene.js?v=3')
       } catch (err) {
         console.error('Veyra world failed to start', err)
         const status = document.getElementById('sceneStatus')

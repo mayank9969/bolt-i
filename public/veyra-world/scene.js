@@ -28,28 +28,17 @@ const clamp = THREE.MathUtils.clamp;
 const smooth = (a,b,x) => { const t=clamp((x-a)/(b-a),0,1); return t*t*(3-2*t); };
 
 const renderer = new THREE.WebGLRenderer({canvas,antialias:true,alpha:true,powerPreference:'high-performance'});
-const maxResolutionScale=Math.min(devicePixelRatio||1,2);
+const maxResolutionScale=Math.max(2, Math.min(devicePixelRatio||2, 2.5));
 let resolutionScale=maxResolutionScale;
-const minResolutionScale=Math.min(maxResolutionScale,1);
 renderer.setPixelRatio(resolutionScale);
-function adaptResolutionToFps(fps){
-  let next=resolutionScale;
-  if(fps<32)next-=.08;
-  else if(fps<42)next-=.03;
-  else if(fps>70)next+=.04;
-  next=clamp(next,minResolutionScale,maxResolutionScale);
-  if(Math.abs(next-resolutionScale)>.02){
-    resolutionScale=Number(next.toFixed(2));
-    renderer.setPixelRatio(resolutionScale);
-  }
-}
+function adaptResolutionToFps(){}
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.14;
 const performanceParams=new URLSearchParams(location.search);
 renderer.shadowMap.enabled=performanceParams.get('shadows')!=='off';
 renderer.shadowMap.type=THREE.PCFSoftShadowMap;
-renderer.shadowMap.autoUpdate=false;renderer.shadowMap.needsUpdate=true;
+renderer.shadowMap.autoUpdate=true;
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0xc9dce2);
@@ -1029,7 +1018,7 @@ function buildIslandTreeInstances(){
     const firstLow=addTreeInstanceSet(parent,forestTreeSource,bucket.firstLow,cache);
     addTreeInstanceSet(parent,forestTreeSource,bucket.otherLow,cache);
     const hero=addTreeInstanceSet(parent,detailTreeSource,bucket.hero,cache);
-    firstLow.visible=true;hero.visible=false;parent.userData.islandTreeLod={firstLow,hero};
+    firstLow.visible=false;hero.visible=true;parent.userData.islandTreeLod={firstLow,hero};
   }
 }
 function updateIslandTreeMatrices(elapsed){
@@ -1821,8 +1810,7 @@ function updateIslandTreeLod(){
   for(let i=0;i<islands.length;i++){
     const lod=islands[i].group.userData.islandTreeLod;if(!lod)continue;
     islands[i].group.getWorldPosition(treeLodDirection);treeLodDirection.sub(camera.position).normalize();
-    const detail=selectedIsland===i||treeLodDirection.dot(treeLodForward)>.52;
-    lod.hero.visible=detail;lod.firstLow.visible=!detail;
+    lod.hero.visible=true;lod.firstLow.visible=false;
   }
 }
 function scheduleFrame(){
