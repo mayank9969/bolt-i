@@ -317,6 +317,10 @@
 .about-ed .map-quote-band--foot {
   padding: 2.5rem 1.5rem 5.5rem;
 }
+.about-ed .map-quote-band--top[hidden],
+.about-ed .map-quote-band--foot[hidden] {
+  display: none !important;
+}
 .about-ed .map-quote-copy {
   position: relative;
   z-index: 1;
