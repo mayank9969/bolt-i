@@ -319,17 +319,16 @@
 }
 .about-ed .quote-film {
   margin: 1.75rem auto 2.1rem;
-  max-width: min(52rem, 92vw);
-  text-align: center;
+  max-width: min(56rem, 94vw);
 }
-.about-ed .quote-film img {
+.about-ed .quote-film .film-frame {
+  aspect-ratio: 16 / 9;
+  background: #0b0714;
+}
+.about-ed .quote-film canvas {
   display: block;
   width: 100%;
-  height: auto;
-  min-height: 12rem;
-  object-fit: cover;
-  aspect-ratio: 16 / 9;
-  background: #1a1020;
+  height: 100%;
 }
 .about-ed .quote-film-vo {
   margin-top: 0.75rem;

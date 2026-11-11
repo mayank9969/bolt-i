@@ -1,6 +1,6 @@
-import QuoteFilm from '@/components/QuoteFilm'
+import FilmPlayer from '@/about-film/FilmPlayer'
 
-/** Dark typographic quote — same series as the About epigraph. */
+/** Dark typographic quote — film + voiceover sit between the two lines. */
 export default function MapQuotePoster() {
   return (
     <section className="quote-band map-quote-band" aria-label="The map is not a verdict">
@@ -11,7 +11,9 @@ export default function MapQuotePoster() {
           keeps you there.
         </p>
       </blockquote>
-      <QuoteFilm />
+      <div className="quote-film">
+        <FilmPlayer />
+      </div>
       <blockquote className="map-quote-copy">
         <p className="map-quote-body map-quote-split">Yesterday cannot be redrawn, but</p>
         <p className="map-quote-mark-line">the next mark is still yours to make.</p>
