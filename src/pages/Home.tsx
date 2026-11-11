@@ -385,7 +385,7 @@ export default function Home() {
             <div className="grid lg:grid-cols-12 gap-10">
               <div className="lg:col-span-4">
                 <span className="eyebrow">The path</span>
-                <h2 className="t-section mt-4 text-balance">One world, five views.</h2>
+                <h2 className="t-section mt-4 text-balance">Home, Practice, a sitting, History, About.</h2>
                 <p className="muted text-sm mt-5 max-w-sm leading-relaxed">Home keeps the islands. Practice, a sitting, History and About are the rest of the path — the map never sits on a question.</p>
               </div>
               <ol className="lg:col-span-8 grid sm:grid-cols-2 gap-x-10">
