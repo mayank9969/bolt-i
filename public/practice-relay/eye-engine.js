@@ -99,6 +99,8 @@
           let col = pal(val);
           const bright = (1.22 + 0.4 * s1) * (1.02 + 0.22 * s2);
           col = [col[0] * bright, col[1] * bright, col[2] * bright];
+          const sky = mix([255, 48, 18], [0, 210, 195], clamp01((v + 1) * 0.5));
+          col = mix(col, sky, 0.28);
           const eo = 0.47 + 0.1 * (noise3(ct * 6, st * 6, 2) - 0.5) * 2 + 0.07 * (noise3(ct * 38, st * 38, 4) - 0.5) * 2;
           const om = smooth(eo + 0.13, eo - 0.08, r);
           let orange = mix([255, 182, 118], [205, 86, 34], smooth(0.5, 0.14, r));
