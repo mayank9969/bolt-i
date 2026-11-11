@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react'
 import { motion, useMotionValue, useSpring } from 'framer-motion'
 
-/** Trailing ring on fine pointers. Native cursor stays. */
+/** Fine-pointer companion. Native OS cursor stays. */
 export default function CustomCursor() {
   const x = useMotionValue(-80)
   const y = useMotionValue(-80)
-  const rx = useSpring(x, { stiffness: 280, damping: 28, mass: 0.35 })
-  const ry = useSpring(y, { stiffness: 280, damping: 28, mass: 0.35 })
+  const hx = useSpring(x, { stiffness: 420, damping: 32, mass: 0.22 })
+  const hy = useSpring(y, { stiffness: 420, damping: 32, mass: 0.22 })
+  const tx = useSpring(x, { stiffness: 140, damping: 22, mass: 0.55 })
+  const ty = useSpring(y, { stiffness: 140, damping: 22, mass: 0.55 })
   const [hover, setHover] = useState<'off' | 'nav' | 'ui'>('off')
   const [visible, setVisible] = useState(false)
   const [enabled, setEnabled] = useState(false)
@@ -57,27 +59,55 @@ export default function CustomCursor() {
 
   if (!enabled) return null
 
+  const accent = 'var(--nx-accent, #16827e)'
+  const nav = hover === 'nav'
+  const ui = hover === 'ui'
+
   return (
-    <motion.div
-      style={{ x: rx, y: ry }}
-      className="pointer-events-none fixed left-0 top-0 z-[9999]"
-      animate={{ opacity: visible ? 1 : 0 }}
-      transition={{ duration: 0.12 }}
-      aria-hidden="true"
-    >
+    <div className="pointer-events-none fixed inset-0 z-[9999]" aria-hidden="true" style={{ opacity: visible ? 1 : 0, transition: 'opacity 120ms' }}>
+      {/* delayed diamond — not a hoop */}
       <motion.div
-        className="rounded-full -translate-x-1/2 -translate-y-1/2 border"
-        style={{
-          borderColor: 'var(--nx-accent, #16827e)',
-          background: hover !== 'off' ? 'color-mix(in srgb, var(--nx-accent, #16827e) 14%, transparent)' : 'transparent',
-        }}
-        animate={{
-          width: hover === 'nav' ? 28 : hover === 'ui' ? 52 : 32,
-          height: hover === 'nav' ? 28 : hover === 'ui' ? 52 : 32,
-          opacity: hover !== 'off' ? 1 : 0.88,
-        }}
-        transition={{ type: 'spring', stiffness: 220, damping: 22, mass: 0.4 }}
-      />
-    </motion.div>
+        style={{ x: tx, y: ty, color: accent }}
+        className="absolute left-0 top-0"
+      >
+        <motion.div
+          className="-translate-x-1/2 -translate-y-1/2"
+          animate={{
+            width: nav ? 14 : ui ? 30 : 22,
+            height: nav ? 14 : ui ? 30 : 22,
+            rotate: ui ? 45 : 12,
+            opacity: nav ? 0.55 : 0.9,
+          }}
+          transition={{ type: 'spring', stiffness: 260, damping: 24, mass: 0.35 }}
+        >
+          <svg viewBox="0 0 32 32" className="h-full w-full overflow-visible" fill="none">
+            <rect
+              x="5.5"
+              y="5.5"
+              width="21"
+              height="21"
+              rx="5.2"
+              stroke="currentColor"
+              strokeWidth="1.35"
+            />
+          </svg>
+        </motion.div>
+      </motion.div>
+
+      {/* tight nib on the pointer */}
+      <motion.div style={{ x: hx, y: hy, color: accent }} className="absolute left-0 top-0">
+        <motion.div
+          className="-translate-x-1/2 -translate-y-1/2"
+          animate={{
+            width: nav ? 5 : ui ? 8 : 6,
+            height: nav ? 5 : ui ? 8 : 6,
+            rotate: ui ? 45 : 18,
+            borderRadius: ui ? 2 : 2.5,
+          }}
+          style={{ background: accent }}
+          transition={{ type: 'spring', stiffness: 380, damping: 26 }}
+        />
+      </motion.div>
+    </div>
   )
 }
