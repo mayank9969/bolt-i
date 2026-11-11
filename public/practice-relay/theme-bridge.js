@@ -267,21 +267,34 @@
         })
         board.appendChild(cell)
       })
-      cap.innerHTML = solved()
-        ? '<strong>The picture holds.</strong> You built it piece by piece.'
-        : '<strong>Tap a piece, then another to swap.</strong> Puzzles are like life — they have to be made piece by piece.'
+      how.textContent = solved() ? 'The picture holds.' : 'Tap a piece, then another to swap.'
+      life.textContent = solved()
+        ? 'You built it piece by piece.'
+        : 'Puzzles are like life — they have to be made piece by piece.'
     }
-    var cap = document.createElement('p')
-    cap.className = 'v-puzzle-cap'
+    var how = document.createElement('p')
+    how.className = 'v-puzzle-how'
+    var life = document.createElement('p')
+    life.className = 'v-puzzle-life'
     wrap.appendChild(board)
     target.replaceWith(wrap)
     var section = document.getElementById('leave-open')
     if (section) {
-      var after = wrap.closest('.relative') || wrap.parentElement
-      if (after && after.parentElement) after.parentElement.insertBefore(cap, after.nextSibling)
-      else section.appendChild(cap)
+      section.appendChild(how)
     } else {
-      wrap.appendChild(cap)
+      wrap.appendChild(how)
+    }
+    var foot = document.querySelector('footer')
+    if (foot) {
+      var oldLife = foot.querySelector('.v-puzzle-life')
+      if (oldLife) oldLife.remove()
+      var curious = Array.from(foot.querySelectorAll('span, p')).find(function (n) {
+        return /curious person/i.test(n.textContent || '')
+      })
+      if (curious && curious.parentElement) curious.parentElement.insertBefore(life, curious)
+      else foot.insertBefore(life, foot.firstChild)
+    } else if (section) {
+      section.appendChild(life)
     }
     paint()
     hideTapRow()
