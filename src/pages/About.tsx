@@ -161,9 +161,15 @@ export default function About() {
             So tell me, are you shaping your life, or merely repeating it?
           </p>
         </blockquote>
-        <div className="about-quote-bloom relative z-10 mx-auto mt-8 pb-10 pointer-events-auto">
+        <div className="about-quote-bloom relative z-10 mx-auto mt-8 pointer-events-auto">
           <VeyraFlower />
         </div>
+        <p className="about-for-you">this for you my love</p>
+        <p className="about-for-you-rule" aria-hidden="true">
+          <span>— — — —</span>
+          <span className="about-for-you-mid">a</span>
+          <span>— — — —</span>
+        </p>
       </section>
 
       <MapQuotePoster />

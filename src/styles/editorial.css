@@ -65,6 +65,46 @@
 .about-ed .about-quote-bloom .veyra-flower {
   max-width: none;
 }
+.about-ed .about-for-you {
+  position: relative;
+  z-index: 2;
+  margin: 0.15rem auto 0.85rem;
+  max-width: 28rem;
+  text-align: center;
+  font-family: var(--nx-font);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(1.05rem, 2.2vw, 1.35rem);
+  letter-spacing: 0.04em;
+  line-height: 1.4;
+}
+.about-ed .about-for-you-rule {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.85rem;
+  margin: 0 auto 3.5rem;
+  font-family: var(--nx-font);
+  font-size: 0.85rem;
+  letter-spacing: 0.28em;
+  opacity: 0.78;
+}
+.about-ed .about-for-you-mid {
+  font-style: italic;
+  font-size: 1.15rem;
+  letter-spacing: 0;
+  opacity: 1;
+}
+[data-theme='paper'] .about-ed .about-for-you,
+[data-theme='paper'] .about-ed .about-for-you-rule {
+  color: #fafbfa;
+}
+[data-theme='ink'] .about-ed .about-for-you,
+[data-theme='ink'] .about-ed .about-for-you-rule {
+  color: #1b2230;
+}
 
 .about-ed .ed-eyebrow,
 .archive-ed .ed-eyebrow {
