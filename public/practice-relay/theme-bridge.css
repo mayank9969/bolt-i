@@ -393,6 +393,30 @@ a.v-daily-disc:hover {
   object-fit: cover;
   image-rendering: auto;
 }
+.v-puzzle-wrap { width: 100%; }
+.v-puzzle {
+  display: grid;
+  grid-template-columns: repeat(var(--n, 3), 1fr);
+  gap: 3px;
+  background: #161917;
+  aspect-ratio: 1;
+}
+.v-puzzle-cell {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  cursor: pointer;
+  background-repeat: no-repeat;
+  aspect-ratio: 1;
+}
+.v-puzzle-cell.is-pick {
+  outline: 2px solid #16827e;
+  outline-offset: -2px;
+}
+.v-puzzle-cap {
+  margin: 0.85rem 0 0 !important;
+  letter-spacing: 0.12em;
+}
 
 @media (max-width: 640px) {
   #veyra-studio .veyra-studio-head,

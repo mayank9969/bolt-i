@@ -200,15 +200,83 @@
     swapDaily()
   }
 
+  function hideTapRow() {
+    var nodes = document.querySelectorAll('p, button')
+    for (var i = 0; i < nodes.length; i++) {
+      var tx = (nodes[i].textContent || '').replace(/\s+/g, ' ')
+      if (/spaces still open|still open ·|Clear my tile/i.test(tx)) {
+        nodes[i].style.display = 'none'
+      }
+    }
+  }
+
   function swapLeaveRoom() {
-    var svg = document.querySelector('svg[aria-label*="geometric tiles"]')
-    if (!svg || svg.getAttribute('data-veyra-art')) return !!document.querySelector('.v-leave-room-art')
-    var img = document.createElement('img')
-    img.className = 'v-leave-room-art'
-    img.src = '/practice-relay/leave-room.png'
-    img.alt = 'Puzzle portrait — leave room for the next'
-    svg.setAttribute('data-veyra-art', '1')
-    svg.replaceWith(img)
+    if (document.querySelector('.v-puzzle')) {
+      hideTapRow()
+      return true
+    }
+    var target =
+      document.querySelector('svg[aria-label*="geometric tiles"]') || document.querySelector('.v-leave-room-art')
+    if (!target) return false
+    var N = 3
+    var src = new URL('leave-room.png', location.href).href
+    var wrap = document.createElement('div')
+    wrap.className = 'v-puzzle-wrap'
+    var board = document.createElement('div')
+    board.className = 'v-puzzle'
+    board.style.setProperty('--n', String(N))
+    var order = []
+    var i
+    for (i = 0; i < N * N; i++) order.push(i)
+    for (i = order.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1))
+      var tmp = order[i]
+      order[i] = order[j]
+      order[j] = tmp
+    }
+    var pick = -1
+    function solved() {
+      for (var k = 0; k < order.length; k++) if (order[k] !== k) return false
+      return true
+    }
+    function paint() {
+      board.innerHTML = ''
+      order.forEach(function (piece, slot) {
+        var cell = document.createElement('button')
+        cell.type = 'button'
+        cell.className = 'v-puzzle-cell' + (pick === slot ? ' is-pick' : '')
+        var r = Math.floor(piece / N)
+        var c = piece % N
+        cell.style.backgroundImage = 'url("' + src + '")'
+        cell.style.backgroundSize = N * 100 + '% ' + N * 100 + '%'
+        cell.style.backgroundPosition = (N === 1 ? 0 : (c / (N - 1)) * 100) + '% ' + (N === 1 ? 0 : (r / (N - 1)) * 100) + '%'
+        cell.addEventListener('click', function () {
+          if (solved()) return
+          if (pick < 0) {
+            pick = slot
+          } else if (pick === slot) {
+            pick = -1
+          } else {
+            var a = order[pick]
+            order[pick] = order[slot]
+            order[slot] = a
+            pick = -1
+          }
+          paint()
+        })
+        board.appendChild(cell)
+      })
+      cap.textContent = solved()
+        ? 'The picture holds. You built it piece by piece.'
+        : 'Life is like a puzzle. Start building it piece by piece.'
+    }
+    var cap = document.createElement('p')
+    cap.className = 'v-puzzle-cap mono-label'
+    wrap.appendChild(board)
+    wrap.appendChild(cap)
+    target.replaceWith(wrap)
+    paint()
+    hideTapRow()
     return true
   }
 
