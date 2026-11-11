@@ -70,26 +70,31 @@
 .about-ed .about-quote-bloom {
   width: min(420px, 88vw);
   margin-inline: auto;
+  margin-bottom: 2.5rem;
+  position: relative;
 }
 .about-ed .about-quote-bloom .veyra-flower {
   max-width: none;
 }
-.about-ed .about-quote-bloom {
-  margin-bottom: -1.5rem;
+.about-ed .about-for-you-block {
+  position: absolute;
+  left: 50%;
+  bottom: 7%;
+  z-index: 4;
+  width: min(34rem, 94vw);
+  transform: translateX(-50%);
+  text-align: center;
+  pointer-events: none;
 }
 .about-ed .about-for-you {
-  position: relative;
-  z-index: 3;
-  margin: 0 auto 1.1rem;
-  max-width: 36rem;
-  text-align: center;
+  margin: 0 auto 0.55rem;
   font-family: var(--ed-display);
   font-style: italic;
   font-weight: 500;
   font-size: clamp(1.65rem, 3.6vw, 2.45rem);
   letter-spacing: -0.03em;
   line-height: 1.15;
-  text-shadow: 0 1px 0 rgb(0 0 0 / 0.35), 0 10px 28px rgb(0 0 0 / 0.28);
+  text-shadow: 0 2px 0 rgb(0 0 0 / 0.55), 0 8px 22px rgb(0 0 0 / 0.45);
 }
 .about-ed .about-for-you em {
   font-style: italic;
@@ -102,29 +107,24 @@
   background-position: 0 92%;
 }
 .about-ed .about-for-you-rule {
-  position: relative;
-  z-index: 3;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.9rem;
-  margin: 0 auto 4rem;
-  min-height: 1.6rem;
-}
-.about-ed .about-for-you-dash {
-  display: block;
-  width: min(7.5rem, 22vw);
-  height: 0;
-  border-top: 1.5px dashed currentColor;
-  opacity: 0.55;
+  gap: 0.65rem;
+  margin: 0;
+  font-family: var(--nx-font);
+  font-size: clamp(1.05rem, 2vw, 1.25rem);
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  line-height: 1;
+  text-shadow: 0 2px 0 rgb(0 0 0 / 0.55);
 }
 .about-ed .about-for-you-mid {
   font-family: var(--ed-display);
   font-style: italic;
-  font-weight: 600;
-  font-size: 1.35rem;
-  letter-spacing: 0;
-  line-height: 1;
+  font-weight: 650;
+  font-size: 1.55rem;
+  letter-spacing: 0.04em;
 }
 [data-theme='paper'] .about-ed .about-for-you,
 [data-theme='paper'] .about-ed .about-for-you-rule {

@@ -163,15 +163,17 @@ export default function About() {
         </blockquote>
         <div className="about-quote-bloom relative z-10 mx-auto mt-8 pointer-events-auto">
           <VeyraFlower />
+          <div className="about-for-you-block">
+            <p className="about-for-you">
+              this for you <em>my love</em>
+            </p>
+            <p className="about-for-you-rule">
+              <span>— — — —</span>
+              <span className="about-for-you-mid">a</span>
+              <span>— — — —</span>
+            </p>
+          </div>
         </div>
-        <p className="about-for-you">
-          this for you <em>my love</em>
-        </p>
-        <p className="about-for-you-rule" aria-hidden="true">
-          <span className="about-for-you-dash" />
-          <span className="about-for-you-mid">a</span>
-          <span className="about-for-you-dash" />
-        </p>
       </section>
 
       <MapQuotePoster />
