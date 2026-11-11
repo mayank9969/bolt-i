@@ -36,7 +36,7 @@ export default function About() {
         </Reveal>
 
         <article className="ed-article mt-2">
-          <Section title="Look closer">
+          <Section n="01" title="Look closer">
             <p>
               A question asks you to stop guessing in the dark. You pick one of{' '}
               <span className="ed-hit">fifteen subjects</span>, a difficulty, and a length. Some answers are multiple
@@ -49,7 +49,7 @@ export default function About() {
             </p>
           </Section>
 
-          <Section title="Ideas travel">
+          <Section n="02" title="Ideas travel">
             <p>
               Knowledge does not stay with one sitting. An attempt is scored, then it is written into History — so
               a later you can see which subjects you returned to, and how that hour actually went.
@@ -61,7 +61,7 @@ export default function About() {
             </p>
           </Section>
 
-          <Section title="Leave it open">
+          <Section n="03" title="Leave it open">
             <p>
               One percentage is a moment, not a verdict. History is there so you can come back, not so a single
               score can stand in for everything you understand.
@@ -122,11 +122,15 @@ export default function About() {
   )
 }
 
-function Section({ title, children }: { title: string; children: ReactNode }) {
+function Section({ n, title, children }: { n: string; title: string; children: ReactNode }) {
   return (
     <Reveal>
       <section className="ed-section">
-        <h2 className="ed-kicker">{title}</h2>
+        <h2 className="ed-kicker">
+          <span className="ed-num">{n}</span>
+          {title}
+        </h2>
+        <div className="ed-rainbow" aria-hidden="true" />
         <div className="ed-prose">{children}</div>
       </section>
     </Reveal>
