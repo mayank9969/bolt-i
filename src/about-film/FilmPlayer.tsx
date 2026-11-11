@@ -154,8 +154,8 @@ export default function FilmPlayer() {
         <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
 
         {/* letterbox bars */}
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-[4%] bg-black/90" />
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[4%] bg-black/90" />
+        <div className="film-letter pointer-events-none absolute inset-x-0 top-0 h-[3%]" />
+        <div className="film-letter pointer-events-none absolute inset-x-0 bottom-0 h-[3%]" />
 
         {/* captions */}
         {caption && !ended && (
@@ -204,7 +204,7 @@ export default function FilmPlayer() {
       </div>
 
       {/* transport bar */}
-      <div className="mt-4 rounded-lg border border-[#b9aed4]/12 bg-[#140d24]/70 px-4 py-3 backdrop-blur-sm">
+      <div className="film-transport mt-4 rounded-2xl border px-4 py-3">
         <div className="flex items-center gap-3">
           <button
             onClick={toggle}

@@ -1,9 +1,8 @@
 import FilmPlayer from '@/about-film/FilmPlayer'
 
-/** Quote, film, then the closing quote kept in the page but not shown. */
 export default function MapQuotePoster() {
   return (
-    <div className="map-quote-stack" style={{ background: '#080808' }}>
+    <div className="map-quote-stack">
       <section className="map-quote-band map-quote-band--top" hidden aria-hidden="true">
         <blockquote className="map-quote-copy">
           <p className="map-quote-hed">The map is not a verdict.</p>
@@ -13,13 +12,11 @@ export default function MapQuotePoster() {
           </p>
         </blockquote>
       </section>
-      <div aria-hidden="true" style={{ height: '2.5rem', background: '#080808' }} />
-      <section className="quote-film-band" aria-label="Quote film" style={{ background: '#080808', padding: '0 1.25rem' }}>
+      <section className="quote-film-band" aria-label="Quote film">
         <div className="quote-film">
           <FilmPlayer />
         </div>
       </section>
-      <div aria-hidden="true" style={{ height: '4rem', background: '#080808' }} />
       <section className="map-quote-band map-quote-band--foot" hidden aria-hidden="true">
         <blockquote className="map-quote-copy">
           <p className="map-quote-body map-quote-split">Yesterday cannot be redrawn, but</p>
