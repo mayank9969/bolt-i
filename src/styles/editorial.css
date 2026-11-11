@@ -130,6 +130,9 @@
 [data-theme='paper'] .about-ed .about-for-you-rule {
   color: #fafbfa;
 }
+[data-theme='paper'] .about-ed .about-for-you-mid {
+  color: #c4fff7;
+}
 [data-theme='paper'] .about-ed .about-for-you em {
   color: #c4fff7;
 }
