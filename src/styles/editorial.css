@@ -192,6 +192,18 @@
   font-size: 1.04em;
   letter-spacing: -0.02em;
 }
+.about-ed .ed-weight {
+  font-family: var(--ed-display);
+  font-style: italic;
+  font-weight: 650;
+  font-size: 1.12em;
+  letter-spacing: -0.035em;
+  color: rgb(var(--nx-text-rgb));
+  background-image: linear-gradient(90deg, #8ce0d8, #f4d35e, #e07a5f);
+  background-size: 100% 2px;
+  background-repeat: no-repeat;
+  background-position: 0 94%;
+}
 .about-ed .ed-prose p + p {
   margin-top: 1.35rem;
 }

@@ -30,8 +30,8 @@ export default function About() {
             </div>
             <p className="ed-prose mt-8 max-w-3xl">
               I am the person who would rather rebuild an island than leave it looking almost right. I made VEYRA
-              because I was tired of learning that vanished the moment a score appeared — I wanted a room where a
-              question could <span className="ed-hit">stay open</span>, and where I could see, later, how an hour
+              because I was tired of learning that vanished the moment a score appeared. I wanted a room where a
+              question could <span className="ed-weight">stay open</span> — and where I could see, later, how an hour
               actually went.
             </p>
           </header>
@@ -40,46 +40,63 @@ export default function About() {
         <article className="ed-article mt-2">
           <Section n="01" title="Who this is">
             <p>
-              I work like someone assembling a picture <span className="ed-soft">piece by piece</span> — the
-              archipelago, the relay, the jewel of an eye, a sitting that must be scored in truth. If a mark is muddy, I
-              ask for more light. If a puzzle does not play, it is not a puzzle. That is not decoration. That is how I
-              think: finish the thing in front of you, then look again.
+              I work like someone assembling a picture <span className="ed-soft">piece by piece</span>. The
+              archipelago, the relay, the jewel of an eye, a sitting that must be scored in truth — none of that is a
+              costume I put on the work. If a mark is muddy I ask for more light. If a puzzle does not play, it is not a
+              puzzle. I finish the thing in front of me, then I look again. That is the only method I trust.
             </p>
             <p>
-              I do not want a version of myself I never chose. The line under the flower is the one I keep: the mind can
-              build a universe and still live inside a habit. VEYRA is my way of interrupting that — a map I return to,
-              fifteen islands, two thousand questions, <span className="ed-hit">nothing locked</span>, so curiosity can
-              choose instead of a script.
+              I do not want a version of myself I never chose. Days become years; a pattern becomes a name; one morning
+              you notice you have been repeating a life you did not pick. The line under the flower is the one I keep:{' '}
+              <span className="ed-weight">the mind can build a universe and still live inside a habit.</span> VEYRA is
+              how I interrupt that. A map I return to. Fifteen islands. Two thousand questions.{' '}
+              <span className="ed-hit">Nothing locked.</span> Curiosity chooses, or I am only reciting.
             </p>
             <p>
-              I am not writing a company. I am keeping a record for a later me, and for anyone who still likes to sit
-              with a question. Take is private if you write one. History only believes the engine. I would rather leave
-              a gap than invent a key.
+              I am not writing a company, and I am not performing a biography. I am keeping a record for a later me —
+              and for anyone who still likes to sit with a question until it changes shape. Take, if I write one, is
+              private and unscored: a thought I will not let a percentage touch. History only believes the engine. I
+              would rather leave a <span className="ed-soft">gap</span> than invent a key. The browser never holds the
+              answer before I finish. That is not a technical detail. That is a promise I made to myself: do not cheat
+              the hour.
+            </p>
+            <p>
+              When I say I made this for the pleasure of learning, I mean the slow kind — the kind that does not vanish
+              when the sitting ends. I mean coming back to an island I failed, not because a dashboard told me to, but
+              because I still did not understand. I mean paper and ink, a field of islands, a chart I can actually read.
+              I mean being the sort of person who will sit until the picture holds.
             </p>
           </Section>
 
-          <Section n="02" title="What we are trying">
+          <Section n="02" title="What I am trying">
             <p>
-              Our goal is not a higher number. It is to <span className="ed-hit">look closer</span> — to stop guessing
-              in the dark, go ashore, and find out what we actually know. A percentage is a moment. It is not a
-              verdict. We come back.
+              The goal is not a higher number. It is to <span className="ed-weight">look closer</span>. To stop guessing
+              in the dark. To go ashore and find out what I actually know, not what I can recite. A percentage is a
+              moment. It is not a verdict. I come back.
             </p>
             <p>
-              Between people, a question travels: someone asks, someone tests, someone carries it a little further.
-              That is the whole project. Paper and ink. A sitting on the server. A chart you can read. Learning that{' '}
-              <span className="ed-soft">stays unfinished on purpose</span>, for the curiouser learners out there.
+              Between people, a question travels: someone asks, someone tests, someone carries it a little further. I
+              wanted a small version of that motion in one place. Home is the map. Practice is the relay. A sitting is
+              scored on the server. History is the trail. This page is the reason. If the work is honest, a later hour
+              can use it. If it is not honest, it is only noise I will have to unlearn.
+            </p>
+            <p>
+              So the project stays slightly unfinished on purpose. Not because I cannot close it — because a closed
+              question stops teaching. <span className="ed-hit">Leave room for the next.</span> For the curiouser
+              learners. For the person I am still becoming, who might need this map more than I do today.
             </p>
           </Section>
 
           <Section n="03" title="Leave it open">
             <p>
-              One percentage is a moment, not a verdict. History is there so you can come back, not so a single
-              score can stand in for everything you understand.
+              One percentage cannot stand in for everything I understand. History is there so I can return — to see
+              which subjects I touched, which I fled, which I sat with until the band got shorter. The charts are not
+              trophies. They are a way to look at an hour without lying to it.
             </p>
             <p>
-              Today’s Take, when you want it, is a private line in your own words — subjective and unscored. Skip it if
-              you like.{' '}
-              <span className="ed-hit">Learning stays unfinished on purpose.</span>
+              Today’s Take, when I want it, is a line in my own words. Skip it. Write it. No one grades it.{' '}
+              <span className="ed-weight">Learning stays unfinished on purpose.</span> That is the whole ethic. Shape
+              the life, or merely repeat it — I built VEYRA so I would have to keep answering that.
             </p>
             <p className="mt-6">
               <Link
