@@ -1,10 +1,10 @@
 import FilmPlayer from '@/about-film/FilmPlayer'
 
-/** Quote, then the film in its own band, then the rest of the quote. */
+/** Quote, then a gap, then the film, then a gap, then the rest. */
 export default function MapQuotePoster() {
   return (
-    <div className="map-quote-stack">
-      <section className="quote-band map-quote-band map-quote-band--top" aria-label="The map is not a verdict">
+    <div className="map-quote-stack" style={{ background: '#080808' }}>
+      <section className="map-quote-band map-quote-band--top" aria-label="The map is not a verdict">
         <blockquote className="map-quote-copy">
           <p className="map-quote-hed">The map is not a verdict.</p>
           <p className="map-quote-body">
@@ -13,16 +13,14 @@ export default function MapQuotePoster() {
           </p>
         </blockquote>
       </section>
-      <section
-        className="quote-film-band"
-        aria-label="Quote film"
-        style={{ paddingTop: '5.5rem', paddingBottom: '5.5rem', background: '#080808' }}
-      >
+      <div aria-hidden="true" style={{ height: '6.5rem', background: '#080808' }} />
+      <section className="quote-film-band" aria-label="Quote film" style={{ background: '#080808', padding: '0 1.25rem' }}>
         <div className="quote-film">
           <FilmPlayer />
         </div>
       </section>
-      <section className="quote-band map-quote-band map-quote-band--foot">
+      <div aria-hidden="true" style={{ height: '6.5rem', background: '#080808' }} />
+      <section className="map-quote-band map-quote-band--foot">
         <blockquote className="map-quote-copy">
           <p className="map-quote-body map-quote-split">Yesterday cannot be redrawn, but</p>
           <p className="map-quote-mark-line">the next mark is still yours to make.</p>
