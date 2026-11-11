@@ -304,15 +304,18 @@
   color: rgb(var(--nx-text-3-rgb));
 }
 
+.about-ed .map-quote-stack {
+  background: #080808;
+}
 .about-ed .map-quote-band {
   position: relative;
   overflow: visible;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 5.5rem 1.5rem 6rem;
+  padding: 4.5rem 1.5rem 2.5rem;
   text-align: center;
-  gap: 0;
+  background: #080808 !important;
+}
+.about-ed .map-quote-band--foot {
+  padding: 2.5rem 1.5rem 5.5rem;
 }
 .about-ed .map-quote-copy {
   position: relative;
@@ -321,15 +324,18 @@
   max-width: 42rem;
   color: #f4f6f5;
 }
-.about-ed .map-quote-copy:first-of-type .map-quote-body:last-child {
+.about-ed .map-quote-copy .map-quote-body:last-child {
   margin-bottom: 0;
 }
-.about-ed .quote-film {
+.about-ed .quote-film-band {
   position: relative;
   z-index: 2;
+  padding: 3.5rem 1.25rem 4rem;
+  background: #080808;
+}
+.about-ed .quote-film {
   width: min(56rem, 92vw);
-  margin: 4.25rem auto 4.75rem;
-  flex: 0 0 auto;
+  margin: 0 auto;
 }
 .about-ed .quote-film .film-frame {
   aspect-ratio: 16 / 9;
