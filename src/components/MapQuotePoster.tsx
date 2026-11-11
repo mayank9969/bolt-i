@@ -1,6 +1,6 @@
 import FilmPlayer from '@/about-film/FilmPlayer'
 
-/** Quote, then a gap, then the film, then a gap, then the rest. */
+/** Quote, film, then the closing quote kept in the page but not shown. */
 export default function MapQuotePoster() {
   return (
     <div className="map-quote-stack" style={{ background: '#080808' }}>
@@ -20,6 +20,18 @@ export default function MapQuotePoster() {
         </div>
       </section>
       <div aria-hidden="true" style={{ height: '4rem', background: '#080808' }} />
+      <section className="map-quote-band map-quote-band--foot" hidden aria-hidden="true">
+        <blockquote className="map-quote-copy">
+          <p className="map-quote-body map-quote-split">Yesterday cannot be redrawn, but</p>
+          <p className="map-quote-mark-line">the next mark is still yours to make.</p>
+          <p className="map-quote-body">
+            Begin where you are—small, honest, unfinished. The future does not ask you to be flawless. It asks only that
+            you begin.
+          </p>
+          <p className="map-quote-ready">And when you’re ready,</p>
+          <p className="map-quote-forgive">forgive yourself.</p>
+        </blockquote>
+      </section>
     </div>
   )
 }
