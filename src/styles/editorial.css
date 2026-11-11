@@ -306,9 +306,13 @@
 
 .about-ed .map-quote-band {
   position: relative;
-  overflow: hidden;
-  padding: 4.5rem 1.5rem 5.5rem;
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 5.5rem 1.5rem 6rem;
   text-align: center;
+  gap: 0;
 }
 .about-ed .map-quote-copy {
   position: relative;
@@ -317,9 +321,15 @@
   max-width: 42rem;
   color: #f4f6f5;
 }
+.about-ed .map-quote-copy:first-of-type .map-quote-body:last-child {
+  margin-bottom: 0;
+}
 .about-ed .quote-film {
-  margin: 1.75rem auto 2.1rem;
-  max-width: min(56rem, 94vw);
+  position: relative;
+  z-index: 2;
+  width: min(56rem, 92vw);
+  margin: 4.25rem auto 4.75rem;
+  flex: 0 0 auto;
 }
 .about-ed .quote-film .film-frame {
   aspect-ratio: 16 / 9;
