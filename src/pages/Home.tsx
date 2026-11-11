@@ -45,7 +45,7 @@ export default function Home() {
       {/* ── Hero: copy on the left, framed map on the right (stacked on phones) ── */}
       <section ref={heroRef} className="relative pt-4 pb-4">
         <div className="relative z-10 max-w-page mx-auto w-full px-5 sm:px-8 lg:px-12">
-          <div className="home-intro max-w-3xl mx-auto text-center">
+          <div className="home-intro max-w-2xl mx-auto text-center">
             <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={enter(0)} className="opener justify-center">
               <span>The Knowledge Archipelago</span>
             </motion.p>

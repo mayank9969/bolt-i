@@ -44,7 +44,7 @@ export default function Lab() {
   }
 
   return (
-    <div className="relative z-10 max-w-page mx-auto px-5 sm:px-8 lg:px-12 pt-16 pb-24 md:pt-24 page-reading">
+    <div className="relative z-10 max-w-page mx-auto px-5 sm:px-6 lg:px-8 pt-16 pb-24 md:pt-24">
       <Reveal>
         <p className="figcap inline-flex items-center gap-3">
           <span className="w-8 h-px bg-line-strong" />

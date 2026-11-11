@@ -99,7 +99,7 @@ export default function Setup() {
     <div className="relative flex-1">
       <div className="relative z-10 max-w-page mx-auto px-5 sm:px-8 lg:px-12 py-10 md:py-16 grid lg:grid-cols-12 gap-10">
         {/* form sits in the middle on PC */}
-        <div className="lg:col-span-8 lg:col-start-3 xl:col-span-6 xl:col-start-4 max-w-2xl w-full mx-auto column-paper">
+        <div className="lg:col-span-7 xl:col-span-6 max-w-2xl column-paper">
           <Reveal>
             <span className="opener">Choose your path</span>
             <h1 className="t-title text-fg mt-5 text-balance">
@@ -291,8 +291,8 @@ export default function Setup() {
         </div>
 
         {/* right: the island is framed here; only a caption in the DOM */}
-        <div className="hidden lg:flex lg:col-span-12 items-center justify-center pb-4 pointer-events-none">
-          <motion.p key={category + difficulty} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease }} className="figcap text-center">
+        <div className="hidden lg:flex lg:col-span-5 xl:col-span-6 items-end justify-end pb-4 pointer-events-none">
+          <motion.p key={category + difficulty} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease }} className="figcap text-right">
             Fig. 02 — {category === 'all' ? 'the whole archipelago' : `${labelCategory(category)} island`} · {labelDifficulty(difficulty)} tier
           </motion.p>
         </div>

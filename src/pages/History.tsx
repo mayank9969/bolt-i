@@ -85,7 +85,7 @@ export default function History() {
         {/* ── Header ──────────────────────────────────────── */}
         <Reveal>
           <div className="grid lg:grid-cols-12 gap-x-10 gap-y-8 items-end">
-            <div className="lg:col-span-12 mx-auto w-full max-w-3xl text-center">
+            <div className="lg:col-span-8">
               <p className="ed-eyebrow">History</p>
               <h1 className="ed-display mt-4 text-balance">
                 {history && history.length ? (
@@ -117,8 +117,8 @@ export default function History() {
               )}
             </div>
             {categories.length > 0 && (
-              <div className="lg:col-span-12 flex justify-center min-w-0">
-                <div role="tablist" aria-label="Filter by region" className="flex flex-nowrap items-center gap-1 justify-center overflow-x-auto max-w-full pb-1 [scrollbar-width:none]">
+              <div className="lg:col-span-4 flex lg:justify-end min-w-0">
+                <div role="tablist" aria-label="Filter by region" className="flex flex-nowrap items-center gap-1 lg:justify-end overflow-x-auto max-w-full pb-1 [scrollbar-width:none]">
                   {(['all', ...categories] as Filter[]).map((f) => (
                     <button
                       key={f}

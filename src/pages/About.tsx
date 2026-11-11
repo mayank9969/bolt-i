@@ -19,16 +19,16 @@ export default function About() {
       <div className="relative z-10 max-w-page mx-auto px-5 sm:px-8 lg:px-12 py-10 md:py-16">
         <Reveal>
           <header>
-            <div className="max-w-3xl mx-auto">
+            <div className="max-w-3xl">
               <p className="ed-eyebrow">A first product · a personal learning project</p>
               <h1 className="ed-display ed-hero mt-6">
                 A question is never the <em>end</em> of the story.
               </h1>
             </div>
-            <div className="mt-10 text-fg w-full max-w-3xl mx-auto">
+            <div className="mt-10 text-fg w-full max-w-4xl">
               <SelfReflection />
             </div>
-            <p className="ed-prose mt-8 max-w-3xl mx-auto">
+            <p className="ed-prose mt-8 max-w-3xl">
               I am the person who would rather rebuild an island than leave it looking almost right. I made VEYRA
               because I was tired of learning that vanished the moment a score appeared. I wanted a room where a
               question could <span className="ed-weight">stay open</span> — and where I could see, later, how an hour
@@ -167,7 +167,7 @@ export default function About() {
       </section>
 
       <MapQuotePoster />
-      <div className="relative z-10 max-w-page mx-auto px-5 sm:px-8 lg:px-12 pb-16 pt-8 text-center">
+      <div className="relative z-10 max-w-page mx-auto px-5 sm:px-6 lg:px-8 pb-16 pt-8">
         <Reveal>
           <p className="ed-close mt-2">
             Made by Mayank Sarwal, for the pleasure of learning — for only the curiouser learners out there.

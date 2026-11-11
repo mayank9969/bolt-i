@@ -46,7 +46,7 @@ export default function Result() {
       {/* ── The number ──────────────────────────────────────────── */}
       <section className="relative z-10 max-w-page mx-auto px-5 sm:px-8 lg:px-12 pt-20 md:pt-28 pb-16 md:pb-24">
         <div className="grid lg:grid-cols-12 gap-x-10 gap-y-10 items-end">
-          <div className="lg:col-span-8 lg:col-start-3 xl:col-span-6 xl:col-start-4 hero-paper lg:before:hidden mx-auto w-full">
+          <div className="lg:col-span-7 hero-paper lg:before:hidden">
             <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, ease }} className="opener">
               <span>Quiz complete</span>
               <span className="text-fg-3/70">·</span>
