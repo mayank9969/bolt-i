@@ -23,6 +23,17 @@
     background-color: var(--nx-canvas);
   }
 
+  html.veyra-pointer,
+  html.veyra-pointer * {
+    cursor: none !important;
+  }
+  html.veyra-pointer input,
+  html.veyra-pointer textarea,
+  html.veyra-pointer select,
+  html.veyra-pointer [contenteditable='true'] {
+    cursor: text !important;
+  }
+
   body {
     font-family: var(--nx-font);
     font-size: var(--nx-fs-body);
