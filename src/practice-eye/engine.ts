@@ -475,7 +475,7 @@ export function startEye(canvas: HTMLCanvasElement, onLabel: (s: string) => void
       ctx.globalAlpha = 0.55 * m;
       ctx.beginPath();
       ctx.arc(0, 0, Ri * 0.96, 0, Math.PI * 2);
-      ctx.fillStyle = "rgb(110,90,255)";
+      ctx.fillStyle = "rgb(180,90,30)";
       ctx.fill();
       ctx.restore();
 

@@ -13,14 +13,14 @@ const mix = (a: RGB, b: RGB, t: number): RGB => [
   a[2] + (b[2] - a[2]) * t,
 ];
 
-// pastel, iridescent palette lifted from the reference
+// Original jewel: amber / rust fibres on a dark collarette (the WHO'S THERE iris)
 const PAL: { at: number; c: RGB }[] = [
-  { at: 0.0, c: [20, 240, 255] },
-  { at: 0.2, c: [140, 255, 250] },
-  { at: 0.38, c: [255, 248, 245] },
-  { at: 0.55, c: [255, 110, 190] },
-  { at: 0.75, c: [210, 140, 255] },
-  { at: 1.0, c: [255, 150, 70] },
+  { at: 0.0, c: [28, 12, 8] },
+  { at: 0.18, c: [92, 38, 14] },
+  { at: 0.4, c: [168, 82, 22] },
+  { at: 0.62, c: [214, 132, 42] },
+  { at: 0.82, c: [232, 176, 88] },
+  { at: 1.0, c: [74, 32, 12] },
 ];
 
 function pal(v: number): RGB {
