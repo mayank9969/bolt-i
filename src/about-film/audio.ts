@@ -1,4 +1,4 @@
-import { CAPTIONS, DURATION, voiceClips, type VoiceClip } from "./timeline";
+import { CAPTIONS, DURATION } from "./timeline";
 
 /**
  * FilmAudio
@@ -17,8 +17,6 @@ export class FilmAudio {
   private timers: number[] = [];
   private vo: HTMLAudioElement | null = null;
   private hasVoiceover = false;
-  private clips: VoiceClip[] = [];
-  private clipI = -1;
   muted = false;
   tts = false;
 
@@ -37,7 +35,6 @@ export class FilmAudio {
         return false;
       }
       this.vo = el;
-      this.clips = voiceClips(dur);
       this.hasVoiceover = true;
     } catch {
       this.hasVoiceover = false;
@@ -45,27 +42,27 @@ export class FilmAudio {
     return this.hasVoiceover;
   }
 
-  /** Play the take that belongs on this frame of the picture. */
+  /** Keep the recording running with the picture. One take, natural pace. */
   sync(t: number) {
-    if (!this.vo || !this.hasVoiceover || this.muted) return;
-    const i = this.clips.findIndex((c) => t >= c.at && t < c.until);
-    if (i < 0) {
-      this.clipI = -1;
-      this.vo.pause();
+    const el = this.vo;
+    if (!el || !this.hasVoiceover) return;
+    if (this.muted || t < 0 || t >= DURATION) {
+      if (!el.paused) el.pause();
       return;
     }
-    const c = this.clips[i];
-    const window = Math.max(0.2, c.until - c.at);
-    const srcDur = Math.max(0.2, c.srcEnd - c.srcStart);
-    if (this.clipI !== i) {
-      this.clipI = i;
-      this.vo.playbackRate = Math.min(1.15, Math.max(0.78, srcDur / window));
-      this.vo.preservesPitch = true;
-      this.vo.currentTime = c.srcStart;
-      this.vo.volume = this.muted ? 0 : 1;
-      void this.vo.play().catch(() => {});
-    } else if (this.vo.currentTime >= c.srcEnd - 0.04) {
-      this.vo.pause();
+    el.playbackRate = 1;
+    el.preservesPitch = true;
+    el.volume = 1;
+    const fileDur = el.duration;
+    if (!fileDur || !isFinite(fileDur)) return;
+    const target = Math.min(fileDur - 0.05, Math.max(0, t));
+    if (el.paused) {
+      el.currentTime = target;
+      void el.play().catch(() => {});
+      return;
+    }
+    if (Math.abs(el.currentTime - target) > 0.45) {
+      el.currentTime = target;
     }
   }
 
@@ -199,8 +196,6 @@ export class FilmAudio {
     bell(35.6, 659.25, 0.045);
     bell(39.0, 440.0, 0.04);
 
-    this.clipI = -1;
-
     /* --- optional device narration stand-in --- */
     if (this.tts && "speechSynthesis" in window) {
       window.speechSynthesis.cancel();
@@ -261,12 +256,10 @@ export class FilmAudio {
   pause() {
     this.ctx?.suspend();
     this.vo?.pause();
-    this.clipI = -1;
   }
 
   resume() {
     if (this.ctx && this.ctx.state === "suspended") this.ctx.resume();
-    this.clipI = -1;
   }
 
   private stopNodes() {
@@ -289,7 +282,6 @@ export class FilmAudio {
       this.vo.pause();
       this.vo.currentTime = 0;
     }
-    this.clipI = -1;
     if ("speechSynthesis" in window) window.speechSynthesis.cancel();
   }
 
