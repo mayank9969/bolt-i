@@ -223,7 +223,7 @@
     if (window.veyraMountContinue) go()
     else {
       var s = document.createElement('script')
-      s.src = 'continue-anim.js?v=2'
+      s.src = 'continue-anim.js?v=3'
       s.onload = go
       document.head.appendChild(s)
     }

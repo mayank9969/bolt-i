@@ -5,7 +5,7 @@
 
   var DURATION = 5
   var Q_PATH = 'M 14 50 C 14 8, 82 6, 84 46 C 86 82, 48 90, 46 118 L 46 128'
-  var BASE = 'anim/'
+  var BASE = new URL('anim/', location.href).href
 
   function clamp(x, a, b) {
     if (a === undefined) a = 0
@@ -145,6 +145,10 @@
       raf = requestAnimationFrame(tick)
       if (!playing) return
       var live = (now - start) / 1000
+      if (live >= DURATION) {
+        start = now
+        live = 0
+      }
       var dt = Math.min(0.05, (now - prev) / 1000)
       prev = now
       var t = Math.min(live, DURATION)
