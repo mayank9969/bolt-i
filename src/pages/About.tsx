@@ -20,7 +20,7 @@ export default function About() {
         <Reveal>
           <header>
             <div className="max-w-3xl">
-              <p className="ed-eyebrow">A personal learning project</p>
+              <p className="ed-eyebrow">A first product · a personal learning project</p>
               <h1 className="ed-display ed-hero mt-6">
                 A question is never the <em>end</em> of the story.
               </h1>
@@ -66,9 +66,32 @@ export default function About() {
               because I still did not understand. I mean paper and ink, a field of islands, a chart I can actually read.
               I mean being the sort of person who will sit until the picture holds.
             </p>
+            <p>
+              If you need a name to hold all of that: I am Mayank Sarwal. The rest of this page is the part that
+              actually matters.
+            </p>
           </Section>
 
-          <Section n="02" title="What I am trying">
+          <Section n="02" title="A first product">
+            <p>
+              This is the first thing I have put in the world as a whole. Not a sketch I kept in a folder. A room other
+              people can walk into. That feeling is specific: pride and exposure in the same breath. I keep asking
+              whether the jewel is bright enough, whether the puzzle plays, whether the sentence tells the truth —
+              because once it is public, <span className="ed-weight">almost</span> is not a place I can hide.
+            </p>
+            <p>
+              A first product is also a decision about who I am willing to be seen as. I could have shipped a quiz with
+              a leaderboard and called it done. I did not. I built a field of islands, a relay of curiosity, History
+              that only believes the engine, a Take no one grades. That is the person I am trying to be: someone who
+              will not flatten a question to look finished.
+            </p>
+            <p>
+              It feels like standing on the first island with the rest of the map still in fog — and going ashore
+              anyway. If you are here, you are walking through that decision with me.
+            </p>
+          </Section>
+
+          <Section n="03" title="What I am trying">
             <p>
               The goal is not a higher number. It is to <span className="ed-weight">look closer</span>. To stop guessing
               in the dark. To go ashore and find out what I actually know, not what I can recite. A percentage is a
@@ -87,7 +110,7 @@ export default function About() {
             </p>
           </Section>
 
-          <Section n="03" title="Leave it open">
+          <Section n="04" title="Leave it open">
             <p>
               One percentage cannot stand in for everything I understand. History is there so I can return — to see
               which subjects I touched, which I fled, which I sat with until the band got shorter. The charts are not
