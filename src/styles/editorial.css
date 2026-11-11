@@ -305,7 +305,7 @@
 }
 
 .about-ed .map-quote-stack {
-  background: var(--veyra-ui-canvas, #fafbfa);
+  background: rgb(var(--nx-canvas-rgb));
 }
 .about-ed .map-quote-band {
   position: relative;
@@ -335,7 +335,7 @@
   position: relative;
   z-index: 2;
   padding: 0.5rem 1.25rem 4.5rem;
-  background: var(--veyra-ui-canvas, #fafbfa);
+  background: rgb(var(--nx-canvas-rgb));
 }
 .about-ed .quote-film {
   width: min(56rem, 92vw);
@@ -345,30 +345,54 @@
   aspect-ratio: 16 / 9;
   overflow: hidden;
   border-radius: 1.15rem;
-  border: 1px solid var(--veyra-ui-line-strong, rgba(27, 34, 48, 0.16));
-  background: var(--veyra-ui-surface, #eef2f0);
-  box-shadow: 0 18px 50px rgb(27 34 48 / 0.08);
+  border: 1px solid var(--nx-line-strong);
+  background: rgb(var(--nx-surface-rgb));
+  box-shadow: var(--nx-shadow-1);
 }
 .about-ed .quote-film .film-letter {
-  background: linear-gradient(to bottom, rgb(250 251 250 / 0.4), transparent);
+  background: linear-gradient(to bottom, rgb(var(--nx-canvas-rgb) / 0.42), transparent);
 }
 .about-ed .quote-film .film-letter + .film-letter {
-  background: linear-gradient(to top, rgb(250 251 250 / 0.35), transparent);
+  background: linear-gradient(to top, rgb(var(--nx-canvas-rgb) / 0.38), transparent);
 }
 .about-ed .quote-film .film-transport {
-  border-color: var(--veyra-ui-line, rgba(27, 34, 48, 0.1));
-  background: var(--veyra-ui-card, #fdfefd);
+  border-color: var(--nx-line);
+  background: rgb(var(--nx-card-rgb));
   color: rgb(var(--nx-text-2-rgb));
 }
 .about-ed .quote-film .film-transport button {
-  border-color: var(--veyra-ui-line-strong, rgba(27, 34, 48, 0.16));
+  border-color: var(--nx-line-strong);
+}
+.about-ed .quote-film .film-time,
+.about-ed .quote-film .film-mute {
+  color: rgb(var(--nx-text-3-rgb));
 }
 .about-ed .quote-film .film-transport .bg-\[\#f3eefb\] {
-  background: #16827e;
-  color: #fafbfa;
+  background: rgb(var(--nx-accent-rgb));
+  color: rgb(var(--nx-text-inverse-rgb));
 }
 .about-ed .quote-film .scrub {
-  accent-color: #16827e;
+  accent-color: rgb(var(--nx-accent-rgb));
+}
+.about-ed .quote-film .film-voice {
+  color: rgb(var(--nx-text-3-rgb));
+  border-color: var(--nx-line-strong);
+}
+.about-ed .quote-film .film-voice.is-on {
+  color: rgb(var(--nx-accent-rgb));
+  border-color: rgb(var(--nx-accent-rgb));
+}
+.about-ed .quote-film .film-mark {
+  background: rgb(var(--nx-text-rgb) / 0.28);
+}
+.about-ed .quote-film .group:hover .film-mark {
+  background: rgb(var(--nx-accent-rgb));
+}
+.about-ed .quote-film .film-mark-label {
+  color: rgb(var(--nx-text-3-rgb));
+}
+.about-ed .quote-film .group:hover .film-mark-label {
+  color: rgb(var(--nx-text-rgb));
 }
 .about-ed .quote-film canvas {
   display: block;

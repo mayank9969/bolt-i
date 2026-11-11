@@ -232,11 +232,11 @@ export default function FilmPlayer() {
             aria-label="Film timeline"
           />
 
-          <span ref={timeLabelRef} className="w-12 shrink-0 text-right font-mono text-xs text-[#b9aed4]">0.0s</span>
+          <span ref={timeLabelRef} className="film-time w-12 shrink-0 text-right font-mono text-xs">0.0s</span>
 
           <button
             onClick={toggleMute}
-            className="btn-ghost flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#b9aed4]/20 text-[#b9aed4] hover:border-[#e90096] hover:text-[#e90096]"
+            className="film-mute btn-ghost flex h-9 w-9 shrink-0 items-center justify-center rounded-full border hover:border-[rgb(var(--nx-accent-rgb))] hover:text-[rgb(var(--nx-accent-rgb))]"
             aria-label={muted ? "Unmute" : "Mute"}
           >
             {muted ? (
@@ -248,10 +248,8 @@ export default function FilmPlayer() {
 
           <button
             onClick={() => setNarration(narration === "captions" ? "voice" : "captions")}
-            className={`btn-ghost hidden shrink-0 rounded-full border px-3 py-1.5 text-[11px] font-medium uppercase tracking-wider sm:block ${
-              narration === "voice"
-                ? "border-[#e90096] text-[#e90096]"
-                : "border-[#b9aed4]/20 text-[#b9aed4] hover:border-[#b9aed4]/50"
+            className={`film-voice btn-ghost hidden shrink-0 rounded-full border px-3 py-1.5 text-[11px] font-medium uppercase tracking-wider sm:block ${
+              narration === "voice" ? "is-on" : ""
             }`}
             title="Device narration is a synthetic stand-in. Drop a real recording at /public/voiceover.mp3 and the film will use it automatically."
           >
@@ -269,8 +267,8 @@ export default function FilmPlayer() {
               style={{ left: `${(s.mark / DURATION) * 100}%` }}
               title={`Jump to “${s.label}”`}
             >
-              <span className="mx-auto block h-1.5 w-1.5 rounded-full bg-[#b9aed4]/40 transition group-hover:scale-150 group-hover:bg-[#e90096]" />
-              <span className="mt-1 block text-[9px] uppercase tracking-[0.18em] text-[#b9aed4]/60 transition group-hover:text-[#f3eefb]">
+              <span className="film-mark mx-auto block h-1.5 w-1.5 rounded-full transition group-hover:scale-150" />
+              <span className="film-mark-label mt-1 block text-[9px] uppercase tracking-[0.18em] transition">
                 {s.label}
               </span>
             </button>
