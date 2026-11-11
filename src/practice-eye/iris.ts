@@ -15,12 +15,12 @@ const mix = (a: RGB, b: RGB, t: number): RGB => [
 
 // Original jewel: amber / rust fibres on a dark collarette (the WHO'S THERE iris)
 const PAL: { at: number; c: RGB }[] = [
-  { at: 0.0, c: [22, 14, 10] },
-  { at: 0.22, c: [58, 36, 22] },
-  { at: 0.45, c: [102, 68, 38] },
-  { at: 0.68, c: [140, 96, 52] },
-  { at: 0.86, c: [88, 58, 34] },
-  { at: 1.0, c: [32, 20, 12] },
+  { at: 0.0, c: [0, 255, 255] },
+  { at: 0.18, c: [40, 255, 220] },
+  { at: 0.36, c: [255, 255, 255] },
+  { at: 0.52, c: [255, 55, 190] },
+  { at: 0.72, c: [190, 80, 255] },
+  { at: 1.0, c: [255, 140, 40] },
 ];
 
 function pal(v: number): RGB {
@@ -81,10 +81,13 @@ export function makeIrisTexture(size: number, kind: 0 | 1): HTMLCanvasElement {
         val = clamp01((val - 0.5) * 2.0 + 0.5);
         let col = pal(val);
 
-        const bright = (1.08 + 0.35 * s1) * (0.95 + 0.2 * s2);
+        const bright = (1.22 + 0.4 * s1) * (1.02 + 0.22 * s2);
         col = [col[0] * bright, col[1] * bright, col[2] * bright];
 
-        // warm collarette around the pupil
+        // pull sunset red / teal from the field into the fibres
+        const sky = mix([255, 48, 18], [0, 210, 195], clamp01((v + 1) * 0.5));
+        col = mix(col, sky, 0.28);
+
         const eo =
           0.47 +
           0.1 * (noise3(ct * 6, st * 6, 2) - 0.5) * 2 +
@@ -94,7 +97,7 @@ export function makeIrisTexture(size: number, kind: 0 | 1): HTMLCanvasElement {
         orange = mix(orange, [96, 34, 16], smooth(0.22, 0.1, r));
         const ob = 0.7 + 0.6 * s1;
         orange = [orange[0] * ob, orange[1] * ob, orange[2] * ob];
-        const fin = mix(col, orange, om * 0.32);
+        const fin = mix(col, orange, om * 0.12);
 
         d[idx] = Math.min(255, fin[0]);
         d[idx + 1] = Math.min(255, fin[1]);

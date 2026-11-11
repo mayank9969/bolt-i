@@ -52,12 +52,12 @@
     a[2] + (b[2] - a[2]) * t
   ];
   var PAL = [
-    { at: 0, c: [20, 240, 255] },
-    { at: 0.2, c: [140, 255, 250] },
-    { at: 0.38, c: [255, 248, 245] },
-    { at: 0.55, c: [255, 110, 190] },
-    { at: 0.75, c: [210, 140, 255] },
-    { at: 1, c: [255, 150, 70] }
+    { at: 0, c: [0, 255, 255] },
+    { at: 0.18, c: [40, 255, 220] },
+    { at: 0.36, c: [255, 255, 255] },
+    { at: 0.52, c: [255, 55, 190] },
+    { at: 0.72, c: [190, 80, 255] },
+    { at: 1, c: [255, 140, 40] }
   ];
   function pal(v) {
     v = clamp01(v);
@@ -97,7 +97,7 @@
           let val = fbm3(Math.cos(phi) * 1.35, Math.sin(phi) * 1.35, r * 2.4, 3);
           val = clamp01((val - 0.5) * 2 + 0.5);
           let col = pal(val);
-          const bright = (1.08 + 0.35 * s1) * (0.95 + 0.2 * s2);
+          const bright = (1.22 + 0.4 * s1) * (1.02 + 0.22 * s2);
           col = [col[0] * bright, col[1] * bright, col[2] * bright];
           const eo = 0.47 + 0.1 * (noise3(ct * 6, st * 6, 2) - 0.5) * 2 + 0.07 * (noise3(ct * 38, st * 38, 4) - 0.5) * 2;
           const om = smooth(eo + 0.13, eo - 0.08, r);
@@ -105,7 +105,7 @@
           orange = mix(orange, [96, 34, 16], smooth(0.22, 0.1, r));
           const ob = 0.7 + 0.6 * s1;
           orange = [orange[0] * ob, orange[1] * ob, orange[2] * ob];
-          const fin = mix(col, orange, om * 0.32);
+          const fin = mix(col, orange, om * 0.12);
           d[idx] = Math.min(255, fin[0]);
           d[idx + 1] = Math.min(255, fin[1]);
           d[idx + 2] = Math.min(255, fin[2]);
