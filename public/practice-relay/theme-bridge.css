@@ -410,12 +410,29 @@ a.v-daily-disc:hover {
   aspect-ratio: 1;
 }
 .v-puzzle-cell.is-pick {
-  outline: 2px solid #16827e;
-  outline-offset: -2px;
+  outline: 3px solid #f4d35e;
+  outline-offset: -3px;
+  filter: brightness(1.08);
+}
+.v-puzzle-cell:hover {
+  filter: brightness(1.06);
 }
 .v-puzzle-cap {
-  margin: 0.85rem 0 0 !important;
-  letter-spacing: 0.12em;
+  display: block !important;
+  margin: 1rem 0 0 !important;
+  padding: 0 5% 1.2rem;
+  font-family: ui-monospace, 'IBM Plex Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  line-height: 1.45;
+  text-transform: uppercase;
+  color: #161917 !important;
+}
+.v-puzzle-cap strong {
+  display: block;
+  margin-bottom: 0.2rem;
+  color: #16827e;
+  letter-spacing: 0.14em;
 }
 
 @media (max-width: 640px) {

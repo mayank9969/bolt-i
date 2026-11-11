@@ -250,6 +250,7 @@
         cell.style.backgroundImage = 'url("' + src + '")'
         cell.style.backgroundSize = N * 100 + '% ' + N * 100 + '%'
         cell.style.backgroundPosition = (N === 1 ? 0 : (c / (N - 1)) * 100) + '% ' + (N === 1 ? 0 : (r / (N - 1)) * 100) + '%'
+        cell.title = 'Tap two pieces to swap'
         cell.addEventListener('click', function () {
           if (solved()) return
           if (pick < 0) {
@@ -266,15 +267,22 @@
         })
         board.appendChild(cell)
       })
-      cap.textContent = solved()
-        ? 'The picture holds. You built it piece by piece.'
-        : 'Life is like a puzzle. Start building it piece by piece.'
+      cap.innerHTML = solved()
+        ? '<strong>The picture holds.</strong> You built it piece by piece.'
+        : '<strong>Tap a piece, then another to swap.</strong> Puzzles are like life — they have to be made piece by piece.'
     }
     var cap = document.createElement('p')
-    cap.className = 'v-puzzle-cap mono-label'
+    cap.className = 'v-puzzle-cap'
     wrap.appendChild(board)
-    wrap.appendChild(cap)
     target.replaceWith(wrap)
+    var section = document.getElementById('leave-open')
+    if (section) {
+      var after = wrap.closest('.relative') || wrap.parentElement
+      if (after && after.parentElement) after.parentElement.insertBefore(cap, after.nextSibling)
+      else section.appendChild(cap)
+    } else {
+      wrap.appendChild(cap)
+    }
     paint()
     hideTapRow()
     return true
