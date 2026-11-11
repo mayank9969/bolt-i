@@ -99,7 +99,7 @@ function VeyraGuardian(){
     return ()=>{disposed=true;observer.disconnect();document.removeEventListener('visibilitychange',onVisibility);image.removeEventListener('load',upload);if(frame)cancelAnimationFrame(frame);gl.deleteTexture(texture);gl.deleteBuffer(buffer);gl.deleteProgram(program);gl.deleteShader(vs);gl.deleteShader(fs)};
   },[playing]);
   return c.jsxs('div',{className:'v-guardian',children:[
-    c.jsxs('div',{className:'v-guardian-frame',children:[c.jsx('img',{ref:imgRef,src:'/practice-relay/guardian.png',alt:'A symbolic guardian opens the sky with a pen, revealing a branching question.'}),c.jsx('canvas',{ref:canvasRef,className:'v-guardian-living','aria-hidden':true,style:{opacity:ready?1:0}}),c.jsx('div',{className:'v-guardian-qmark','aria-hidden':true,children:'?'}),c.jsxs('div',{className:'v-guardian-onart',children:[c.jsx('p',{className:'v-guardian-onart-kicker',children:'PLATE 01  /  THE FIRST QUESTION'}),c.jsx('p',{className:'v-guardian-onart-line',children:'Someone painted a question into the sky. What did they want to know?'}),c.jsx('p',{className:'v-guardian-onart-trail',children:'FOLLOW ITS TRAIL  ↗'})]})]}),
+    c.jsxs('div',{className:'v-guardian-frame',children:[c.jsx('img',{ref:imgRef,src:'/practice-relay/guardian.png',alt:'A symbolic guardian opens the sky with a pen, revealing a branching question.'}),c.jsx('canvas',{ref:canvasRef,className:'v-guardian-living','aria-hidden':true,style:{opacity:ready?1:0}}),c.jsxs('div',{className:'v-guardian-onart',children:[c.jsx('p',{className:'v-guardian-onart-kicker',children:'PLATE 01  /  THE FIRST QUESTION'}),c.jsx('p',{className:'v-guardian-onart-line',children:'Someone painted a question into the sky. What did they want to know?'}),c.jsx('p',{className:'v-guardian-onart-trail',children:'FOLLOW ITS TRAIL  ↗'})]})]}),
     c.jsxs('div',{className:'v-guardian-caption',children:[c.jsx('span',{children:'PLATE 01  /  THE GUARDIAN'}),!unavailable&&c.jsx('button',{className:'v-guardian-replay',type:'button',onClick:()=>setPlaying(p=>!p),'aria-label':playing?'Pause the guardian scene animation':'Play the guardian scene animation','aria-pressed':!playing,children:playing?'PAUSE THE SCENE Ⅱ':'PLAY THE SCENE ▷'}),c.jsx('span',{children:'A QUESTION IS AN OPENING  ↗'})]}),
     c.jsx('div',{className:'v-guardian-seal','aria-hidden':true,children:'?'})]})
 }
@@ -352,44 +352,36 @@ nav[aria-label="Sections"] { backdrop-filter: none; -webkit-backdrop-filter: non
 
 /* A living illustration: locally displaced clouds, figure, pen, light and stars. */
 .v-guardian-frame { position: relative; }
-.v-guardian-qmark {
-  position: absolute;
-  top: 11%;
-  right: 16%;
-  z-index: 3;
-  font: italic 7.2rem/0.8 'Instrument Serif', Georgia, serif;
-  color: #c23a22;
-  text-shadow: 0 2px 0 #7a1c12, 0 10px 18px rgba(10, 20, 60, 0.35);
-  pointer-events: none;
-  transform: rotate(-8deg);
-}
 .v-guardian-onart {
   position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  left: 1.1rem;
+  right: auto;
+  bottom: auto;
+  top: 1.05rem;
   z-index: 4;
-  padding: 2.4rem 1.1rem 0.85rem;
-  background: linear-gradient(transparent, rgba(6, 18, 48, 0.78) 55%);
-  color: #f4efe4;
+  max-width: 22rem;
+  padding: 0.7rem 0.85rem 0.75rem;
+  background: rgba(250, 246, 236, 0.92);
+  border: 1px solid rgba(22, 25, 23, 0.18);
+  color: #161917;
   pointer-events: none;
 }
 .v-guardian-onart p { margin: 0; }
 .v-guardian-onart-kicker {
   font: 700 9px/1.4 'Space Mono', monospace;
   letter-spacing: 0.14em;
-  opacity: 0.88;
+  color: #16827e;
 }
 .v-guardian-onart-line {
-  margin-top: 0.35rem !important;
-  font: 500 1.05rem/1.35 'Instrument Serif', Georgia, serif;
-  max-width: 28ch;
+  margin-top: 0.4rem !important;
+  font: 500 1.12rem/1.35 'Instrument Serif', Georgia, serif;
+  color: #161917;
 }
 .v-guardian-onart-trail {
   margin-top: 0.45rem !important;
   font: 700 9px/1.4 'Space Mono', monospace;
   letter-spacing: 0.14em;
-  color: #f4d35e;
+  color: #c23a22;
 }
 .v-guardian .v-guardian-frame img { animation: none; }
 .v-guardian-living { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; object-position: 42% center; pointer-events: none; }
