@@ -29,35 +29,38 @@ export default function About() {
               <SelfReflection />
             </div>
             <p className="ed-prose mt-8 max-w-3xl">
-              I’m Mayank. VEYRA is a place I made to look closer at what I know, and to keep a{' '}
-              <span className="ed-hit">truthful record</span> of what still needs another sitting.
+              I’m <span className="ed-hit">Mayank Sarwal</span>. VEYRA is a personal learning project I made to look
+              closer at what I know — and to keep a <span className="ed-soft">truthful record</span> of what still
+              needs another sitting. It is for the pleasure of learning, and for the curiouser learners who will sit
+              with a question instead of skimming past it.
             </p>
           </header>
         </Reveal>
 
         <article className="ed-article mt-2">
-          <Section n="01" title="Look closer">
+          <Section n="01" title="Who this is">
             <p>
-              A question asks you to stop guessing in the dark. You pick one of{' '}
-              <span className="ed-hit">fifteen subjects</span>, a difficulty, and a length. Some answers are multiple
-              choice; some you type. The quiz engine on the server checks them.{' '}
-              <span className="ed-soft">The browser never sees a key before you finish.</span>
+              I wanted a place that would not pretend. A sitting is scored on the server; the browser never holds the
+              key. History only stores what the engine saw. Take, if you write one, stays private and unscored. I would
+              rather leave a gap than fill it with a story.
             </p>
             <p>
-              <span className="ed-hit">Two thousand questions</span> sit in the bank. Nothing is locked.{' '}
-              <span className="ed-soft">Curiosity chooses the island.</span>
+              The archipelago on Home is the map I keep returning to — fifteen subjects, two thousand questions,
+              nothing locked. Practice, a quiz, History, and this page are the rest of the path. I am not building a
+              company profile. I am building a room where a later me can see how an hour actually went.
             </p>
           </Section>
 
-          <Section n="02" title="Ideas travel">
+          <Section n="02" title="What we are trying">
             <p>
-              Knowledge does not stay with one sitting. An attempt is scored, then it is written into History — so
-              a later you can see which subjects you returned to, and how that hour actually went.
+              The goal is to <span className="ed-hit">look closer</span>. A question asks you to stop guessing in the
+              dark. You pick an island, a difficulty, a length. You go ashore. The score is a moment, not a verdict —
+              it is there so you can come back, not so one percentage can stand in for everything you understand.
             </p>
             <p>
               Between people, a question is the same motion: someone asks, someone tests, someone carries it a little
-              further. VEYRA is a small version of that — <span className="ed-soft">not a company profile</span>, just
-              a project that wants the record to stay <span className="ed-hit">honest</span>.
+              further. VEYRA is a small version of that. <span className="ed-soft">Learning stays unfinished on
+              purpose.</span> Curiosity chooses the island.
             </p>
           </Section>
 
