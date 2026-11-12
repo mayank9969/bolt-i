@@ -162,6 +162,36 @@ nav.sticky {
   display: none !important;
 }
 
+/* Laptop: give the closing folio room — copy, eye, film, puzzle are not one pile */
+@media (min-width: 1024px) {
+  #leave-open {
+    padding-top: 4.5rem !important;
+    padding-bottom: 5rem !important;
+    margin-top: 2.5rem !important;
+  }
+  #leave-open > div {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 4.75rem !important;
+    align-items: start !important;
+  }
+  #leave-open .v-closing-invitation {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) min(420px, 38vw) !important;
+    gap: 3.25rem !important;
+    align-items: center !important;
+  }
+  #leave-open .v-ending-scene,
+  #leave-open .frame {
+    max-width: 42rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  #veyra-studio {
+    margin-bottom: 2.5rem;
+  }
+}
+
 footer .font-poster {
   gap: 0.7rem;
 }
