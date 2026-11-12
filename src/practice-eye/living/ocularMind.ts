@@ -527,7 +527,7 @@ export class OcularMindEngine {
     let effectiveTargetX = this.targetGazeX;
     let effectiveTargetY = this.targetGazeY;
     if (pointerRecentlyActive && !this.isHesitatingAway) {
-      const pursuitWeight = this.pointer.isPressed ? 0.88 : 0.68 * (1.0 - 0.45 * this.uncertainty);
+      const pursuitWeight = this.pointer.isPressed ? 0.95 : 0.92;
       const px = Math.max(-0.48, Math.min(0.48, this.pointer.x * 0.46));
       const py = Math.max(-0.42, Math.min(0.42, this.pointer.y * 0.42));
       effectiveTargetX = effectiveTargetX * (1.0 - pursuitWeight) + (px + this.microOffsetX * 0.6) * pursuitWeight;

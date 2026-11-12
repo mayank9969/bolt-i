@@ -888,7 +888,7 @@ void main() {
       let effectiveTargetX = this.targetGazeX;
       let effectiveTargetY = this.targetGazeY;
       if (pointerRecentlyActive && !this.isHesitatingAway) {
-        const pursuitWeight = this.pointer.isPressed ? 0.88 : 0.68 * (1 - 0.45 * this.uncertainty);
+        const pursuitWeight = this.pointer.isPressed ? 0.95 : 0.92;
         const px = Math.max(-0.48, Math.min(0.48, this.pointer.x * 0.46));
         const py = Math.max(-0.42, Math.min(0.42, this.pointer.y * 0.42));
         effectiveTargetX = effectiveTargetX * (1 - pursuitWeight) + (px + this.microOffsetX * 0.6) * pursuitWeight;
@@ -1274,7 +1274,7 @@ void main() {
       const { nx, ny } = toNorm(e.clientX, e.clientY);
       mind.onPointerDown(nx, ny);
     };
-    canvas.addEventListener("pointermove", move, { passive: true });
+    window.addEventListener("pointermove", move, { passive: true });
     canvas.addEventListener("pointerdown", down);
     window.addEventListener("pointerup", () => mind.onPointerUp());
     window.addEventListener("resize", fit);
@@ -1286,9 +1286,11 @@ void main() {
       prev = now;
       const state = mind.step(dt);
       const tel = mind.getTelemetry();
-      if (now - lastLabel > 120) {
+      if (now - lastLabel > 180) {
         lastLabel = now;
-        onLabel(tel.emotionLabel);
+        const startle = state.startle > 0.45;
+        const label = startle ? "who's there?" : tel.phase === "uncertain_hesitation" ? "is it safe?" : tel.phase === "deep_wonder" ? "i want to know everything." : tel.wonder > 0.7 ? "closer\u2026" : tel.curiosity > 0.75 ? "curious\u2026" : "hmm\u2026";
+        onLabel(label);
       }
       if (gl && program) {
         gl.useProgram(program);

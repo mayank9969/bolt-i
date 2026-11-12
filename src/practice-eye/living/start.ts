@@ -118,7 +118,7 @@ export function startEye(canvas: HTMLCanvasElement, onLabel: (s: string) => void
     mind.onPointerDown(nx, ny)
   }
 
-  canvas.addEventListener('pointermove', move, { passive: true })
+  window.addEventListener('pointermove', move, { passive: true })
   canvas.addEventListener('pointerdown', down)
   window.addEventListener('pointerup', () => mind.onPointerUp())
   window.addEventListener('resize', fit)
@@ -131,9 +131,21 @@ export function startEye(canvas: HTMLCanvasElement, onLabel: (s: string) => void
     prev = now
     const state = mind.step(dt)
     const tel = mind.getTelemetry()
-    if (now - lastLabel > 120) {
+    if (now - lastLabel > 180) {
       lastLabel = now
-      onLabel(tel.emotionLabel)
+      const startle = state.startle > 0.45
+      const label = startle
+        ? "who's there?"
+        : tel.phase === 'uncertain_hesitation'
+          ? 'is it safe?'
+          : tel.phase === 'deep_wonder'
+            ? 'i want to know everything.'
+            : tel.wonder > 0.7
+              ? 'closer…'
+              : tel.curiosity > 0.75
+                ? 'curious…'
+                : 'hmm…'
+      onLabel(label)
     }
     if (gl && program) {
       gl.useProgram(program)
