@@ -131,10 +131,10 @@ export default function About() {
           <div className="quote-veil absolute left-1/2 top-[38%] -translate-x-1/2 -translate-y-1/2 rounded-full" />
         </div>
         <blockquote className="relative z-10 mx-auto max-w-page px-6 text-center">
-          <p className="quote-line font-sans italic font-normal text-[1.35rem] sm:text-2xl md:text-[1.85rem] max-w-[28ch] mx-auto text-balance leading-snug tracking-tight">
-            The mind can build a universe, yet spend a lifetime living inside the walls of a habit. Days become years,
-            patterns become identity, and one day you may realize you spent your life repeating a version of yourself you
-            never chose.
+          <p className="quote-line font-sans italic font-normal text-[1.35rem] sm:text-2xl md:text-[1.85rem] max-w-[22ch] mx-auto text-balance leading-snug tracking-tight">
+            I could imagine a thousand routes.
+            <br />
+            I kept taking the same one.
           </p>
           <p className="quote-line font-sans italic mt-6 text-[1.15rem] sm:text-xl max-w-[32ch] mx-auto leading-snug">
             Perhaps the greatest prison is the one you mistake for your nature. But the moment you recognize its walls, you
