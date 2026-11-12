@@ -1,5 +1,7 @@
 import '@fontsource-variable/geist/wght.css'
 import '@fontsource-variable/geist/wght-italic.css'
+import '@fontsource-variable/fraunces/wght.css'
+import '@fontsource-variable/source-serif-4/wght.css'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
