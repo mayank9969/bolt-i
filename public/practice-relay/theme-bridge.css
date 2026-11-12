@@ -162,12 +162,18 @@ nav.sticky {
   display: none !important;
 }
 
-/* Old relay coda (film + LEAVE ROOM). Practice only keeps the studio four. */
+/* Old relay chapters. Practice keeps the living eye + the studio four. */
 #leave-open,
 #your-hands,
+#same-paper,
+#crossings,
+#subject,
+#try-it,
 section#leave-open,
 .v-closing-copy,
-.v-closing-invitation {
+.v-closing-invitation,
+.v-puzzle-wrap,
+.v-ending-art {
   display: none !important;
 }
 
