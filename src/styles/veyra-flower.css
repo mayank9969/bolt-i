@@ -10,12 +10,14 @@
   --vf-tint-c:    var(--veyra-flower-tint-c,#ff5fa2);
   --vf-tint-d:    var(--veyra-flower-tint-d,#ffb457);
   display:block;width:100%;max-width:560px;aspect-ratio:3/4;background:transparent;
+  transform:translate3d(0,0,0);
+  backface-visibility:hidden;
+  contain:layout paint;
 }
 .veyra-flower:focus,.veyra-flower:focus-visible{outline:none}
 .veyra-flower svg{
-  display:block;width:100%;height:100%;overflow:visible;outline:none;
-  shape-rendering:geometricPrecision;
-  transform:translateZ(0);
+  display:block;width:100%;height:100%;overflow:hidden;outline:none;
+  transform:translate3d(0,0,0);
 }
 
 /* pointer: only main petal fills are hoverable */
@@ -104,9 +106,21 @@
 .veyra-flower.is-run:not(.is-settled) .pulse{animation:vf-pulse var(--t,1.5s) cubic-bezier(.45,0,.35,1) var(--d,0s) both}
 
 /* ----- settled: near-imperceptible drift, plus one-at-a-time ripple ----- */
+.veyra-flower.is-run.is-settled .draw,
+.veyra-flower.is-run.is-settled .fade,
+.veyra-flower.is-run.is-settled .petal{
+  animation:none;
+  stroke-dashoffset:0;
+  opacity:var(--o,1);
+  transform:none;
+}
 .veyra-flower.is-run.is-settled .bloom{animation:vf-breathe 14s ease-in-out infinite alternate}
 .veyra-flower.is-run.is-settled .bloom-wide{animation:vf-breathe2 18s ease-in-out infinite alternate}
-.veyra-flower.is-settled .sway{animation:vf-sway 16s ease-in-out infinite alternate;will-change:transform}
+.veyra-flower.is-settled{
+  animation:vf-sway 12s ease-in-out infinite alternate;
+  will-change:transform;
+}
+.veyra-flower.is-settled .sway{animation:none}
 .veyra-flower.is-settled .mote{animation:vf-twinkle var(--tw,11s) ease-in-out calc(var(--d,0s) * -1) infinite alternate}
 @keyframes vf-twinkle{from{opacity:var(--o,.5)}to{opacity:calc(var(--o,.5) * .4)}}
 .veyra-flower.is-settled .petal.is-rippling .pulse{animation:vf-ripple var(--rt,1.4s) cubic-bezier(.4,0,.3,1) var(--rd,0s) both}
