@@ -1,6 +1,14 @@
+import FilmPlayer from '@/about-film/FilmPlayer'
+
 export default function MapQuotePoster() {
   return (
     <div className="map-quote-stack">
+      <section className="quote-film-band field-film-plate" aria-label="The film">
+        <div className="quote-film">
+          <p className="field-film-label">Film + Sound</p>
+          <FilmPlayer />
+        </div>
+      </section>
       <section className="quote-band map-quote-band map-quote-band--foot" aria-label="Map quote">
         <blockquote className="map-quote-copy">
           <p className="map-quote-hed">The map is not a verdict.</p>
