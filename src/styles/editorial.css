@@ -743,6 +743,21 @@
   --ed-mono: 'IBM Plex Mono', ui-monospace, monospace;
   --ed-serif: 'Instrument Serif', Palatino, serif;
 }
+.field-film-label {
+  font-family: var(--ed-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: rgb(var(--nx-accent-2-rgb));
+  margin: 0 0 0.85rem;
+}
+.field-film-plate .quote-film {
+  padding: 1.1rem 1.1rem 1.25rem;
+  border: 1px solid var(--nx-line-strong);
+  border-radius: 1.25rem;
+  background: rgb(var(--nx-card-rgb));
+}
 .field-open {
   max-width: 40rem;
   text-align: left;
@@ -757,31 +772,27 @@
 }
 .field-display {
   font-family: var(--ed-display);
-  font-size: clamp(2.6rem, 7.2vw, 5.1rem);
+  font-size: clamp(2.15rem, 6.2vw, 4.35rem);
   font-weight: 400;
   letter-spacing: -0.03em;
-  line-height: 0.98;
+  line-height: 1.02;
   margin: 1.1rem 0 0;
-  max-width: 14ch;
+  max-width: 16ch;
   color: rgb(var(--nx-text-rgb));
+  text-wrap: balance;
 }
-.field-display em {
+.field-display-line {
+  display: block;
+}
+.field-display-sub {
+  margin-top: 0.12em;
   font-style: italic;
   color: rgb(var(--nx-accent-2-rgb));
 }
-.field-display-sub {
-  display: block;
-  margin-top: 0.2em;
-  font-style: italic;
-  font-weight: 400;
-  font-size: 0.72em;
-  letter-spacing: -0.02em;
-  color: rgb(var(--nx-text-2-rgb));
-}
 .field-lede {
   font-family: var(--ed-body);
-  font-size: clamp(1.05rem, 1.7vw, 1.15rem);
-  line-height: 1.7;
+  font-size: clamp(1.08rem, 1.8vw, 1.2rem);
+  line-height: 1.72;
   color: rgb(var(--nx-text-2-rgb));
   margin-top: 1.4rem;
   max-width: 38rem;
@@ -860,8 +871,32 @@
 }
 .field-stop {
   position: relative;
-  padding: 2.4rem 0 2.8rem;
+  padding: 2.6rem 0 3rem;
   border-top: 1px solid var(--nx-line);
+}
+.field-stop--loop {
+  background-image: radial-gradient(circle at 0 1.6rem, rgb(var(--nx-accent-2-rgb) / 0.08), transparent 42%);
+}
+.field-stop--ashore {
+  background-image: linear-gradient(180deg, transparent 0%, rgb(var(--nx-accent-rgb) / 0.04) 100%);
+}
+.field-stop--promise .field-stamp {
+  display: inline-block;
+  margin-top: 0.35rem;
+  padding: 0.45rem 0.7rem;
+  border: 1px dashed rgb(var(--nx-accent-2-rgb) / 0.55);
+}
+.field-stop--opening {
+  background-image: radial-gradient(ellipse at 88% 0, rgb(244 211 94 / 0.18), transparent 46%);
+}
+.field-stop--route {
+  background-image: linear-gradient(90deg, rgb(var(--nx-accent-2-rgb) / 0.05), transparent 55%);
+}
+.field-waymark {
+  width: 4.5rem;
+  height: 2.25rem;
+  color: rgb(var(--nx-accent-2-rgb));
+  flex-shrink: 0;
 }
 .field-stop-head {
   display: flex;
@@ -893,8 +928,8 @@
 }
 .field-prose {
   font-family: var(--ed-body);
-  font-size: clamp(1.05rem, 1.6vw, 1.125rem);
-  line-height: 1.75;
+  font-size: clamp(1.08rem, 1.8vw, 1.2rem);
+  line-height: 1.72;
   color: rgb(var(--nx-text-2-rgb));
   max-width: 38rem;
 }

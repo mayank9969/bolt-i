@@ -12,8 +12,9 @@ export default function MapQuotePoster() {
           </p>
         </blockquote>
       </section>
-      <section className="quote-film-band" aria-label="Quote film">
+      <section className="quote-film-band field-film-plate" aria-label="The film">
         <div className="quote-film">
+          <p className="field-film-label">Field plate · The film</p>
           <FilmPlayer />
         </div>
       </section>
