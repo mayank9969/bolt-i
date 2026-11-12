@@ -1,712 +1,1326 @@
 "use strict";
 (() => {
-  // src/practice-eye/noise.ts
-  var P = new Uint8Array(512);
-  (() => {
-    const base = Array.from({ length: 256 }, (_, i) => i);
-    let s = 1337;
-    const rnd = () => {
-      s = s * 1664525 + 1013904223 >>> 0;
-      return s / 4294967296;
-    };
-    for (let i = 255; i > 0; i--) {
-      const j = Math.floor(rnd() * (i + 1));
-      [base[i], base[j]] = [base[j], base[i]];
-    }
-    for (let i = 0; i < 512; i++) P[i] = base[i & 255];
-  })();
-  var fade = (t) => t * t * t * (t * (t * 6 - 15) + 10);
-  var lerp = (a, b, t) => a + (b - a) * t;
-  var h3 = (x, y, z) => P[P[P[x & 255] + (y & 255)] + (z & 255)] / 255;
-  function noise3(x, y, z) {
-    const xi = Math.floor(x), yi = Math.floor(y), zi = Math.floor(z);
-    const xf = x - xi, yf = y - yi, zf = z - zi;
-    const u = fade(xf), v = fade(yf), w = fade(zf);
-    const c000 = h3(xi, yi, zi), c100 = h3(xi + 1, yi, zi), c010 = h3(xi, yi + 1, zi), c110 = h3(xi + 1, yi + 1, zi), c001 = h3(xi, yi, zi + 1), c101 = h3(xi + 1, yi, zi + 1), c011 = h3(xi, yi + 1, zi + 1), c111 = h3(xi + 1, yi + 1, zi + 1);
-    return lerp(
-      lerp(lerp(c000, c100, u), lerp(c010, c110, u), v),
-      lerp(lerp(c001, c101, u), lerp(c011, c111, u), v),
-      w
-    );
+  // src/practice-eye/living/curiousEyeShader.ts
+  var EYE_VERTEX_SHADER = `
+attribute vec2 aPosition;
+varying vec2 vUv;
+
+void main() {
+  vUv = aPosition * 0.5 + 0.5;
+  gl_Position = vec4(aPosition, 0.0, 1.0);
+}
+`;
+  var EYE_FRAGMENT_SHADER = `
+precision highp float;
+
+varying vec2 vUv;
+
+uniform vec2 uResolution;
+uniform float uTime;
+uniform vec2 uGaze;           // (gazeX, gazeY) in radians (+X right, +Y up)
+uniform float uTorsion;       // iris cyclotorsion angle
+uniform float uPupilRadius;   // ~0.14 .. 0.53
+uniform float uPupilVel;      // rate of pupil change
+uniform vec2 uPupilEcc;       // subtle organic pupil eccentricity
+uniform float uFluidWobble;   // post-saccadic iridodonesis
+uniform float uRipplePhase;
+uniform float uRippleAmp;
+uniform float uStromaTension;
+uniform float uCuriosity;
+uniform float uUncertainty;
+uniform float uWonder;
+uniform float uStartle;
+uniform float uMacroZoom;
+uniform float uTearWave;
+uniform float uStarburst;
+uniform vec2 uFocusPoint;
+uniform float uFocusGlow;
+
+#define PI 3.14159265359
+#define TAU 6.28318530718
+
+// Crisp sinless hashes for analog film grain & seamless polar fiber noise
+float hash12(vec2 p) {
+  vec3 p3 = fract(vec3(p.xyx) * 0.1031);
+  p3 += dot(p3, p3.yzx + 33.33);
+  return fract((p3.x + p3.y) * p3.z);
+}
+
+float noise2D(vec2 p) {
+  vec2 i = floor(p);
+  vec2 f = fract(p);
+  vec2 u = f * f * (3.0 - 2.0 * f);
+  float a = hash12(i);
+  float b = hash12(i + vec2(1.0, 0.0));
+  float c = hash12(i + vec2(0.0, 1.0));
+  float d = hash12(i + vec2(1.0, 1.0));
+  return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);
+}
+
+// Seamless periodic noise around 0..2PI circle via 2D circle embedding
+float periodicFiberNoise(float angle, float freq, float radialCoord, float seed) {
+  vec2 circlePos = vec2(cos(angle), sin(angle)) * freq;
+  return noise2D(circlePos + vec2(radialCoord * 2.2 + seed, seed * 1.7 - radialCoord * 1.8));
+}
+
+float periodicFiberFbm(float angle, float freq, float radialCoord, float seed) {
+  float v = 0.0;
+  float amp = 0.52;
+  float f = freq;
+  for (int i = 0; i < 4; i++) {
+    vec2 cp = vec2(cos(angle), sin(angle)) * f;
+    v += amp * noise2D(cp + vec2(radialCoord * (1.7 + float(i) * 0.85) + seed, seed * 2.1));
+    f *= 2.04;
+    amp *= 0.48;
   }
-  function fbm3(x, y, z, oct = 3) {
-    let amp = 0.5, f = 1, sum = 0, norm = 0;
-    for (let i = 0; i < oct; i++) {
-      sum += amp * noise3(x * f, y * f, z * f);
-      norm += amp;
-      amp *= 0.5;
-      f *= 2.03;
+  return v;
+}
+
+// Anamorphic starburst flare matching the reference's blazing crimson-gold upper-rim highlight
+vec3 computeStarburst(vec2 uvDelta, float intensity, float warmth) {
+  // Primary spike tilted ~65 degrees (shooting far up-right into the red aura & grazing down-left onto iris)
+  float angMain = 1.135;
+  vec2 dir1 = vec2(cos(angMain), sin(angMain));
+  vec2 dir2 = vec2(-sin(angMain), cos(angMain));
+
+  vec2 q = vec2(dot(uvDelta, dir1), dot(uvDelta, dir2));
+  float dist = length(uvDelta);
+
+  // Blazing pinpoint white core + soft warm halo
+  float core = exp(-dist * 38.0) * 1.65 + exp(-dist * 12.5) * 0.56;
+
+  // Long needle-sharp primary spike (extended tail shooting upward-right!)
+  float upRightReach = mix(0.55, 1.65, smoothstep(-0.12, 0.32, q.x));
+  float ray1Width = 0.0022 + abs(q.x) * 0.013;
+  float ray1 = exp(-abs(q.y) / ray1Width) * exp(-abs(q.x) * (2.05 / upRightReach));
+
+  // Crisp perpendicular cross-spike
+  float ray2Width = 0.0026 + abs(q.y) * 0.020;
+  float ray2 = exp(-abs(q.x) / ray2Width) * exp(-abs(q.y) * 4.6) * 0.84;
+
+  // Secondary subtle studio diffraction glints
+  float angSub = angMain + 0.54;
+  vec2 dSub = vec2(cos(angSub), sin(angSub));
+  vec2 dSubP = vec2(-dSub.y, dSub.x);
+  vec2 qSub = vec2(dot(uvDelta, dSub), dot(uvDelta, dSubP));
+  float ray3 = exp(-abs(qSub.y) / (0.0032 + abs(qSub.x) * 0.028)) * exp(-abs(qSub.x) * 7.8) * 0.36;
+
+  // Twin parallel corneal reflection filaments grazing down-left onto the iris rim (signature detail in reference!)
+  float twinFilament = exp(-abs(q.y - 0.0085) / (0.0018 + abs(q.x) * 0.012)) *
+                       smoothstep(0.01, -0.09, q.x) * exp(-abs(q.x) * 10.5) * 0.62;
+
+  // Color gradient along spikes: pure white center -> golden apricot -> fiery crimson-red needle tip
+  vec3 cCore = vec3(1.00, 0.99, 0.96);
+  vec3 cMid  = vec3(1.00, 0.68, 0.30);
+  vec3 cTail = mix(vec3(0.95, 0.11, 0.04), vec3(1.00, 0.34, 0.10), warmth * 0.55);
+
+  float tailFactor = smoothstep(0.025, 0.32, dist);
+  vec3 rayColor = mix(cMid, cTail, tailFactor);
+  rayColor = mix(cCore, rayColor, smoothstep(0.0, 0.068, dist));
+
+  vec3 total = cCore * core + rayColor * (ray1 * 1.42 + ray2 + ray3 + twinFilament);
+  return total * intensity;
+}
+
+void main() {
+  // Normalized aspect-corrected coordinates centered slightly below midpoint for tall starburst headroom
+  float minDim = min(uResolution.x, uResolution.y);
+  float isPortrait = step(uResolution.x, uResolution.y);
+  vec2 centerOffset = vec2(0.0, mix(-0.036, -0.028, isPortrait));
+  vec2 p = (gl_FragCoord.xy - 0.5 * uResolution.xy) / minDim - centerOffset;
+
+  // Adaptive scale matching the vertical reference composition on portrait & breathing cleanly on desktop
+  float baseScale = mix(0.292, 0.352, isPortrait);
+  float eyeRadiusScreen = baseScale * uMacroZoom;
+  vec2 q = p / eyeRadiusScreen; // Eyeball sphere radius = 1.0 in q-space
+
+  // Tactile analog airbrush / macro film grain
+  vec2 grainSeed = gl_FragCoord.xy + floor(uTime * 24.0) * vec2(19.3, 47.1);
+  float liveGrain = hash12(grainSeed) - 0.5;
+  float paperGrain = hash12(gl_FragCoord.xy * 0.9 + 13.7) - 0.5;
+  float grain = liveGrain * 0.38 + paperGrain * 0.62;
+
+  // =========================================================================
+  // 1. RETRO-AIRBRUSH DUAL HALO ATMOSPHERE (GRAINY ORANGE TOP / CYAN BOTTOM)
+  // =========================================================================
+  vec3 bgVoid = vec3(0.076, 0.050, 0.086);
+
+  vec2 auraShift = vec2(uGaze.x * 0.16, uGaze.y * 0.14);
+
+  // Upper fiery orange-crimson diffused corona
+  vec2 topCenter = vec2(0.02, 0.36) + auraShift * 0.55;
+  vec2 dTop = (q - topCenter) * vec2(0.74, 0.85);
+  float topDist = length(dTop);
+  float topGlow = exp(-topDist * topDist * 1.15);
+
+  // Bright eclipse crescent hugging the upper rim of the sphere (just like reference!)
+  float upperCrescent = exp(-pow(max(0.0, length(q - vec2(0.0, 0.07)) - 0.90), 2.0) * 9.0) *
+                        smoothstep(-0.25, 0.80, q.y);
+
+  vec3 fieryRed  = vec3(0.75, 0.15, 0.05);
+  vec3 fieryGold = vec3(1.00, 0.56, 0.17);
+  vec3 topAuraCol = mix(fieryRed, fieryGold, smoothstep(0.16, 0.88, topGlow + upperCrescent * 0.5));
+  float topStrength = (0.94 + 0.18 * uCuriosity + 0.14 * uWonder) * (topGlow * 0.92 + upperCrescent * 0.62);
+
+  // Lower atmospheric cyan-teal-ochre glow
+  vec2 botCenter = vec2(-0.02, -0.48) + auraShift * 0.45;
+  vec2 dBot = (q - botCenter) * vec2(0.70, 0.82);
+  float botDist = length(dBot);
+  float botGlow = exp(-botDist * botDist * 1.02) * smoothstep(0.50, -0.35, q.y);
+
+  // Warm muted amber-olive transition right beneath the lower sphere edge
+  float underRimAmber = exp(-pow(length(q - vec2(0.0, -0.94)), 2.0) * 3.6) * smoothstep(-0.35, -1.35, q.y);
+
+  vec3 tealDeep   = vec3(0.08, 0.35, 0.41);
+  vec3 tealLumen  = vec3(0.24, 0.72, 0.76);
+  vec3 ochreUnder = vec3(0.46, 0.44, 0.21);
+  vec3 botAuraCol = mix(tealDeep, tealLumen, smoothstep(0.14, 0.80, botGlow));
+  botAuraCol = mix(botAuraCol, ochreUnder, clamp(underRimAmber * 0.62, 0.0, 0.62));
+  float botStrength = (0.88 + 0.24 * uUncertainty) * botGlow;
+
+  vec3 bgCol = bgVoid + topAuraCol * topStrength + botAuraCol * botStrength;
+
+  // Authentic stippled airbrush noise across the mid-tone gradients
+  float haloDensity = clamp(topStrength + botStrength, 0.0, 1.25);
+  bgCol += grain * (0.044 + 0.088 * haloDensity);
+
+  // =========================================================================
+  // 2. TRUE ORTHONORMAL 3D OCULAR GLOBE & RAISED CORNEAL REFRACTION
+  // =========================================================================
+  float r2 = dot(q, q);
+  float rGlobe = sqrt(r2);
+  vec3 finalColor = bgCol;
+
+  // Subtle rim aura scattering right outside r = 1.0
+  float rimScatter = exp(-abs(rGlobe - 1.0) * 11.5);
+  vec3 rimScatterCol = mix(vec3(0.26, 0.58, 0.62), vec3(1.0, 0.50, 0.15), smoothstep(-0.65, 0.65, q.y));
+  finalColor += rimScatterCol * rimScatter * 0.20;
+
+  if (r2 < 1.0) {
+    float zFront = sqrt(max(0.0, 1.0 - r2));
+    vec3 worldPos = vec3(q.x, q.y, zFront);
+
+    // Construct exact orthonormal 3D Eye Anatomical Basis (looking toward +uGaze.x right, +uGaze.y up)
+    vec3 eyeForward = normalize(vec3(
+      sin(uGaze.x) * cos(uGaze.y),
+      sin(uGaze.y),
+      cos(uGaze.x) * cos(uGaze.y)
+    ));
+    vec3 eyeRight0 = normalize(cross(vec3(0.0, 1.0, 0.0), eyeForward));
+    vec3 eyeUp0 = cross(eyeForward, eyeRight0);
+
+    float ct = cos(uTorsion), st = sin(uTorsion);
+    vec3 eyeRight = eyeRight0 * ct + eyeUp0 * st;
+    vec3 eyeUp    = -eyeRight0 * st + eyeUp0 * ct;
+
+    // Express surface point & camera ray in the Eye's local anatomical space
+    vec3 localSurface = vec3(
+      dot(worldPos, eyeRight),
+      dot(worldPos, eyeUp),
+      dot(worldPos, eyeForward)
+    );
+    vec3 worldView = vec3(0.0, 0.0, -1.0);
+    vec3 localView = vec3(
+      dot(worldView, eyeRight),
+      dot(worldView, eyeUp),
+      dot(worldView, eyeForward)
+    );
+
+    // Subtle raised corneal cabochon bulge over the iris dome (r_local < 0.86)
+    float localRad2D = length(localSurface.xy);
+    float corneaDomeMask = smoothstep(0.90, 0.20, localRad2D);
+    vec3 corneaNormalLocal = normalize(vec3(
+      localSurface.xy * (1.0 + 0.22 * corneaDomeMask),
+      max(0.05, localSurface.z)
+    ));
+
+    // Snell's law refraction through wet tear film + cornea + aqueous humor (IOR = 1.376)
+    vec3 refractedLocal = refract(localView, corneaNormalLocal, 1.0 / 1.376);
+
+    // Concave anterior chamber depth: recessed pupil & gently cupped iris cone give true 3D parallax!
+    float chamberDepth = 0.125 + 0.065 * (1.0 - clamp(localRad2D / 0.86, 0.0, 1.0));
+    vec3 irisHit3D = localSurface + refractedLocal * (chamberDepth / max(0.30, -refractedLocal.z));
+    vec2 irisP = irisHit3D.xy;
+
+    // Post-saccadic aqueous fluid wobble (iridodonesis \u2014 subtle liquid shimmer of iris tissue!)
+    float wobbleFalloff = smoothstep(0.90, 0.16, length(irisP));
+    float wobbleAng = uFluidWobble * 0.052 * wobbleFalloff;
+    float wc = cos(wobbleAng), ws = sin(wobbleAng);
+    irisP = mat2(wc, -ws, ws, wc) * irisP;
+    irisP += vec2(uFluidWobble * 0.007, -uFluidWobble * 0.005) * wobbleFalloff;
+
+    // =======================================================================
+    // 3. FLOW-ADVECTED LOWER-LEFT DOUBLE S-RIBBON FOLD & IRIS ANATOMY
+    // =======================================================================
+    // Sculpting the iconic lower-left serpentine silk wave from the reference artwork:
+    // Lobe 1 (8:00-9:00): upper-left lavender/mint curl tucking over a deep dark teal cleft
+    // Lobe 2 (6:30-7:30): luminous pastel rose-pink ribbon sweeping out over glacier cyan!
+    float vortexBreath = 1.0 + 0.07 * sin(uTime * 1.3 + uCuriosity * 1.8);
+
+    vec2 cleftPos = vec2(-0.63, -0.37);
+    float cleftIndentation = exp(-dot(irisP - cleftPos, irisP - cleftPos) * 15.0);
+
+    vec2 lowerNotchPos = vec2(-0.36, -0.68);
+    float lowerNotch = exp(-dot(irisP - lowerNotchPos, irisP - lowerNotchPos) * 16.0);
+
+    vec2 foldCenter = vec2(-0.34, -0.52);
+    float foldMask = exp(-dot(irisP - foldCenter, irisP - foldCenter) * 6.8);
+
+    vec2 upperCurlCenter = vec2(-0.58, -0.20);
+    float upperCurlMask = exp(-dot(irisP - upperCurlCenter, irisP - upperCurlCenter) * 7.8);
+
+    // Subtle organic pupil eccentricity (sphincter tension asymmetry)
+    vec2 pupilSpaceP = irisP + uPupilEcc * smoothstep(0.68, 0.14, length(irisP));
+    float rad = length(pupilSpaceP);
+    float theta = atan(pupilSpaceP.y, pupilSpaceP.x);
+
+    // Feathery, brush-tufted outer ciliary margin (matching the ragged outer bristles in the reference!)
+    float bristlesFine   = periodicFiberNoise(theta, 84.0, 0.88, 4.1);
+    float bristlesMedium = periodicFiberNoise(theta, 38.0, 0.72, 11.7);
+    float bristlesMacro  = periodicFiberFbm(theta, 12.0, 0.50, 19.3);
+    float tuftOutliers   = pow(periodicFiberNoise(theta, 48.0, 0.94, 27.5), 4.0) * 0.048;
+
+    float irisOuterR = 0.852
+      + (bristlesFine - 0.5) * 0.028
+      + (bristlesMedium - 0.5) * 0.026
+      + (bristlesMacro - 0.5) * 0.040
+      + tuftOutliers
+      - cleftIndentation * 0.165
+      - lowerNotch * 0.075;
+
+    // Microscopic fibrous pupillary ruff spikes pulling into the Vantablack pupil core!
+    float pupilSpikesFine = (periodicFiberNoise(theta, 115.0, 0.12, 33.1) - 0.5) * 0.017;
+    float pupilWave       = (periodicFiberNoise(theta, 10.0, uTime * 0.18, 7.4) - 0.5) * (0.009 + 0.016 * uUncertainty);
+    float pupilR = uPupilRadius + pupilSpikesFine + pupilWave;
+
+    // Elastic radial iris coordinate u: 0.0 at pupil margin -> 1.0 at outer ciliary bristles!
+    // As uPupilRadius dilates & constricts, u physically compresses & stretches all stroma fibers!
+    float uRaw = (rad - pupilR) / max(0.11, irisOuterR - pupilR);
+
+    // Liquid radial ripple wave propagating outward on focus/startle/wonder impulses
+    float ripple = sin((uRaw - uRipplePhase * 0.46) * 22.0) *
+                   exp(-abs(uRaw - uRipplePhase * 0.46) * 5.2) *
+                   uRippleAmp * 0.046;
+    float u = clamp(uRaw + ripple, 0.0, 1.25);
+
+    // Accordion fiber buckling when pupil dilates wide ("curious mydriasis") vs taut straight pull when constricted!
+    float dilationAmount = smoothstep(0.17, 0.50, uPupilRadius);
+    float buckle = sin(u * PI * 2.4 + periodicFiberNoise(theta, 7.0, u, 2.8) * 3.2)
+                   * (0.015 + 0.048 * dilationAmount);
+
+    // Tangential silk-ribbon flow warp in the lower-left S-fold so individual strands visibly curl!
+    float silkSwirl =
+      foldMask * 0.56 * sin((u - 0.42) * 5.0) * vortexBreath -
+      upperCurlMask * 0.42 * cos((u - 0.25) * 4.2) * vortexBreath;
+
+    float fiberTheta = theta + buckle + silkSwirl;
+
+    // =======================================================================
+    // 4. MULTI-SCALE MACRO IRIS FIBERS, CRYPTS & SILK STRAND SPECULARITY
+    // =======================================================================
+    float fHair   = periodicFiberNoise(fiberTheta, 175.0, u * 0.30, 1.9);
+    float fFine   = periodicFiberNoise(fiberTheta, 88.0,  u * 0.48, 8.4);
+    float fBundled = periodicFiberNoise(fiberTheta, 36.0, u * 0.70, 16.2);
+    float fMacro  = periodicFiberFbm(fiberTheta,   16.0,  u * 0.85, 24.7);
+
+    float tensionBoost = mix(0.88, 1.36, uStromaTension);
+    float fiberRelief = fHair * 0.38 + fFine * 0.30 + fBundled * 0.18 + fMacro * 0.14;
+    fiberRelief = clamp((fiberRelief - 0.5) * tensionBoost + 0.5, 0.0, 1.0);
+
+    // Crypts of Fuchs (deep organic openings around the inner collarette u ~ 0.15..0.36)
+    float cryptEnvelope = exp(-pow((u - 0.24) / 0.105, 2.0));
+    float cryptCell = periodicFiberNoise(fiberTheta * 1.01, 29.0, u * 4.4, 41.0) *
+                      periodicFiberNoise(fiberTheta * 0.99 + 0.04, 23.0, u * 3.7, 53.0);
+    float cryptDepth = smoothstep(0.45, 0.13, cryptCell) * cryptEnvelope * 0.72;
+
+    // Concentric contraction furrows (delicate iridescent wave-rings when dilated)
+    float furrowWave = sin(u * 25.0 + fMacro * 4.5) * 0.5 + 0.5;
+    float furrows = pow(furrowWave, 4.2) * smoothstep(0.34, 0.86, u) * (0.07 + 0.17 * dilationAmount);
+
+    // Micro-silk collagen sheen glints
+    float silkGlint = pow(fiberRelief, 5.5) * (0.14 + 0.12 * uWonder);
+
+    // =======================================================================
+    // 5. EXACT IRIDESCENT CHROMATIC PALETTE (1:1 TRIBUTE TO REFERENCE IMAGE)
+    // =======================================================================
+    float bottomSector = smoothstep(0.22, -0.82, sin(theta));
+    float leftSector   = smoothstep(0.18, -0.78, cos(theta));
+    float upperArc     = smoothstep(-0.25, 0.75, sin(theta + 0.35));
+
+    float iridShift = periodicFiberFbm(fiberTheta, 5.0, u * 1.35 - uTime * 0.045, 71.4);
+
+    // Inner Pupillary Ruff -> Blazing Burnt-Crimson & Fiery Tangerine Corona (u: 0.0 -> 0.27)
+    vec3 colAbyssRuff  = vec3(0.09, 0.012, 0.010);
+    vec3 colMahogany   = vec3(0.54, 0.075, 0.018);
+    vec3 colVermilion  = vec3(0.88, 0.23, 0.03);
+    vec3 colTangerine  = vec3(1.00, 0.55, 0.13);
+
+    vec3 innerCorona = mix(colVermilion, colTangerine, clamp(fiberRelief * 1.18, 0.0, 1.0));
+    innerCorona = mix(colAbyssRuff, innerCorona, smoothstep(0.0, 0.09, u));
+    innerCorona = mix(innerCorona, colMahogany, cryptDepth * 0.80);
+
+    // Signature Chartreuse-Lime / Electric Gold Collarette Ring (u ~ 0.265)
+    float collaretteRidge = exp(-pow((u - (0.265 + (fMacro - 0.5) * 0.052)) / 0.034, 2.0));
+    vec3 colChartreuse = mix(vec3(0.96, 0.89, 0.26), vec3(0.68, 0.98, 0.46), leftSector);
+
+    // Pearlescent Cream, Rose-Peach, Orchid-Magenta & Glacier-Cyan Outer Stroma
+    vec3 pearlWhite   = vec3(1.00, 0.94, 0.91);
+    vec3 roseBlush    = vec3(1.00, 0.75, 0.71);
+    vec3 orchidViolet = vec3(0.91, 0.56, 0.97);
+    vec3 mintOpal     = vec3(0.55, 0.97, 0.90);
+    vec3 glacierCyan  = vec3(0.19, 0.83, 0.93);
+    vec3 cobaltTeal   = vec3(0.05, 0.46, 0.67);
+    vec3 coralFringe  = vec3(1.00, 0.55, 0.26);
+
+    vec3 stroma = mix(roseBlush, pearlWhite, smoothstep(0.24, 0.76, fiberRelief));
+
+    // Holographic orchid-magenta arc across upper & right outer stroma (u ~ 0.66..0.88)
+    float orchidArc = exp(-pow((u - 0.76 + (iridShift - 0.5) * 0.11) / 0.105, 2.0)) * (0.42 + 0.58 * upperArc);
+    stroma = mix(stroma, orchidViolet, clamp(orchidArc * 0.80, 0.0, 0.86));
+
+    // Iridescent mint-aqua curve along the left side (9..11 o'clock)
+    float mintArc = leftSector * (1.0 - bottomSector * 0.52) * exp(-pow((u - 0.60) / 0.22, 2.0));
+    stroma = mix(stroma, mintOpal, clamp(mintArc * (0.58 + 0.34 * iridShift), 0.0, 0.84));
+
+    // Luminous glacier-cyan & deep turquoise across the bottom hemisphere
+    vec3 cyanBlend = mix(cobaltTeal, glacierCyan, smoothstep(0.16, 0.78, fiberRelief + iridShift * 0.24));
+    cyanBlend = mix(cyanBlend, pearlWhite, smoothstep(0.66, 0.30, u) * 0.46);
+    stroma = mix(stroma, cyanBlend, clamp(bottomSector * smoothstep(0.25, 0.66, u) * 1.10, 0.0, 0.95));
+
+    // Sculpting the Lower-Left Pastel Pink Silk Ribbon Crest & Deep Turquoise Shadow Trough
+    float ribbonWave = (irisP.y + 0.49) * 6.6 + sin((irisP.x + 0.34) * 6.4) * 1.38;
+    float pinkSilkCrest = exp(-pow(ribbonWave - 0.36, 2.0) * 1.45) * foldMask;
+    float deepCyanTrough = exp(-pow(ribbonWave + 0.92, 2.0) * 1.25) * foldMask;
+    float upperLeftHook = exp(-pow(length(irisP - vec2(-0.59, -0.25)) / 0.165, 2.0));
+
+    vec3 silkPinkCol = mix(vec3(1.00, 0.71, 0.80), vec3(1.00, 0.92, 0.91), fiberRelief);
+    stroma = mix(stroma, vec3(0.04, 0.36, 0.53), clamp(deepCyanTrough * 0.85, 0.0, 0.85));
+    stroma = mix(stroma, silkPinkCol, clamp(pinkSilkCrest * 1.18 + upperLeftHook * 0.68, 0.0, 0.95));
+
+    // Coral-apricot & electric cyan bristle tips right at the frayed outer ciliary edge
+    float bristleTipZone = smoothstep(0.84, 0.99, u);
+    vec3 bristleTipCol = mix(coralFringe, vec3(0.18, 0.87, 0.95), bottomSector * 0.68);
+    stroma = mix(stroma, bristleTipCol, bristleTipZone * 0.70);
+
+    // Seamlessly blend Inner Fiery Corona -> Chartreuse Collarette -> Opalescent Stroma
+    vec3 irisColor = mix(innerCorona, stroma, smoothstep(0.20, 0.34, u));
+    irisColor = mix(irisColor, colChartreuse, clamp(collaretteRidge * (0.50 + 0.36 * fiberRelief), 0.0, 0.74));
+
+    // Apply micro-fibrous relief shading, silk specular glints & contraction furrows
+    irisColor *= (0.74 + 0.46 * fiberRelief);
+    irisColor += vec3(1.0, 0.96, 0.97) * (furrows + silkGlint);
+
+    // Emotional chromatic modulation (Curiosity/Wonder warm luminescence vs Uncertainty cool crystalline tension)
+    irisColor *= (0.95 + 0.14 * uWonder + 0.09 * uCuriosity);
+    irisColor = mix(irisColor, irisColor * vec3(0.91, 0.99, 1.07), uUncertainty * 0.30);
+
+    // 3D Corneal Caustic Lighting (refracted light focusing across the opposite concave iris slope!)
+    vec3 lightDir = normalize(vec3(0.22, 0.72, 0.66));
+    float caustic = clamp(dot(normalize(vec3(-irisP.x, -irisP.y, 0.62)), lightDir), 0.0, 1.0);
+    irisColor *= (0.85 + 0.32 * pow(caustic, 2.0));
+
+    // =======================================================================
+    // 6. VELVETY ABYSSAL PUPIL & DARK OBSIDIAN GLASSY ORB COMPOSITING
+    // =======================================================================
+    // Feathered micro-fibrous pupil edge into Vantablack abyss
+    float pupilAlpha = smoothstep(pupilR - 0.007, pupilR + 0.011, rad);
+    vec3 pupilAbyss = vec3(0.006, 0.003, 0.008);
+
+    // Inside the 8 o'clock cleft & top notches, delicate electric cyan brush wisps trail into the dark orb!
+    float cleftCyanWisps = periodicFiberNoise(theta, 98.0, rad, 91.2) * exp(-max(0.0, rad - irisOuterR) * 17.0);
+    float topCyanTufts = exp(-pow(theta - 1.48, 2.0) * 18.0) * exp(-max(0.0, rad - irisOuterR) * 26.0);
+    vec3 darkLimbalOrb = vec3(0.052, 0.030, 0.048)
+                       + vec3(0.06, 0.42, 0.50) * cleftCyanWisps * cleftIndentation * 1.6
+                       + vec3(0.12, 0.72, 0.76) * topCyanTufts * bristlesFine * 0.85;
+
+    float irisOuterMask = 1.0 - smoothstep(irisOuterR - 0.013, irisOuterR + 0.015, rad);
+
+    vec3 globeColor = mix(pupilAbyss, irisColor, pupilAlpha);
+    globeColor = mix(darkLimbalOrb, globeColor, irisOuterMask);
+
+    // Subtle limbal ambient occlusion ring inside the glass sphere
+    globeColor *= 1.0 - 0.18 * smoothstep(0.80, 0.95, rGlobe);
+
+    // =======================================================================
+    // 7. WET CORNEAL OPTICS, WARM AMBER GLASS RIM & INTERACTIVE CATCHLIGHTS
+    // =======================================================================
+    float fresnel = pow(1.0 - max(0.0, worldPos.z), 3.3);
+
+    // Warm copper-amber translucent rim around the dark obsidian sphere (matching reference!)
+    vec3 rimAmberTop = vec3(0.98, 0.50, 0.15);
+    vec3 rimAmberBot = vec3(0.60, 0.38, 0.16);
+    vec3 orbRimGlow  = mix(rimAmberBot, rimAmberTop, smoothstep(-0.8, 0.8, q.y));
+    globeColor += orbRimGlow * fresnel * 0.74;
+
+    float outerGlassEdge = smoothstep(0.964, 0.996, rGlobe);
+    globeColor = mix(globeColor, orbRimGlow * 0.86, outerGlassEdge * 0.50);
+
+    // Subtle upper fiery & lower cyan wet corneal sky reflections
+    globeColor += vec3(1.0, 0.60, 0.36) * smoothstep(0.18, 0.94, worldPos.y) * (1.0 - zFront) * 0.17;
+    globeColor += vec3(0.20, 0.76, 0.84) * smoothstep(-0.22, -0.94, worldPos.y) * (1.0 - zFront) * 0.13;
+
+    // Interactive luminous spark catchlight on the wet cornea when user interacts!
+    if (uFocusGlow > 0.005) {
+      vec2 specPos = uFocusPoint * 0.36 + uGaze * 0.24;
+      float dSpec = length(q - specPos);
+      float sparkCatch = exp(-dSpec * 28.0) * uFocusGlow * 0.70 + exp(-dSpec * 9.0) * uFocusGlow * 0.16;
+      globeColor += vec3(1.0, 0.93, 0.84) * sparkCatch;
     }
-    return sum / norm;
+
+    // Living wet tear-film meniscus shimmer sweeping delicately across the cornea
+    if (uTearWave > -1.1 && uTearWave < 1.3) {
+      float tearY = q.y - (1.0 - (uTearWave + 1.0) * 1.05);
+      float tearMeniscus = exp(-tearY * tearY * 95.0) * (0.14 + 0.08 * zFront);
+      globeColor += vec3(0.96, 0.97, 1.0) * tearMeniscus;
+    }
+
+    // Cohesive micro-grain across dark shadows
+    globeColor += grain * 0.022;
+
+    float sphereAA = 1.0 - smoothstep(0.991, 1.002, rGlobe);
+    finalColor = mix(finalColor, globeColor, sphereAA);
   }
 
-  // src/practice-eye/iris.ts
-  var clamp01 = (x) => x < 0 ? 0 : x > 1 ? 1 : x;
-  var smooth = (a, b, x) => {
-    const t = clamp01((x - a) / (b - a));
-    return t * t * (3 - 2 * t);
-  };
-  var mix = (a, b, t) => [
-    a[0] + (b[0] - a[0]) * t,
-    a[1] + (b[1] - a[1]) * t,
-    a[2] + (b[2] - a[2]) * t
-  ];
-  var PAL = [
-    { at: 0, c: [0, 255, 255] },
-    { at: 0.18, c: [40, 255, 220] },
-    { at: 0.36, c: [255, 255, 255] },
-    { at: 0.52, c: [255, 55, 190] },
-    { at: 0.72, c: [190, 80, 255] },
-    { at: 1, c: [255, 140, 40] }
-  ];
-  function pal(v) {
-    v = clamp01(v);
-    for (let i = 1; i < PAL.length; i++) {
-      if (v <= PAL[i].at) {
-        const a = PAL[i - 1], b = PAL[i];
-        return mix(a.c, b.c, (v - a.at) / (b.at - a.at));
+  // =========================================================================
+  // 8. THE SIGNATURE UPPER-RIM ANAMORPHIC CRIMSON-GOLD STARBURST FLARE
+  // =========================================================================
+  // Sits right at the upper-right crest of the dark amber rim (~12:35 o'clock: q ~ (0.135, 0.985))
+  // and glides subtly with corneal curvature as the sentient eye looks & trembles!
+  vec2 starAnchor = vec2(0.135, 0.985) + vec2(uGaze.x * 0.12, uGaze.y * 0.09);
+  vec2 starDelta = (q - starAnchor) * 0.42;
+  finalColor += computeStarburst(starDelta, uStarburst, uCuriosity);
+
+  // Soft filmic highlight rolloff preserving deep Vantablack pupil & rich neon-pastel iridescence
+  finalColor = max(finalColor, vec3(0.0));
+  finalColor = finalColor / (1.0 + finalColor * 0.15);
+  finalColor = pow(finalColor, vec3(0.96));
+
+  gl_FragColor = vec4(finalColor, 1.0);
+}
+`;
+
+  // src/practice-eye/living/ocularMind.ts
+  var OcularMindEngine = class {
+    time = 0;
+    preset = "autonomous";
+    // Autonomous narrative state
+    phase = "curious_search";
+    phaseTimer = 0;
+    phaseDuration = 4.2;
+    saccadeTimer = 0;
+    nextSaccadeInterval = 0.85;
+    // Target & physical gaze kinematics
+    targetGazeX = 0.04;
+    targetGazeY = 0.03;
+    gazeX = 0;
+    gazeY = 0;
+    gazeVelX = 0;
+    gazeVelY = 0;
+    // Micro-inspection offset around point of interest
+    microOffsetX = 0;
+    microOffsetY = 0;
+    // Torsional rotation
+    irisTorsion = 0;
+    irisTorsionVel = 0;
+    // Pupil biomechanics
+    pupilRadius = 0.31;
+    targetPupilRadius = 0.33;
+    pupilVelocity = 0;
+    // Post-saccadic aqueous wobble (iridodonesis) & ripples
+    wobblePos = 0;
+    wobbleVel = 0;
+    ripplePhase = 0;
+    rippleAmp = 0;
+    // Emotional state variables (smoothly interpolated 0..1)
+    curiosity = 0.68;
+    uncertainty = 0.28;
+    wonder = 0.22;
+    startle = 0;
+    trust = 0.45;
+    // Camera / presence proximity
+    userZoomOffset = 0;
+    macroZoom = 1;
+    // Tear film shimmer
+    tearTimer = 6.5;
+    tearWaveProgress = -1.5;
+    // Pointer tracking
+    pointer = {
+      x: 0,
+      y: 0,
+      vx: 0,
+      vy: 0,
+      speed: 0,
+      jerk: 0,
+      active: false,
+      lastMoveTime: -10,
+      isPressed: false,
+      pressDuration: 0,
+      dwellTime: 0
+    };
+    // Hesitation / shy look-away vector during high uncertainty
+    shyOffsetX = 0;
+    shyOffsetY = 0;
+    isHesitatingAway = false;
+    // Callback hook for optional sound triggers on saccades / ripples
+    onSaccade;
+    onRipple;
+    setPreset(preset) {
+      this.preset = preset;
+      if (preset === "curious") {
+        this.transitionPhase("curious_search");
+      } else if (preset === "uncertain") {
+        this.transitionPhase("uncertain_hesitation");
+      } else if (preset === "wonder") {
+        this.transitionPhase("deep_wonder");
+      }
+      this.triggerMicroSaccade(0.18);
+    }
+    getPreset() {
+      return this.preset;
+    }
+    onPointerMove(nx, ny, dt) {
+      const safeDt = Math.max(dt, 4e-3);
+      const nvx = (nx - this.pointer.x) / safeDt;
+      const nvy = (ny - this.pointer.y) / safeDt;
+      const newSpeed = Math.hypot(nvx, nvy);
+      const accel = Math.abs(newSpeed - this.pointer.speed) / safeDt;
+      this.pointer.x = nx;
+      this.pointer.y = ny;
+      this.pointer.vx = nvx;
+      this.pointer.vy = nvy;
+      this.pointer.speed = this.pointer.speed * 0.6 + newSpeed * 0.4;
+      this.pointer.jerk = this.pointer.jerk * 0.7 + accel * 0.3;
+      this.pointer.active = true;
+      this.pointer.lastMoveTime = this.time;
+      if (newSpeed > 4.8 && accel > 38 && this.startle < 0.45) {
+        this.startle = Math.min(1, this.startle + 0.65);
+        this.uncertainty = Math.min(1, this.uncertainty + 0.42);
+        this.trust = Math.max(0.05, this.trust - 0.25);
+        this.wobbleVel += (Math.random() > 0.5 ? 1 : -1) * 5.5;
+        if (Math.random() < 0.65) {
+          this.isHesitatingAway = true;
+          const angle = Math.atan2(-ny, -nx) + (Math.random() - 0.5) * 1.3;
+          this.shyOffsetX = Math.cos(angle) * 0.28;
+          this.shyOffsetY = Math.sin(angle) * 0.24;
+        }
+        this.onSaccade?.(0.55, this.curiosity, this.uncertainty);
       }
     }
-    return PAL[PAL.length - 1].c;
-  }
-  function makeIrisTexture(size, kind) {
-    const cv = document.createElement("canvas");
-    cv.width = cv.height = size;
-    const ctx = cv.getContext("2d");
-    const img = ctx.createImageData(size, size);
-    const d = img.data;
-    const c = size / 2;
-    const seed = kind === 0 ? 0 : 41;
-    for (let y = 0; y < size; y++) {
-      for (let x = 0; x < size; x++) {
-        const u = (x + 0.5 - c) / c;
-        const v = (y + 0.5 - c) / c;
-        const r = Math.hypot(u, v);
-        const idx = (y * size + x) * 4;
-        if (r > 1) continue;
-        const th = Math.atan2(v, u);
-        const ct = Math.cos(th), st = Math.sin(th);
-        const edge = 0.92 + 0.07 * (noise3(ct * 7 + seed, st * 7, 1) - 0.5) * 2 + 0.045 * (noise3(ct * 70 + seed, st * 70, 9) - 0.5) * 2 + 0.02 * (noise3(ct * 160, st * 160, 3) - 0.5) * 2;
-        const edgeA = clamp01((edge - r) / 0.012);
-        if (edgeA <= 0) continue;
-        const s1 = noise3(ct * 55 + seed, st * 55, r * 2.5);
-        const s2 = noise3(ct * 140 + seed, st * 140, r * 1.2 + 5);
-        if (kind === 0) {
-          const warp = (noise3(ct * 0.9 + 11, st * 0.9, r * 2) - 0.5) * 1.3;
-          const phi = th - 3.3 * Math.pow(r, 1.25) + warp;
-          let val = fbm3(Math.cos(phi) * 1.35, Math.sin(phi) * 1.35, r * 2.4, 3);
-          val = clamp01((val - 0.5) * 2 + 0.5);
-          let col = pal(val);
-          const bright = (1.22 + 0.4 * s1) * (1.02 + 0.22 * s2);
-          col = [col[0] * bright, col[1] * bright, col[2] * bright];
-          const sky = mix([255, 48, 18], [0, 210, 195], clamp01((v + 1) * 0.5));
-          col = mix(col, sky, 0.28);
-          const eo = 0.47 + 0.1 * (noise3(ct * 6, st * 6, 2) - 0.5) * 2 + 0.07 * (noise3(ct * 38, st * 38, 4) - 0.5) * 2;
-          const om = smooth(eo + 0.13, eo - 0.08, r);
-          let orange = mix([255, 182, 118], [205, 86, 34], smooth(0.5, 0.14, r));
-          orange = mix(orange, [96, 34, 16], smooth(0.22, 0.1, r));
-          const ob = 0.7 + 0.6 * s1;
-          orange = [orange[0] * ob, orange[1] * ob, orange[2] * ob];
-          const fin = mix(col, orange, om * 0.12);
-          d[idx] = Math.min(255, fin[0]);
-          d[idx + 1] = Math.min(255, fin[1]);
-          d[idx + 2] = Math.min(255, fin[2]);
-          d[idx + 3] = edgeA * 255;
+    onPointerDown(nx, ny) {
+      this.pointer.x = nx;
+      this.pointer.y = ny;
+      this.pointer.active = true;
+      this.pointer.lastMoveTime = this.time;
+      this.pointer.isPressed = true;
+      this.pointer.pressDuration = 0;
+      const distFromEyeCenter = Math.hypot(nx - this.gazeX * 0.5, ny - this.gazeY * 0.5);
+      if (distFromEyeCenter < 0.22) {
+        this.startle = Math.min(1, this.startle + 0.52);
+        this.pupilRadius = Math.max(0.15, this.pupilRadius - 0.045);
+        this.rippleAmp = 1;
+        this.ripplePhase = 0;
+        this.wobbleVel += 6.2;
+        this.onRipple?.(0.9);
+      } else {
+        this.rippleAmp = Math.max(this.rippleAmp, 0.55);
+        this.ripplePhase = 0;
+        this.isHesitatingAway = false;
+        this.onRipple?.(0.55);
+      }
+    }
+    onPointerUp() {
+      if (this.pointer.isPressed && this.pointer.pressDuration > 0.45) {
+        this.rippleAmp = Math.min(1, 0.45 + this.pointer.pressDuration * 0.25);
+        this.ripplePhase = 0;
+        this.wobbleVel += 3.2;
+        this.onRipple?.(0.7);
+      }
+      this.pointer.isPressed = false;
+      this.pointer.pressDuration = 0;
+    }
+    onPointerLeave() {
+      this.pointer.active = false;
+      this.pointer.isPressed = false;
+      this.pointer.pressDuration = 0;
+    }
+    onDoubleTap() {
+      this.tearWaveProgress = -1.1;
+      this.startle = Math.min(1, this.startle + 0.35);
+      this.wobbleVel += 4.5;
+      this.onSaccade?.(0.35, this.curiosity, this.uncertainty);
+    }
+    onWheelZoom(deltaY) {
+      this.userZoomOffset = Math.max(-0.18, Math.min(0.26, this.userZoomOffset - deltaY * 45e-5));
+    }
+    transitionPhase(next) {
+      this.phase = next;
+      this.phaseTimer = 0;
+      switch (next) {
+        case "curious_search":
+          this.phaseDuration = 4 + Math.random() * 3.5;
+          break;
+        case "uncertain_hesitation":
+          this.phaseDuration = 3.5 + Math.random() * 3;
+          break;
+        case "intimate_recognition":
+          this.phaseDuration = 3.2 + Math.random() * 2.4;
+          break;
+        case "anxious_scrutiny":
+          this.phaseDuration = 2.8 + Math.random() * 2.2;
+          break;
+        case "deep_wonder":
+          this.phaseDuration = 3.8 + Math.random() * 3;
+          break;
+      }
+    }
+    chooseNextAutonomousPhase() {
+      if (this.preset === "curious") {
+        this.transitionPhase(Math.random() < 0.78 ? "curious_search" : "intimate_recognition");
+        return;
+      }
+      if (this.preset === "uncertain") {
+        this.transitionPhase(Math.random() < 0.72 ? "uncertain_hesitation" : "anxious_scrutiny");
+        return;
+      }
+      if (this.preset === "wonder") {
+        this.transitionPhase(Math.random() < 0.75 ? "deep_wonder" : "intimate_recognition");
+        return;
+      }
+      const r = Math.random();
+      switch (this.phase) {
+        case "curious_search":
+          if (r < 0.36) this.transitionPhase("uncertain_hesitation");
+          else if (r < 0.68) this.transitionPhase("intimate_recognition");
+          else if (r < 0.86) this.transitionPhase("deep_wonder");
+          else this.transitionPhase("anxious_scrutiny");
+          break;
+        case "uncertain_hesitation":
+          if (r < 0.45) this.transitionPhase("curious_search");
+          else if (r < 0.75) this.transitionPhase("anxious_scrutiny");
+          else this.transitionPhase("intimate_recognition");
+          break;
+        case "intimate_recognition":
+          if (r < 0.42) this.transitionPhase("deep_wonder");
+          else if (r < 0.75) this.transitionPhase("curious_search");
+          else this.transitionPhase("uncertain_hesitation");
+          break;
+        case "anxious_scrutiny":
+          if (r < 0.55) this.transitionPhase("curious_search");
+          else if (r < 0.82) this.transitionPhase("intimate_recognition");
+          else this.transitionPhase("uncertain_hesitation");
+          break;
+        case "deep_wonder":
+          if (r < 0.48) this.transitionPhase("curious_search");
+          else if (r < 0.8) this.transitionPhase("uncertain_hesitation");
+          else this.transitionPhase("intimate_recognition");
+          break;
+      }
+    }
+    triggerMicroSaccade(scale) {
+      const angle = Math.random() * Math.PI * 2;
+      const rad = (0.25 + Math.random() * 0.75) * scale;
+      this.microOffsetX = Math.cos(angle) * rad;
+      this.microOffsetY = Math.sin(angle) * rad * 0.85;
+      this.wobbleVel += (Math.random() - 0.5) * 5 * Math.min(1, scale * 3);
+    }
+    step(rawDt) {
+      const dt = Math.min(Math.max(rawDt, 1e-3), 0.05);
+      this.time += dt;
+      const timeSinceMove = this.time - this.pointer.lastMoveTime;
+      if (timeSinceMove > 0.06) {
+        this.pointer.speed *= Math.exp(-8 * dt);
+        this.pointer.jerk *= Math.exp(-10 * dt);
+      }
+      const pointerRecentlyActive = this.pointer.active && (timeSinceMove < 3.6 || this.pointer.isPressed);
+      if (pointerRecentlyActive && this.pointer.speed < 0.9) {
+        this.pointer.dwellTime = Math.min(8, this.pointer.dwellTime + dt);
+        this.trust = Math.min(1, this.trust + dt * 0.16);
+      } else {
+        this.pointer.dwellTime = Math.max(0, this.pointer.dwellTime - dt * 1.4);
+      }
+      if (this.pointer.isPressed) {
+        this.pointer.pressDuration += dt;
+      }
+      this.startle *= Math.exp(-2.3 * dt);
+      if (this.isHesitatingAway && Math.random() < dt * 2.2) {
+        this.isHesitatingAway = false;
+      }
+      this.phaseTimer += dt;
+      if (this.phaseTimer >= this.phaseDuration && !this.pointer.isPressed) {
+        this.chooseNextAutonomousPhase();
+      }
+      let targetCuriosity = 0.6;
+      let targetUncertainty = 0.25;
+      let targetWonder = 0.2;
+      switch (this.phase) {
+        case "curious_search":
+          targetCuriosity = 0.88;
+          targetUncertainty = 0.22;
+          targetWonder = 0.34;
+          break;
+        case "uncertain_hesitation":
+          targetCuriosity = 0.44;
+          targetUncertainty = 0.88;
+          targetWonder = 0.12;
+          break;
+        case "intimate_recognition":
+          targetCuriosity = 0.78;
+          targetUncertainty = 0.34;
+          targetWonder = 0.72;
+          break;
+        case "anxious_scrutiny":
+          targetCuriosity = 0.62;
+          targetUncertainty = 0.82;
+          targetWonder = 0.15;
+          break;
+        case "deep_wonder":
+          targetCuriosity = 0.92;
+          targetUncertainty = 0.1;
+          targetWonder = 0.95;
+          break;
+      }
+      if (pointerRecentlyActive) {
+        if (this.pointer.isPressed) {
+          const holdFactor = Math.min(1, this.pointer.pressDuration / 1.8);
+          targetCuriosity = 0.95;
+          targetWonder = Math.max(targetWonder, 0.55 + 0.43 * holdFactor);
+          targetUncertainty = Math.max(0.08, 0.28 * (1 - holdFactor));
+        } else if (this.pointer.speed > 2.4) {
+          const speedFactor = Math.min(1, (this.pointer.speed - 2) / 4);
+          targetUncertainty = Math.max(targetUncertainty, 0.55 + 0.42 * speedFactor);
+          targetCuriosity = 0.58;
+          targetWonder *= 0.3;
         } else {
-          const sA = noise3(ct * 36 + seed, st * 36, r * 1.1 + 30);
-          const a = clamp01((sA - 0.52) * 3.2) * smooth(0.3, 0.55, r) * (0.7 + 0.6 * s2);
-          const warp = fbm3(ct * 1.1 + 3, st * 1.1, r * 2.2 + 7, 2);
-          const col = mix(pal(warp * 1.2), [255, 255, 255], 0.55);
-          d[idx] = col[0];
-          d[idx + 1] = col[1];
-          d[idx + 2] = col[2];
-          d[idx + 3] = Math.min(1, a) * edgeA * 150;
+          const calmTrust = Math.min(1, this.pointer.dwellTime / 2.2);
+          targetCuriosity = Math.max(targetCuriosity, 0.82 + 0.15 * calmTrust);
+          targetWonder = Math.max(targetWonder, 0.35 + 0.45 * calmTrust);
+          if (this.preset !== "uncertain") {
+            targetUncertainty = Math.min(targetUncertainty, 0.38 - 0.2 * calmTrust);
+          }
         }
       }
-    }
-    ctx.putImageData(img, 0, 0);
-    return cv;
-  }
-
-  // src/practice-eye/engine.ts
-  var lerp2 = (a, b, t) => a + (b - a) * t;
-  var clamp = (x, a, b) => Math.max(a, Math.min(b, x));
-  var mix3 = (a, b, t) => [
-    lerp2(a[0], b[0], t),
-    lerp2(a[1], b[1], t),
-    lerp2(a[2], b[2], t)
-  ];
-  var rgba = (c, a) => `rgba(${Math.round(c[0])},${Math.round(c[1])},${Math.round(c[2])},${a})`;
-  var makeState = () => ({
-    gx: 0,
-    gy: 0,
-    gvx: 0,
-    gvy: 0,
-    pupil: 0.5,
-    pvel: 0,
-    lid: 0.3,
-    lvel: 0,
-    mood: 0.1,
-    tension: 0,
-    sparkle: 0.2,
-    sgx: 0,
-    sgy: 0,
-    gazeSpeed: 1,
-    pupilT: 0.5,
-    lidT: 0.05,
-    moodT: 0.1,
-    tensionT: 0.1,
-    px: 0,
-    py: 0,
-    lastPointer: -100,
-    interest: 0,
-    startleT: 99,
-    blinkT: -1,
-    nextBlink: 3,
-    doubleBlink: false,
-    burstLeft: 0,
-    mx: 0,
-    my: 0,
-    nextMicro: 1,
-    label: ""
-  });
-  function* script(S, R, api) {
-    const sign = () => R() < 0.5 ? -1 : 1;
-    S.sgx = 0;
-    S.sgy = 0;
-    yield 0.3;
-    const beat = 2.5;
-    while (true) {
-      api.say("curious\u2026");
-      api.set({ pupil: 0.48, lid: 0.05, mood: 0.14, tension: 0.08 });
-      api.look((R() - 0.5) * 1.1, (R() - 0.5) * 0.7, 0.4);
-      yield beat;
-      const tx = sign() * (0.55 + R() * 0.35);
-      const ty = (R() - 0.6) * 0.8;
-      api.blink();
-      api.say("wait\u2026 what's that?");
-      api.look(tx, ty, 1.1);
-      api.set({ pupil: 0.86, lid: 0, mood: 0.2, tension: 0.25 });
-      api.spark(1);
-      yield beat;
-      api.say("closer\u2026");
-      api.set({ pupil: 0.9, lid: 0 });
-      api.look(tx * 0.9, ty * 0.85, 1.1);
-      yield beat;
-      api.say("is it safe?");
-      api.set({ pupil: 0.12, lid: 0.22, mood: 1, tension: 0.9 });
-      api.look(-tx * 0.8, -ty * 0.3 + 0.25, 1.5);
-      yield beat;
-      api.say("hmm\u2026");
-      api.set({ pupil: 0.42, lid: 0.08, tension: 0.7 });
-      api.look(tx * 0.25, ty * 0.25, 0.24);
-      yield beat;
-      api.say("maybe\u2026");
-      api.set({ pupil: 0.58, lid: 0.05, tension: 0.6 });
-      api.look(tx * 0.6, ty * 0.6, 0.3);
-      yield beat;
-      if (R() < 0.65) {
-        api.say("oh\u2026");
-        api.look(0, 0, 0.22);
-        api.set({ pupil: 1, lid: 0, mood: 0, tension: 0 });
-        api.spark(1.5);
-        yield beat;
-        api.say("i want to know everything.");
-        api.spark(0.9);
-        yield beat;
+      if (this.preset === "curious") {
+        targetCuriosity = Math.max(targetCuriosity, 0.88);
+        targetUncertainty = Math.min(targetUncertainty, 0.28);
+      } else if (this.preset === "uncertain") {
+        targetUncertainty = Math.max(targetUncertainty, 0.85);
+        targetWonder = Math.min(targetWonder, 0.22);
+      } else if (this.preset === "wonder") {
+        targetWonder = Math.max(targetWonder, 0.9);
+        targetCuriosity = Math.max(targetCuriosity, 0.85);
+        targetUncertainty = Math.min(targetUncertainty, 0.15);
+      }
+      const emoSmooth = 1 - Math.exp(-2.4 * dt);
+      this.curiosity += (targetCuriosity - this.curiosity) * emoSmooth;
+      this.uncertainty += (targetUncertainty - this.uncertainty) * emoSmooth;
+      this.wonder += (targetWonder - this.wonder) * emoSmooth;
+      this.saccadeTimer += dt;
+      if (this.saccadeTimer >= this.nextSaccadeInterval) {
+        this.saccadeTimer = 0;
+        const prevTargetX = this.targetGazeX;
+        const prevTargetY = this.targetGazeY;
+        if (pointerRecentlyActive) {
+          const baseX = Math.max(-0.48, Math.min(0.48, this.pointer.x * 0.46));
+          const baseY = Math.max(-0.42, Math.min(0.42, this.pointer.y * 0.42));
+          if (this.pointer.isPressed) {
+            this.triggerMicroSaccade(0.025);
+            this.targetGazeX = baseX + this.microOffsetX;
+            this.targetGazeY = baseY + this.microOffsetY;
+            this.nextSaccadeInterval = 0.28 + Math.random() * 0.35;
+          } else if (this.isHesitatingAway || this.uncertainty > 0.68 && Math.random() < 0.34) {
+            const glanceAngle = Math.random() * Math.PI * 2;
+            this.targetGazeX = baseX * 0.35 + Math.cos(glanceAngle) * 0.22;
+            this.targetGazeY = baseY * 0.35 + Math.sin(glanceAngle) * 0.18;
+            this.nextSaccadeInterval = 0.22 + Math.random() * 0.32;
+          } else {
+            const inspectSpread = 0.045 * this.curiosity + 0.03 * this.uncertainty;
+            this.triggerMicroSaccade(inspectSpread);
+            this.targetGazeX = baseX + this.microOffsetX;
+            this.targetGazeY = baseY + this.microOffsetY;
+            this.nextSaccadeInterval = 0.35 + Math.random() * 0.65;
+          }
+        } else {
+          if (this.phase === "intimate_recognition" || this.phase === "deep_wonder") {
+            this.triggerMicroSaccade(0.032);
+            this.targetGazeX = this.microOffsetX;
+            this.targetGazeY = this.microOffsetY;
+            this.nextSaccadeInterval = 0.75 + Math.random() * 1.35;
+          } else if (this.phase === "curious_search") {
+            const r = Math.random();
+            if (r < 0.25) {
+              this.targetGazeX = (Math.random() - 0.5) * 0.08;
+              this.targetGazeY = (Math.random() - 0.5) * 0.08;
+            } else if (r < 0.65) {
+              this.triggerMicroSaccade(0.11);
+              this.targetGazeX = Math.max(-0.44, Math.min(0.44, this.targetGazeX + this.microOffsetX));
+              this.targetGazeY = Math.max(-0.38, Math.min(0.38, this.targetGazeY + this.microOffsetY));
+            } else {
+              const ang = Math.random() * Math.PI * 2;
+              const amp = 0.18 + Math.random() * 0.26;
+              this.targetGazeX = Math.cos(ang) * amp;
+              this.targetGazeY = Math.sin(ang) * amp * 0.85;
+            }
+            this.nextSaccadeInterval = 0.38 + Math.random() * 0.85;
+          } else if (this.phase === "uncertain_hesitation") {
+            const r = Math.random();
+            if (r < 0.45) {
+              this.targetGazeX = this.targetGazeX * 0.4 + (Math.random() - 0.5) * 0.22;
+              this.targetGazeY = -0.06 + (Math.random() - 0.5) * 0.2;
+            } else {
+              this.triggerMicroSaccade(0.14);
+              this.targetGazeX = Math.max(-0.38, Math.min(0.38, this.microOffsetX * 1.8));
+              this.targetGazeY = Math.max(-0.34, Math.min(0.34, this.microOffsetY * 1.6));
+            }
+            this.nextSaccadeInterval = 0.24 + Math.random() * 0.58;
+          } else {
+            this.triggerMicroSaccade(0.09);
+            this.targetGazeX = Math.max(-0.36, Math.min(0.36, this.targetGazeX * 0.6 + this.microOffsetX));
+            this.targetGazeY = Math.max(-0.32, Math.min(0.32, this.targetGazeY * 0.6 + this.microOffsetY));
+            this.nextSaccadeInterval = 0.18 + Math.random() * 0.36;
+          }
+        }
+        const jumpAmp = Math.hypot(this.targetGazeX - prevTargetX, this.targetGazeY - prevTargetY);
+        if (jumpAmp > 0.045) {
+          this.wobbleVel += (this.targetGazeX >= prevTargetX ? 1 : -1) * Math.min(7.5, jumpAmp * 18);
+          this.onSaccade?.(jumpAmp, this.curiosity, this.uncertainty);
+        }
+      }
+      let effectiveTargetX = this.targetGazeX;
+      let effectiveTargetY = this.targetGazeY;
+      if (pointerRecentlyActive && !this.isHesitatingAway) {
+        const pursuitWeight = this.pointer.isPressed ? 0.88 : 0.68 * (1 - 0.45 * this.uncertainty);
+        const px = Math.max(-0.48, Math.min(0.48, this.pointer.x * 0.46));
+        const py = Math.max(-0.42, Math.min(0.42, this.pointer.y * 0.42));
+        effectiveTargetX = effectiveTargetX * (1 - pursuitWeight) + (px + this.microOffsetX * 0.6) * pursuitWeight;
+        effectiveTargetY = effectiveTargetY * (1 - pursuitWeight) + (py + this.microOffsetY * 0.6) * pursuitWeight;
+      } else if (this.isHesitatingAway) {
+        effectiveTargetX += this.shyOffsetX * 0.5;
+        effectiveTargetY += this.shyOffsetY * 0.5;
+      }
+      const tremorAmp = 22e-4 + 75e-4 * this.uncertainty + 0.011 * this.startle;
+      const tremorX = Math.sin(this.time * 47.3) * tremorAmp * 0.6 + Math.sin(this.time * 29.1 + 1.4) * tremorAmp * 0.4;
+      const tremorY = Math.cos(this.time * 43.7 + 0.8) * tremorAmp * 0.6 + Math.sin(this.time * 31.9 + 2.7) * tremorAmp * 0.4;
+      const stiffness = 245;
+      const damping = 26.5;
+      const ax = stiffness * (effectiveTargetX - this.gazeX) - damping * this.gazeVelX;
+      const ay = stiffness * (effectiveTargetY - this.gazeY) - damping * this.gazeVelY;
+      this.gazeVelX += ax * dt;
+      this.gazeVelY += ay * dt;
+      this.gazeX += this.gazeVelX * dt;
+      this.gazeY += this.gazeVelY * dt;
+      const inquisitiveTilt = Math.sin(this.time * 0.85) * 0.045 * this.curiosity + Math.sin(this.time * 2.6) * 0.038 * this.uncertainty + (this.pointer.isPressed ? Math.sin(this.time * 1.4) * 0.075 : 0);
+      const listingsTorsion = -this.gazeX * this.gazeY * 0.55 + inquisitiveTilt;
+      const torsionAcc = 65 * (listingsTorsion - this.irisTorsion) - 13.5 * this.irisTorsionVel;
+      this.irisTorsionVel += torsionAcc * dt;
+      this.irisTorsion += this.irisTorsionVel * dt;
+      const wobbleAcc = -260 * this.wobblePos - 14.5 * this.wobbleVel;
+      this.wobbleVel += wobbleAcc * dt;
+      this.wobblePos += this.wobbleVel * dt;
+      if (this.rippleAmp > 2e-3) {
+        this.ripplePhase += dt * 4.2;
+        this.rippleAmp *= Math.exp(-2.1 * dt);
       } else {
-        api.say("never mind\u2026");
-        api.look(-0.55, 0.7, 0.3);
-        api.set({ pupil: 0.24, lid: 0.12, mood: 0.78, tension: 0.4 });
-        yield beat;
+        this.rippleAmp = 0;
+      }
+      const baseFromEmotion = 0.265 + 0.135 * this.curiosity + 0.105 * this.wonder - 0.095 * this.uncertainty - 0.145 * this.startle;
+      const hippusAmp = 8e-3 + 0.048 * Math.pow(this.uncertainty, 1.15) + 0.014 * this.curiosity;
+      const hippusWave = Math.sin(this.time * 3.85) * 0.52 + Math.sin(this.time * 6.7 + 1.3) * 0.31 + Math.sin(this.time * 1.65 + 2.9) * 0.38;
+      const pressDilationBoost = this.pointer.isPressed ? Math.min(0.11, this.pointer.pressDuration * 0.055) : 0;
+      const accommodativeShift = -0.025 * Math.max(0, this.userZoomOffset);
+      this.targetPupilRadius = Math.max(
+        0.145,
+        Math.min(
+          0.525,
+          baseFromEmotion + hippusWave * hippusAmp + pressDilationBoost + accommodativeShift
+        )
+      );
+      const pupilDiff = this.targetPupilRadius - this.pupilRadius;
+      const muscleRate = pupilDiff < 0 ? 11.5 : 3.2;
+      const desiredPupilVel = pupilDiff * muscleRate;
+      this.pupilVelocity += (desiredPupilVel - this.pupilVelocity) * (1 - Math.exp(-16 * dt));
+      this.pupilRadius += this.pupilVelocity * dt;
+      this.pupilRadius = Math.max(0.135, Math.min(0.535, this.pupilRadius));
+      const eccScale = 8e-3 + 0.024 * this.uncertainty + 0.015 * Math.abs(this.pupilVelocity);
+      const pupilEccX = Math.sin(this.time * 2.3 + 0.5) * eccScale;
+      const pupilEccY = Math.cos(this.time * 1.9 + 1.7) * eccScale;
+      const emotionalZoom = 1 + 0.042 * this.curiosity + 0.035 * this.wonder - 0.045 * this.uncertainty - 0.055 * this.startle + this.userZoomOffset;
+      this.macroZoom += (emotionalZoom - this.macroZoom) * (1 - Math.exp(-3.2 * dt));
+      this.tearTimer -= dt;
+      if (this.tearTimer <= 0 && this.tearWaveProgress < -1) {
+        this.tearWaveProgress = -1.1;
+        this.tearTimer = 8 + Math.random() * 7.5;
+      }
+      if (this.tearWaveProgress >= -1.15) {
+        this.tearWaveProgress += dt * 7.5;
+        if (this.tearWaveProgress > 1.6) {
+          this.tearWaveProgress = -1.5;
+        }
+      }
+      const starburstIntensity = 0.88 + 0.24 * this.wonder + 0.15 * this.curiosity + 0.08 * Math.sin(this.time * 2.9) + 0.18 * this.startle;
+      const stromaTension = Math.min(
+        1,
+        0.3 + Math.abs(this.pupilVelocity) * 2.4 + 0.4 * this.uncertainty
+      );
+      const focusGlow = pointerRecentlyActive ? Math.min(1, (this.pointer.isPressed ? 0.95 : 0.42) * (1 - Math.min(1, timeSinceMove / 3.6))) : 0;
+      return {
+        time: this.time,
+        gazeX: this.gazeX + tremorX,
+        gazeY: this.gazeY + tremorY,
+        irisTorsion: this.irisTorsion,
+        pupilRadius: this.pupilRadius,
+        pupilVelocity: this.pupilVelocity,
+        pupilEccentricityX: pupilEccX,
+        pupilEccentricityY: pupilEccY,
+        irisFluidWobble: this.wobblePos,
+        irisRipplePhase: this.ripplePhase,
+        irisRippleAmp: this.rippleAmp,
+        stromaTension,
+        curiosity: this.curiosity,
+        uncertainty: this.uncertainty,
+        wonder: this.wonder,
+        startle: this.startle,
+        macroZoom: this.macroZoom,
+        tearFilmWave: this.tearWaveProgress,
+        starburstIntensity,
+        focusPointX: this.pointer.x,
+        focusPointY: this.pointer.y,
+        focusGlow
+      };
+    }
+    getTelemetry() {
+      const pupilNorm = Math.max(0, Math.min(1, (this.pupilRadius - 0.145) / (0.51 - 0.145)));
+      let emotionLabel = "Curious Inquiry";
+      let subLabel = "Dilating to drink in light";
+      if (this.startle > 0.35) {
+        emotionLabel = "Startled Reflex";
+        subLabel = "Rapid sphincter constriction \xB7 Wary check";
+      } else if (this.pointer.isPressed && this.pointer.pressDuration > 0.3) {
+        emotionLabel = "Rapt Fascination";
+        subLabel = "Locked on your spark \xB7 Deep mydriasis";
+      } else if (this.uncertainty > 0.62 && this.uncertainty > this.curiosity) {
+        emotionLabel = "Uncertain Hesitation";
+        subLabel = "Pupillary hippus flutter \xB7 Questioning the unseen";
+      } else if (this.wonder > 0.68) {
+        emotionLabel = "Luminous Wonder";
+        subLabel = "Wide-open absorption \xB7 Quiet awe";
+      } else if (this.phase === "intimate_recognition" && (!this.pointer.active || this.pointer.dwellTime > 1)) {
+        emotionLabel = "Studying You";
+        subLabel = "Direct gaze lock \xB7 Inquisitive recognition";
+      } else if (this.curiosity > 0.65) {
+        emotionLabel = "Insatiable Curiosity";
+        subLabel = "Saccadic exploration \xB7 Seeking every detail";
+      } else {
+        emotionLabel = "Wavering Thought";
+        subLabel = "Drifting between curiosity & doubt";
+      }
+      return {
+        emotionLabel,
+        subLabel,
+        curiosity: this.curiosity,
+        uncertainty: this.uncertainty,
+        wonder: this.wonder,
+        pupilNormalized: pupilNorm,
+        phase: this.phase
+      };
+    }
+  };
+
+  // src/practice-eye/living/ocularAudio.ts
+  var OcularAudioEngine = class {
+    ctx = null;
+    masterGain = null;
+    filter = null;
+    osc1 = null;
+    osc2 = null;
+    lfo = null;
+    lfoGain = null;
+    enabled = false;
+    lastSaccadeSoundTime = 0;
+    toggle() {
+      if (!this.enabled) {
+        this.start();
+        return this.enabled;
+      } else {
+        this.stop();
+        return false;
       }
     }
+    isEnabled() {
+      return this.enabled;
+    }
+    start() {
+      try {
+        if (!this.ctx) {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioCtx();
+          this.masterGain = this.ctx.createGain();
+          this.masterGain.gain.value = 1e-4;
+          this.filter = this.ctx.createBiquadFilter();
+          this.filter.type = "lowpass";
+          this.filter.frequency.value = 380;
+          this.filter.Q.value = 2.4;
+          this.osc1 = this.ctx.createOscillator();
+          this.osc1.type = "sine";
+          this.osc1.frequency.value = 110;
+          this.osc2 = this.ctx.createOscillator();
+          this.osc2.type = "triangle";
+          this.osc2.frequency.value = 164.81;
+          const osc2Gain = this.ctx.createGain();
+          osc2Gain.gain.value = 0.28;
+          this.lfo = this.ctx.createOscillator();
+          this.lfo.type = "sine";
+          this.lfo.frequency.value = 3.4;
+          this.lfoGain = this.ctx.createGain();
+          this.lfoGain.gain.value = 0.6;
+          this.lfo.connect(this.lfoGain);
+          this.lfoGain.connect(this.osc1.frequency);
+          this.lfoGain.connect(this.osc2.frequency);
+          this.osc1.connect(this.filter);
+          this.osc2.connect(osc2Gain);
+          osc2Gain.connect(this.filter);
+          this.filter.connect(this.masterGain);
+          this.masterGain.connect(this.ctx.destination);
+          this.osc1.start();
+          this.osc2.start();
+          this.lfo.start();
+        }
+        if (this.ctx.state === "suspended") {
+          this.ctx.resume();
+        }
+        if (this.masterGain && this.ctx) {
+          const now = this.ctx.currentTime;
+          this.masterGain.gain.cancelScheduledValues(now);
+          this.masterGain.gain.setTargetAtTime(0.085, now, 0.45);
+        }
+        this.enabled = true;
+      } catch {
+        this.enabled = false;
+      }
+    }
+    stop() {
+      this.enabled = false;
+      if (this.masterGain && this.ctx) {
+        const now = this.ctx.currentTime;
+        this.masterGain.gain.cancelScheduledValues(now);
+        this.masterGain.gain.setTargetAtTime(1e-4, now, 0.25);
+      }
+    }
+    update(pupilNormalized, curiosity, uncertainty, wonder) {
+      if (!this.enabled || !this.ctx || !this.filter || !this.lfoGain || !this.osc2) return;
+      const now = this.ctx.currentTime;
+      const targetCutoff = 210 + pupilNormalized * 720 + wonder * 340 - uncertainty * 90;
+      this.filter.frequency.setTargetAtTime(Math.max(160, targetCutoff), now, 0.08);
+      this.filter.Q.setTargetAtTime(1.8 + uncertainty * 3.8 + curiosity * 1.2, now, 0.1);
+      this.lfoGain.gain.setTargetAtTime(0.25 + uncertainty * 2.8, now, 0.12);
+    }
+    playSaccadePulse(amplitude, curiosity, uncertainty) {
+      if (!this.enabled || !this.ctx || !this.masterGain) return;
+      const now = this.ctx.currentTime;
+      if (now - this.lastSaccadeSoundTime < 0.11) return;
+      this.lastSaccadeSoundTime = now;
+      const osc = this.ctx.createOscillator();
+      const env = this.ctx.createGain();
+      const notes = curiosity >= uncertainty ? [329.63, 392, 440, 523.25, 659.25] : [293.66, 311.13, 369.99, 415.3];
+      const baseFreq = notes[Math.floor(Math.random() * notes.length)];
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(baseFreq * (0.98 + amplitude * 0.12), now);
+      osc.frequency.exponentialRampToValueAtTime(
+        baseFreq * (curiosity >= uncertainty ? 1.03 : 0.96),
+        now + 0.16
+      );
+      const peak = Math.min(0.032, 0.01 + amplitude * 0.035);
+      env.gain.setValueAtTime(1e-4, now);
+      env.gain.linearRampToValueAtTime(peak, now + 0.014);
+      env.gain.exponentialRampToValueAtTime(1e-4, now + 0.22);
+      osc.connect(env);
+      env.connect(this.ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.24);
+    }
+    playRippleChime(intensity) {
+      if (!this.enabled || !this.ctx) return;
+      const now = this.ctx.currentTime;
+      const freqs = [440, 554.37, 659.25];
+      freqs.forEach((f, idx) => {
+        if (!this.ctx) return;
+        const osc = this.ctx.createOscillator();
+        const env = this.ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(f, now + idx * 0.045);
+        env.gain.setValueAtTime(1e-4, now + idx * 0.045);
+        env.gain.linearRampToValueAtTime(0.018 * intensity, now + idx * 0.045 + 0.03);
+        env.gain.exponentialRampToValueAtTime(1e-4, now + idx * 0.045 + 0.65);
+        osc.connect(env);
+        env.connect(this.ctx.destination);
+        osc.start(now + idx * 0.045);
+        osc.stop(now + idx * 0.045 + 0.7);
+      });
+    }
+    dispose() {
+      if (this.ctx) {
+        this.ctx.close().catch(() => {
+        });
+        this.ctx = null;
+      }
+    }
+  };
+
+  // src/practice-eye/living/start.ts
+  function compile(gl, type, source) {
+    const shader = gl.createShader(type);
+    if (!shader) return null;
+    gl.shaderSource(shader, source);
+    gl.compileShader(shader);
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+      gl.deleteShader(shader);
+      return null;
+    }
+    return shader;
   }
   function startEye(canvas, onLabel) {
-    const ctx = canvas.getContext("2d", { alpha: false });
-    const S = makeState();
-    const rnd = () => Math.random();
-    const api = {
-      say: (s) => S.label = s,
-      look: (x, y, speed = 1) => {
-        S.sgx = clamp(x, -1, 1);
-        S.sgy = clamp(y, -1, 1);
-        S.gazeSpeed = speed;
-      },
-      set: (p) => {
-        if (p.pupil !== void 0) S.pupilT = p.pupil;
-        if (p.lid !== void 0) S.lidT = p.lid;
-        if (p.mood !== void 0) S.moodT = p.mood;
-        if (p.tension !== void 0) S.tensionT = p.tension;
-      },
-      blink: () => {
-        if (S.blinkT < 0) S.blinkT = 0;
-      },
-      spark: (v) => S.sparkle = Math.max(S.sparkle, v)
-    };
-    const gen = script(S, rnd, api);
-    let wait = 0;
-    const texSize = 1536;
-    let texA = null;
-    let texB = null;
-    const grainSmall = document.createElement("canvas");
-    grainSmall.width = grainSmall.height = 160;
-    {
-      const g = grainSmall.getContext("2d");
-      const id = g.createImageData(160, 160);
-      for (let i = 0; i < id.data.length; i += 4) {
-        const v = Math.random() * 255;
-        id.data[i] = id.data[i + 1] = id.data[i + 2] = v;
-        id.data[i + 3] = 255;
-      }
-      g.putImageData(id, 0, 0);
+    const mind = new OcularMindEngine();
+    mind.setPreset("autonomous");
+    const audio = new OcularAudioEngine();
+    mind.onSaccade = (amp, cur, unc) => audio.playSaccadePulse(amp, cur, unc);
+    mind.onRipple = (intensity) => audio.playRippleChime(intensity);
+    let gl = null;
+    try {
+      gl = canvas.getContext("webgl", { antialias: false, alpha: false, depth: false }) || canvas.getContext("experimental-webgl");
+    } catch {
+      gl = null;
     }
-    const grainTile = document.createElement("canvas");
-    grainTile.width = grainTile.height = 320;
-    {
-      const g = grainTile.getContext("2d");
-      g.imageSmoothingEnabled = false;
-      g.drawImage(grainSmall, 0, 0, 320, 320);
-    }
-    const grainPattern = ctx.createPattern(grainTile, "repeat");
-    let grainOX = 0, grainOY = 0, grainTick = 0;
-    const FIB = 480;
-    const fib = Array.from({ length: FIB }, (_, i) => ({
-      a: i / FIB * Math.PI * 2 + (Math.random() - 0.5) * 0.04,
-      len: Math.pow(Math.random(), 0.7),
-      ph: Math.random() * 6.28,
-      w: Math.random() < 0.5 ? 0 : 1,
-      tone: Math.random()
-    }));
-    let W = 0, H = 0, dpr = 1;
-    const resize = () => {
-      dpr = Math.min(window.devicePixelRatio || 1, 3);
-      const box = canvas.getBoundingClientRect();
-      W = Math.max(160, box.width || canvas.clientWidth || 280);
-      H = Math.max(140, box.height || canvas.clientHeight || W * 0.7);
-      canvas.width = Math.round(W * dpr);
-      canvas.height = Math.round(H * dpr);
-      canvas.style.width = "";
-      canvas.style.height = "";
-    };
-    resize();
-    window.addEventListener("resize", resize);
-    let lastPX = 0, lastPY = 0, lastPT = 0;
-    let now = 0;
-    const onMove = (e) => {
-      const t = performance.now() / 1e3;
-      const dx = e.clientX - lastPX, dy = e.clientY - lastPY;
-      const dt = Math.max(8e-3, t - lastPT);
-      const speed = Math.hypot(dx, dy) / dt;
-      S.interest = Math.min(1, S.interest + speed * 12e-5 + 0.02);
-      lastPX = e.clientX;
-      lastPY = e.clientY;
-      lastPT = t;
-      const box = canvas.getBoundingClientRect();
-      S.px = clamp((e.clientX - (box.left + box.width / 2)) / (box.width * 0.32), -1, 1);
-      S.py = clamp((e.clientY - (box.top + box.height / 2)) / (box.height * 0.32), -1, 1);
-      S.lastPointer = now;
-    };
-    const onDown = (e) => {
-      onMove(e);
-      S.startleT = 0;
-      api.blink();
-      S.sparkle = 1.4;
-    };
-    window.addEventListener("pointermove", onMove);
-    window.addEventListener("pointerdown", onDown);
-    const spring = (x, v, target, k, c, dt) => {
-      v += (target - x) * k * dt;
-      v *= Math.exp(-c * dt);
-      return [x + v * dt, v];
-    };
-    let shownLabel = "";
-    const update = (dt) => {
-      now += dt;
-      wait -= dt;
-      while (wait <= 0) {
-        const r = gen.next();
-        wait = r.value ?? 1;
-      }
-      const pointerActive = now - S.lastPointer < 2.8;
-      S.interest = Math.max(0, S.interest - dt * 0.35);
-      S.nextMicro -= dt;
-      if (S.nextMicro <= 0) {
-        const amp = 0.025 + S.tension * 0.1;
-        S.mx = (rnd() - 0.5) * 2 * amp;
-        S.my = (rnd() - 0.5) * 2 * amp * 0.7;
-        S.nextMicro = 0.25 + rnd() * (1.3 - S.tension * 0.9);
-      }
-      S.mx *= Math.exp(-dt * 0.8);
-      S.my *= Math.exp(-dt * 0.8);
-      let tgx = S.sgx, tgy = S.sgy, sp = S.gazeSpeed;
-      if (pointerActive) {
-        tgx = S.px;
-        tgy = S.py;
-        sp = 0.75 + S.interest * 0.5;
-      }
-      tgx += S.mx + Math.sin(now * 0.37) * 0.015;
-      tgy += S.my + Math.cos(now * 0.29) * 0.012;
-      const k = 420 * sp * sp, c = 28 * sp;
-      [S.gx, S.gvx] = spring(S.gx, S.gvx, tgx, k, c, dt);
-      [S.gy, S.gvy] = spring(S.gy, S.gvy, tgy, k, c, dt);
-      let pupilT = S.pupilT, lidT = S.lidT;
-      S.startleT += dt;
-      let pk = 70;
-      if (S.startleT < 0.22) {
-        pupilT = 0.02;
-        lidT = Math.max(lidT, 0.5);
-        pk = 400;
-        S.moodT = 0.9;
-        S.label = "!";
-      } else if (S.startleT < 1.8) {
-        pupilT = 1;
-        lidT = 0;
-        pk = 90;
-        if (S.startleT < 0.3) S.label = "oh!";
-      }
-      if (pointerActive && S.startleT > 1.8) {
-        pupilT = lerp2(pupilT, 0.62 + 0.38 * S.interest, 0.7);
-        lidT = Math.min(lidT, 0.04);
-      }
-      if (pupilT < S.pupil) pk = Math.max(pk, 160);
-      [S.pupil, S.pvel] = spring(S.pupil, S.pvel, pupilT, pk, 2 * Math.sqrt(pk) * 0.8, dt);
-      [S.lid, S.lvel] = spring(S.lid, S.lvel, lidT, 110, 17, dt);
-      S.mood = lerp2(S.mood, S.moodT, 1 - Math.exp(-dt * 1.6));
-      S.tension = lerp2(S.tension, S.tensionT, 1 - Math.exp(-dt * 2.2));
-      S.sparkle = lerp2(S.sparkle, pointerActive ? 0.45 : 0.2, 1 - Math.exp(-dt * 0.9));
-      S.nextBlink -= dt;
-      if (S.nextBlink <= 0 && S.blinkT < 0) {
-        S.blinkT = 0;
-        if (S.burstLeft <= 0) {
-          const idle = now - S.lastPointer > 2.8;
-          const n = idle ? (rnd() < 0.12 ? 4 : 1 + Math.floor(rnd() * 3)) : 1;
-          S.burstLeft = Math.min(4, n);
-        }
-        S.burstLeft -= 1;
-        S.nextBlink = 99;
-      }
-      if (S.blinkT >= 0) {
-        S.blinkT += dt;
-        if (S.blinkT > 0.16) {
-          S.blinkT = -1;
-          if (S.burstLeft > 0) S.nextBlink = 0.22;
-          else S.nextBlink = 2.8 + rnd() * 2.2;
-        }
-      }
-      const lab = pointerActive && S.startleT > 1.8 ? "who's there?" : S.label;
-      if (lab !== shownLabel) {
-        shownLabel = lab;
-        onLabel(lab);
-      }
-      if (S.startleT > 1.8 && (S.label === "!" || S.label === "oh!")) S.label = "curious\u2026";
-    };
-    const WARM_IN = [255, 120, 36];
-    const COOL_IN = [255, 90, 200];
-    const WARM_MID = [255, 48, 18];
-    const COOL_MID = [150, 40, 200];
-    const WARM_LOW = [0, 190, 175];
-    const COOL_LOW = [40, 110, 220];
-    const draw = (dt) => {
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      ctx.globalCompositeOperation = "source-over";
-      ctx.globalAlpha = 1;
-      const cx = W / 2;
-      const cy = H * 0.5;
-      ctx.imageSmoothingEnabled = true;
-      ctx.imageSmoothingQuality = "high";
-      const Rr = Math.min(W * 0.42, H * 0.42);
-      const t = now;
-      const breath = Math.sin(t * 1.1) * 0.5 + 0.5;
-      const flick = 1 + (Math.random() - 0.5) * 0.06 * S.tension;
-      const m = S.mood;
-      const cIn = mix3(WARM_IN, COOL_IN, m * 0.85);
-      const cMid = mix3(WARM_MID, COOL_MID, m);
-      const cLow = mix3(WARM_LOW, COOL_LOW, m * 0.9);
-      ctx.fillStyle = "#150a1c";
-      ctx.fillRect(0, 0, W, H);
-      const glowR = Rr * (1.95 + 0.35 * S.pupil + 0.07 * breath + 0.12 * S.sparkle) * flick;
-      let g = ctx.createRadialGradient(cx, cy - Rr * 0.12, Rr * 0.4, cx, cy - Rr * 0.12, glowR);
-      g.addColorStop(0, rgba(cIn, 1));
-      g.addColorStop(0.5, rgba(cIn, 0.96));
-      g.addColorStop(0.68, rgba(cMid, 0.88));
-      g.addColorStop(0.86, rgba(cMid, 0.28));
-      g.addColorStop(1, rgba(cMid, 0));
-      ctx.fillStyle = g;
-      ctx.fillRect(0, 0, W, H);
-      g = ctx.createRadialGradient(cx, cy + Rr * 1.3, Rr * 0.2, cx, cy + Rr * 1.3, Rr * 2.5);
-      g.addColorStop(0, rgba(cLow, 0.98));
-      g.addColorStop(0.4, rgba(cLow, 0.78));
-      g.addColorStop(0.75, rgba(mix3(cLow, [20, 10, 30], 0.6), 0.25));
-      g.addColorStop(1, rgba(cLow, 0));
-      ctx.fillStyle = g;
-      ctx.fillRect(0, 0, W, H);
-      g = ctx.createRadialGradient(cx, cy + Rr * 0.75, Rr * 0.9, cx, cy + Rr * 0.75, Rr * 1.9);
-      g.addColorStop(0, rgba([230, 160, 60], 0));
-      g.addColorStop(0.4, rgba([230, 160, 60], 0.26 * (1 - m * 0.6)));
-      g.addColorStop(1, rgba([230, 160, 60], 0));
-      ctx.fillStyle = g;
-      ctx.fillRect(0, 0, W, H);
-      g = ctx.createRadialGradient(cx, cy, Math.min(W, H) * 0.3, cx, cy, Math.max(W, H) * 0.78);
-      g.addColorStop(0, "rgba(14,6,20,0)");
-      g.addColorStop(1, "rgba(14,6,20,0.8)");
-      ctx.fillStyle = g;
-      ctx.fillRect(0, 0, W, H);
-      ctx.save();
-      ctx.shadowColor = rgba(cIn, 0.55);
-      ctx.shadowBlur = Rr * 0.12;
-      ctx.beginPath();
-      ctx.arc(cx, cy, Rr, 0, Math.PI * 2);
-      g = ctx.createRadialGradient(cx, cy, Rr * 0.6, cx, cy, Rr);
-      g.addColorStop(0, "#1c0f20");
-      g.addColorStop(1, "#0d060f");
-      ctx.fillStyle = g;
-      ctx.fill();
-      ctx.restore();
-      if (texA && texB) {
-        const Ri = Rr * 0.88 * (1 + 0.012 * breath + 0.01 * S.pupil);
-        const ix = cx + S.gx * Rr * 0.1;
-        const iy = cy + S.gy * Rr * 0.085;
-        const sx = 1 - 0.07 * Math.abs(S.gx);
-        const sy = 1 - 0.06 * Math.abs(S.gy);
-        ctx.save();
-        ctx.beginPath();
-        ctx.arc(cx, cy, Rr * 0.985, 0, Math.PI * 2);
-        ctx.clip();
-        ctx.translate(ix, iy);
-        ctx.scale(sx, sy);
-        const rotBase = t * (0.035 + 0.1 * S.sparkle + 0.05 * S.tension);
-        const shiver = Math.sin(t * 23) * 4e-3 * S.tension;
-        ctx.save();
-        ctx.rotate(rotBase + shiver);
-        ctx.drawImage(texA, -Ri, -Ri, Ri * 2, Ri * 2);
-        ctx.restore();
-        ctx.save();
-        ctx.globalCompositeOperation = "screen";
-        ctx.rotate(-rotBase * 1.7 + 1.2);
-        const bs = 1 + 0.015 * Math.sin(t * 0.9);
-        ctx.globalAlpha = 0.6 + 0.25 * S.sparkle;
-        ctx.drawImage(texB, -Ri * bs, -Ri * bs, Ri * 2 * bs, Ri * 2 * bs);
-        ctx.restore();
-        ctx.save();
-        ctx.globalCompositeOperation = "soft-light";
-        ctx.globalAlpha = 0.55 * m;
-        ctx.beginPath();
-        ctx.arc(0, 0, Ri * 0.96, 0, Math.PI * 2);
-        ctx.fillStyle = "rgb(110,90,255)";
-        ctx.fill();
-        ctx.restore();
-        g = ctx.createRadialGradient(0, 0, Ri * 0.72, 0, 0, Ri * 1);
-        g.addColorStop(0, "rgba(28,10,40,0)");
-        g.addColorStop(1, "rgba(28,10,40,0.42)");
-        ctx.fillStyle = g;
-        ctx.beginPath();
-        ctx.arc(0, 0, Ri * 0.99, 0, Math.PI * 2);
-        ctx.fill();
-        const ox = S.gx * Rr * 0.045 / sx;
-        const oy = S.gy * Rr * 0.04 / sy;
-        ctx.translate(ox, oy);
-        const hippus = Math.sin(t * 2.1) * 8e-3 + Math.sin(t * 5.3 + 1) * 5e-3 + S.tension * (Math.sin(t * 17) * 0.012 + Math.sin(t * 29 + 2) * 8e-3);
-        const Rp = Ri * (0.13 + 0.31 * clamp(S.pupil, -0.05, 1.05) + hippus);
-        g = ctx.createRadialGradient(0, 0, Rp * 0.9, 0, 0, Rp * 2.3);
-        g.addColorStop(0, "rgba(34,10,6,0.96)");
-        g.addColorStop(0.3, "rgba(150,50,16,0.6)");
-        g.addColorStop(0.7, "rgba(255,150,80,0.22)");
-        g.addColorStop(1, "rgba(255,150,80,0)");
-        ctx.fillStyle = g;
-        ctx.beginPath();
-        ctx.arc(0, 0, Rp * 2.3, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.lineCap = "round";
-        const passes = [
-          [0, Ri * 65e-4, "rgba(70,20,8,0.55)"],
-          [1, Ri * 0.011, "rgba(80,24,8,0.4)"],
-          [0, Ri * 45e-4, "rgba(255,168,92,0.5)"],
-          [1, Ri * 75e-4, "rgba(255,206,140,0.35)"]
-        ];
-        for (let p = 0; p < passes.length; p++) {
-          const [wcls, lw, col] = passes[p];
-          const light = p >= 2;
-          ctx.strokeStyle = col;
-          ctx.lineWidth = lw;
-          ctx.beginPath();
-          for (let i = 0; i < FIB; i++) {
-            const f = fib[i];
-            if (f.w !== wcls) continue;
-            const a = f.a + Math.sin(t * 0.5 + f.ph) * 6e-3 + (S.tension > 0.3 ? Math.sin(t * 9 + f.ph) * 4e-3 * S.tension : 0);
-            const reach = light ? 0.05 + f.len * 0.2 : 0.07 + f.len * 0.27;
-            const r0 = Rp * 0.98;
-            const r1 = Rp + Ri * reach * (0.85 + 0.3 * f.tone);
-            const ca = Math.cos(a), sa = Math.sin(a);
-            ctx.moveTo(ca * r0, sa * r0);
-            ctx.lineTo(ca * r1, sa * r1);
+    let program = null;
+    const loc = {};
+    if (gl) {
+      const vs = compile(gl, gl.VERTEX_SHADER, EYE_VERTEX_SHADER);
+      const fs = compile(gl, gl.FRAGMENT_SHADER, EYE_FRAGMENT_SHADER);
+      if (vs && fs) {
+        program = gl.createProgram();
+        if (program) {
+          gl.attachShader(program, vs);
+          gl.attachShader(program, fs);
+          gl.linkProgram(program);
+          if (gl.getProgramParameter(program, gl.LINK_STATUS)) {
+            gl.useProgram(program);
+            const buf = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]), gl.STATIC_DRAW);
+            const pos = gl.getAttribLocation(program, "aPosition");
+            gl.enableVertexAttribArray(pos);
+            gl.vertexAttribPointer(pos, 2, gl.FLOAT, false, 0, 0);
+            [
+              "uResolution",
+              "uTime",
+              "uGaze",
+              "uTorsion",
+              "uPupilRadius",
+              "uPupilVel",
+              "uPupilEcc",
+              "uFluidWobble",
+              "uRipplePhase",
+              "uRippleAmp",
+              "uStromaTension",
+              "uCuriosity",
+              "uUncertainty",
+              "uWonder",
+              "uStartle",
+              "uMacroZoom",
+              "uTearWave",
+              "uStarburst",
+              "uFocusPoint",
+              "uFocusGlow"
+            ].forEach((name) => {
+              loc[name] = gl.getUniformLocation(program, name);
+            });
+          } else {
+            program = null;
+            gl = null;
           }
-          ctx.stroke();
         }
-        const fringeW = Rp * 0.12;
-        ctx.lineWidth = fringeW;
-        const anyCtx = ctx;
-        if (anyCtx.createConicGradient) {
-          const cg = anyCtx.createConicGradient(t * 0.25, 0, 0);
-          cg.addColorStop(0, "rgba(255,214,90,0.8)");
-          cg.addColorStop(0.25, "rgba(255,120,60,0.55)");
-          cg.addColorStop(0.5, "rgba(190,90,230,0.6)");
-          cg.addColorStop(0.75, "rgba(110,200,190,0.5)");
-          cg.addColorStop(1, "rgba(255,214,90,0.8)");
-          ctx.strokeStyle = cg;
-        } else {
-          ctx.strokeStyle = "rgba(255,190,80,0.6)";
-        }
-        ctx.beginPath();
-        ctx.arc(0, 0, Rp * 1.05, 0, Math.PI * 2);
-        ctx.stroke();
-        g = ctx.createRadialGradient(0, 0, Rp * 0.8, 0, 0, Rp * 1.1);
-        g.addColorStop(0, "rgba(0,0,0,1)");
-        g.addColorStop(1, "rgba(0,0,0,0)");
-        ctx.fillStyle = g;
-        ctx.beginPath();
-        ctx.arc(0, 0, Rp * 1.1, 0, Math.PI * 2);
-        ctx.fill();
-        const amp = 0.012 + 0.045 * S.tension;
-        ctx.beginPath();
-        const N = 72;
-        for (let i = 0; i <= N; i++) {
-          const a = i / N * Math.PI * 2;
-          const rr = Rp * (1 + amp * (Math.sin(a * 3 + t * 2.1) * 0.5 + Math.sin(a * 5 - t * 3.3) * 0.3 + Math.sin(a * 9 + t * 5.2 + S.tension * t * 3) * 0.2));
-          const px = Math.cos(a) * rr, py = Math.sin(a) * rr;
-          if (i === 0) ctx.moveTo(px, py);
-          else ctx.lineTo(px, py);
-        }
-        ctx.closePath();
-        g = ctx.createRadialGradient(0, 0, 0, 0, 0, Rp);
-        g.addColorStop(0, "#000");
-        g.addColorStop(0.75, "#030105");
-        g.addColorStop(1, "#0b0410");
-        ctx.fillStyle = g;
-        ctx.fill();
-        ctx.restore();
+      } else {
+        gl = null;
       }
-      ctx.save();
-      ctx.beginPath();
-      ctx.arc(cx, cy, Rr * 0.985, 0, Math.PI * 2);
-      ctx.clip();
-      ctx.globalCompositeOperation = "screen";
-      const hx = cx - Rr * 0.34 + S.gx * Rr * 0.02;
-      const hy = cy - Rr * 0.4 + S.gy * Rr * 0.02;
-      g = ctx.createRadialGradient(hx, hy, 0, hx, hy, Rr * 0.34);
-      g.addColorStop(0, `rgba(255,245,235,${0.28 + 0.12 * S.sparkle})`);
-      g.addColorStop(1, "rgba(255,245,235,0)");
-      ctx.fillStyle = g;
-      ctx.fillRect(cx - Rr, cy - Rr, Rr * 2, Rr * 2);
-      const hs = Rr * (0.04 + 0.012 * S.sparkle);
-      ctx.fillStyle = `rgba(255,252,246,${0.6 + 0.25 * Math.min(1, S.sparkle)})`;
-      ctx.beginPath();
-      ctx.ellipse(hx - Rr * 0.02, hy - Rr * 0.02, hs * 1.3, hs, -0.6, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.beginPath();
-      ctx.arc(cx + Rr * 0.25, cy + Rr * 0.34, hs * 0.45, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(255,240,230,0.35)";
-      ctx.fill();
-      ctx.restore();
-      let blink = 0;
-      if (S.blinkT >= 0) {
-        const bt = S.blinkT;
-        blink = bt < 0.09 ? bt / 0.09 : 1 - (bt - 0.09) / 0.21;
-        blink = clamp(blink, 0, 1);
-        blink = blink * blink * (3 - 2 * blink);
+    }
+    const fit = () => {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const w = Math.max(1, Math.floor((canvas.clientWidth || 320) * dpr));
+      const h = Math.max(1, Math.floor((canvas.clientHeight || 320) * dpr));
+      if (canvas.width !== w || canvas.height !== h) {
+        canvas.width = w;
+        canvas.height = h;
       }
-      const lidV = clamp(S.lid, 0, 0.98);
-      const closure = 1 - (1 - blink) * (1 - lidV);
-      if (closure > 4e-3) {
-        ctx.save();
-        ctx.beginPath();
-        ctx.arc(cx, cy, Rr * 1.003, 0, Math.PI * 2);
-        ctx.clip();
-        const ey = cy + Rr * closure * 0.18;
-        const ry = Math.max(1e-4, Rr * (1 - closure) * 1);
-        ctx.beginPath();
-        ctx.rect(cx - Rr - 4, cy - Rr - 4, Rr * 2 + 8, Rr * 2 + 8);
-        ctx.moveTo(cx + Rr, ey);
-        ctx.ellipse(cx, ey, Rr, ry, 0, 0, Math.PI * 2, true);
-        ctx.fillStyle = "#0e0711";
-        ctx.fill("evenodd");
-        ctx.beginPath();
-        ctx.ellipse(cx, ey, Rr, ry, 0, 0, Math.PI * 2);
-        ctx.strokeStyle = rgba(cIn, 0.28);
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
-        ctx.restore();
-      }
-      {
-        const fx = cx + Rr * 0.13 + S.gx * Rr * 0.025 + Math.sin(t * 0.4) * Rr * 0.01;
-        const fy = cy - Rr * 1.21 + S.gy * Rr * 0.015;
-        const I = 0.78 + 0.16 * Math.sin(t * 1.7) + 0.08 * Math.sin(t * 6.1) + S.sparkle * 0.7;
-        const L = Rr * (0.95 + 0.55 * Math.min(1.5, S.sparkle));
-        const tilt = -1.1 + S.gx * 0.08;
-        ctx.save();
-        ctx.globalCompositeOperation = "lighter";
-        ctx.lineCap = "round";
-        const streak = (ang, len, back, a, wd) => {
-          const dx = Math.cos(ang), dy = Math.sin(ang);
-          const x0 = fx - dx * len * back, y0 = fy - dy * len * back;
-          const x1 = fx + dx * len, y1 = fy + dy * len;
-          const lg = ctx.createLinearGradient(x0, y0, x1, y1);
-          const mid = back / (1 + back);
-          lg.addColorStop(0, "rgba(255,40,20,0)");
-          lg.addColorStop(mid, `rgba(255,236,224,${Math.min(1, a)})`);
-          lg.addColorStop(mid + (1 - mid) * 0.3, `rgba(255,70,34,${a * 0.65})`);
-          lg.addColorStop(1, "rgba(255,40,20,0)");
-          ctx.strokeStyle = lg;
-          ctx.lineWidth = wd;
-          ctx.beginPath();
-          ctx.moveTo(x0, y0);
-          ctx.lineTo(x1, y1);
-          ctx.stroke();
-        };
-        streak(tilt, L, 0.28, 0.95 * I, 2.4);
-        streak(tilt - 0.5, L * 0.55, 0.2, 0.5 * I, 1.6);
-        streak(tilt + 1.57, L * 0.15, 1, 0.5 * I, 1.2);
-        streak(0.2, L * 0.22, 1, 0.55 * I, 1.2);
-        streak(0.2 + 1.7, L * 0.12, 1, 0.35 * I, 1);
-        const hr = Rr * (0.2 + 0.1 * S.sparkle);
-        g = ctx.createRadialGradient(fx, fy, 0, fx, fy, hr);
-        g.addColorStop(0, `rgba(255,250,240,${Math.min(1, 0.95 * I)})`);
-        g.addColorStop(0.12, `rgba(255,220,180,${0.55 * I})`);
-        g.addColorStop(0.4, `rgba(255,110,50,${0.18 * I})`);
-        g.addColorStop(1, "rgba(255,80,30,0)");
-        ctx.fillStyle = g;
-        ctx.beginPath();
-        ctx.arc(fx, fy, hr, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
-      }
-      ctx.globalCompositeOperation = "source-over";
-      ctx.globalAlpha = 1;
+      gl?.viewport(0, 0, canvas.width, canvas.height);
     };
+    fit();
+    const toNorm = (cx, cy) => {
+      const r = canvas.getBoundingClientRect();
+      const nx = (cx - r.left) / Math.max(1, r.width) * 2 - 1;
+      const ny = -((cy - r.top) / Math.max(1, r.height) * 2 - 1);
+      return { nx, ny };
+    };
+    let lastPtr = performance.now();
+    let lastTap = 0;
+    const move = (e) => {
+      const now = performance.now();
+      const dt = (now - lastPtr) / 1e3;
+      lastPtr = now;
+      const { nx, ny } = toNorm(e.clientX, e.clientY);
+      mind.onPointerMove(nx, ny, dt);
+    };
+    const down = (e) => {
+      const now = performance.now();
+      if (now - lastTap < 280) mind.onDoubleTap();
+      lastTap = now;
+      const { nx, ny } = toNorm(e.clientX, e.clientY);
+      mind.onPointerDown(nx, ny);
+    };
+    canvas.addEventListener("pointermove", move, { passive: true });
+    canvas.addEventListener("pointerdown", down);
+    window.addEventListener("pointerup", () => mind.onPointerUp());
+    window.addEventListener("resize", fit);
     let raf = 0;
-    let last = performance.now();
-    let alive = true;
-    const frame = (tNow) => {
-      if (!alive) return;
-      const dt = Math.min(0.05, (tNow - last) / 1e3);
-      last = tNow;
-      update(dt);
-      draw(dt);
-      raf = requestAnimationFrame(frame);
+    let prev = performance.now();
+    let lastLabel = 0;
+    const loop = (now) => {
+      const dt = (now - prev) / 1e3;
+      prev = now;
+      const state = mind.step(dt);
+      const tel = mind.getTelemetry();
+      if (now - lastLabel > 120) {
+        lastLabel = now;
+        onLabel(tel.emotionLabel);
+      }
+      if (gl && program) {
+        gl.useProgram(program);
+        gl.uniform2f(loc.uResolution, canvas.width, canvas.height);
+        gl.uniform1f(loc.uTime, state.time);
+        gl.uniform2f(loc.uGaze, state.gazeX, state.gazeY);
+        gl.uniform1f(loc.uTorsion, state.irisTorsion);
+        gl.uniform1f(loc.uPupilRadius, state.pupilRadius);
+        gl.uniform1f(loc.uPupilVel, state.pupilVelocity);
+        gl.uniform2f(loc.uPupilEcc, state.pupilEccentricityX, state.pupilEccentricityY);
+        gl.uniform1f(loc.uFluidWobble, state.irisFluidWobble);
+        gl.uniform1f(loc.uRipplePhase, state.irisRipplePhase);
+        gl.uniform1f(loc.uRippleAmp, state.irisRippleAmp);
+        gl.uniform1f(loc.uStromaTension, state.stromaTension);
+        gl.uniform1f(loc.uCuriosity, state.curiosity);
+        gl.uniform1f(loc.uUncertainty, state.uncertainty);
+        gl.uniform1f(loc.uWonder, state.wonder);
+        gl.uniform1f(loc.uStartle, state.startle);
+        gl.uniform1f(loc.uMacroZoom, state.macroZoom);
+        gl.uniform1f(loc.uTearWave, state.tearFilmWave);
+        gl.uniform1f(loc.uStarburst, state.starburstIntensity);
+        gl.uniform2f(loc.uFocusPoint, state.focusPointX, state.focusPointY);
+        gl.uniform1f(loc.uFocusGlow, state.focusGlow);
+        gl.drawArrays(gl.TRIANGLES, 0, 6);
+      }
+      raf = requestAnimationFrame(loop);
     };
-    raf = requestAnimationFrame(frame);
-    const buildTimer = window.setTimeout(() => {
-      texA = makeIrisTexture(texSize, 0);
-      texB = makeIrisTexture(texSize, 1);
-      S.lid = 0.95;
-    }, 30);
+    raf = requestAnimationFrame(loop);
     return () => {
-      alive = false;
       cancelAnimationFrame(raf);
-      window.clearTimeout(buildTimer);
-      window.removeEventListener("resize", resize);
-      window.removeEventListener("pointermove", onMove);
-      window.removeEventListener("pointerdown", onDown);
+      audio.dispose();
+      window.removeEventListener("resize", fit);
     };
   }
 
