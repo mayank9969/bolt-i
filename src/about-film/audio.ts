@@ -15,62 +15,63 @@ export class FilmAudio {
   private master: GainNode | null = null;
   private live: AudioNode[] = [];
   private timers: number[] = [];
-  private vo: HTMLAudioElement | null = null;
+  private voBuffer: AudioBuffer | null = null;
+  private voGain: GainNode | null = null;
+  private voSource: AudioBufferSourceNode | null = null;
   private hasVoiceover = false;
   muted = false;
   tts = false;
 
   async probeVoiceover() {
     try {
-      const el = new Audio("/about-film/voiceover.mp3");
-      el.preload = "auto";
-      await new Promise<void>((resolve, reject) => {
-        el.addEventListener("loadedmetadata", () => resolve(), { once: true });
-        el.addEventListener("error", () => reject(), { once: true });
-        el.load();
-      });
-      const dur = el.duration;
-      if (!dur || !isFinite(dur) || dur < 1) {
-        this.hasVoiceover = false;
-        return false;
-      }
-      this.vo = el;
-      this.hasVoiceover = true;
+      const ctx = this.ensure();
+      const res = await fetch("/about-film/voiceover.mp3");
+      if (!res.ok) throw new Error("missing voiceover");
+      const raw = await res.arrayBuffer();
+      this.voBuffer = await ctx.decodeAudioData(raw.slice(0));
+      this.hasVoiceover = this.voBuffer.duration > 1;
     } catch {
       this.hasVoiceover = false;
+      this.voBuffer = null;
     }
     return this.hasVoiceover;
   }
 
-  /**
-   * The mp3 is the full take for the 40s picture. Play it straight through
-   * at 1x, locked to film time — no pauses between captions, no sliced mute.
-   */
-  sync(t: number) {
-    const el = this.vo;
-    if (!el || !this.hasVoiceover) return;
-    if (this.muted || t < 0 || t >= DURATION) {
-      if (!el.paused) el.pause();
-      return;
+  /** Picture clock only — voice is a Web Audio buffer started once, never seeked. */
+  sync(_t: number) {}
+
+  /** Play the full take from this offset. No slicing, no per-frame seeks. */
+  startVoice(offset = 0) {
+    this.stopVoice();
+    if (!this.voBuffer || this.muted) return;
+    const ctx = this.ensure();
+    if (!this.voGain) {
+      this.voGain = ctx.createGain();
+      this.voGain.connect(this.master!);
     }
-    const dur = el.duration;
-    if (!dur || !isFinite(dur)) return;
-    el.playbackRate = 1;
-    el.preservesPitch = true;
-    el.volume = 1;
-    const target = Math.min(dur - 0.04, Math.max(0, t));
-    if (el.ended || target >= dur - 0.04) {
-      if (!el.paused) el.pause();
-      return;
+    this.voGain.gain.value = 1;
+    const src = ctx.createBufferSource();
+    src.buffer = this.voBuffer;
+    src.playbackRate.value = 1;
+    src.connect(this.voGain);
+    const off = Math.min(Math.max(0, offset), Math.max(0, this.voBuffer.duration - 0.05));
+    src.start(ctx.currentTime, off);
+    this.voSource = src;
+  }
+
+  private stopVoice() {
+    if (!this.voSource) return;
+    try {
+      this.voSource.stop();
+    } catch {
+      /* already stopped */
     }
-    if (el.paused) {
-      el.currentTime = target;
-      void el.play().catch(() => {});
-      return;
+    try {
+      this.voSource.disconnect();
+    } catch {
+      /* noop */
     }
-    if (Math.abs(el.currentTime - target) > 0.28) {
-      el.currentTime = target;
-    }
+    this.voSource = null;
   }
 
   private ensure() {
@@ -203,6 +204,8 @@ export class FilmAudio {
     bell(35.6, 659.25, 0.045);
     bell(39.0, 440.0, 0.04);
 
+    this.startVoice(0);
+
     /* --- optional device narration stand-in --- */
     if (this.tts && "speechSynthesis" in window) {
       window.speechSynthesis.cancel();
@@ -257,12 +260,11 @@ export class FilmAudio {
     if (this.master && this.ctx) {
       this.master.gain.setTargetAtTime(m ? 0 : 0.9, this.ctx.currentTime, 0.05);
     }
-    if (this.vo) this.vo.volume = m ? 0 : 1;
+    if (this.voGain && this.ctx) this.voGain.gain.setTargetAtTime(m ? 0 : 1, this.ctx.currentTime, 0.05);
   }
 
   pause() {
     this.ctx?.suspend();
-    this.vo?.pause();
   }
 
   resume() {
@@ -285,10 +287,7 @@ export class FilmAudio {
     this.live = [];
     this.timers.forEach((id) => clearTimeout(id));
     this.timers = [];
-    if (this.vo) {
-      this.vo.pause();
-      this.vo.currentTime = 0;
-    }
+    this.stopVoice();
     if ("speechSynthesis" in window) window.speechSynthesis.cancel();
   }
 
