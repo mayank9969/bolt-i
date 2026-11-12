@@ -31,15 +31,16 @@ function glow(color: string) {
   let c = glowCache.get(color);
   if (!c) {
     c = document.createElement("canvas");
-    c.width = c.height = 64;
+    c.width = c.height = 192;
     const g = c.getContext("2d")!;
     const [r, gg, b] = hex(color);
-    const grad = g.createRadialGradient(32, 32, 0, 32, 32, 32);
-    grad.addColorStop(0, `rgba(${r},${gg},${b},0.95)`);
-    grad.addColorStop(0.35, `rgba(${r},${gg},${b},0.38)`);
+    const grad = g.createRadialGradient(96, 96, 0, 96, 96, 96);
+    grad.addColorStop(0, `rgba(${r},${gg},${b},1)`);
+    grad.addColorStop(0.18, `rgba(${r},${gg},${b},0.72)`);
+    grad.addColorStop(0.45, `rgba(${r},${gg},${b},0.28)`);
     grad.addColorStop(1, `rgba(${r},${gg},${b},0)`);
     g.fillStyle = grad;
-    g.fillRect(0, 0, 64, 64);
+    g.fillRect(0, 0, 192, 192);
     glowCache.set(color, c);
   }
   return c;
@@ -85,19 +86,28 @@ function flower(
     ctx.beginPath();
     ctx.ellipse(r * 0.75, 0, r * 0.62, r * 0.3, 0, 0, Math.PI * 2);
     ctx.fill();
+    ctx.fillStyle = "rgba(255,255,255,0.18)";
+    ctx.beginPath();
+    ctx.ellipse(r * 0.62, -r * 0.04, r * 0.28, r * 0.12, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = color;
   }
   ctx.fillStyle = center;
   ctx.beginPath();
   ctx.arc(0, 0, r * 0.34, 0, Math.PI * 2);
   ctx.fill();
+  ctx.fillStyle = "rgba(255,255,255,0.28)";
+  ctx.beginPath();
+  ctx.arc(-r * 0.08, -r * 0.08, r * 0.12, 0, Math.PI * 2);
+  ctx.fill();
   ctx.restore();
 }
 
 /* precomputed ambient particle fields ------------------------------ */
-const GRASS = Array.from({ length: 34 }, (_, i) => ({
+const GRASS = Array.from({ length: 86 }, (_, i) => ({
   x: rnd(i + 200), h: 0.03 + rnd(i + 230) * 0.05, ph: rnd(i + 260) * 6.28, lean: rnd(i + 290) - 0.5,
 }));
-const MOTES = Array.from({ length: 22 }, (_, i) => ({
+const MOTES = Array.from({ length: 52 }, (_, i) => ({
   x: rnd(i + 300), y: rnd(i + 330), sp: 0.008 + rnd(i + 360) * 0.02, ph: rnd(i + 390) * 6.28,
 }));
 
@@ -118,6 +128,8 @@ export function drawFilmScene(
   const dEff = d * (1 - settle * 0.9);
   const X = (f: number) => f * W;
   const Y = (f: number) => f * H;
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = "high";
 
   /* ---------- virtual camera: slow push-in + handheld drift ---------- */
   const camZ = 1 + 0.055 * smooth(1, 38, t);
@@ -140,13 +152,13 @@ export function drawFilmScene(
   /* clouds — slow parallax drift, tinting with the dream */
   const cloudCol = mix("#ffe9c8", "#5a2a72", dEff);
   ctx.fillStyle = cloudCol;
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < 6; i++) {
     const cx = ((rnd(i + 20) + idle * (0.006 + i * 0.003)) % 1.3 - 0.15) * W;
-    const cy = Y(0.12 + i * 0.09);
-    ctx.globalAlpha = 0.5 - dEff * 0.25;
-    for (let j = 0; j < 4; j++) {
+    const cy = Y(0.1 + i * 0.07);
+    ctx.globalAlpha = 0.42 - dEff * 0.2;
+    for (let j = 0; j < 6; j++) {
       ctx.beginPath();
-      ctx.ellipse(cx + j * X(0.035) - X(0.05), cy + (j % 2) * Y(0.012), X(0.05 - j * 0.006), Y(0.016), 0, 0, Math.PI * 2);
+      ctx.ellipse(cx + j * X(0.032) - X(0.06), cy + (j % 2) * Y(0.01), X(0.055 - j * 0.005), Y(0.018), 0, 0, Math.PI * 2);
       ctx.fill();
     }
   }
@@ -155,13 +167,16 @@ export function drawFilmScene(
   /* stars */
   if (w2 > 0.02) {
     ctx.fillStyle = "#fff";
-    for (let i = 0; i < 90; i++) {
+    for (let i = 0; i < 160; i++) {
       const sx = rnd(i) * W;
       const sy = rnd(i + 50) * Y(0.55);
-      if (sx < W * 0.45) continue;
+      if (sx < W * 0.38) continue;
       const tw = 0.5 + 0.5 * Math.sin(idle * 2 + i * 3.1);
-      ctx.globalAlpha = w2 * tw * 0.9;
-      ctx.fillRect(sx, sy, 1.6, 1.6);
+      ctx.globalAlpha = w2 * tw * 0.95;
+      const s = 0.7 + rnd(i + 80) * 2.2;
+      ctx.beginPath();
+      ctx.arc(sx, sy, s, 0, Math.PI * 2);
+      ctx.fill();
     }
     ctx.globalAlpha = 1;
   }
@@ -184,9 +199,9 @@ export function drawFilmScene(
     rg.addColorStop(0, `rgba(255,228,170,${rayA})`);
     rg.addColorStop(1, "rgba(255,228,170,0)");
     ctx.fillStyle = rg;
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 8; i++) {
       ctx.save();
-      ctx.rotate((Math.PI * 2) / 5 * i + 0.4);
+      ctx.rotate((Math.PI * 2) / 8 * i + 0.4);
       ctx.beginPath();
       ctx.moveTo(0, 0);
       ctx.lineTo(-W * 1.2, -Y(0.06));
@@ -234,8 +249,8 @@ export function drawFilmScene(
     const R = Y(0.26) * (0.85 + 0.15 * Math.sin(idle * 0.8));
     ctx.save();
     ctx.globalAlpha = w2 * 0.92;
-    for (let ring = 0; ring < 2; ring++) {
-      const n = 18 - ring * 6;
+    for (let ring = 0; ring < 3; ring++) {
+      const n = 22 - ring * 5;
       const rr = R * (1 - ring * 0.32);
       for (let i = 0; i < n; i++) {
         const a = (i / n) * Math.PI * 2 + ring * 0.2 + Math.sin(idle * 0.3) * 0.02;
@@ -275,7 +290,7 @@ export function drawFilmScene(
     ctx.fillStyle = treeDark;
     ctx.fillRect(X(bx) - Y(0.014), Y(0.42), Y(0.028), Y(0.28));
     ctx.fillStyle = treeCol;
-    for (let i = 0; i < 7; i++) {
+    for (let i = 0; i < 12; i++) {
       const a = rnd(seed + i) * Math.PI * 2;
       const rr = r * (0.55 + rnd(seed + i + 3) * 0.5);
       ctx.beginPath();

@@ -47,7 +47,7 @@ export default function FilmPlayer() {
     const fit = () => {
       const c = canvasRef.current;
       if (!c) return;
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const dpr = Math.min(window.devicePixelRatio || 1, 3);
       const w = Math.round(c.clientWidth * dpr);
       const h = Math.round(c.clientHeight * dpr);
       if (c.width !== w || c.height !== h) {
