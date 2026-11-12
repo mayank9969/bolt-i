@@ -898,19 +898,20 @@
 .field-stop--route {
   background-image: linear-gradient(90deg, rgb(var(--nx-accent-2-rgb) / 0.05), transparent 55%);
 }
-.field-waymark {
-  width: 4.5rem;
-  height: 2.25rem;
-  color: rgb(var(--nx-accent-2-rgb));
-  flex-shrink: 0;
-}
 .field-stop-head {
   display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 0.6rem 1.5rem;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.85rem;
   margin-bottom: 1.1rem;
+}
+.field-waymark {
+  width: 2.6rem;
+  height: 1.3rem;
+  color: rgb(var(--nx-accent-2-rgb));
+  flex-shrink: 0;
+  opacity: 0.7;
 }
 .field-stop-label {
   font-family: var(--ed-mono);
@@ -960,14 +961,13 @@
   font-family: var(--ed-display);
   font-style: italic;
   font-weight: 400;
-  font-size: clamp(2.05rem, 4vw, 2.75rem);
-  line-height: 1.22;
+  font-size: clamp(1.45rem, 2.4vw, 2rem);
+  line-height: 1.28;
   letter-spacing: -0.03em;
   color: rgb(var(--nx-text-rgb));
-  max-width: 28ch;
-  text-align: center;
-  margin-left: auto;
-  margin-right: auto;
+  max-width: 34ch;
+  text-align: left;
+  margin: 1.1rem 0;
 }
 .field-stamp {
   font-family: var(--ed-mono);
@@ -1058,6 +1058,20 @@
   }
   .about-ed .field-article {
     max-width: 42rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .about-ed .field-story {
+    max-width: 48rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .about-ed .field-prose {
+    text-align: left;
+  }
+  .about-ed .field-pull {
+    text-align: left;
+    margin-left: 0;
   }
 }
 

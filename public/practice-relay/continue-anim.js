@@ -81,10 +81,19 @@
       '" pathLength="1" fill="none" stroke="#c4302b" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1 1" filter="url(#v-rough)"/>' +
       '<g class="v-qd" transform="translate(46 152)"><circle r="8.5" fill="#c4302b"/></g>'
 
-    host.querySelector('.v-sc-img').src = BASE + 'scene.jpg'
-    host.querySelector('.v-man-img').src = BASE + 'man.jpg'
-    host.querySelector('.v-crowd-img').src = BASE + 'crowd.jpg'
-    host.querySelector('.v-orange-img').src = BASE + 'orange.jpg'
+    function setImg(sel, file) {
+      var el = host.querySelector(sel)
+      if (!el) return
+      el.src = BASE + file
+      el.onerror = function () {
+        el.onerror = null
+        el.src = 'anim/' + file
+      }
+    }
+    setImg('.v-sc-img', 'scene.jpg')
+    setImg('.v-man-img', 'man.jpg')
+    setImg('.v-crowd-img', 'crowd.jpg')
+    setImg('.v-orange-img', 'orange.jpg')
 
     var stage = host.querySelector('.v-continue-stage')
     var rig = host.querySelector('.v-continue-rig')
@@ -304,6 +313,7 @@
       { threshold: 0.35 },
     )
     io.observe(stage)
+    playing = true
     raf = requestAnimationFrame(tick)
   }
 

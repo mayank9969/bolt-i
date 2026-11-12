@@ -60,8 +60,9 @@ export default function About() {
               </p>
               <p className="field-pull">The mind can build a universe and still live inside a habit.</p>
               <p>
-                VEYRA began as an interruption: <span className="ed-hit">choose a question for yourself</span>. Stay with
-                it. Come back when it still has something to teach you.
+                VEYRA began as an interruption:{' '}
+                <span className="ed-hit">choose a question for yourself</span>. Stay with it. Come back when it still
+                has something to teach you.
               </p>
             </Stop>
 
