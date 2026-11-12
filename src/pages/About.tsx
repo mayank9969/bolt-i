@@ -32,7 +32,8 @@ export default function About() {
             </h1>
             <p className="field-lede">
               I’m Mayank Sarwal. I built VEYRA to make curiosity feel like{' '}
-              <span className="ed-hit">somewhere I could actually go</span>—not somewhere I kept imagining.
+              <span className="ed-hit">somewhere I could actually go</span>
+              {' '}— not somewhere I kept imagining.
             </p>
             <p className="field-stat">15 subject islands. 2,000 questions. No locked route.</p>
             <div className="field-cta">

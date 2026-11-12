@@ -1004,6 +1004,46 @@
   }
 }
 
+/* Laptop / PC: left reading column, title on two intended lines, highlights stay whole */
+@media (min-width: 1024px) {
+  .about-ed .field-open {
+    max-width: 40rem;
+    margin-left: 0;
+    text-align: left;
+  }
+  .about-ed .field-open .field-meta,
+  .about-ed .field-open .field-display {
+    text-align: left;
+    margin-left: 0;
+    margin-right: 0;
+  }
+  .about-ed .field-display {
+    max-width: none;
+    font-size: clamp(2.35rem, 3.2vw, 3.35rem);
+    line-height: 1.12;
+  }
+  .about-ed .field-display-line {
+    white-space: nowrap;
+  }
+  .about-ed .field-lede,
+  .about-ed .field-prose {
+    max-width: 36rem;
+    font-size: 1.28rem;
+    line-height: 1.58;
+    text-wrap: pretty;
+  }
+  .about-ed .field-notes .ed-hit,
+  .about-ed .ed-hit {
+    white-space: nowrap;
+  }
+  .about-ed .field-cta {
+    justify-content: flex-start;
+  }
+  .about-ed .field-article {
+    max-width: 38rem;
+  }
+}
+
 @keyframes caption-word-in {
   from { opacity: 0; transform: translateY(0.35em); }
   to { opacity: 1; transform: none; }
