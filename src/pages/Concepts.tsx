@@ -1,3 +1,5 @@
+import '@fontsource-variable/fraunces/wght.css'
+import '@fontsource-variable/source-serif-4/wght.css'
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -38,14 +40,11 @@ export default function Concepts() {
   const [picked, setPicked] = useState<number | null>(null)
 
   return (
-    <div className="relative z-10 max-w-page mx-auto px-5 sm:px-8 lg:px-12 pt-16 pb-24 md:pt-24">
+    <div className="relative z-10 max-w-page mx-auto px-5 sm:px-8 lg:px-12 pt-16 pb-24 md:pt-24 archive-ed">
       <Reveal>
-        <p className="figcap inline-flex items-center gap-3">
-          <span className="w-8 h-px bg-line-strong" />
-          Studio · concepts
-        </p>
-        <h1 className="t-hero text-fg mt-6">Lessons that rotate.</h1>
-        <p className="t-lead text-fg-2 mt-5 max-w-lg">
+        <p className="ed-eyebrow">Studio · concepts</p>
+        <h1 className="ed-display mt-4">Lessons that rotate.</h1>
+        <p className="ed-lede mt-5">
           Curated ideas from newest.py. Today’s pick changes with the date; browse the library to revisit earlier ones.
         </p>
       </Reveal>

@@ -1,3 +1,5 @@
+import '@fontsource-variable/fraunces/wght.css'
+import '@fontsource-variable/source-serif-4/wght.css'
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getHistory } from '@/api/quizApi'
@@ -71,40 +73,55 @@ export default function Progress() {
   }
 
   return (
-    <div className="relative z-10 max-w-page mx-auto px-5 sm:px-6 lg:px-8 pt-16 pb-24 md:pt-24">
+    <div className="relative z-10 max-w-page mx-auto px-5 sm:px-6 lg:px-8 pt-16 pb-24 md:pt-24 archive-ed">
       <Reveal>
-        <p className="figcap inline-flex items-center gap-3">
-          <span className="w-8 h-px bg-line-strong" />
-          History · progress
+        <p className="ed-eyebrow">History · progress</p>
+        <h1 className="ed-display mt-4 text-balance">What history shows.</h1>
+        <p className="ed-lede mt-5">
+          Engine sittings only. Numbers in teal. The recommended five is the island that still needs the most light.
         </p>
-        <h1 className="t-hero text-fg mt-6">What history shows.</h1>
       </Reveal>
       {error && <p className="mt-6 text-warm-text">{error}</p>}
-      <p className="t-lead text-fg-2 mt-6">
-        {stats.n} attempts · overall {formatPercent(stats.overall)}
-      </p>
-      {stats.weakest && (
-        <p className="mt-4 text-fg-2">
-          Recommended next:{' '}
-          <button type="button" className="link-rule" disabled={busy} onClick={() => void sitWeak()}>
+
+      <div className="mt-10 flex flex-wrap items-end gap-x-10 gap-y-4">
+        <p>
+          <span className="block t-caption text-fg-3">Attempts</span>
+          <span className="num text-accent text-[clamp(2.2rem,5vw,3.4rem)] font-semibold leading-none">{stats.n}</span>
+        </p>
+        <p>
+          <span className="block t-caption text-fg-3">Overall</span>
+          <span className="num text-accent text-[clamp(2.2rem,5vw,3.4rem)] font-semibold leading-none">
+            {formatPercent(stats.overall)}
+          </span>
+        </p>
+        {stats.weakest && (
+          <button type="button" className="btn-primary btn-sm mt-2" disabled={busy} onClick={() => void sitWeak()}>
             {busy ? 'Opening…' : `Sit five · ${labelCategory(stats.weakest)}`}
           </button>
-        </p>
-      )}
-      <ul className="mt-8 grid gap-2">
-        {Object.entries(stats.byCat).map(([id, v]) => (
-          <li key={id} className="flex justify-between border-b border-line py-3">
-            <span>{labelCategory(id)}</span>
-            <span className="t-meta">{v.marks ? formatPercent((v.score / v.marks) * 100) : '—'}</span>
-          </li>
-        ))}
+        )}
+      </div>
+
+      <ul className="mt-12 grid gap-1">
+        {Object.entries(stats.byCat).map(([id, v]) => {
+          const pct = v.marks ? (v.score / v.marks) * 100 : 0
+          return (
+            <li key={id} className="grid grid-cols-[1fr_auto] items-center gap-x-6 gap-y-2 border-b border-line py-4">
+              <span className="text-fg font-medium">{labelCategory(id)}</span>
+              <span className="num text-accent font-semibold">{v.marks ? formatPercent(pct) : '—'}</span>
+              <span className="col-span-2 h-1.5 rounded-full bg-line overflow-hidden">
+                <span className="block h-full bg-accent" style={{ width: `${Math.min(100, Math.max(0, pct))}%` }} />
+              </span>
+            </li>
+          )
+        })}
       </ul>
-      <h2 className="t-title text-fg mt-12">Learning milestones</h2>
-      <ul className="mt-4 grid gap-3">
+
+      <h2 className="ed-display mt-16 text-[clamp(1.6rem,3vw,2.1rem)]">Learning milestones</h2>
+      <ul className="mt-6 grid sm:grid-cols-2 gap-3">
         {stats.milestones.map((m) => (
-          <li key={m.name} className="rounded-xl border border-line p-4">
+          <li key={m.name} className="rounded-xl border border-line px-4 py-4">
             <p className="font-medium text-fg">
-              {m.achieved ? '✓' : '·'} {m.name}
+              <span className={m.achieved ? 'text-accent' : 'text-fg-3'}>{m.achieved ? '✓' : '·'}</span> {m.name}
             </p>
             <p className="t-meta text-fg-2 mt-1">{m.detail}</p>
           </li>
