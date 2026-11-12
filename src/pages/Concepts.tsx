@@ -1,6 +1,6 @@
 import '@fontsource-variable/fraunces/wght.css'
 import '@fontsource-variable/source-serif-4/wght.css'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import library from '@/lib/conceptLibrary.json'
@@ -9,6 +9,7 @@ import Reveal from '@/components/Reveal'
 import { labelCategory } from '@/lib/format'
 import { useQuiz } from '@/context/QuizContext'
 import { launchSitting, mixedFive } from '@/lib/launchSitting'
+import { getLabTopics, type LabTopic } from '@/api/quizApi'
 
 type Lesson = {
   id: string
@@ -27,29 +28,44 @@ export default function Concepts() {
   const navigate = useNavigate()
   const { beginSession } = useQuiz()
   const [starting, setStarting] = useState(false)
-  const cats = Object.keys(LIB)
-  const [cat, setCat] = useState(cats[0] ?? 'maths')
-  const daily = useMemo(() => {
+  const [topics, setTopics] = useState<LabTopic[]>([])
+  const [note, setNote] = useState('')
+  const [cat, setCat] = useState('maths')
+  const [picked, setPicked] = useState<number | null>(null)
+
+  useEffect(() => {
+    getLabTopics()
+      .then((pack) => {
+        const list = pack.topics || []
+        setTopics(list)
+        if (pack.refreshes_at) setNote(`Next refresh ${pack.refreshes_at}`)
+        if (list[0]?.category) setCat(list[0].category)
+      })
+      .catch((err: Error) => setNote(err.message))
+  }, [])
+
+  const article = topics.find((t) => t.category === cat) ?? topics[0]
+  const lesson = useMemo(() => {
     const list = LIB[cat] ?? []
     if (!list.length) return null
     const ord = Math.floor(Date.now() / 86400000)
     return list[ord % list.length]
   }, [cat])
-  const [open, setOpen] = useState<Lesson | null>(null)
-  const lesson = open ?? daily
-  const [picked, setPicked] = useState<number | null>(null)
+
+  const chips = topics.length ? topics.map((t) => t.category) : Object.keys(LIB)
 
   return (
     <div className="relative z-10 max-w-page mx-auto px-5 sm:px-8 lg:px-12 pt-16 pb-24 md:pt-24 archive-ed">
       <Reveal>
         <p className="ed-eyebrow">Studio · concepts</p>
-        <h1 className="ed-display mt-4">Lessons that rotate.</h1>
+        <h1 className="ed-display mt-4">A thread from the live page.</h1>
         <p className="ed-lede mt-5">
-          Curated ideas from newest.py. Today’s pick changes with the date; browse the library to revisit earlier ones.
+          Same daily Wikipedia openings as the Lab — then a short walkthrough if we have one for that island.
         </p>
+        {note && <p className="t-meta text-fg-3 mt-3">{note}</p>}
       </Reveal>
       <div className="mt-8 flex flex-wrap gap-2">
-        {cats.map((id) => (
+        {chips.map((id) => (
           <button
             key={id}
             type="button"
@@ -57,7 +73,6 @@ export default function Concepts() {
             style={cat === id ? { borderColor: 'var(--nx-accent)', color: 'var(--nx-text)' } : undefined}
             onClick={() => {
               setCat(id)
-              setOpen(null)
               setPicked(null)
             }}
           >
@@ -65,6 +80,20 @@ export default function Concepts() {
           </button>
         ))}
       </div>
+
+      {article && (
+        <article className="mt-10 pt-8 border-t border-line">
+          <p className="eyebrow">{article.category_label || labelCategory(article.category)}</p>
+          <h2 className="t-title text-fg mt-2">{article.topic || 'No article loaded'}</h2>
+          <p className="text-fg-2 mt-4 text-pretty">{article.summary || article.error || 'Waiting on Wikipedia.'}</p>
+          {article.source_url && (
+            <a className="t-meta underline underline-offset-4 mt-3 inline-block" href={article.source_url} target="_blank" rel="noreferrer">
+              Wikipedia source
+            </a>
+          )}
+        </article>
+      )}
+
       {lesson && (
         <AnimatePresence mode="wait">
           <motion.article
@@ -75,65 +104,53 @@ export default function Concepts() {
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
           >
-          <p className="eyebrow">{open ? 'Library' : 'Today’s pick'}</p>
-          <h2 className="t-title text-fg mt-2">{lesson.title}</h2>
-          <p className="text-fg-2 mt-4 text-pretty">{lesson.analogy}</p>
-          <p className="text-fg mt-4 text-pretty">{lesson.idea}</p>
-          <p className="t-meta text-fg-2 mt-4">{lesson.example}</p>
-          <div className="mt-8 pt-6 border-t border-line">
-            <p className="font-medium text-fg">{lesson.check.prompt}</p>
-            <div className="mt-3 flex flex-col gap-2">
-              {lesson.check.choices.map((c, i) => (
-                <button
-                  key={c}
-                  type="button"
-                  className="studio-choice text-left rounded-xl border border-line px-4 py-3 hover:border-line-strong"
-                  onClick={() => setPicked(i)}
-                >
-                  {c}
-                </button>
-              ))}
+            <p className="eyebrow">Walkthrough</p>
+            <h2 className="t-title text-fg mt-2">{lesson.title}</h2>
+            <p className="text-fg-2 mt-4 text-pretty">{lesson.analogy}</p>
+            <p className="text-fg mt-4 text-pretty">{lesson.idea}</p>
+            <p className="t-meta text-fg-2 mt-4">{lesson.example}</p>
+            <div className="mt-8 pt-6 border-t border-line">
+              <p className="font-medium text-fg">{lesson.check.prompt}</p>
+              <div className="mt-3 flex flex-col gap-2">
+                {lesson.check.choices.map((c, i) => (
+                  <button
+                    key={c}
+                    type="button"
+                    className="studio-choice text-left rounded-xl border border-line px-4 py-3 hover:border-line-strong"
+                    onClick={() => setPicked(i)}
+                  >
+                    {c}
+                  </button>
+                ))}
+              </div>
+              {picked !== null && (
+                <motion.p className="mt-4 text-fg-2" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}>
+                  {picked === lesson.check.answer ? 'Yes. ' : 'Not that one. '}
+                  {lesson.check.why}
+                </motion.p>
+              )}
             </div>
-            {picked !== null && (
-              <motion.p
-                className="mt-4 text-fg-2"
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-              >
-                {picked === lesson.check.answer ? 'Yes. ' : 'Not that one. '}
-                {lesson.check.why}
-              </motion.p>
-            )}
-            <button
-              type="button"
-              className="btn-primary mt-6"
-              disabled={starting}
-              onClick={async () => {
-                setStarting(true)
-                await launchSitting(
-                  mixedFive(cat),
-                  beginSession,
-                  () => navigate('/quiz'),
-                  (config) => navigate('/setup', { state: config }),
-                )
-                setStarting(false)
-              }}
-            >
-              {starting ? 'Opening…' : 'Sit five on this island'}
-            </button>
-          </div>
           </motion.article>
         </AnimatePresence>
       )}
-      <ul className="mt-8 grid gap-2">
-        {(LIB[cat] ?? []).map((l) => (
-          <li key={l.id}>
-            <button type="button" className="link-rule text-sm" onClick={() => { setOpen(l); setPicked(null) }}>
-              {l.title}
-            </button>
-          </li>
-        ))}
-      </ul>
+
+      <button
+        type="button"
+        className="btn-primary mt-8"
+        disabled={starting}
+        onClick={async () => {
+          setStarting(true)
+          await launchSitting(
+            mixedFive(cat),
+            beginSession,
+            () => navigate('/quiz'),
+            (config) => navigate('/setup', { state: config }),
+          )
+          setStarting(false)
+        }}
+      >
+        {starting ? 'Opening…' : 'Sit five on this island'}
+      </button>
     </div>
   )
 }
