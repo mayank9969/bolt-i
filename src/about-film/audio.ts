@@ -1,4 +1,4 @@
-import { CAPTIONS, DURATION } from "./timeline";
+import { CAPTIONS, DURATION, voiceClips, type VoiceClip } from "./timeline";
 
 /**
  * FilmAudio
@@ -18,6 +18,8 @@ export class FilmAudio {
   private voBuffer: AudioBuffer | null = null;
   private voGain: GainNode | null = null;
   private voSource: AudioBufferSourceNode | null = null;
+  private clips: VoiceClip[] = [];
+  private clipI = -1;
   private hasVoiceover = false;
   muted = false;
   tts = false;
@@ -30,6 +32,7 @@ export class FilmAudio {
       const raw = await res.arrayBuffer();
       this.voBuffer = await ctx.decodeAudioData(raw.slice(0));
       this.hasVoiceover = this.voBuffer.duration > 1;
+      if (this.hasVoiceover) this.clips = voiceClips(this.voBuffer.duration);
     } catch {
       this.hasVoiceover = false;
       this.voBuffer = null;
@@ -37,13 +40,18 @@ export class FilmAudio {
     return this.hasVoiceover;
   }
 
-  /** Picture clock only — voice is a Web Audio buffer started once, never seeked. */
-  sync(_t: number) {}
-
-  /** Play the full take from this offset. No slicing, no per-frame seeks. */
-  startVoice(offset = 0) {
-    this.stopVoice();
+  /** When a caption appears, speak that slice; speed up so every word fits. */
+  sync(t: number) {
     if (!this.voBuffer || this.muted) return;
+    const i = this.clips.findIndex((c) => t >= c.at && t < c.until);
+    if (i === this.clipI) return;
+    this.clipI = i;
+    this.stopVoice();
+    if (i < 0) return;
+    const c = this.clips[i];
+    const window = Math.max(0.4, c.until - c.at);
+    const srcDur = Math.max(0.4, c.srcEnd - c.srcStart);
+    const rate = Math.min(1.35, Math.max(1, srcDur / window));
     const ctx = this.ensure();
     if (!this.voGain) {
       this.voGain = ctx.createGain();
@@ -52,10 +60,11 @@ export class FilmAudio {
     this.voGain.gain.value = 1;
     const src = ctx.createBufferSource();
     src.buffer = this.voBuffer;
-    src.playbackRate.value = 1;
+    src.playbackRate.value = rate;
     src.connect(this.voGain);
-    const off = Math.min(Math.max(0, offset), Math.max(0, this.voBuffer.duration - 0.05));
-    src.start(ctx.currentTime, off);
+    const off = Math.min(c.srcStart, this.voBuffer.duration - 0.05);
+    const len = Math.min(srcDur, this.voBuffer.duration - off);
+    src.start(ctx.currentTime, off, len);
     this.voSource = src;
   }
 
@@ -204,7 +213,7 @@ export class FilmAudio {
     bell(35.6, 659.25, 0.045);
     bell(39.0, 440.0, 0.04);
 
-    this.startVoice(0);
+    this.clipI = -1;
 
     /* --- optional device narration stand-in --- */
     if (this.tts && "speechSynthesis" in window) {
@@ -288,6 +297,7 @@ export class FilmAudio {
     this.timers.forEach((id) => clearTimeout(id));
     this.timers = [];
     this.stopVoice();
+    this.clipI = -1;
     if ("speechSynthesis" in window) window.speechSynthesis.cancel();
   }
 
