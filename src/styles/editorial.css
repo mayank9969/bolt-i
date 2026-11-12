@@ -777,7 +777,7 @@
   letter-spacing: -0.03em;
   line-height: 1.02;
   margin: 1.1rem 0 0;
-  max-width: 18ch;
+  max-width: 22ch;
   color: rgb(var(--nx-text-rgb));
   text-wrap: balance;
 }

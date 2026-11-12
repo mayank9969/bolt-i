@@ -32,8 +32,8 @@ export default function About() {
           <header className="field-open">
             <p className="field-meta">Field note 00 · The person behind the map</p>
             <h1 className="field-display">
-              <span className="field-display-line">MY MIND COULD BUILD A UNIVERSE.</span>
-              <span className="field-display-line field-display-sub">MY DAYS KEPT REPEATING.</span>
+              <span className="field-display-line">I could imagine a thousand routes.</span>
+              <span className="field-display-line field-display-sub">I kept taking the same one.</span>
             </h1>
             <p className="field-lede">
               I’m Mayank Sarwal. I built VEYRA to make curiosity feel like{' '}
