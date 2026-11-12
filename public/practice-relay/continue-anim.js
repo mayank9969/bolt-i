@@ -84,10 +84,11 @@
     function setImg(sel, file) {
       var el = host.querySelector(sel)
       if (!el) return
-      el.src = BASE + file
+      var url = BASE + file + '?v=2'
+      el.src = url
+      el.style.filter = 'none'
       el.onerror = function () {
-        el.onerror = null
-        el.src = 'anim/' + file
+        el.style.opacity = '0'
       }
     }
     setImg('.v-sc-img', 'scene.jpg')

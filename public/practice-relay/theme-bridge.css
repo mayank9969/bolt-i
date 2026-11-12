@@ -340,8 +340,17 @@ a[aria-label^='Daily challenge'],
   position: absolute;
   inset: 0;
 }
-.v-sc { transform-origin: 85% 55%; }
-.v-sc-img, .v-crowd-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.v-sc { transform-origin: 85% 55%; background: #d9d0bf url('/practice-relay/anim/scene.jpg') center / cover no-repeat; }
+.v-crowd { background: url('/practice-relay/anim/crowd.jpg') center / cover no-repeat; }
+.v-man { background: url('/practice-relay/anim/man.jpg') center / contain no-repeat; }
+.v-orange { background: url('/practice-relay/anim/orange.jpg') center / contain no-repeat; }
+.v-sc-img, .v-crowd-img, .v-man-img, .v-orange-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: none !important;
+}
 .v-mist { position: absolute; top: 30%; width: 80%; height: 30%; filter: blur(18px); pointer-events: none; }
 .v-mist-a { background: radial-gradient(ellipse at center, rgba(255,252,243,.55), transparent 65%); }
 .v-mist-b { top: 38%; width: 70%; height: 24%; filter: blur(22px); background: radial-gradient(ellipse at center, rgba(255,252,243,.45), transparent 65%); }
@@ -353,7 +362,7 @@ a[aria-label^='Daily challenge'],
   -webkit-mask-image: radial-gradient(ellipse 66% 62% at 50% 50%, #000 62%, transparent 100%);
   mask-image: radial-gradient(ellipse 66% 62% at 50% 50%, #000 62%, transparent 100%);
 }
-.v-man-img, .v-orange-img { width: 100%; height: 100%; display: block; filter: brightness(1.08) url(#v-boil); }
+.v-man-img, .v-orange-img { width: 100%; height: 100%; display: block; }
 .v-q-draw { position: absolute; inset: 0; width: 100%; height: 100%; }
 .v-crowd-in { position: absolute; inset: 0; transform-origin: 50% 64%; }
 .v-crowd-img { filter: url(#v-boil); }
