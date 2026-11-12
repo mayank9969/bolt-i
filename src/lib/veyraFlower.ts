@@ -281,10 +281,9 @@ function initVeyraFlower(root){
   var started=false,busy=false,nextRip=0,loopTimer=0;
   function settle(){
     root.classList.add('is-settled');
-    if(loopTimer) clearInterval(loopTimer);
-    loopTimer=setInterval(function(){
-      if(!root.classList.contains('is-settled')) return;
-      nextRipple();
+    if(loopTimer) clearTimeout(loopTimer);
+    loopTimer=setTimeout(function(){
+      if(root.veyraFlower) root.veyraFlower.replay();
     },5000);
   }
   function start(){if(started)return;started=true;root.classList.add('is-run');}
@@ -308,7 +307,13 @@ function initVeyraFlower(root){
     ripple:ripple,
     replay:function(){
       if(reduce)return;
-      nextRipple();
+      if(loopTimer) clearTimeout(loopTimer);
+      busy=false;
+      petalEls.forEach(function(g){g.classList.remove('is-rippling');});
+      root.classList.remove('is-run','is-settled');
+      requestAnimationFrame(function(){
+        requestAnimationFrame(function(){root.classList.add('is-run');});
+      });
     }
   };
 

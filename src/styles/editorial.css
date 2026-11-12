@@ -95,6 +95,20 @@
   letter-spacing: -0.03em;
   line-height: 1.15;
   text-shadow: 0 2px 0 rgb(0 0 0 / 0.55), 0 8px 22px rgb(0 0 0 / 0.45);
+  opacity: 0;
+}
+.about-ed .about-quote-bloom:has(.veyra-flower.is-run) .about-for-you {
+  animation: about-love-in 3.2s ease-out 2.6s both;
+}
+.about-ed .about-for-you-rule {
+  opacity: 0;
+}
+.about-ed .about-quote-bloom:has(.veyra-flower.is-run) .about-for-you-rule {
+  animation: about-love-in 1.15s ease-out 5.9s both;
+}
+@keyframes about-love-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
 }
 .about-ed .about-for-you em {
   font-style: italic;
