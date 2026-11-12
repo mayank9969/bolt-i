@@ -1004,12 +1004,17 @@
   }
 }
 
-/* Laptop / PC: left reading column, title on two intended lines, highlights stay whole */
+/* Laptop / PC: copy left, animation right — not a phone stack */
 @media (min-width: 1024px) {
   .about-ed .field-open {
-    max-width: 40rem;
+    max-width: none;
+    width: 100%;
     margin-left: 0;
     text-align: left;
+    display: grid;
+    grid-template-columns: minmax(28rem, 1fr) minmax(22rem, 26rem);
+    gap: 3rem 4rem;
+    align-items: start;
   }
   .about-ed .field-open .field-meta,
   .about-ed .field-open .field-display {
@@ -1019,7 +1024,7 @@
   }
   .about-ed .field-display {
     max-width: none;
-    font-size: clamp(2.35rem, 3.2vw, 3.35rem);
+    font-size: clamp(2.55rem, 3.6vw, 3.85rem);
     line-height: 1.12;
   }
   .about-ed .field-display-line {
@@ -1027,8 +1032,8 @@
   }
   .about-ed .field-lede,
   .about-ed .field-prose {
-    max-width: 36rem;
-    font-size: 1.28rem;
+    max-width: 38rem;
+    font-size: 1.32rem;
     line-height: 1.58;
     text-wrap: pretty;
   }
@@ -1039,8 +1044,13 @@
   .about-ed .field-cta {
     justify-content: flex-start;
   }
+  .about-ed .field-open-anim {
+    width: 100%;
+    max-width: 26rem;
+    justify-self: end;
+  }
   .about-ed .field-article {
-    max-width: 38rem;
+    max-width: 42rem;
   }
 }
 

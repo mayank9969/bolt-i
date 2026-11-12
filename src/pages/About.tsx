@@ -25,24 +25,26 @@ export default function About() {
       <div className="relative z-10 max-w-page mx-auto px-5 sm:px-8 lg:px-12 py-10 md:py-16">
         <Reveal>
           <header className="field-open">
-            <p className="field-meta">Field note 00 · The person behind the map</p>
-            <h1 className="field-display">
-              <span className="field-display-line">I could imagine a thousand routes.</span>
-              <span className="field-display-line field-display-sub">I kept taking the same one.</span>
-            </h1>
-            <p className="field-lede">
-              I’m Mayank Sarwal. I built VEYRA to make curiosity feel like{' '}
-              <span className="ed-hit">somewhere I could actually go</span>
-              {' '}— not somewhere I kept imagining.
-            </p>
-            <p className="field-stat">15 subject islands. 2,000 questions. No locked route.</p>
-            <div className="field-cta">
-              <Link to="/" className="btn-primary btn-lg inline-flex">
-                Explore the islands
-                <ArrowRight className="arrow w-5 h-5" />
-              </Link>
+            <div className="field-open-copy">
+              <p className="field-meta">Field note 00 · The person behind the map</p>
+              <h1 className="field-display">
+                <span className="field-display-line">I could imagine a thousand routes.</span>
+                <span className="field-display-line field-display-sub">I kept taking the same one.</span>
+              </h1>
+              <p className="field-lede">
+                I’m Mayank Sarwal. I built VEYRA to make curiosity feel like{' '}
+                <span className="ed-hit">somewhere I could actually go</span>
+                {' '}— not somewhere I kept imagining.
+              </p>
+              <p className="field-stat">15 subject islands. 2,000 questions. No locked route.</p>
+              <div className="field-cta">
+                <Link to="/" className="btn-primary btn-lg inline-flex">
+                  Explore the islands
+                  <ArrowRight className="arrow w-5 h-5" />
+                </Link>
+              </div>
             </div>
-            <div className="mt-12 text-fg w-full max-w-4xl">
+            <div className="field-open-anim text-fg">
               <SelfReflection />
             </div>
           </header>
