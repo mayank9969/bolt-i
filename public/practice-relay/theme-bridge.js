@@ -103,14 +103,10 @@
   }
 
   var STUDIO = [
-    { act: 'daily', n: '01', kicker: 'Begin', title: 'Try five', meta: 'Mixed subjects' },
-    { act: 'concepts', n: '02', kicker: 'Follow', title: 'Open a thread', meta: 'Concept studio' },
-    { act: 'take', n: '03', kicker: 'Keep', title: 'Write a take', meta: 'Private · unscored' },
-    { act: 'history', n: '04', kicker: 'Return', title: 'Find your trail', meta: 'Sittings so far' },
-    { act: 'lab', n: '05', kicker: 'Work', title: 'Open the lab', meta: 'Form and scores' },
-    { act: 'missed', n: '06', kicker: 'Repair', title: 'Missed topics', meta: 'What still slips' },
-    { act: 'focus', n: '07', kicker: 'Aim', title: 'A longer sitting', meta: 'Pick subject and length' },
-    { act: 'progress', n: '08', kicker: 'Chart', title: 'See the line', meta: 'Progress over time' },
+    { act: 'daily', n: '01', kicker: 'Begin', title: 'Try five', meta: 'Quick start · mixed' },
+    { act: 'concepts', n: '02', kicker: 'Follow', title: 'Open a thread', meta: 'A guided concept' },
+    { act: 'take', n: '03', kicker: 'Keep', title: 'Write a Take', meta: 'Private · unscored' },
+    { act: 'lab', n: '04', kicker: 'Work', title: 'Open the Lab', meta: 'Sourced topics today' },
   ]
 
   function insertStudio() {

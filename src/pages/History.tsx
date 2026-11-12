@@ -1,7 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { getHistory } from '@/api/quizApi'
+import { reviewTopics } from '@/lib/review'
+import { launchSitting, mixedFive } from '@/lib/launchSitting'
+import { useQuiz } from '@/context/QuizContext'
 import type { HistoryEntry } from '@/types/quiz'
 import Reveal from '@/components/Reveal'
 import TrendChart from '@/components/TrendChart'
@@ -19,10 +22,13 @@ type Filter = 'all' | string
 const ease = [0.22, 1, 0.36, 1] as const
 
 export default function History() {
+  const navigate = useNavigate()
+  const { beginSession } = useQuiz()
   const [history, setHistory] = useState<HistoryEntry[] | null>(null)
   const [error, setError] = useState('')
   const [filter, setFilter] = useState<Filter>('all')
   const [showAll, setShowAll] = useState(false)
+  const [repairing, setRepairing] = useState(false)
 
   useEffect(() => {
     getHistory()
@@ -135,6 +141,38 @@ export default function History() {
                 </div>
               </div>
             )}
+          </div>
+        </Reveal>
+
+        <Reveal delay={0.04}>
+          <div className="mt-10 grid sm:grid-cols-3 gap-px border-t border-line-strong">
+            <a href="#attempts" className="py-5 pr-6 block">
+              <p className="ed-eyebrow">Find your trail</p>
+              <p className="text-fg mt-2">The sittings, in order.</p>
+            </a>
+            <button
+              type="button"
+              className="py-5 pr-6 text-left"
+              disabled={repairing || !history?.length}
+              onClick={() => {
+                if (!history?.length) return
+                const next = reviewTopics(history)[0]
+                setRepairing(true)
+                void launchSitting(
+                  next ? mixedFive(next.id) : mixedFive('all'),
+                  beginSession,
+                  () => navigate('/quiz'),
+                  (config) => navigate('/setup', { state: config }),
+                ).finally(() => setRepairing(false))
+              }}
+            >
+              <p className="ed-eyebrow">Missed topics</p>
+              <p className="text-fg mt-2">{repairing ? 'Opening…' : 'Sit the island that still slips.'}</p>
+            </button>
+            <Link to="/progress" className="py-5 pr-6 block">
+              <p className="ed-eyebrow">See the line</p>
+              <p className="text-fg mt-2">How scores moved over time.</p>
+            </Link>
           </div>
         </Reveal>
 
@@ -261,7 +299,7 @@ export default function History() {
             <HistoryStats history={visible} />
 
             {/* ── Attempts ──────────────────────────────────── */}
-            <div className="mt-20 grid lg:grid-cols-12 gap-x-10">
+            <div id="attempts" className="mt-20 grid lg:grid-cols-12 gap-x-10">
               <Reveal className="lg:col-span-4">
                 <span className="index">03 — Attempts</span>
                 <h2 className="ed-kicker" style={{ fontFamily: 'var(--ed-display)', fontSize: 'clamp(1.4rem,2.2vw,1.8rem)' }}>Each sitting</h2>

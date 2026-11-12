@@ -19,6 +19,7 @@ export default function Lab() {
   const [busy, setBusy] = useState<string | null>(null)
   const [topics, setTopics] = useState<LabTopic[] | null>(null)
   const [note, setNote] = useState('')
+  const [length, setLength] = useState<5 | 15>(5)
 
   useEffect(() => {
     getLabTopics()
@@ -35,7 +36,7 @@ export default function Lab() {
   const open = async (category: string) => {
     setBusy(category)
     await launchSitting(
-      mixedFive(category),
+      { ...mixedFive(category), questionCount: length },
       beginSession,
       () => navigate('/quiz'),
       (config) => navigate('/setup', { state: config }),
@@ -52,6 +53,14 @@ export default function Lab() {
           Each subject draws a Wikipedia opening from the live engine. A sitting still scores from the question bank.
         </p>
         {note && <p className="t-meta text-fg-3 mt-3">{note}</p>}
+        <div className="mt-6 flex flex-wrap gap-2" role="group" aria-label="Sitting length">
+          <button type="button" className={`btn-sm ${length === 5 ? 'btn-primary' : 'btn-secondary'}`} onClick={() => setLength(5)}>
+            Try five
+          </button>
+          <button type="button" className={`btn-sm ${length === 15 ? 'btn-primary' : 'btn-secondary'}`} onClick={() => setLength(15)}>
+            A longer sitting
+          </button>
+        </div>
       </Reveal>
       <ol className="studio-rail mt-10 ml-4 grid gap-1">
         {(topics ?? []).map((item, i) => (
