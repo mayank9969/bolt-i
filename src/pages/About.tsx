@@ -1,8 +1,11 @@
-import '@fontsource-variable/fraunces/wght.css'
-import '@fontsource-variable/fraunces/wght-italic.css'
-import '@fontsource-variable/source-serif-4/wght.css'
-import '@fontsource-variable/source-serif-4/wght-italic.css'
-import type { ReactNode } from 'react'
+import '@fontsource/instrument-serif/400.css'
+import '@fontsource/instrument-serif/400-italic.css'
+import '@fontsource-variable/dm-sans/wght.css'
+import '@fontsource-variable/dm-sans/wght-italic.css'
+import '@fontsource/ibm-plex-mono/400.css'
+import '@fontsource/ibm-plex-mono/500.css'
+import '@fontsource/ibm-plex-mono/600.css'
+import { useEffect, useRef, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import Reveal from '@/components/Reveal'
 import SelfReflection from '@/components/SelfReflection'
@@ -11,136 +14,125 @@ import VeyraFlower from '@/components/VeyraFlower'
 import { useWorld } from '@/components/three/world'
 import { ArrowRight } from '@/components/ui/Icons'
 
+const STOPS = [
+  { id: 'loop', n: '01', label: 'THE LOOP' },
+  { id: 'ashore', n: '02', label: 'GO ASHORE' },
+  { id: 'promise', n: '03', label: 'THE PROMISE' },
+  { id: 'opening', n: '04', label: 'THE FIRST OPENING' },
+  { id: 'route', n: '05', label: 'YOUR ROUTE' },
+] as const
+
 export default function About() {
   useWorld({ mode: 'quiet' })
 
   return (
-    <div className="relative flex-1 about-ed">
+    <div className="relative flex-1 about-ed field-notes">
       <div className="relative z-10 max-w-page mx-auto px-5 sm:px-8 lg:px-12 py-10 md:py-16">
         <Reveal>
-          <header>
-            <div className="max-w-3xl">
-              <p className="ed-eyebrow">A first product · a personal learning project</p>
-              <h1 className="ed-display ed-hero mt-6">
-                A question is never the <em>end</em> of the story.
-              </h1>
+          <header className="field-open">
+            <p className="field-meta">Field note 00 · The person behind the map</p>
+            <h1 className="field-display">
+              My mind could build a <em>universe.</em>
+              <span className="field-display-sub">My days kept repeating.</span>
+            </h1>
+            <p className="field-lede">
+              I’m Mayank Sarwal. I built VEYRA to make curiosity feel like somewhere I could actually go — not
+              somewhere I kept imagining.
+            </p>
+            <p className="field-stat">
+              15 subject islands. 2,000 questions. <span>No locked route.</span>
+            </p>
+            <div className="field-cta">
+              <Link to="/" className="btn-primary btn-lg inline-flex">
+                Enter the map
+                <ArrowRight className="arrow w-5 h-5" />
+              </Link>
+              <Link to="/history" className="field-ghost">
+                Open History ↗
+              </Link>
             </div>
-            <div className="mt-10 text-fg w-full max-w-4xl">
+            <div className="mt-12 text-fg w-full max-w-4xl">
               <SelfReflection />
             </div>
-            <p className="ed-prose mt-8 max-w-3xl">
-              I am the person who would rather rebuild an island than leave it looking almost right. I made VEYRA
-              because I was tired of learning that vanished the moment a score appeared. I wanted a room where a
-              question could <span className="ed-weight">stay open</span> — and where I could see, later, how an hour
-              actually went.
-            </p>
           </header>
         </Reveal>
 
-        <article className="ed-article mt-2">
-          <Section n="01" title="Who this is">
-            <p>
-              I work like someone assembling a picture <span className="ed-soft">piece by piece</span>. The
-              archipelago, the relay, the jewel of an eye, a sitting that must be scored in truth — none of that is a
-              costume I put on the work. If a mark is muddy I ask for more light. If a puzzle does not play, it is not a
-              puzzle. I finish the thing in front of me, then I look again. That is the only method I trust.
-            </p>
-            <p>
-              I do not want a version of myself I never chose. Days become years; a pattern becomes a name; one morning
-              you notice you have been repeating a life you did not pick. The line under the flower is the one I keep:{' '}
-              <span className="ed-weight">the mind can build a universe and still live inside a habit.</span> VEYRA is
-              how I interrupt that. A map I return to. Fifteen islands. Two thousand questions.{' '}
-              <span className="ed-hit">Nothing locked.</span> Curiosity chooses, or I am only reciting.
-            </p>
-            <p>
-              I am not writing a company, and I am not performing a biography. I am keeping a record for a later me —
-              and for anyone who still likes to sit with a question until it changes shape. Take, if I write one, is
-              private and unscored: a thought I will not let a percentage touch. History only believes the engine. I
-              would rather leave a <span className="ed-soft">gap</span> than invent a key. The browser never holds the
-              answer before I finish. That is not a technical detail. That is a promise I made to myself: do not cheat
-              the hour.
-            </p>
-            <p>
-              When I say I made this for the pleasure of learning, I mean the slow kind — the kind that does not vanish
-              when the sitting ends. I mean coming back to an island I failed, not because a dashboard told me to, but
-              because I still did not understand. I mean paper and ink, a field of islands, a chart I can actually read.
-              I mean being the sort of person who will sit until the picture holds.
-            </p>
-            <p>
-              If you need a name to hold all of that: I am Mayank Sarwal. The rest of this page is the part that
-              actually matters.
-            </p>
-          </Section>
+        <div className="field-story">
+          <RouteLine />
+          <article className="field-article">
+            <Stop id="loop" n="01" label="THE LOOP" note="habit as weather">
+              <p>
+                I was never short on things to wonder about. I was short on a way to follow one before habit pulled me
+                back.
+              </p>
+              <p className="field-pull">
+                The mind can build a universe and still live inside a habit.
+              </p>
+              <p>
+                VEYRA began as an interruption: choose a question for yourself. Stay with it. Come back when it still
+                has something to teach you.
+              </p>
+            </Stop>
 
-          <Section n="02" title="The rush of a first product">
-            <p>
-              This is the first thing I have put in the world as a whole. Not a sketch in a folder. A room other people
-              can walk into. The feeling is not calm. It is a <span className="ed-weight">rush</span> — the kind that
-              sits in the chest when the islands load, when a sitting actually starts, when History writes a line that
-              is mine. Pride and exposure in the same breath. Hands a little too awake. I keep asking whether the jewel
-              is bright enough, whether the puzzle plays, whether the sentence tells the truth, because once it is
-              public, <span className="ed-soft">almost</span> is not a place I can hide.
-            </p>
-            <p>
-              Imagine the first time you show someone a thing you made and you cannot take it back. That is this. The
-              excitement is not fireworks. It is quieter and worse and better: waiting to see if a stranger will sit
-              with a question the way I sit with one. Wanting them to feel the field at sunset, the click of a piece,
-              the small heat of getting something right without being lied to. Wanting them not to bounce. That want is
-              the rush.
-            </p>
-            <p>
-              A first product is also a decision about who I am willing to be seen as. I could have shipped a quiz with
-              a leaderboard and called it done. I did not. I built a field of islands, a relay of curiosity, History
-              that only believes the engine, a Take no one grades. That is the person I am trying to be: someone who
-              will not flatten a question to look finished — even when finishing would feel safer.
-            </p>
-            <p>
-              It feels like standing on the first island with the rest of the map still in fog, pulse up, and going
-              ashore anyway. If you are here, you are walking through that decision with me. Welcome. Stay long enough
-              to find out whether the picture holds.
-            </p>
-          </Section>
+            <Stop id="ashore" n="02" label="GO ASHORE" note="map → sitting → record">
+              <p>
+                Home is the map. Practice is where I go ashore: one sitting, scored after I finish. History keeps the
+                record of what the server verifies.
+              </p>
+              <p>
+                Today’s Take is different. It is a private note in my own words, with no score attached. Some learning
+                can be counted. Some thoughts should be left alone.
+              </p>
+            </Stop>
 
-          <Section n="03" title="What I am trying">
-            <p>
-              The goal is not a higher number. It is to <span className="ed-weight">look closer</span>. To stop guessing
-              in the dark. To go ashore and find out what I actually know, not what I can recite. A percentage is a
-              moment. It is not a verdict. I come back.
-            </p>
-            <p>
-              Between people, a question travels: someone asks, someone tests, someone carries it a little further. I
-              wanted a small version of that motion in one place. Home is the map. Practice is the relay. A sitting is
-              scored on the server. History is the trail. This page is the reason. If the work is honest, a later hour
-              can use it. If it is not honest, it is only noise I will have to unlearn.
-            </p>
-            <p>
-              So the project stays slightly unfinished on purpose. Not because I cannot close it — because a closed
-              question stops teaching. <span className="ed-hit">Leave room for the next.</span> For the curiouser
-              learners. For the person I am still becoming, who might need this map more than I do today.
-            </p>
-          </Section>
+            <Stop id="promise" n="03" label="THE PROMISE" note="do not cheat the hour">
+              <p>
+                If the engine cannot verify an answer, I would rather leave a gap than invent a key.
+              </p>
+              <p>
+                The browser does not decide the answer while I am still thinking. The sitting finishes first; then
+                History records what happened.
+              </p>
+              <p className="field-stamp">Do not cheat the hour.</p>
+            </Stop>
 
-          <Section n="04" title="Leave it open">
-            <p>
-              One percentage cannot stand in for everything I understand. History is there so I can return — to see
-              which subjects I touched, which I fled, which I sat with until the band got shorter. The charts are not
-              trophies. They are a way to look at an hour without lying to it.
-            </p>
-            <p>
-              Today’s Take, when I want it, is a line in my own words. Skip it. Write it. No one grades it.{' '}
-              <span className="ed-weight">Learning stays unfinished on purpose.</span> That is the whole ethic. Shape
-              the life, or merely repeat it — I built VEYRA so I would have to keep answering that.
-            </p>
-            <p className="mt-6">
-              <Link
-                to="/history"
-                className="text-fg font-medium underline underline-offset-4 decoration-line-strong hover:decoration-fg"
-              >
-                Open History
-              </Link>
-            </p>
-          </Section>
-        </article>
+            <Stop id="opening" n="04" label="THE FIRST OPENING" note="pride + exposure">
+              <p>
+                The first time the islands loaded as a real product, I felt proud and exposed at once. I kept asking:
+                Does the puzzle work? Does this sentence tell the truth? Will someone stay with a question a little
+                longer?
+              </p>
+              <p>
+                That is the rush of putting your first whole thing into the world: hoping it matters to someone you
+                have never met.
+              </p>
+              <p>
+                VEYRA is a record for a later me — and an invitation to anyone who likes to sit with a question until
+                it changes shape.
+              </p>
+            </Stop>
+
+            <Stop id="route" n="05" label="YOUR ROUTE" note="start where it pulls">
+              <p>
+                You do not have to finish the map. Start with the island that pulls at you. Return to the question that
+                resisted you.
+              </p>
+              <p>
+                If one question follows you after you leave, VEYRA has done what I hoped.
+              </p>
+              <p className="field-sign">Mayank Sarwal · Still following the question</p>
+              <p className="field-cta field-cta-end">
+                <Link to="/" className="btn-primary inline-flex">
+                  Choose an island
+                  <ArrowRight className="arrow w-5 h-5" />
+                </Link>
+                <Link to="/history" className="field-ghost">
+                  Open History ↗
+                </Link>
+              </p>
+            </Stop>
+          </article>
+        </div>
       </div>
 
       <section className="quote-band about-quote relative pt-24 md:pt-32 pb-0 overflow-visible" aria-label="Epigraph">
@@ -182,27 +174,85 @@ export default function About() {
           <p className="ed-close mt-2">
             Made by Mayank Sarwal, for the pleasure of learning — for only the curiouser learners out there.
           </p>
-          <Link to="/setup" className="btn-primary btn-lg mt-8 inline-flex">
-            Start a quiz
-            <ArrowRight className="arrow w-5 h-5" />
-          </Link>
         </Reveal>
       </div>
     </div>
   )
 }
 
-function Section({ n, title, children }: { n: string; title: string; children: ReactNode }) {
+function Stop({
+  id,
+  n,
+  label,
+  note,
+  children,
+}: {
+  id: string
+  n: string
+  label: string
+  note: string
+  children: ReactNode
+}) {
   return (
-    <Reveal>
-      <section className="ed-section">
-        <h2 className="ed-kicker">
-          <span className="ed-num">{n}</span>
-          {title}
-        </h2>
-        <div className="ed-rainbow" aria-hidden="true" />
-        <div className="ed-prose">{children}</div>
-      </section>
-    </Reveal>
+    <section id={id} className="field-stop" data-stop={id}>
+      <header className="field-stop-head">
+        <p className="field-stop-label">
+          <span>{n}</span>
+          {label}
+        </p>
+        <p className="field-annote" aria-hidden="true">
+          {note}
+        </p>
+      </header>
+      <div className="field-prose">{children}</div>
+    </section>
+  )
+}
+
+function RouteLine() {
+  const wrap = useRef<HTMLDivElement>(null)
+  const fill = useRef<SVGPathElement>(null)
+
+  useEffect(() => {
+    const root = wrap.current?.closest('.field-story') as HTMLElement | null
+    const path = fill.current
+    if (!root || !path) return
+    const len = path.getTotalLength()
+    path.style.strokeDasharray = String(len)
+    path.style.strokeDashoffset = String(len)
+
+    const stops = [...root.querySelectorAll<HTMLElement>('[data-stop]')]
+    const io = new IntersectionObserver(
+      () => {
+        const vh = window.innerHeight
+        let seen = 0
+        stops.forEach((el, i) => {
+          const r = el.getBoundingClientRect()
+          const mid = r.top + r.height * 0.35
+          if (mid < vh * 0.72) seen = i + 1
+        })
+        const t = Math.min(1, seen / STOPS.length)
+        path.style.strokeDashoffset = String(len * (1 - t))
+        root.style.setProperty('--seen', String(seen))
+      },
+      { threshold: [0, 0.2, 0.45, 0.7, 1] }
+    )
+    stops.forEach((el) => io.observe(el))
+    return () => io.disconnect()
+  }, [])
+
+  const d = 'M 12 8 C 12 70, 12 90, 12 140 S 12 210, 12 280 S 12 350, 12 420 S 12 490, 12 560'
+  return (
+    <div className="field-rail" ref={wrap} aria-hidden="true">
+      <svg viewBox="0 0 24 568" preserveAspectRatio="none">
+        <path d={d} fill="none" stroke="currentColor" strokeWidth="1.2" opacity="0.18" />
+        <path ref={fill} d={d} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+        {STOPS.map((s, i) => (
+          <g key={s.id} className={`field-dot field-dot-${i}`}>
+            <circle cx="12" cy={8 + i * 138} r="4.5" />
+          </g>
+        ))}
+      </svg>
+    </div>
   )
 }

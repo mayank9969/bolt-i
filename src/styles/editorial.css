@@ -736,6 +736,207 @@
   color: rgb(var(--nx-text-rgb));
 }
 
+/* Field-note About story */
+.about-ed.field-notes {
+  --ed-display: 'Instrument Serif', Palatino, serif;
+  --ed-body: 'DM Sans Variable', 'DM Sans', var(--nx-font);
+  --ed-mono: 'IBM Plex Mono', ui-monospace, monospace;
+  --ed-serif: 'Instrument Serif', Palatino, serif;
+}
+.field-open {
+  max-width: 40rem;
+  text-align: left;
+}
+.field-meta {
+  font-family: var(--ed-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgb(var(--nx-accent-2-rgb));
+  font-weight: 600;
+}
+.field-display {
+  font-family: var(--ed-display);
+  font-size: clamp(2.6rem, 7.2vw, 5.1rem);
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  line-height: 0.98;
+  margin: 1.1rem 0 0;
+  max-width: 14ch;
+  color: rgb(var(--nx-text-rgb));
+}
+.field-display em {
+  font-style: italic;
+  color: rgb(var(--nx-accent-2-rgb));
+}
+.field-display-sub {
+  display: block;
+  margin-top: 0.2em;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 0.72em;
+  letter-spacing: -0.02em;
+  color: rgb(var(--nx-text-2-rgb));
+}
+.field-lede {
+  font-family: var(--ed-body);
+  font-size: clamp(1.05rem, 1.7vw, 1.15rem);
+  line-height: 1.7;
+  color: rgb(var(--nx-text-2-rgb));
+  margin-top: 1.4rem;
+  max-width: 38rem;
+}
+.field-stat {
+  font-family: var(--ed-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-top: 1.25rem;
+  color: rgb(var(--nx-text-3-rgb));
+}
+.field-stat span {
+  color: rgb(var(--nx-accent-2-rgb));
+}
+.field-cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.1rem 1.6rem;
+  margin-top: 1.6rem;
+}
+.field-ghost {
+  font-family: var(--ed-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgb(var(--nx-text-rgb));
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.field-story {
+  position: relative;
+  display: grid;
+  grid-template-columns: 2.2rem minmax(0, 1fr);
+  gap: 1.25rem;
+  margin-top: 4.5rem;
+  --seen: 0;
+}
+.field-rail {
+  position: sticky;
+  top: 6.5rem;
+  height: min(70vh, 32rem);
+  color: rgb(var(--nx-accent-2-rgb));
+}
+.field-rail svg {
+  width: 100%;
+  height: 100%;
+}
+.field-rail path {
+  transition: stroke-dashoffset 0.7s ease;
+}
+.field-dot circle {
+  fill: rgb(var(--nx-canvas-rgb));
+  stroke: currentColor;
+  stroke-width: 1.6;
+  opacity: 0.35;
+  transition: opacity 0.4s ease, fill 0.4s ease;
+}
+.field-story[style*='--seen: 1'] .field-dot-0 circle,
+.field-story[style*='--seen: 2'] .field-dot-0 circle,
+.field-story[style*='--seen: 2'] .field-dot-1 circle,
+.field-story[style*='--seen: 3'] .field-dot-0 circle,
+.field-story[style*='--seen: 3'] .field-dot-1 circle,
+.field-story[style*='--seen: 3'] .field-dot-2 circle,
+.field-story[style*='--seen: 4'] .field-dot-0 circle,
+.field-story[style*='--seen: 4'] .field-dot-1 circle,
+.field-story[style*='--seen: 4'] .field-dot-2 circle,
+.field-story[style*='--seen: 4'] .field-dot-3 circle,
+.field-story[style*='--seen: 5'] .field-dot circle {
+  opacity: 1;
+  fill: currentColor;
+}
+.field-article {
+  min-width: 0;
+}
+.field-stop {
+  position: relative;
+  padding: 2.4rem 0 2.8rem;
+  border-top: 1px solid var(--nx-line);
+}
+.field-stop-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.6rem 1.5rem;
+  margin-bottom: 1.1rem;
+}
+.field-stop-label {
+  font-family: var(--ed-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: rgb(var(--nx-text-rgb));
+  margin: 0;
+}
+.field-stop-label span {
+  color: rgb(var(--nx-accent-2-rgb));
+  margin-right: 0.7rem;
+}
+.field-annote {
+  font-family: var(--ed-display);
+  font-style: italic;
+  font-size: 0.95rem;
+  color: rgb(var(--nx-text-3-rgb));
+  margin: 0;
+}
+.field-prose {
+  font-family: var(--ed-body);
+  font-size: clamp(1.05rem, 1.6vw, 1.125rem);
+  line-height: 1.75;
+  color: rgb(var(--nx-text-2-rgb));
+  max-width: 38rem;
+}
+.field-prose p + p {
+  margin-top: 1rem;
+}
+.field-pull {
+  font-family: var(--ed-display);
+  font-style: italic;
+  font-size: clamp(1.35rem, 2.4vw, 1.7rem);
+  line-height: 1.3;
+  color: rgb(var(--nx-text-rgb));
+  max-width: 22ch;
+}
+.field-stamp {
+  font-family: var(--ed-mono);
+  font-size: 0.82rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: rgb(var(--nx-accent-2-rgb));
+}
+.field-sign {
+  font-family: var(--ed-display);
+  font-style: italic;
+  font-size: 1.15rem;
+  color: rgb(var(--nx-text-rgb));
+}
+.field-cta-end {
+  margin-top: 1.4rem;
+}
+@media (max-width: 720px) {
+  .field-story {
+    grid-template-columns: 1.2rem minmax(0, 1fr);
+    gap: 0.7rem;
+  }
+  .field-rail {
+    top: 5rem;
+    height: 55vh;
+  }
+}
+
 @keyframes caption-word-in {
   from { opacity: 0; transform: translateY(0.35em); }
   to { opacity: 1; transform: none; }
