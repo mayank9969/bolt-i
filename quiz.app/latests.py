@@ -2709,6 +2709,66 @@ class Quiz:
         write_json_atomically(self.TAKE_PROMPT_CACHE_FILE, cache_data)
         return prompts, None
 
+    def quiz_system_guidance(self, prompt, response):
+        """Local coach from the prompt, rubric, and question bank — used when Gemini is silent."""
+        text = str(response or "").strip()
+        topic = str((prompt or {}).get("topic") or "this topic")
+        prompt_text = str((prompt or {}).get("prompt") or "").strip()
+        hint = str((prompt or {}).get("reflection_hint") or "").strip()
+        words = [w for w in text.replace("\n", " ").split(" ") if w]
+        n = len(words)
+        lower = text.casefold()
+        has_because = any(mark in lower for mark in ("because", "so that", "which means", "i think", "for me", "rather than"))
+        has_example = any(mark in lower for mark in ("for example", "like when", "once ", "such as", "when i"))
+
+        related = []
+        bank = getattr(self.question_bank, "questions", {}) or {}
+        needles = [w for w in topic.casefold().replace("-", " ").split() if len(w) > 3][:5]
+        for cat, diffs in bank.items():
+            for qs in (diffs or {}).values():
+                for item in qs or []:
+                    qtext = str(getattr(item, "question", "") or "").strip()
+                    hay = (str(cat) + " " + qtext).casefold()
+                    if needles and not any(needle in hay for needle in needles):
+                        continue
+                    if qtext:
+                        related.append(qtext)
+                    if len(related) >= 2:
+                        break
+                if len(related) >= 2:
+                    break
+            if len(related) >= 2:
+                break
+
+        if n < 18:
+            next_step = "The quiz system sees a first mark. Add one sentence that names why this thought matters to you."
+        elif not has_because:
+            next_step = "The take is on the page. One short reason — even a 'because…' — would show how you arrived."
+        elif not has_example:
+            next_step = "A reason is already there. One small scene or contrast would make it easier to hold."
+        else:
+            next_step = "Reason and shape are both present. You could stop, or press one assumption you just used."
+        if hint:
+            next_step += " Hint from the prompt: " + hint
+        if related:
+            next_step += " Nearby from the bank: " + related[0]
+            if len(related) > 1:
+                next_step += " Also: " + related[1]
+
+        intent = f"The quiz system read this as a take on {topic} — not a mark, and not agreement."
+        if prompt_text:
+            intent += " The prompt in play is: " + prompt_text[:200]
+        strength = hint or (
+            "You stayed with the question." if n >= 12 else "You started. That is enough to keep."
+        )
+        return {
+            "intent_summary": intent[:500],
+            "strength": strength[:500],
+            "next_step": next_step[:800],
+            "source": "quiz",
+            "criteria": [],
+        }
+
     def score_opinion_response(self, prompt, response, thinking_note=""):
         """Use one Gemini model for rubric scores and supportive feedback, then validate its output."""
         level = prompt.get("challenge_level", 1)

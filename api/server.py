@@ -360,22 +360,18 @@ def take_guidance():
     }
     q = Quiz(question_bank)
     review, problem = q.score_opinion_response(prompt, text)
+    source = "gemini"
     if problem or not review:
-        hint = str(prompt.get("reflection_hint") or "").strip()
-        return jsonify({
-            "guidance": True,
-            "scored": False,
-            "intent_summary": "No grade — this is optional coaching.",
-            "strength": hint or "Your take is private. The engine did not mark it.",
-            "next_step": problem or "Add GEMINI_API_KEY on the server to get live guidance.",
-        })
+        review = q.quiz_system_guidance(prompt, text)
+        source = "quiz"
     return jsonify({
         "guidance": True,
         "scored": False,
+        "source": source,
         "intent_summary": review.get("intent_summary"),
         "strength": review.get("strength"),
         "next_step": review.get("next_step"),
-        "criteria": review.get("criteria"),
+        "criteria": review.get("criteria") if source == "gemini" else [],
     })
 
 

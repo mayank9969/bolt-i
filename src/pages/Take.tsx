@@ -198,7 +198,10 @@ export default function Take() {
 
       {guide && (
         <aside className="mt-8 pt-6 border-t border-line max-w-xl">
-          <p className="eyebrow">Guidance · not a score</p>
+          <p className="eyebrow">
+            Guidance · not a score
+            {guide.source === 'quiz' ? ' · from the quiz system' : guide.source === 'gemini' ? ' · from Gemini' : ''}
+          </p>
           {guide.intent_summary && <p className="text-fg mt-3">{guide.intent_summary}</p>}
           {guide.strength && <p className="text-fg-2 mt-3">{guide.strength}</p>}
           {guide.next_step && <p className="text-fg mt-3">{guide.next_step}</p>}

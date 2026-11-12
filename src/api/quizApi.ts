@@ -115,6 +115,7 @@ export function getTakePrompts(): Promise<{ prompts: TakePrompt[]; error?: strin
 export type TakeGuidance = {
   guidance: boolean
   scored: boolean
+  source?: string
   intent_summary?: string
   strength?: string
   next_step?: string
