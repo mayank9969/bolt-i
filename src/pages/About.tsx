@@ -36,8 +36,8 @@ export default function About() {
               <span className="field-display-line field-display-sub">MY DAYS KEPT REPEATING.</span>
             </h1>
             <p className="field-lede">
-              I’m Mayank Sarwal. I built VEYRA to make curiosity feel like somewhere I could actually go—not somewhere I
-              kept imagining.
+              I’m Mayank Sarwal. I built VEYRA to make curiosity feel like{' '}
+              <span className="ed-hit">somewhere I could actually go</span>—not somewhere I kept imagining.
             </p>
             <p className="field-stat">15 subject islands. 2,000 questions. No locked route.</p>
             <div className="field-cta">
@@ -56,55 +56,67 @@ export default function About() {
           <RouteLine />
           <article className="field-article">
             <Stop id="loop" n="01" label="THE LOOP" mark="loop">
-              <p>I was never short on things to wonder about. I was short on a way to follow one before habit pulled me back.</p>
+              <p>
+                I was never short on things to wonder about. I was short on a way to follow one before{' '}
+                <span className="ed-soft">habit pulled me back</span>.
+              </p>
               <p className="field-pull">The mind can build a universe and still live inside a habit.</p>
               <p>
-                VEYRA began as an interruption: choose a question for yourself. Stay with it. Come back when it still has
-                something to teach you.
+                VEYRA began as an interruption: <span className="ed-hit">choose a question for yourself</span>. Stay with
+                it. Come back when it still has something to teach you.
               </p>
             </Stop>
 
             <Stop id="ashore" n="02" label="GO ASHORE" mark="ashore">
               <p>
-                Home is the map. Practice is where I go ashore: one sitting, scored after I finish. History keeps the
-                record of what the server verifies.
+                Home is the map. Practice is where I go ashore:{' '}
+                <span className="ed-weight">one sitting, scored after I finish</span>. History keeps the record of what
+                the server verifies.
               </p>
               <p>
-                Today’s Take is different. It is a private note in my own words, with no score attached. Some learning can
-                be counted. Some thoughts should be left alone.
+                Today’s Take is different. It is a <span className="ed-soft">private note</span> in my own words, with{' '}
+                <span className="ed-hit">no score attached</span>. Some learning can be counted. Some thoughts should be
+                left alone.
               </p>
             </Stop>
 
             <Stop id="promise" n="03" label="THE PROMISE" mark="promise">
-              <p>If the engine cannot verify an answer, I would rather leave a gap than invent a key.</p>
               <p>
-                The browser does not decide the answer while I am still thinking. The sitting finishes first; then History
-                records what happened.
+                If the engine cannot verify an answer, I would rather{' '}
+                <span className="ed-hit">leave a gap than invent a key</span>.
+              </p>
+              <p>
+                The browser does not decide the answer while I am still thinking.{' '}
+                <span className="ed-weight">The sitting finishes first</span>; then History records what happened.
               </p>
               <p className="field-stamp">Do not cheat the hour.</p>
             </Stop>
 
             <Stop id="opening" n="04" label="THE FIRST OPENING" mark="opening">
               <p>
-                The first time the islands loaded as a real product, I felt proud and exposed at once. I kept asking: Does
-                the puzzle work? Does this sentence tell the truth? Will someone stay with a question a little longer?
+                The first time the islands loaded as a real product, I felt{' '}
+                <span className="ed-soft">proud and exposed</span> at once. I kept asking: Does the puzzle work? Does this
+                sentence tell the truth? Will someone stay with a question a little longer?
               </p>
               <p>
-                That is the rush of putting your first whole thing into the world: hoping it matters to someone you have
-                never met.
+                That is the rush of putting your first whole thing into the world:{' '}
+                <span className="ed-hit">hoping it matters</span> to someone you have never met.
               </p>
               <p>
-                VEYRA is a record for a later me—and an invitation to anyone who likes to sit with a question until it
-                changes shape.
+                VEYRA is a record for a later me—and an invitation to anyone who likes to sit with a question until it{' '}
+                <span className="ed-soft">changes shape</span>.
               </p>
             </Stop>
 
             <Stop id="route" n="05" label="YOUR ROUTE" mark="route">
               <p>
-                You do not have to finish the map. Start with the island that pulls at you. Return to the question that
-                resisted you.
+                You do not have to finish the map. Start with the{' '}
+                <span className="ed-hit">island that pulls at you</span>. Return to the question that resisted you.
               </p>
-              <p>If one question follows you after you leave, VEYRA has done what I hoped.</p>
+              <p>
+                If one question follows you after you leave,{' '}
+                <span className="ed-weight">VEYRA has done what I hoped</span>.
+              </p>
               <p className="field-sign">Mayank Sarwal · Still following the question</p>
               <p className="field-cta field-cta-end">
                 <Link to="/history" className="field-ghost">
