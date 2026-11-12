@@ -36,7 +36,7 @@ export default function Layout({ children }: { children: ReactNode }) {
             <Wordmark className="veyra-wordmark text-[22px]" />
           </Link>
 
-          <nav className="veyra-nav flex items-center gap-0.5 sm:gap-1 min-w-0 overflow-x-auto [scrollbar-width:none] [-webkit-overflow-scrolling:touch]">
+          <nav className="veyra-nav desk-nav flex items-center gap-0.5 sm:gap-1 min-w-0 overflow-x-auto [scrollbar-width:none] [-webkit-overflow-scrolling:touch]">
             {NAV.map((item) => (
               <NavItem key={item.to} to={item.to} label={item.label} />
             ))}
@@ -45,7 +45,7 @@ export default function Layout({ children }: { children: ReactNode }) {
           <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             <ThemeSwitcher />
             {!inQuiz && (
-              <Link to="/setup" className="btn-primary btn-sm hidden sm:inline-flex">
+              <Link to="/setup" className="btn-primary btn-sm hidden md:inline-flex">
                 Start Quiz
               </Link>
             )}
@@ -54,6 +54,16 @@ export default function Layout({ children }: { children: ReactNode }) {
       </header>
 
       <main className="flex-1 relative z-10 flex flex-col overflow-x-clip">{children}</main>
+
+      {!inQuiz && (
+        <nav className="phone-dock" aria-label="Mobile">
+          {NAV.map((item) => (
+            <RouterNavLink key={item.to} to={item.to} end={item.to === '/'} className="phone-dock-link">
+              {item.label}
+            </RouterNavLink>
+          ))}
+        </nav>
+      )}
 
       {!inQuiz && !inPractice && <Footer />}
     </div>
