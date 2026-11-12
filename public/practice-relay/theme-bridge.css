@@ -162,6 +162,15 @@ nav.sticky {
   display: none !important;
 }
 
+/* Old relay coda (film + LEAVE ROOM). Practice only keeps the studio four. */
+#leave-open,
+#your-hands,
+section#leave-open,
+.v-closing-copy,
+.v-closing-invitation {
+  display: none !important;
+}
+
 footer .font-poster {
   gap: 0.7rem;
 }
