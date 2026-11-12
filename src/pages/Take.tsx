@@ -2,7 +2,6 @@ import '@fontsource-variable/fraunces/wght.css'
 import '@fontsource-variable/source-serif-4/wght.css'
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
 import prompts from '@/lib/opinionPrompts.json'
 import { useWorld } from '@/components/three/world'
 import Reveal from '@/components/Reveal'
@@ -10,6 +9,12 @@ import { useQuiz } from '@/context/QuizContext'
 import { launchSitting, mixedFive } from '@/lib/launchSitting'
 
 const KEY = 'veyra.todays-take'
+
+const STARTERS = [
+  "I hadn't noticed before…",
+  'Zero is less an answer than…',
+  "A question I'm taking with me:",
+]
 
 type Entry = { day: string; topic: string; prompt: string; response: string; influence: string }
 
@@ -36,8 +41,8 @@ export default function Take() {
   }, [list])
   const [entries, setEntries] = useState<Entry[]>(load)
   const [response, setResponse] = useState('')
-  const [influence, setInfluence] = useState('')
   const today = entries.find((e) => e.day === day)
+  const words = (today?.response ?? response).trim() ? (today?.response ?? response).trim().split(/\s+/).length : 0
 
   const save = () => {
     if (!response.trim() || !prompt) return
@@ -46,7 +51,7 @@ export default function Take() {
       topic: prompt[0],
       prompt: prompt[1],
       response: response.trim(),
-      influence: influence.trim(),
+      influence: '',
     }
     const rest = entries.filter((e) => e.day !== day)
     const all = [next, ...rest]
@@ -61,53 +66,62 @@ export default function Take() {
   return (
     <div className="relative z-10 max-w-page mx-auto px-5 sm:px-6 lg:px-8 pt-16 pb-24 md:pt-24 archive-ed">
       <Reveal>
-        <p className="ed-eyebrow">Studio · today’s take</p>
-        <h1 className="ed-display mt-4">Write a view.</h1>
+        <p className="ed-eyebrow">A thought to keep, if you want to:</p>
+        <h1 className="ed-display mt-4">Write a take.</h1>
         <p className="ed-lede mt-5">
-          Subjective and unscored. A private line in this browser — the quiz engine never marks it. Gemini reflection from the desktop tool is not connected here.
+          Unscored. Private to this browser. The quiz engine never marks it.
         </p>
       </Reveal>
-      {prompt && (
-        <motion.section
-          className="studio-ink-card mt-8 rounded-2xl border border-line bg-card p-6"
-          initial={{ opacity: 0, y: 14 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <p className="eyebrow">{prompt[0]}</p>
-          <p className="text-fg mt-2 text-pretty">{prompt[1]}</p>
-          {today ? (
-            <p className="mt-6 text-fg-2 whitespace-pre-wrap">{today.response}</p>
-          ) : (
-            <>
-              <textarea
-                className="mt-6 w-full min-h-[8rem] rounded-xl border border-line bg-canvas p-3"
-                value={response}
-                onChange={(e) => setResponse(e.target.value)}
-                placeholder="Your response"
-              />
-              <textarea
-                className="mt-3 w-full min-h-[4rem] rounded-xl border border-line bg-canvas p-3"
-                value={influence}
-                onChange={(e) => setInfluence(e.target.value)}
-                placeholder="What influenced this view? (optional)"
-              />
-              <button type="button" className="btn-primary mt-4" onClick={save}>
-                Save today’s take
-              </button>
-            </>
-          )}
-        </motion.section>
+
+      <div className="take-starters mt-8" role="group" aria-label="Opening lines">
+        {STARTERS.map((s) => (
+          <button
+            key={s}
+            type="button"
+            className="take-chip"
+            disabled={!!today}
+            onClick={() => setResponse((r) => (r.trim() ? r : s + ' '))}
+          >
+            {s}
+          </button>
+        ))}
+      </div>
+
+      <div className="take-sheet mt-4">
+        {today ? (
+          <div className="take-notebook take-notebook--done" aria-label="Today’s take">
+            {today.response}
+          </div>
+        ) : (
+          <textarea
+            className="take-notebook"
+            value={response}
+            onChange={(e) => setResponse(e.target.value)}
+            placeholder={STARTERS[0]}
+            aria-label="Your take"
+          />
+        )}
+      </div>
+      <p className="take-meta">
+        <span className="num">{words} words</span>
+        <span> · stays on this page</span>
+      </p>
+
+      {!today && (
+        <button type="button" className="btn-primary mt-6" onClick={save} disabled={!response.trim()}>
+          Stamp your mark
+        </button>
       )}
-      <h2 className="t-title text-fg mt-12">Past takes</h2>
+
+      <h2 className="ed-display mt-16 text-[clamp(1.4rem,3vw,1.85rem)]">Past takes</h2>
       <ul className="mt-4 grid gap-4">
         {entries.map((e) => (
-          <li key={e.day} className="border-b border-line pb-4">
+          <li key={e.day} className="take-past">
             <p className="t-meta">
               {e.day} · {e.topic}
             </p>
             <p className="text-fg mt-1">{e.prompt}</p>
-            <p className="text-fg-2 mt-2 whitespace-pre-wrap">{e.response}</p>
+            <p className="take-past-body mt-2">{e.response}</p>
           </li>
         ))}
         {entries.length === 0 && <li className="text-fg-3">None yet.</li>}

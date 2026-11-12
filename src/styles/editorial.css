@@ -603,6 +603,68 @@
   border-top: 1px solid var(--nx-line);
 }
 
+.take-starters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+.take-chip {
+  border: 1px solid rgb(var(--nx-text-rgb) / 0.22);
+  background: rgb(var(--nx-card-rgb));
+  color: rgb(var(--nx-text-2-rgb));
+  border-radius: 0.35rem;
+  padding: 0.4rem 0.7rem;
+  font-size: 0.78rem;
+  font-family: ui-monospace, monospace;
+  cursor: pointer;
+}
+.take-chip:disabled { opacity: 0.5; cursor: default; }
+.take-sheet {
+  position: relative;
+  border-radius: 1.15rem;
+  padding: 0.35rem;
+  background: #e8dfc8;
+  box-shadow: 0 10px 0 #d4c9ae;
+}
+.take-notebook {
+  display: block;
+  width: 100%;
+  min-height: 14rem;
+  margin: 0;
+  border: 1.5px solid #1b2230;
+  border-radius: 0.95rem;
+  background-color: #f6f0e0;
+  background-image: repeating-linear-gradient(transparent 0 43px, #c4bcae 43px 44px);
+  background-attachment: local;
+  padding: 0 1.15rem;
+  font-family: var(--ed-display);
+  font-size: 1.45rem;
+  line-height: 44px;
+  color: #1b2230;
+  resize: vertical;
+  outline: none;
+}
+.take-notebook::placeholder { color: #8a8374; font-style: italic; }
+.take-notebook:focus { box-shadow: 0 0 0 3px rgb(22 130 126 / 0.35); }
+.take-notebook--done {
+  white-space: pre-wrap;
+  min-height: 10rem;
+}
+.take-meta {
+  margin: 0.55rem 0 0;
+  text-align: right;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgb(var(--nx-text-3-rgb));
+}
+.take-past-body {
+  font-family: var(--ed-serif);
+  font-style: italic;
+  color: rgb(var(--nx-text-2-rgb));
+  white-space: pre-wrap;
+}
+
 .archive-ed .ed-display {
   font-size: clamp(2rem, 5vw, 3.1rem);
 }
