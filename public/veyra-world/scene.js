@@ -23,6 +23,11 @@ const subjects = [
   'Physics','Chemistry','Biology','Astronomy & Space','Geography','History',
   'English & Language','General Knowledge','Logic & Reasoning','Economics & Business'
 ];
+const subjectQuizIds = [
+  'maths','science','technology','python','computer_science',
+  'physics','chemistry','biology','astronomy_space','geography','history',
+  'english_language','general_knowledge','logic_reasoning','economics_business'
+];
 const rand = n => { const v = Math.sin(n * 127.1 + 311.7) * 43758.5453; return v - Math.floor(v); };
 const clamp = THREE.MathUtils.clamp;
 const smooth = (a,b,x) => { const t=clamp((x-a)/(b-a),0,1); return t*t*(3-2*t); };
@@ -1709,7 +1714,7 @@ function beginSubjectFocus(index){
  if(focusTransition||!islands[index])return;selectedIsland=index;focusWorldPauseStarted=performance.now();
 const a=landmarkAnimations[index],island=islands[index],root=a.root;if(!a.focusDetail)a.focusDetail=buildFocusDetails(root,index,a.unit,landmarkMaterials);
  focusOriginalRootRotation=root.rotation.clone();const d=camera.position.clone().sub(root.getWorldPosition(new THREE.Vector3()));root.rotation.y=Math.atan2(d.x,d.z);root.updateMatrixWorld(true);const focusGroup=a.focusDetail.group;focusGroup.visible=true;focusGroup.updateWorldMatrix(true,true);const b=new THREE.Box3().setFromObject(focusGroup);focusGroup.visible=false;if(b.isEmpty())b.setFromObject(root);const extent=b.getSize(new THREE.Vector3()),radius=Math.max(1,extent.length()*(index===5?.34:.5)),target=b.getCenter(new THREE.Vector3());target.x+=radius*.12;const dir=target.clone().sub(camera.position).normalize(),fov=42,dist=Math.max(7.5,radius/(Math.sin(THREE.MathUtils.degToRad(fov*.5))*.9)),end=target.clone().addScaledVector(dir,-dist),note=subjectInfoData[index];
- subjectInfoTitle.textContent=focusSubjectTitles[index];subjectInfoEyebrow.textContent=note.eyebrow;subjectInfoText.textContent=note.text;subjectInfo.classList.remove('on');subjectInfo.setAttribute('aria-hidden','true');selected.textContent=island.name+' · selected';selected.classList.add('on');islands.forEach((x,i)=>{x.halo.visible=i===index;x.tag.classList.toggle('active',i===index);});stage.classList.add('focus-active');focusShade.style.opacity='0';focusFlash.style.opacity='0';focusFlash.style.transform='scale(.35)';focusTransition={phase:'in',time:0,index,fromPosition:camera.position.clone(),fromTarget:viewTarget.clone(),toPosition:end,toTarget:target,fromFov:camera.fov,toFov:fov};
+ subjectInfoTitle.textContent=focusSubjectTitles[index];subjectInfoEyebrow.textContent=note.eyebrow;subjectInfoText.textContent=note.text;const playBtn=document.querySelector('#islandPlay');if(playBtn){playBtn.dataset.category=subjectQuizIds[index]||'all';playBtn.textContent='Play '+focusSubjectTitles[index];}subjectInfo.classList.remove('on');subjectInfo.setAttribute('aria-hidden','true');selected.textContent=island.name+' · selected';selected.classList.add('on');islands.forEach((x,i)=>{x.halo.visible=i===index;x.tag.classList.toggle('active',i===index);});stage.classList.add('focus-active');focusShade.style.opacity='0';focusFlash.style.opacity='0';focusFlash.style.transform='scale(.35)';focusTransition={phase:'in',time:0,index,fromPosition:camera.position.clone(),fromTarget:viewTarget.clone(),toPosition:end,toTarget:target,fromFov:camera.fov,toFov:fov};
 }
 
 function closeSubjectFocus(){
@@ -1729,6 +1734,13 @@ function closeSubjectFocus(){
 }
 subjectInfoClose.addEventListener('click',closeSubjectFocus);
 subjectInfo.addEventListener('click',event=>event.stopPropagation());
+document.querySelector('#islandPlay')?.addEventListener('click',event=>{
+  event.preventDefault();
+  event.stopPropagation();
+  const cat=event.currentTarget.dataset.category;
+  if(!cat)return;
+  window.dispatchEvent(new CustomEvent('veyra-island-play',{detail:{category:cat,label:event.currentTarget.textContent}}));
+});
 window.addEventListener('keydown',event=>{if(event.key==='Escape')closeSubjectFocus();});
 function onPointerMove(event){
   const rect=canvas.getBoundingClientRect();

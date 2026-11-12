@@ -27,6 +27,8 @@
 .veyra-html-root .subject-info .eyebrow{display:block;margin:0 34px 5px 0;color:#147d7c;font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase}
 .veyra-html-root .subject-info h2{margin:0 34px 6px 0;color:#16313a;font-size:22px;line-height:1.08}
 .veyra-html-root .subject-info p{margin:0;color:#40545b;font-size:13px;line-height:1.42}
+.veyra-html-root .island-play{display:flex;align-items:center;justify-content:center;width:100%;margin-top:14px;min-height:2.75rem;border:0;border-radius:999px;background:#147d76;color:#f7fffc;font:700 0.92rem/1 Inter,Segoe UI,sans-serif;letter-spacing:.04em;cursor:pointer;pointer-events:auto}
+.veyra-html-root .island-play:hover{background:#0f6b65}
 .veyra-html-root .subject-info .focus-close{position:absolute;top:11px;right:11px;display:grid;place-items:center;width:30px;height:30px;border:1px solid rgba(31,64,70,.15);border-radius:50%;background:#fff;color:#263f46;font-size:22px;line-height:1;cursor:pointer}
 .veyra-html-root .subject-info .focus-close:hover{background:#e8f3ef}
 .veyra-html-root .stage.focus-active .island-tag,.veyra-html-root .stage.focus-active .selected{opacity:0;visibility:hidden}.veyra-html-root .stage.landmark-focus{background:radial-gradient(ellipse at 50% 34%,#314c58 0%,#192b36 43%,#0a131c 100%);border-color:#93c9c0;box-shadow:0 24px 74px #0a171dcc,inset 0 1px #ffffff40}

@@ -25,6 +25,7 @@ const STAGE_HTML = `
       <span class="eyebrow" id="subjectInfoEyebrow">Island field note</span>
       <h2 id="subjectInfoTitle"></h2>
       <p id="subjectInfoText"></p>
+      <button class="island-play" id="islandPlay" type="button">Play this island</button>
       <aside class="focus-graph" id="focusGraph" aria-hidden="true">
         <span class="focus-graph-label" id="focusGraphLabel"></span>
         <div id="focusGraphCanvas"></div>
@@ -76,7 +77,7 @@ export default function VeyraHtmlWorld() {
     ;(async () => {
       try {
         await loadScript('/veyra-world/assets/veyra-models/veyra-three.bundle.js')
-        await loadScript('/veyra-world/scene.js?v=3')
+        await loadScript('/veyra-world/scene.js?v=4')
       } catch (err) {
         console.error('Veyra world failed to start', err)
         const status = document.getElementById('sceneStatus')

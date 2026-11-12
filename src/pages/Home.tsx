@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import Reveal from '@/components/Reveal'
 import MagneticLink from '@/components/ui/MagneticLink'
 import CountUp from '@/components/ui/CountUp'
@@ -13,6 +14,8 @@ import { difficultyLevel, labelCategory } from '@/lib/format'
 import ArchipelagoStage from '@/components/three/ArchipelagoStage'
 import { getWorld, setWorld, useWorld, useWorldSlice } from '@/components/three/world'
 import { hasExhibit } from '@/lib/exhibits'
+import { useQuiz } from '@/context/QuizContext'
+import { launchSitting, mixedFive } from '@/lib/launchSitting'
 
 const ease = [0.22, 1, 0.36, 1] as const
 const enter = (i: number) => ({ duration: 0.9, delay: 0.15 + i * 0.1, ease })
@@ -21,11 +24,28 @@ export default function Home() {
   const [catalog, setCatalog] = useState<CategoriesResponse | null>(null)
   const [history, setHistory] = useState<HistoryEntry[] | null>(null)
   const heroRef = useRef<HTMLElement>(null)
+  const navigate = useNavigate()
+  const { beginSession } = useQuiz()
 
   useEffect(() => {
     getCategories().then(setCatalog).catch(() => setCatalog(null))
     getHistory().then(setHistory).catch(() => setHistory(null))
   }, [])
+
+  useEffect(() => {
+    const onPlay = (e: Event) => {
+      const cat = (e as CustomEvent<{ category?: string }>).detail?.category
+      if (!cat) return
+      void launchSitting(
+        mixedFive(cat),
+        beginSession,
+        () => navigate('/quiz'),
+        (config) => navigate('/setup', { state: config }),
+      )
+    }
+    window.addEventListener('veyra-island-play', onPlay)
+    return () => window.removeEventListener('veyra-island-play', onPlay)
+  }, [beginSession, navigate])
   // real history → regions whose latest attempt still had wrong answers (terracotta markers on the map)
   const review = useMemo(() => reviewTopics(history), [history])
 
