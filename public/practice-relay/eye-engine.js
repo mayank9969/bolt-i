@@ -1286,7 +1286,7 @@ void main() {
       prev = now;
       const state = mind.step(dt);
       const tel = mind.getTelemetry();
-      if (now - lastLabel > 180) {
+      if (now - lastLabel > 4200) {
         lastLabel = now;
         const startle = state.startle > 0.45;
         const label = startle ? "who's there?" : tel.phase === "uncertain_hesitation" ? "is it safe?" : tel.phase === "deep_wonder" ? "i want to know everything." : tel.wonder > 0.7 ? "closer\u2026" : tel.curiosity > 0.75 ? "curious\u2026" : "hmm\u2026";

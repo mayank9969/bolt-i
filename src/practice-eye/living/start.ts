@@ -131,7 +131,7 @@ export function startEye(canvas: HTMLCanvasElement, onLabel: (s: string) => void
     prev = now
     const state = mind.step(dt)
     const tel = mind.getTelemetry()
-    if (now - lastLabel > 180) {
+    if (now - lastLabel > 4200) {
       lastLabel = now
       const startle = state.startle > 0.45
       const label = startle
