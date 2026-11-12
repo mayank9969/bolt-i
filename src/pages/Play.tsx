@@ -85,7 +85,7 @@ export default function Play() {
       <iframe
         ref={ref}
         title="VEYRA Practice — relay of curiosity"
-        src={`/practice-relay/index.html?eye=3&theme=${theme}`}
+        src={`/practice-relay/index.html?eye=7&theme=${theme}`}
         className="w-full max-w-[90rem] border-0 block bg-canvas overflow-auto"
         style={{ height: 'min(96dvh, 1400px)', minHeight: '32rem' }}
       />
