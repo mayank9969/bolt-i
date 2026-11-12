@@ -804,20 +804,22 @@ export function render(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement,
 
   drawSpeedLines(ctx, S, W / 2, neckY - 120);
 
-  /* captions */
-  const haloD = S.I(1);
-  const whiteD = rgba(paper, 1);
-  caption(ctx, 'your mind never stops.', t, 0.35, 2.15, { y: 1370, size: 58, italic: true, fill: whiteD, halo: haloD, haloW: 12, stagger: 0.04 });
-  caption(ctx, 'why does it feel… wrong?', t, 2.15, 3.55, { y: 1370, size: 58, italic: true, fill: whiteD, halo: haloD, haloW: 12, stagger: 0.04, shake: 1.6 });
+  /* captions — ink on paper so they read; invert only during the flash */
+  const inkFill = rgba(ink, 1);
+  const paperFill = rgba(paper, 1);
+  const capFill = inv ? paperFill : inkFill;
+  const capHalo = inv ? inkFill : paperFill;
+  caption(ctx, 'your mind never stops.', t, 0.35, 2.15, { y: 1480, size: 48, italic: true, fill: capFill, halo: capHalo, haloW: 12, stagger: 0.04 });
+  caption(ctx, 'why does it feel… wrong?', t, 2.15, 3.55, { y: 1480, size: 48, italic: true, fill: capFill, halo: capHalo, haloW: 12, stagger: 0.04, shake: 1.6 });
   caption(ctx, 'WHAT AM I', t, T.impact + 0.02, 5.3, {
-    y: 1215, size: 104, weight: 700, track: 6, fill: whiteD, halo: haloD, haloW: 16, stagger: 0.02,
+    y: 1320, size: 72, weight: 700, track: 6, fill: capFill, halo: capHalo, haloW: 16, stagger: 0.02,
     split: t < T.impact + 0.6 ? 6 : 2, shake: t < T.impact + 0.6 ? 7 : 0.8, fade: 0.4,
   });
   caption(ctx, 'DOING WRONG?', t, T.impact + 0.14, 5.3, {
-    y: 1330, size: 104, weight: 700, track: 6, fill: whiteD, halo: haloD, haloW: 16, stagger: 0.02,
+    y: 1410, size: 72, weight: 700, track: 6, fill: capFill, halo: capHalo, haloW: 16, stagger: 0.02,
     split: t < T.impact + 0.7 ? 6 : 2, shake: t < T.impact + 0.7 ? 7 : 0.8, fade: 0.4,
   });
-  caption(ctx, 'stop. look at yourself.', t, 5.45, 7.05, { y: 1370, size: 60, italic: true, fill: whiteD, halo: haloD, haloW: 12, stagger: 0.045 });
+  caption(ctx, 'stop. look at yourself.', t, 5.45, 7.05, { y: 1480, size: 48, italic: true, fill: capFill, halo: capHalo, haloW: 12, stagger: 0.045 });
 
   const cream = rgba([240, 230, 208], 1);
   const dark = '#1a110a';

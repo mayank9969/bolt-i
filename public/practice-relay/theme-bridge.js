@@ -308,7 +308,7 @@
     if (window.veyraMountContinue) go()
     else {
       var s = document.createElement('script')
-      s.src = 'continue-anim.js?v=3'
+      s.src = '/practice-relay/continue-anim.js?v=4'
       s.onload = go
       document.head.appendChild(s)
     }
