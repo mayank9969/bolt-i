@@ -315,32 +315,12 @@
     return true
   }
 
-  function stripRelay() {
-    ;['same-paper', 'your-hands', 'leave-open', 'crossings', 'subject', 'try-it'].forEach(function (id) {
-      var el = document.getElementById(id)
-      if (el) el.setAttribute('hidden', '')
-    })
-    var heads = document.querySelectorAll('h2, h3, p, span')
-    for (var i = 0; i < heads.length; i++) {
-      var tx = (heads[i].textContent || '').replace(/\s+/g, ' ').trim()
-      if (
-        /Missed questions|same paper|Changing Hands|NOT FINISHED|Take your place in the relay|LEAVE ROOM/i.test(
-          tx,
-        )
-      ) {
-        var block = heads[i].closest('section, article, div')
-        if (block && block.id !== 'home' && block.id !== 'veyra-studio') {
-          block.setAttribute('hidden', '')
-        }
-      }
-    }
-  }
-
   function boot() {
     wireActions()
-    stripRelay()
     placeMarks()
     swapDaily()
+    swapLeaveRoom()
+    swapEnding()
   }
 
   if (document.readyState === 'loading') {
@@ -351,9 +331,10 @@
 
   var mo = new MutationObserver(function () {
     if (!document.getElementById('veyra-studio')) insertStudio()
-    stripRelay()
     placeMarks()
     swapDaily()
+    swapLeaveRoom()
+    swapEnding()
     var acts = document.querySelectorAll('[data-veyra-act]')
     for (var j = 0; j < acts.length; j++) wire(acts[j])
   })
