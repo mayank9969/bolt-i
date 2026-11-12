@@ -37,6 +37,9 @@ from pathlib import Path
 from flask import Flask, abort, jsonify, request, send_from_directory
 from flask_cors import CORS
 
+# Windows consoles default to cp1252; the question bank is UTF-8.
+os.environ.setdefault("PYTHONUTF8", "1")
+
 ROOT_DIR = Path(__file__).resolve().parent.parent
 BACKEND_DIR = ROOT_DIR / "quiz.app"
 BACKEND_FILE = BACKEND_DIR / "latests.py"

@@ -87,9 +87,9 @@ class Question_bank:
             
  
             if not os.path.exists("questions.json"): 
-                with open("questions.json", "w") as f: 
+                with open("questions.json", "w", encoding="utf-8") as f: 
                     json.dump({}, f) 
-            with open("questions.json","r")as f: 
+            with open("questions.json","r", encoding="utf-8") as f: 
                 question_data = json.load(f) 
                      
                 for category in question_data: 
