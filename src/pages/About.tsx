@@ -69,9 +69,8 @@ export default function About() {
 
             <Stop id="ashore" n="02" label="GO ASHORE" mark="ashore">
               <p>
-                Home is the map. Practice is where I go ashore:{' '}
-                <span className="ed-weight">one sitting, scored after I finish</span>. History keeps the record of what
-                the server verifies.
+                Home is the map. Practice is where I go ashore: one sitting, scored after I finish. History keeps the
+                record of what the server verifies.
               </p>
               <p>
                 Today’s Take is different. It is a <span className="ed-soft">private note</span> in my own words, with{' '}
@@ -86,8 +85,8 @@ export default function About() {
                 <span className="ed-hit">leave a gap than invent a key</span>.
               </p>
               <p>
-                The browser does not decide the answer while I am still thinking.{' '}
-                <span className="ed-weight">The sitting finishes first</span>; then History records what happened.
+                The browser does not decide the answer while I am still thinking. The sitting finishes first; then History
+                records what happened.
               </p>
               <p className="field-stamp">Do not cheat the hour.</p>
             </Stop>
@@ -114,8 +113,7 @@ export default function About() {
                 <span className="ed-hit">island that pulls at you</span>. Return to the question that resisted you.
               </p>
               <p>
-                If one question follows you after you leave,{' '}
-                <span className="ed-weight">VEYRA has done what I hoped</span>.
+                If one question follows you after you leave, VEYRA has done what I hoped.
               </p>
               <p className="field-sign">Mayank Sarwal · Still following the question</p>
               <p className="field-cta field-cta-end">

@@ -759,7 +759,7 @@
   background: rgb(var(--nx-card-rgb));
 }
 .field-open {
-  max-width: 40rem;
+  max-width: 52rem;
   text-align: left;
 }
 .field-meta {
@@ -777,7 +777,7 @@
   letter-spacing: -0.03em;
   line-height: 1.02;
   margin: 1.1rem 0 0;
-  max-width: 16ch;
+  max-width: 18ch;
   color: rgb(var(--nx-text-rgb));
   text-wrap: balance;
 }
@@ -791,11 +791,11 @@
 }
 .field-lede {
   font-family: var(--ed-body);
-  font-size: clamp(1.28rem, 2.2vw, 1.55rem);
-  line-height: 1.7;
+  font-size: clamp(1.45rem, 2.6vw, 1.85rem);
+  line-height: 1.62;
   color: rgb(var(--nx-text-2-rgb));
-  margin-top: 1.4rem;
-  max-width: 40rem;
+  margin-top: 1.5rem;
+  max-width: 46rem;
 }
 .field-stat {
   font-family: var(--ed-mono);
@@ -928,32 +928,24 @@
 }
 .field-prose {
   font-family: var(--ed-body);
-  font-size: clamp(1.28rem, 2.2vw, 1.55rem);
-  line-height: 1.7;
+  font-size: clamp(1.45rem, 2.6vw, 1.85rem);
+  line-height: 1.62;
   color: rgb(var(--nx-text-2-rgb));
-  max-width: 40rem;
+  max-width: 46rem;
+}
+.field-notes .ed-hit,
+.field-notes .ed-soft,
+.field-notes .ed-weight {
+  font-family: var(--ed-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.02em;
+  letter-spacing: -0.02em;
+  color: rgb(var(--nx-text-rgb));
+  background-image: none;
 }
 .field-notes .ed-hit {
-  font-family: var(--ed-display);
-  font-style: italic;
-  font-weight: 400;
-  font-size: 1.08em;
-  color: rgb(var(--nx-text-rgb));
-  background-image: linear-gradient(90deg, #8ce0d8, #f4d35e, #e07a5f);
-  background-size: 100% 2px;
-  background-repeat: no-repeat;
-  background-position: 0 94%;
-}
-.field-notes .ed-soft {
-  font-family: var(--ed-display);
-  font-style: italic;
-  font-weight: 400;
-  font-size: 1.06em;
-  color: rgb(var(--nx-text-rgb));
-}
-.field-notes .ed-weight {
-  font-weight: 650;
-  color: rgb(var(--nx-text-rgb));
+  color: rgb(var(--nx-accent-2-rgb));
 }
 .field-prose p + p {
   margin-top: 1rem;
@@ -962,11 +954,11 @@
   font-family: var(--ed-display);
   font-style: italic;
   font-weight: 400;
-  font-size: clamp(1.85rem, 3.6vw, 2.45rem);
-  line-height: 1.25;
+  font-size: clamp(2.05rem, 4vw, 2.75rem);
+  line-height: 1.22;
   letter-spacing: -0.03em;
   color: rgb(var(--nx-text-rgb));
-  max-width: 22ch;
+  max-width: 28ch;
 }
 .field-stamp {
   font-family: var(--ed-mono);
