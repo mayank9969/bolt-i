@@ -30,10 +30,10 @@ export default function Layout({ children }: { children: ReactNode }) {
       <header className="sticky top-0 z-50 bg-canvas/92 backdrop-blur-md border-b border-line">
         <div className="veyra-header max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 h-[5.25rem] flex items-center justify-between gap-4">
           <Link to="/" className="flex items-center gap-2 sm:gap-3.5 group shrink-0 rounded-lg" aria-label="VEYRA home">
-            <span className="origin-left scale-[0.62] sm:scale-100">
+            <span className="origin-left scale-[0.55] sm:scale-[0.85] lg:scale-100">
               <LogoMark size={72} />
             </span>
-            <Wordmark className="veyra-wordmark text-[22px]" />
+            <Wordmark className="veyra-wordmark text-[18px] sm:text-[22px]" />
           </Link>
 
           <nav className="veyra-nav desk-nav flex items-center gap-0.5 sm:gap-1 min-w-0 overflow-x-auto [scrollbar-width:none] [-webkit-overflow-scrolling:touch]">

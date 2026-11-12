@@ -182,7 +182,7 @@ export default function Quiz() {
   return (
     <div className="relative flex-1 flex flex-col">
       {/* ── Where am I ──────────────────────────────────── */}
-      <div className="sticky top-16 z-30 bg-canvas/90 backdrop-blur-md border-b border-line">
+      <div className="quiz-progress sticky top-16 z-30 bg-canvas/90 backdrop-blur-md border-b border-line">
         <div className="max-w-2xl mx-auto px-5 sm:px-6 pt-3 pb-1">
           <div className="flex items-baseline justify-between gap-4">
             <p className="t-h3 text-fg num whitespace-nowrap">
