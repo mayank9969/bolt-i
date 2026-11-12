@@ -762,6 +762,12 @@
   max-width: 52rem;
   text-align: left;
 }
+.field-open .field-meta,
+.field-open .field-display {
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+}
 .field-meta {
   font-family: var(--ed-mono);
   font-size: 0.72rem;
@@ -776,7 +782,7 @@
   font-weight: 400;
   letter-spacing: -0.03em;
   line-height: 1.02;
-  margin: 1.1rem 0 0;
+  margin: 1.1rem auto 0;
   max-width: 22ch;
   color: rgb(var(--nx-text-rgb));
   text-wrap: balance;
@@ -959,6 +965,9 @@
   letter-spacing: -0.03em;
   color: rgb(var(--nx-text-rgb));
   max-width: 28ch;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
 }
 .field-stamp {
   font-family: var(--ed-mono);
@@ -967,15 +976,22 @@
   text-transform: uppercase;
   font-weight: 600;
   color: rgb(var(--nx-accent-2-rgb));
+  text-align: center;
+  display: block;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
 }
 .field-sign {
   font-family: var(--ed-display);
   font-style: italic;
   font-size: 1.15rem;
   color: rgb(var(--nx-text-rgb));
+  text-align: center;
 }
 .field-cta-end {
   margin-top: 1.4rem;
+  justify-content: center;
 }
 @media (max-width: 720px) {
   .field-story {
