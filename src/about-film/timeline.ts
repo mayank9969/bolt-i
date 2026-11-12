@@ -31,7 +31,7 @@ export interface Caption {
 export type VoiceClip = Caption & { srcStart: number; srcEnd: number }
 
 export function voiceClips(fileSeconds: number): VoiceClip[] {
-  const weights = CAPTIONS.map((c) => Math.max(12, c.text.length))
+  const weights = CAPTIONS.map((c) => Math.max(28, c.text.split(/\s+/).length * 12))
   const sum = weights.reduce((a, b) => a + b, 0)
   let cursor = 0.08
   const usable = Math.max(0.5, fileSeconds - 0.16)

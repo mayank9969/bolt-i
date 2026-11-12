@@ -12,7 +12,7 @@ export default function FilmPlayer() {
   const [playing, setPlaying] = useState(false);
   const [ended, setEnded] = useState(false);
   const [muted, setMuted] = useState(false);
-  const [narration, setNarration] = useState<"captions" | "voice">("captions");
+  const [captionsOn, setCaptionsOn] = useState(true);
   const [caption, setCaption] = useState<{ text: string; id: number } | null>(null);
   const [quoteOn, setQuoteOn] = useState(false);
 
@@ -96,11 +96,14 @@ export default function FilmPlayer() {
     if (timeLabelRef.current) {
       timeLabelRef.current.textContent = `${t.toFixed(1)}s`;
     }
-    const active = CAPTIONS.find((c) => t >= c.at && t <= c.until);
+    const fromVo = audioRef.current?.captionAt(t) ?? null;
+    const active = fromVo ?? (() => {
+      const c = CAPTIONS.find((cap) => t >= cap.at && t <= cap.until);
+      return c ? { text: c.text, id: CAPTIONS.indexOf(c) } : null;
+    })();
     setCaption((prev) => {
-      const id = active ? CAPTIONS.indexOf(active) : -1;
-      if ((prev?.id ?? -1) === id) return prev;
-      return active ? { text: active.text, id } : null;
+      if ((prev?.id ?? -1) === (active?.id ?? -1)) return prev;
+      return active;
     });
     setQuoteOn((prev) => {
       const next = t >= QUOTE.appearsAt;
@@ -110,7 +113,6 @@ export default function FilmPlayer() {
 
   /* ---------------------------------------------------------- transport */
   const play = useCallback((fromStart: boolean) => {
-    if (audioRef.current) audioRef.current.tts = narration === "voice";
     if (fromStart || tRef.current >= DURATION || tRef.current < 0.05) {
       tRef.current = 0;
       setQuoteOn(false);
@@ -123,7 +125,7 @@ export default function FilmPlayer() {
     setEnded(false);
     playingRef.current = true;
     setPlaying(true);
-  }, [narration]);
+  }, []);
 
   const pause = useCallback(() => {
     playingRef.current = false;
@@ -158,7 +160,7 @@ export default function FilmPlayer() {
         <div className="film-letter pointer-events-none absolute inset-x-0 bottom-0 h-[3%]" />
 
         {/* captions */}
-        {caption && !ended && (
+        {captionsOn && caption && !ended && (
           <div key={caption.id} className="caption pointer-events-none absolute inset-x-0 bottom-[9%] flex justify-center px-6">
             <p className="max-w-2xl text-center text-[clamp(0.85rem,2.2vw,1.2rem)] font-light tracking-wide text-[#f3eefb]/95">
               {caption.text}
@@ -247,13 +249,13 @@ export default function FilmPlayer() {
           </button>
 
           <button
-            onClick={() => setNarration(narration === "captions" ? "voice" : "captions")}
+            onClick={() => setCaptionsOn((v) => !v)}
             className={`film-voice btn-ghost hidden shrink-0 rounded-full border px-3 py-1.5 text-[11px] font-medium uppercase tracking-wider sm:block ${
-              narration === "voice" ? "is-on" : ""
+              captionsOn ? "is-on" : ""
             }`}
-            title="Device narration is a synthetic stand-in. Drop a real recording at /public/voiceover.mp3 and the film will use it automatically."
+            aria-pressed={captionsOn}
           >
-            {narration === "voice" ? "voice: device" : "voice: captions"}
+            {captionsOn ? "captions on" : "captions off"}
           </button>
         </div>
 

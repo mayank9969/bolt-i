@@ -1,4 +1,4 @@
-import { CAPTIONS, DURATION, voiceClips, type VoiceClip } from "./timeline";
+import { DURATION, voiceClips, type VoiceClip } from "./timeline";
 
 /**
  * FilmAudio
@@ -19,10 +19,8 @@ export class FilmAudio {
   private voGain: GainNode | null = null;
   private voSource: AudioBufferSourceNode | null = null;
   private clips: VoiceClip[] = [];
-  private clipI = -1;
   private hasVoiceover = false;
   muted = false;
-  tts = false;
 
   async probeVoiceover() {
     try {
@@ -40,18 +38,18 @@ export class FilmAudio {
     return this.hasVoiceover;
   }
 
-  /** When a caption appears, speak that slice; speed up so every word fits. */
-  sync(t: number) {
-    if (!this.voBuffer || this.muted) return;
-    const i = this.clips.findIndex((c) => t >= c.at && t < c.until);
-    if (i === this.clipI) return;
-    this.clipI = i;
+  /** Voice runs at 1x with the picture. Captions follow the take, not the other way. */
+  sync(_t: number) {}
+
+  captionAt(t: number): { text: string; id: number } | null {
+    const i = this.clips.findIndex((c) => t >= c.srcStart && t < c.srcEnd);
+    if (i < 0) return null;
+    return { text: this.clips[i].text, id: i };
+  }
+
+  startVoice(offset = 0) {
     this.stopVoice();
-    if (i < 0) return;
-    const c = this.clips[i];
-    const window = Math.max(0.4, c.until - c.at);
-    const srcDur = Math.max(0.4, c.srcEnd - c.srcStart);
-    const rate = Math.min(1.35, Math.max(1, srcDur / window));
+    if (!this.voBuffer || this.muted) return;
     const ctx = this.ensure();
     if (!this.voGain) {
       this.voGain = ctx.createGain();
@@ -60,11 +58,10 @@ export class FilmAudio {
     this.voGain.gain.value = 1;
     const src = ctx.createBufferSource();
     src.buffer = this.voBuffer;
-    src.playbackRate.value = rate;
+    src.playbackRate.value = 1;
     src.connect(this.voGain);
-    const off = Math.min(c.srcStart, this.voBuffer.duration - 0.05);
-    const len = Math.min(srcDur, this.voBuffer.duration - off);
-    src.start(ctx.currentTime, off, len);
+    const off = Math.min(Math.max(0, offset), Math.max(0, this.voBuffer.duration - 0.05));
+    src.start(ctx.currentTime, off);
     this.voSource = src;
   }
 
@@ -213,24 +210,7 @@ export class FilmAudio {
     bell(35.6, 659.25, 0.045);
     bell(39.0, 440.0, 0.04);
 
-    this.clipI = -1;
-
-    /* --- optional device narration stand-in --- */
-    if (this.tts && "speechSynthesis" in window) {
-      window.speechSynthesis.cancel();
-      const voice = this.pickVoice();
-      CAPTIONS.forEach((c) => {
-        const id = window.setTimeout(() => {
-          const u = new SpeechSynthesisUtterance(c.text);
-          if (voice) u.voice = voice;
-          u.rate = 0.92;
-          u.pitch = 1.08;
-          u.volume = this.muted ? 0 : 1;
-          window.speechSynthesis.speak(u);
-        }, Math.max(0, (c.at - 0.05) * 1000));
-        this.timers.push(id);
-      });
-    }
+    this.startVoice(0);
   }
 
   private whoosh(at: number) {
@@ -253,15 +233,6 @@ export class FilmAudio {
     src.connect(bp).connect(g).connect(this.master!);
     src.start(at);
     this.live.push(src);
-  }
-
-  private pickVoice(): SpeechSynthesisVoice | null {
-    const voices = window.speechSynthesis.getVoices();
-    if (!voices.length) return null;
-    const pref = voices.find((v) =>
-      /female|samantha|zira|karen|moira|tessa|google uk english female|google us english/i.test(v.name)
-    );
-    return pref || voices.find((v) => v.lang.startsWith("en")) || voices[0];
   }
 
   setMuted(m: boolean) {
@@ -297,7 +268,6 @@ export class FilmAudio {
     this.timers.forEach((id) => clearTimeout(id));
     this.timers = [];
     this.stopVoice();
-    this.clipI = -1;
     if ("speechSynthesis" in window) window.speechSynthesis.cancel();
   }
 
