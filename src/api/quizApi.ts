@@ -111,3 +111,22 @@ export type TakePrompt = {
 export function getTakePrompts(): Promise<{ prompts: TakePrompt[]; error?: string | null }> {
   return request('/take/prompts')
 }
+
+export type TakeGuidance = {
+  guidance: boolean
+  scored: boolean
+  intent_summary?: string
+  strength?: string
+  next_step?: string
+  error?: string
+}
+
+export function askTakeGuidance(payload: {
+  response: string
+  topic: string
+  prompt_text: string
+  prompt_type?: string
+  reflection_hint?: string
+}): Promise<TakeGuidance> {
+  return request('/take/guidance', { method: 'POST', body: JSON.stringify(payload) })
+}

@@ -342,6 +342,43 @@ def take_prompts():
     return jsonify({"prompts": prompts or [], "error": problem})
 
 
+@app.post("/api/take/guidance")
+def take_guidance():
+    """Supportive coach notes — never stored as a quiz score."""
+    body = request.get_json(silent=True) or {}
+    text = str(body.get("response") or "").strip()
+    if len(text) < 8:
+        return jsonify({"error": "Write a little more before asking for guidance."}), 400
+    if len(text) > 4000:
+        return jsonify({"error": "Keep the take under 4000 characters."}), 400
+    prompt = body.get("prompt") if isinstance(body.get("prompt"), dict) else {
+        "prompt": str(body.get("prompt_text") or ""),
+        "topic": str(body.get("topic") or ""),
+        "prompt_type": str(body.get("prompt_type") or "personal"),
+        "challenge_level": 1,
+        "reflection_hint": str(body.get("reflection_hint") or ""),
+    }
+    q = Quiz(question_bank)
+    review, problem = q.score_opinion_response(prompt, text)
+    if problem or not review:
+        hint = str(prompt.get("reflection_hint") or "").strip()
+        return jsonify({
+            "guidance": True,
+            "scored": False,
+            "intent_summary": "No grade — this is optional coaching.",
+            "strength": hint or "Your take is private. The engine did not mark it.",
+            "next_step": problem or "Add GEMINI_API_KEY on the server to get live guidance.",
+        })
+    return jsonify({
+        "guidance": True,
+        "scored": False,
+        "intent_summary": review.get("intent_summary"),
+        "strength": review.get("strength"),
+        "next_step": review.get("next_step"),
+        "criteria": review.get("criteria"),
+    })
+
+
 @app.get("/api/history")
 def history():
     history_file = BACKEND_DIR / "history.json"

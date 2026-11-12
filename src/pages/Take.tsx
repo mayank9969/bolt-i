@@ -3,7 +3,14 @@ import '@fontsource-variable/source-serif-4/wght.css'
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import prompts from '@/lib/opinionPrompts.json'
-import { getTakePrompts, type TakePrompt } from '@/api/quizApi'
+import {
+  askTakeGuidance,
+  getLabTopics,
+  getTakePrompts,
+  type LabTopic,
+  type TakeGuidance,
+  type TakePrompt,
+} from '@/api/quizApi'
 import { useWorld } from '@/components/three/world'
 import Reveal from '@/components/Reveal'
 import { useQuiz } from '@/context/QuizContext'
@@ -37,25 +44,42 @@ export default function Take() {
   const list = prompts as [string, string][]
   const day = new Date().toISOString().slice(0, 10)
   const [live, setLive] = useState<TakePrompt | null>(null)
+  const [article, setArticle] = useState<LabTopic | null>(null)
+  const [askErr, setAskErr] = useState('')
+  const [guide, setGuide] = useState<TakeGuidance | null>(null)
+  const [asking, setAsking] = useState(false)
+
   useEffect(() => {
     getTakePrompts()
       .then((pack) => {
         const items = pack.prompts || []
-        if (!items.length) return
+        if (!items.length) {
+          if (pack.error) setAskErr(pack.error)
+          return
+        }
         const ord = Math.floor(Date.now() / 86400000)
         setLive(items[ord % items.length] ?? items[0])
       })
+      .catch((err: Error) => setAskErr(err.message))
+    getLabTopics()
+      .then((pack) => {
+        const withTopic = (pack.topics || []).find((t) => t.topic)
+        setArticle(withTopic ?? pack.topics?.[0] ?? null)
+      })
       .catch(() => {})
   }, [])
+
   const prompt = useMemo(() => {
     if (live) return [live.topic, live.prompt] as [string, string]
     const ord = Math.floor(Date.now() / 86400000)
     return list[ord % list.length] ?? list[0]
   }, [list, live])
+
   const [entries, setEntries] = useState<Entry[]>(load)
   const [response, setResponse] = useState('')
   const today = entries.find((e) => e.day === day)
-  const words = (today?.response ?? response).trim() ? (today?.response ?? response).trim().split(/\s+/).length : 0
+  const draft = today?.response ?? response
+  const words = draft.trim() ? draft.trim().split(/\s+/).length : 0
 
   const save = () => {
     if (!response.trim() || !prompt) return
@@ -76,15 +100,56 @@ export default function Take() {
     }
   }
 
+  const askGuide = async () => {
+    const text = draft.trim()
+    if (text.length < 8) return
+    setAsking(true)
+    setGuide(null)
+    try {
+      const g = await askTakeGuidance({
+        response: text,
+        topic: prompt[0],
+        prompt_text: prompt[1],
+        prompt_type: live?.prompt_type,
+        reflection_hint: live?.reflection_hint,
+      })
+      setGuide(g)
+    } catch (err) {
+      setGuide({
+        guidance: true,
+        scored: false,
+        next_step: err instanceof Error ? err.message : 'Guidance is unavailable right now.',
+      })
+    }
+    setAsking(false)
+  }
+
   return (
     <div className="relative z-10 max-w-page mx-auto px-5 sm:px-6 lg:px-8 pt-16 pb-24 md:pt-24 archive-ed">
       <Reveal>
         <p className="ed-eyebrow">A thought to keep, if you want to:</p>
         <h1 className="ed-display mt-4">Write a take.</h1>
         <p className="ed-lede mt-5">
-          Unscored. Private to this browser. The quiz engine never marks it.
+          Fresh topic from the live page. Unscored. Guidance is optional coaching — History never records it.
         </p>
       </Reveal>
+
+      {(article?.topic || live?.topic) && (
+        <article className="mt-8 pt-6 border-t border-line">
+          <p className="eyebrow">{article?.category_label || 'Today’s field note'}</p>
+          <h2 className="t-title text-fg mt-2">{article?.topic || live?.topic}</h2>
+          {article?.summary && <p className="text-fg-2 mt-3 text-pretty">{article.summary}</p>}
+          {article?.source_url && (
+            <a className="t-meta underline underline-offset-4 mt-2 inline-block" href={article.source_url} target="_blank" rel="noreferrer">
+              Wikipedia source
+            </a>
+          )}
+        </article>
+      )}
+
+      <p className="ed-lede mt-8">{prompt[1]}</p>
+      {live?.reflection_hint && <p className="t-meta text-fg-3 mt-2">{live.reflection_hint}</p>}
+      {askErr && <p className="t-meta text-fg-3 mt-2">{askErr}</p>}
 
       <div className="take-starters mt-8" role="group" aria-label="Opening lines">
         {STARTERS.map((s) => (
@@ -120,10 +185,24 @@ export default function Take() {
         <span> · stays on this page</span>
       </p>
 
-      {!today && (
-        <button type="button" className="btn-primary mt-6" onClick={save} disabled={!response.trim()}>
-          Stamp your mark
+      <div className="mt-6 flex flex-wrap gap-3">
+        {!today && (
+          <button type="button" className="btn-primary" onClick={save} disabled={!response.trim()}>
+            Stamp your mark
+          </button>
+        )}
+        <button type="button" className="btn-secondary" onClick={() => void askGuide()} disabled={asking || draft.trim().length < 8}>
+          {asking ? 'Listening…' : 'Ask for guidance'}
         </button>
+      </div>
+
+      {guide && (
+        <aside className="mt-8 pt-6 border-t border-line max-w-xl">
+          <p className="eyebrow">Guidance · not a score</p>
+          {guide.intent_summary && <p className="text-fg mt-3">{guide.intent_summary}</p>}
+          {guide.strength && <p className="text-fg-2 mt-3">{guide.strength}</p>}
+          {guide.next_step && <p className="text-fg mt-3">{guide.next_step}</p>}
+        </aside>
       )}
 
       <h2 className="ed-display mt-16 text-[clamp(1.4rem,3vw,1.85rem)]">Past takes</h2>
