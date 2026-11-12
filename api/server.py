@@ -39,7 +39,7 @@ from flask_cors import CORS
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 BACKEND_DIR = ROOT_DIR / "quiz.app"
-BACKEND_FILE = BACKEND_DIR / "quiz.py"
+BACKEND_FILE = BACKEND_DIR / "latests.py"
 DIST_DIR = ROOT_DIR / "dist"
 
 # The engine reads/writes questions.json + history.json relative to the CWD.
@@ -51,9 +51,27 @@ os.chdir(BACKEND_DIR)
 #  quiz.py launches its interactive main menu at import time; we answer "3"
 #  (Exit) to every prompt so the import completes without touching the code.
 # ─────────────────────────────────────────────────────────────────────────────
+def _stub_tkinter():
+    """latests.py imports tkinter; the API never opens a window."""
+    import types
+
+    tk = types.ModuleType("tkinter")
+    tk.TclError = type("TclError", (Exception,), {})
+    tk.END = "end"
+    tk.NORMAL = "normal"
+    tk.DISABLED = "disabled"
+    tk.StringVar = lambda *a, **k: None
+    tk.Tk = tk.Toplevel = tk.Frame = tk.Label = tk.Button = tk.Entry = object
+    tk.Text = tk.Canvas = tk.Listbox = tk.OptionMenu = object
+    sys.modules["tkinter"] = tk
+    for name in ("messagebox", "simpledialog", "filedialog"):
+        sys.modules[f"tkinter.{name}"] = types.ModuleType(f"tkinter.{name}")
+
+
 def _load_engine():
     real_input = builtins.input
     builtins.input = lambda *_args, **_kwargs: "3"
+    _stub_tkinter()
     try:
         spec = importlib.util.spec_from_file_location("quiz_engine", BACKEND_FILE)
         module = importlib.util.module_from_spec(spec)
@@ -300,6 +318,28 @@ def quiz_submit():
             "review": review,
         }
     )
+
+
+@app.get("/api/lab/topics")
+def lab_topics():
+    bank = _bank()
+    ids = list(bank.keys()) or list(getattr(engine, "LAB_SUBJECTS", {}).keys())
+    force = str(request.args.get("force", "")).lower() in {"1", "true", "yes"}
+    cache = BACKEND_DIR / "lab_topics.json"
+    try:
+        pack = engine.get_daily_lab_topics(str(cache), ids, force=force)
+    except Exception as err:
+        return jsonify({"error": str(err) or "Lab topics could not be loaded."}), 502
+    return jsonify(pack)
+
+
+@app.get("/api/take/prompts")
+def take_prompts():
+    q = Quiz(question_bank)
+    prompts, problem = q.get_daily_take_prompts()
+    if problem and not prompts:
+        return jsonify({"prompts": [], "error": problem})
+    return jsonify({"prompts": prompts or [], "error": problem})
 
 
 @app.get("/api/history")

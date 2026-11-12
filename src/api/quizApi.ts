@@ -79,3 +79,35 @@ export async function getHistory(): Promise<HistoryEntry[]> {
   const data = await request<{ history: HistoryEntry[] }>('/history')
   return data.history
 }
+
+export type LabTopic = {
+  category: string
+  category_label?: string
+  topic?: string
+  summary?: string
+  source_url?: string
+  error?: string
+  stale?: boolean
+  refreshed?: boolean
+  refreshes_at?: string
+}
+
+export function getLabTopics(force = false): Promise<{ topics: LabTopic[]; cycle?: string; refreshes_at?: string }> {
+  return request(`/lab/topics${force ? '?force=1' : ''}`)
+}
+
+export type TakePrompt = {
+  prompt_id: string
+  day: string
+  prompt_type: string
+  challenge_level: number
+  topic: string
+  prompt: string
+  reflection_hint?: string
+  source_url?: string
+  source_topic?: string
+}
+
+export function getTakePrompts(): Promise<{ prompts: TakePrompt[]; error?: string | null }> {
+  return request('/take/prompts')
+}

@@ -1,8 +1,9 @@
 import '@fontsource-variable/fraunces/wght.css'
 import '@fontsource-variable/source-serif-4/wght.css'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import prompts from '@/lib/opinionPrompts.json'
+import { getTakePrompts, type TakePrompt } from '@/api/quizApi'
 import { useWorld } from '@/components/three/world'
 import Reveal from '@/components/Reveal'
 import { useQuiz } from '@/context/QuizContext'
@@ -35,10 +36,22 @@ export default function Take() {
   const [starting, setStarting] = useState(false)
   const list = prompts as [string, string][]
   const day = new Date().toISOString().slice(0, 10)
+  const [live, setLive] = useState<TakePrompt | null>(null)
+  useEffect(() => {
+    getTakePrompts()
+      .then((pack) => {
+        const items = pack.prompts || []
+        if (!items.length) return
+        const ord = Math.floor(Date.now() / 86400000)
+        setLive(items[ord % items.length] ?? items[0])
+      })
+      .catch(() => {})
+  }, [])
   const prompt = useMemo(() => {
+    if (live) return [live.topic, live.prompt] as [string, string]
     const ord = Math.floor(Date.now() / 86400000)
     return list[ord % list.length] ?? list[0]
-  }, [list])
+  }, [list, live])
   const [entries, setEntries] = useState<Entry[]>(load)
   const [response, setResponse] = useState('')
   const today = entries.find((e) => e.day === day)
