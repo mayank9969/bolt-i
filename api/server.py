@@ -383,8 +383,13 @@ def history():
     history_file = BACKEND_DIR / "history.json"
     if not history_file.exists():
         return jsonify({"history": []})
-    with open(history_file, "r") as f:
-        data = engine.json.load(f)
+    try:
+        with open(history_file, "r", encoding="utf-8") as f:
+            data = engine.json.load(f)
+        if not isinstance(data, list):
+            data = []
+    except (OSError, ValueError, engine.json.JSONDecodeError):
+        return jsonify({"history": []})
     entries = [dict(entry, attempt=i + 1) for i, entry in enumerate(data)]
     return jsonify({"history": entries})
 
