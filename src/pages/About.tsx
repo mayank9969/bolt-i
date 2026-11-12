@@ -1,7 +1,7 @@
-import '@fontsource/instrument-serif/400.css'
-import '@fontsource/instrument-serif/400-italic.css'
-import '@fontsource-variable/dm-sans/wght.css'
-import '@fontsource-variable/dm-sans/wght-italic.css'
+import '@fontsource-variable/fraunces/wght.css'
+import '@fontsource-variable/fraunces/wght-italic.css'
+import '@fontsource-variable/source-serif-4/wght.css'
+import '@fontsource-variable/source-serif-4/wght-italic.css'
 import '@fontsource/ibm-plex-mono/400.css'
 import '@fontsource/ibm-plex-mono/500.css'
 import '@fontsource/ibm-plex-mono/600.css'
@@ -204,6 +204,7 @@ function Stop({
           {note}
         </p>
       </header>
+      <div className="ed-rainbow" aria-hidden="true" />
       <div className="field-prose">{children}</div>
     </section>
   )
