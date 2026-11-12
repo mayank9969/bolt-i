@@ -16,46 +16,29 @@ export const STAGES: StageWindow[] = [
   { key: "scene", label: "Gone", mark: 37.0 },
 ];
 
-/**
- * Voiceover script — record these lines (girl or boy voice) and save the
- * result as public/voiceover.mp3; the film detects and syncs it automatically.
- * Captions double as subtitles until then.
- */
 export interface Caption {
   at: number;
   until: number;
   text: string;
 }
 
-/** Cut the recording into these windows on the 40s picture, like a timeline. */
-export type VoiceClip = Caption & { srcStart: number; srcEnd: number }
-
-export function voiceClips(fileSeconds: number): VoiceClip[] {
-  const weights = CAPTIONS.map((c) => Math.max(28, c.text.split(/\s+/).length * 12))
-  const sum = weights.reduce((a, b) => a + b, 0)
-  let cursor = 0.08
-  const usable = Math.max(0.5, fileSeconds - 0.16)
-  return CAPTIONS.map((c, i) => {
-    const slice = (weights[i] / sum) * usable
-    const srcStart = cursor
-    const srcEnd = Math.min(fileSeconds, cursor + slice)
-    cursor = srcEnd
-    const nextAt = CAPTIONS[i + 1]?.at ?? DURATION - 0.2
-    const until = Math.min(c.until, nextAt - 0.12)
-    return { ...c, until, srcStart, srcEnd }
-  })
+/** Each narration line is a separate clip, with its own caption cue. */
+export interface VoicePart extends Caption {
+  src: string;
 }
 
-export const CAPTIONS: Caption[] = [
-  { at: 2.2, until: 6.6, text: "Some evenings hold everything you will ever need." },
-  { at: 7.0, until: 10.8, text: "He was here. Almost." },
-  { at: 11.2, until: 15.8, text: "But his mind had already left the bench — chasing a somewhere that was never real." },
-  { at: 16.0, until: 20.6, text: "Out here, the light was real. In there, it was only louder." },
-  { at: 20.9, until: 25.6, text: "She stayed. Close enough to touch… too far to reach." },
-  { at: 25.9, until: 30.4, text: "Until the noise inside got so bright, he couldn't hear the quiet holding him." },
-  { at: 30.7, until: 35.0, text: "She said his name. He smiled at somewhere else." },
-  { at: 35.3, until: 39.4, text: "And the moment passed — the way they always do. Without him." },
+export const VOICE_PARTS: VoicePart[] = [
+  { src: "/about-film/part-01.mp3", at: 2.55, until: 6.16, text: "Some evenings hold everything you will ever need." },
+  { src: "/about-film/part-02.mp3", at: 6.78, until: 8.99, text: "He was here. Almost." },
+  { src: "/about-film/part-03.mp3", at: 9.35, until: 14.72, text: "But his mind had already left the bench — chasing a somewhere that was never real." },
+  { src: "/about-film/part-04.mp3", at: 15.10, until: 20.10, text: "Out here, the light was real. In there, it was only louder." },
+  { src: "/about-film/part-05.mp3", at: 20.56, until: 24.99, text: "She stayed. Close enough to touch… too far to reach." },
+  { src: "/about-film/part-06.mp3", at: 25.35, until: 30.66, text: "Until the noise inside got so bright, he couldn't hear the quiet holding him." },
+  { src: "/about-film/part-07.mp3", at: 31.08, until: 34.45, text: "She said his name. He smiled at somewhere else." },
+  { src: "/about-film/part-08.mp3", at: 34.80, until: 38.96, text: "And the moment passed — the way they always do. Without him." },
 ];
+
+export const CAPTIONS: Caption[] = VOICE_PARTS.map(({ at, until, text }) => ({ at, until, text }));
 
 export const QUOTE = {
   line1: "We live more in our minds",

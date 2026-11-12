@@ -12,28 +12,33 @@ export default function FilmPlayer() {
   const [playing, setPlaying] = useState(false);
   const [ended, setEnded] = useState(false);
   const [muted, setMuted] = useState(false);
+  const [voiceAvailable, setVoiceAvailable] = useState(false);
   const [captionsOn, setCaptionsOn] = useState(true);
-  const [caption, setCaption] = useState<{ text: string; id: number } | null>(null);
+  const [caption, setCaption] = useState<{ text: string; words: string[]; id: number } | null>(null);
   const [quoteOn, setQuoteOn] = useState(false);
 
   const tRef = useRef(0);
   const idleRef = useRef(0);
   const playingRef = useRef(false);
+  const audioStartedRef = useRef(false);
   const rafRef = useRef(0);
   const lastRef = useRef(0);
   const audioRef = useRef<FilmAudio | null>(null);
 
   /* ---------------------------------------------------------- setup */
   useEffect(() => {
-    if (!audioRef.current) {
-      audioRef.current = new FilmAudio();
-      void audioRef.current.probeVoiceover().then(() => setReady(true));
-    } else {
+    const audio = audioRef.current ?? new FilmAudio();
+    audioRef.current = audio;
+    let mounted = true;
+    audio.probeVoiceover().then((available) => {
+      if (!mounted) return;
+      setVoiceAvailable(available);
       setReady(true);
-    }
+    });
     return () => {
+      mounted = false;
       cancelAnimationFrame(rafRef.current);
-      audioRef.current?.stop();
+      audio.stop();
     };
   }, []);
 
@@ -64,8 +69,11 @@ export default function FilmPlayer() {
       idleRef.current += dt;
 
       if (playingRef.current) {
-        tRef.current = Math.min(DURATION, tRef.current + dt);
-        audioRef.current?.sync(tRef.current);
+        const voiceTime = audioRef.current?.voiceTime;
+        tRef.current =
+          voiceTime == null
+            ? Math.min(DURATION, tRef.current + dt)
+            : Math.min(DURATION, voiceTime);
         syncUi(tRef.current);
         if (tRef.current >= DURATION) {
           playingRef.current = false;
@@ -96,14 +104,14 @@ export default function FilmPlayer() {
     if (timeLabelRef.current) {
       timeLabelRef.current.textContent = `${t.toFixed(1)}s`;
     }
-    const fromVo = audioRef.current?.captionAt(t) ?? null;
-    const active = fromVo ?? (() => {
-      const c = CAPTIONS.find((cap) => t >= cap.at && t <= cap.until);
-      return c ? { text: c.text, id: CAPTIONS.indexOf(c) } : null;
-    })();
+    const active = CAPTIONS.find((c) => t >= c.at && t <= c.until);
     setCaption((prev) => {
-      if ((prev?.id ?? -1) === (active?.id ?? -1)) return prev;
-      return active;
+      const id = active ? CAPTIONS.indexOf(active) : -1;
+      if (!active) return null;
+      const progress = Math.max(0, Math.min(1, (t - active.at) / (active.until - active.at)));
+      const words = revealWords(active.text, progress);
+      if (prev?.id === id && prev.words.length === words.length) return prev;
+      return { text: active.text, words, id };
     });
     setQuoteOn((prev) => {
       const next = t >= QUOTE.appearsAt;
@@ -113,14 +121,18 @@ export default function FilmPlayer() {
 
   /* ---------------------------------------------------------- transport */
   const play = useCallback((fromStart: boolean) => {
+    const audio = audioRef.current;
     if (fromStart || tRef.current >= DURATION || tRef.current < 0.05) {
       tRef.current = 0;
       setQuoteOn(false);
       setCaption(null);
-      audioRef.current?.stop();
-      audioRef.current?.start();
+      audio?.start(true);
+      audioStartedRef.current = true;
+    } else if (!audioStartedRef.current) {
+      audio?.start(false);
+      audioStartedRef.current = true;
     } else {
-      audioRef.current?.resume();
+      audio?.resume();
     }
     setEnded(false);
     playingRef.current = true;
@@ -137,6 +149,7 @@ export default function FilmPlayer() {
 
   const onScrub = (v: number) => {
     tRef.current = v;
+    audioRef.current?.seekVoice(v);
     if (v < DURATION && ended) setEnded(false);
     syncUi(v);
   };
@@ -156,14 +169,18 @@ export default function FilmPlayer() {
         <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
 
         {/* letterbox bars */}
-        <div className="film-letter pointer-events-none absolute inset-x-0 top-0 h-[3%]" />
-        <div className="film-letter pointer-events-none absolute inset-x-0 bottom-0 h-[3%]" />
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-[4%] bg-black/90" />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[4%] bg-black/90" />
 
         {/* captions */}
         {captionsOn && caption && !ended && (
           <div key={caption.id} className="caption pointer-events-none absolute inset-x-0 bottom-[9%] flex justify-center px-6">
-            <p className="max-w-2xl text-center text-[clamp(0.85rem,2.2vw,1.2rem)] font-light tracking-wide text-[#f3eefb]/95">
-              {caption.text}
+            <p aria-label={caption.text} className="max-w-2xl text-center text-[clamp(0.85rem,2.2vw,1.2rem)] font-light tracking-wide text-[#f3eefb]/95">
+              {caption.words.map((word, index) => (
+                <span key={`${caption.id}-${index}`} aria-hidden="true" className="caption-word">
+                  {word}
+                </span>
+              ))}
             </p>
           </div>
         )}
@@ -238,7 +255,7 @@ export default function FilmPlayer() {
 
           <button
             onClick={toggleMute}
-            className="film-mute btn-ghost flex h-9 w-9 shrink-0 items-center justify-center rounded-full border hover:border-[rgb(var(--nx-accent-rgb))] hover:text-[rgb(var(--nx-accent-rgb))]"
+            className="btn-ghost flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#b9aed4]/20 text-[#b9aed4] hover:border-[#e90096] hover:text-[#e90096]"
             aria-label={muted ? "Unmute" : "Mute"}
           >
             {muted ? (
@@ -254,6 +271,7 @@ export default function FilmPlayer() {
               captionsOn ? "is-on" : ""
             }`}
             aria-pressed={captionsOn}
+            title={voiceAvailable ? "Captions follow the recorded take." : "Voiceover file not found. Captions still follow the timeline."}
           >
             {captionsOn ? "captions on" : "captions off"}
           </button>
@@ -279,4 +297,31 @@ export default function FilmPlayer() {
       </div>
     </div>
   );
+}
+
+function revealWords(text: string, progress: number): string[] {
+  const parts = text.match(/\S+/g) ?? [];
+  const words: string[] = [];
+
+  parts.forEach((part) => {
+    if (/^[—–]+$/.test(part) && words.length) words[words.length - 1] += ` ${part}`;
+    else words.push(part);
+  });
+
+  const weights = words.map((word) => {
+    const letters = word.replace(/[^\p{L}\p{N}']/gu, "").toLowerCase();
+    const syllables = (letters.match(/[aeiouy]+/g) ?? []).length;
+    const punctuation = /[.!?…]$/.test(word) ? 0.8 : /[,;:]$/.test(word) ? 0.45 : /[—–]$/.test(word) ? 0.65 : 0;
+    return Math.max(1, syllables) + punctuation;
+  });
+
+  const threshold = progress * weights.reduce((sum, weight) => sum + weight, 0);
+  let elapsed = 0;
+  const count = weights.reduce((visible, weight, index) => {
+    const shouldShow = index === 0 || elapsed <= threshold;
+    elapsed += weight;
+    return visible + Number(shouldShow);
+  }, 0);
+
+  return words.slice(0, Math.max(1, count));
 }

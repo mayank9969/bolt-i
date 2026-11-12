@@ -449,6 +449,16 @@
 .about-ed .quote-film .film-letter + .film-letter {
   background: linear-gradient(to top, rgb(var(--nx-canvas-rgb) / 0.38), transparent);
 }
+.about-ed .quote-film .caption p {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.28em 0.42em;
+}
+.about-ed .quote-film .caption-word {
+  display: inline-block;
+  animation: caption-word-in 0.32s ease-out both;
+}
 .about-ed .quote-film .film-transport {
   border-color: var(--nx-line);
   background: rgb(var(--nx-card-rgb));
@@ -724,4 +734,9 @@
   border-radius: 999px;
   background: currentColor;
   color: rgb(var(--nx-text-rgb));
+}
+
+@keyframes caption-word-in {
+  from { opacity: 0; transform: translateY(0.35em); }
+  to { opacity: 1; transform: none; }
 }

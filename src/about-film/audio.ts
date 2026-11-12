@@ -1,4 +1,6 @@
-import { DURATION, voiceClips, type VoiceClip } from "./timeline";
+import { DURATION, VOICE_PARTS } from "./timeline";
+
+const VOICE_RATE = 1;
 
 /**
  * FilmAudio
@@ -6,93 +8,68 @@ import { DURATION, voiceClips, type VoiceClip } from "./timeline";
  *   soft detuned pads (Am – F – C – G), a sub drone, transition whooshes,
  *   a tension layer and shimmer at the overwhelm peak, resolving bells at
  *   the end. Real audio, generated in the moment, paced to the 40s film.
- * - If a real human recording is dropped at /about-film/voiceover.mp3, it is detected
- *   and played in sync instead of captions-only.
- * - Optional device narration (speech synthesis) as an accessible stand-in.
+ * - The supplied recording is split into eight scene cues. Each cue is loaded
+ *   and scheduled separately; the voice clock keeps captions and picture locked
+ *   together during playback, pause, and seeking.
  */
 export class FilmAudio {
   private ctx: AudioContext | null = null;
   private master: GainNode | null = null;
+  private voiceGain: GainNode | null = null;
   private live: AudioNode[] = [];
-  private timers: number[] = [];
-  private voBuffer: AudioBuffer | null = null;
-  private voGain: GainNode | null = null;
-  private voSource: AudioBufferSourceNode | null = null;
-  private clips: VoiceClip[] = [];
+  private voiceNodes: AudioBufferSourceNode[] = [];
+  private voiceBuffers: AudioBuffer[] = [];
   private hasVoiceover = false;
+  private voicePosition = 0;
+  private voiceClockOrigin = 0;
+  private voiceRunning = false;
   muted = false;
+
+  get voiceTime(): number | null {
+    if (!this.hasVoiceover || !this.ctx) return null;
+    if (!this.voiceRunning || this.ctx.state !== "running") return this.voicePosition;
+    return Math.max(0, Math.min(DURATION, (this.ctx.currentTime - this.voiceClockOrigin) * VOICE_RATE));
+  }
 
   async probeVoiceover() {
     try {
-      const ctx = this.ensure();
-      const res = await fetch("/about-film/voiceover.mp3");
-      if (!res.ok) throw new Error("missing voiceover");
-      const raw = await res.arrayBuffer();
-      this.voBuffer = await ctx.decodeAudioData(raw.slice(0));
-      this.hasVoiceover = this.voBuffer.duration > 1;
-      if (this.hasVoiceover) this.clips = voiceClips(this.voBuffer.duration);
+      const ctx = this.getContext();
+      this.voiceBuffers = await Promise.all(
+        VOICE_PARTS.map(async (part) => {
+          const response = await fetch(part.src);
+          if (!response.ok) throw new Error(`Could not load ${part.src}`);
+          return ctx.decodeAudioData(await response.arrayBuffer());
+        })
+      );
+      this.hasVoiceover = this.voiceBuffers.length === VOICE_PARTS.length;
     } catch {
       this.hasVoiceover = false;
-      this.voBuffer = null;
+      this.voiceBuffers = [];
     }
     return this.hasVoiceover;
   }
 
-  /** Voice runs at 1x with the picture. Captions follow the take, not the other way. */
-  sync(_t: number) {}
-
-  captionAt(t: number): { text: string; id: number } | null {
-    const i = this.clips.findIndex((c) => t >= c.srcStart && t < c.srcEnd);
-    if (i < 0) return null;
-    return { text: this.clips[i].text, id: i };
-  }
-
-  startVoice(offset = 0) {
-    this.stopVoice();
-    if (!this.voBuffer || this.muted) return;
-    const ctx = this.ensure();
-    if (!this.voGain) {
-      this.voGain = ctx.createGain();
-      this.voGain.connect(this.master!);
-    }
-    this.voGain.gain.value = 1;
-    const src = ctx.createBufferSource();
-    src.buffer = this.voBuffer;
-    src.playbackRate.value = 1;
-    src.connect(this.voGain);
-    const off = Math.min(Math.max(0, offset), Math.max(0, this.voBuffer.duration - 0.05));
-    src.start(ctx.currentTime, off);
-    this.voSource = src;
-  }
-
-  private stopVoice() {
-    if (!this.voSource) return;
-    try {
-      this.voSource.stop();
-    } catch {
-      /* already stopped */
-    }
-    try {
-      this.voSource.disconnect();
-    } catch {
-      /* noop */
-    }
-    this.voSource = null;
-  }
-
-  private ensure() {
+  private getContext() {
     if (!this.ctx) {
       const AC = window.AudioContext || (window as any).webkitAudioContext;
       this.ctx = new AC();
       this.master = this.ctx.createGain();
       this.master.gain.value = this.muted ? 0 : 0.9;
       this.master.connect(this.ctx.destination);
+      this.voiceGain = this.ctx.createGain();
+      this.voiceGain.gain.value = this.muted ? 0 : 1;
+      this.voiceGain.connect(this.ctx.destination);
     }
-    if (this.ctx.state === "suspended") this.ctx.resume();
     return this.ctx;
   }
 
-  start() {
+  private ensure() {
+    const ctx = this.getContext();
+    if (ctx.state === "suspended") void ctx.resume().catch(() => {});
+    return ctx;
+  }
+
+  start(resetVoice = true) {
     const ctx = this.ensure();
     this.stopNodes();
     const t0 = ctx.currentTime + 0.05;
@@ -210,7 +187,62 @@ export class FilmAudio {
     bell(35.6, 659.25, 0.045);
     bell(39.0, 440.0, 0.04);
 
-    this.startVoice(0);
+    /* --- scene-by-scene narration, with a small breath between each part --- */
+    if (this.hasVoiceover) {
+      if (resetVoice) this.voicePosition = 0;
+      this.voiceRunning = true;
+      this.scheduleVoiceParts(this.voicePosition, t0);
+    }
+  }
+
+  seekVoice(time: number) {
+    if (!this.hasVoiceover || !this.ctx) return;
+    this.voicePosition = Math.max(0, Math.min(DURATION, time));
+    if (this.voiceRunning && this.ctx.state === "running") {
+      this.scheduleVoiceParts(this.voicePosition, this.ctx.currentTime);
+    }
+  }
+
+  private scheduleVoiceParts(fromTime: number, contextOrigin: number) {
+    const ctx = this.ctx;
+    if (!ctx || !this.voiceGain) return;
+    this.stopVoiceNodes();
+    this.voiceClockOrigin = contextOrigin - fromTime / VOICE_RATE;
+
+    VOICE_PARTS.forEach((part, index) => {
+      const buffer = this.voiceBuffers[index];
+      if (!buffer) return;
+      const endAt = part.at + buffer.duration;
+      if (endAt <= fromTime) return;
+
+      const elapsed = Math.max(0, fromTime - part.at);
+      const source = ctx.createBufferSource();
+      source.buffer = buffer;
+      source.playbackRate.value = VOICE_RATE;
+      source.connect(this.voiceGain!);
+      const when = contextOrigin + Math.max(0, part.at - fromTime) / VOICE_RATE;
+      source.start(when, elapsed);
+      this.voiceNodes.push(source);
+      this.live.push(source);
+    });
+  }
+
+  private stopVoiceNodes() {
+    const voices = new Set(this.voiceNodes);
+    this.voiceNodes.forEach((node) => {
+      try {
+        node.stop();
+      } catch {
+        /* already stopped */
+      }
+      try {
+        node.disconnect();
+      } catch {
+        /* noop */
+      }
+    });
+    this.voiceNodes = [];
+    this.live = this.live.filter((node) => !voices.has(node as AudioBufferSourceNode));
   }
 
   private whoosh(at: number) {
@@ -240,15 +272,32 @@ export class FilmAudio {
     if (this.master && this.ctx) {
       this.master.gain.setTargetAtTime(m ? 0 : 0.9, this.ctx.currentTime, 0.05);
     }
-    if (this.voGain && this.ctx) this.voGain.gain.setTargetAtTime(m ? 0 : 1, this.ctx.currentTime, 0.05);
+    if (this.voiceGain && this.ctx) {
+      this.voiceGain.gain.setTargetAtTime(m ? 0 : 1, this.ctx.currentTime, 0.05);
+    }
   }
 
   pause() {
-    this.ctx?.suspend();
+    const time = this.voiceTime;
+    if (time != null) this.voicePosition = time;
+    this.voiceRunning = false;
+    this.stopVoiceNodes();
+    void this.ctx?.suspend().catch(() => {});
   }
 
   resume() {
-    if (this.ctx && this.ctx.state === "suspended") this.ctx.resume();
+    const ctx = this.ctx;
+    if (!ctx) return;
+    const resumeVoice = () => {
+      if (!this.hasVoiceover || this.voiceRunning) return;
+      this.voiceRunning = true;
+      this.scheduleVoiceParts(this.voicePosition, ctx.currentTime);
+    };
+    if (ctx.state === "suspended") {
+      void ctx.resume().then(resumeVoice).catch(() => {});
+    } else {
+      resumeVoice();
+    }
   }
 
   private stopNodes() {
@@ -265,13 +314,13 @@ export class FilmAudio {
       }
     });
     this.live = [];
-    this.timers.forEach((id) => clearTimeout(id));
-    this.timers = [];
-    this.stopVoice();
-    if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+    this.voiceNodes = [];
+    this.voiceRunning = false;
   }
 
   stop() {
+    const time = this.voiceTime;
+    if (time != null) this.voicePosition = time;
     this.stopNodes();
   }
 }
