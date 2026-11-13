@@ -1315,6 +1315,35 @@ void main() {
         gl.uniform2f(loc.uFocusPoint, state.focusPointX, state.focusPointY);
         gl.uniform1f(loc.uFocusGlow, state.focusGlow);
         gl.drawArrays(gl.TRIANGLES, 0, 6);
+      } else {
+        /* 2D fallback when WebGL is unavailable: a simple eye that still
+           follows the gaze, so the box is never blank. */
+        var ctx2d = canvas.getContext("2d");
+        if (ctx2d) {
+          var w2 = canvas.width, h2 = canvas.height;
+          ctx2d.fillStyle = "#150a1c";
+          ctx2d.fillRect(0, 0, w2, h2);
+          var cx = w2 / 2, cy = h2 / 2;
+          var R = Math.min(w2, h2) * 0.38;
+          ctx2d.fillStyle = "#f4efe4";
+          ctx2d.beginPath();
+          ctx2d.ellipse(cx, cy, R * 1.5, R * 0.85, 0, 0, 6.3);
+          ctx2d.fill();
+          var gx = cx + state.gazeX * R * 0.45;
+          var gy = cy - state.gazeY * R * 0.35;
+          ctx2d.fillStyle = "#2b8e9a";
+          ctx2d.beginPath();
+          ctx2d.arc(gx, gy, R * 0.52, 0, 6.3);
+          ctx2d.fill();
+          ctx2d.fillStyle = "#0d0d0f";
+          ctx2d.beginPath();
+          ctx2d.arc(gx, gy, R * 0.26, 0, 6.3);
+          ctx2d.fill();
+          ctx2d.fillStyle = "rgba(255,255,255,0.85)";
+          ctx2d.beginPath();
+          ctx2d.arc(gx - R * 0.08, gy - R * 0.08, R * 0.07, 0, 6.3);
+          ctx2d.fill();
+        }
       }
       raf = requestAnimationFrame(loop);
     };
