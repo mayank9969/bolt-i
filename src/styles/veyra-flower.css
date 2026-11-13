@@ -156,3 +156,27 @@
   .veyra-flower .pulse,.veyra-flower .birth{display:none}
 }
 /* ==== END COMPONENT CSS ==== */
+
+/* Sound toggle for the flower audio (public/flower-audio/flower.mp3) */
+.veyra-flower{position:relative}
+.flower-sound-btn{
+  position:absolute;
+  left:50%;
+  bottom:-2.75rem;
+  transform:translateX(-50%);
+  padding:.5rem 1.1rem;
+  border-radius:999px;
+  border:1px solid var(--nx-line,rgba(0,0,0,.15));
+  background:var(--nx-canvas,#fff);
+  color:var(--nx-text,#111);
+  font:500 .8rem/1 var(--nx-font,inherit);
+  letter-spacing:.04em;
+  cursor:pointer;
+  transition:background-color .2s ease,color .2s ease,border-color .2s ease;
+}
+.flower-sound-btn:hover{border-color:var(--nx-accent,#2b8e9a)}
+.flower-sound-btn[aria-pressed="true"]{
+  background:var(--nx-accent,#2b8e9a);
+  border-color:var(--nx-accent,#2b8e9a);
+  color:#fff;
+}

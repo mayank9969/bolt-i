@@ -1,14 +1,27 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { mountVeyraFlower } from '@/lib/veyraFlower'
 import '@/styles/veyra-flower.css'
 
 export default function VeyraFlower() {
   const ref = useRef<HTMLDivElement>(null)
+  const audioRef = useRef<HTMLAudioElement | null>(null)
+  const [soundOn, setSoundOn] = useState(false)
   useEffect(() => {
     const el = ref.current
     if (!el) return
     mountVeyraFlower(el)
   }, [])
+
+  const toggleSound = () => {
+    const audio = audioRef.current
+    if (!audio) return
+    if (soundOn) {
+      audio.pause()
+      setSoundOn(false)
+    } else {
+      audio.play().then(() => setSoundOn(true)).catch(() => setSoundOn(false))
+    }
+  }
 
   return (
     <div
@@ -78,6 +91,16 @@ export default function VeyraFlower() {
           <g data-vf="motes" />
         </g>
       </svg>
+      <audio ref={audioRef} src="/flower-audio/flower.mp3" loop preload="none" />
+      <button
+        type="button"
+        className="flower-sound-btn"
+        onClick={toggleSound}
+        aria-pressed={soundOn}
+        aria-label={soundOn ? 'Mute the flower sound' : 'Play the flower sound'}
+      >
+        {soundOn ? 'Sound on' : 'Sound off'}
+      </button>
     </div>
   )
 }
