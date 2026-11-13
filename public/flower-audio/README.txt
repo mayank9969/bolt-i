@@ -1,14 +1,12 @@
-FLOWER AUDIO
-============
-Drop your audio files in this folder. They will play with the flower
-animation on the About page.
+FLOWER VOICEOVERS
+=================
+Upload your two voiceover files into this folder on GitHub:
 
-- Supported: .mp3, .wav, .ogg, .m4a
-- Name your main file:  flower.mp3   (this is the one that plays)
-- Extra files are ignored unless you rename them to flower.mp3
+  male.mp3    <- male voiceover
+  female.mp3  <- female voiceover
 
-The flower has a sound on/off button. Browsers block autoplay with
-sound, so the audio starts when you tap the button.
+The flower on the About page has two buttons: Male and Female.
+Each plays its own file (looping) with the flower animation.
+Only one plays at a time.
 
-Example:
-  public/flower-audio/flower.mp3   <- your file goes here
+Supported: .mp3, .wav, .ogg, .m4a  (keep the names male.mp3 / female.mp3)

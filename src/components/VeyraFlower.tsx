@@ -2,25 +2,30 @@ import { useEffect, useRef, useState } from 'react'
 import { mountVeyraFlower } from '@/lib/veyraFlower'
 import '@/styles/veyra-flower.css'
 
+type Voice = 'male' | 'female'
+
 export default function VeyraFlower() {
   const ref = useRef<HTMLDivElement>(null)
-  const audioRef = useRef<HTMLAudioElement | null>(null)
-  const [soundOn, setSoundOn] = useState(false)
+  const maleRef = useRef<HTMLAudioElement | null>(null)
+  const femaleRef = useRef<HTMLAudioElement | null>(null)
+  const [playing, setPlaying] = useState<Voice | null>(null)
   useEffect(() => {
     const el = ref.current
     if (!el) return
     mountVeyraFlower(el)
   }, [])
 
-  const toggleSound = () => {
-    const audio = audioRef.current
-    if (!audio) return
-    if (soundOn) {
-      audio.pause()
-      setSoundOn(false)
-    } else {
-      audio.play().then(() => setSoundOn(true)).catch(() => setSoundOn(false))
+  const toggleVoice = (voice: Voice) => {
+    const el = voice === 'male' ? maleRef.current : femaleRef.current
+    const other = voice === 'male' ? femaleRef.current : maleRef.current
+    if (!el) return
+    if (playing === voice) {
+      el.pause()
+      setPlaying(null)
+      return
     }
+    other?.pause()
+    el.play().then(() => setPlaying(voice)).catch(() => setPlaying(null))
   }
 
   return (
@@ -91,16 +96,28 @@ export default function VeyraFlower() {
           <g data-vf="motes" />
         </g>
       </svg>
-      <audio ref={audioRef} src="/flower-audio/flower.mp3" loop preload="none" />
-      <button
-        type="button"
-        className="flower-sound-btn"
-        onClick={toggleSound}
-        aria-pressed={soundOn}
-        aria-label={soundOn ? 'Mute the flower sound' : 'Play the flower sound'}
-      >
-        {soundOn ? 'Sound on' : 'Sound off'}
-      </button>
+      <audio ref={maleRef} src="/flower-audio/male.mp3" loop preload="none" />
+      <audio ref={femaleRef} src="/flower-audio/female.mp3" loop preload="none" />
+      <div className="flower-sound-row">
+        <button
+          type="button"
+          className="flower-sound-btn"
+          onClick={() => toggleVoice('male')}
+          aria-pressed={playing === 'male'}
+          aria-label={playing === 'male' ? 'Stop the male voiceover' : 'Play the male voiceover'}
+        >
+          {playing === 'male' ? 'Male on' : 'Male'}
+        </button>
+        <button
+          type="button"
+          className="flower-sound-btn"
+          onClick={() => toggleVoice('female')}
+          aria-pressed={playing === 'female'}
+          aria-label={playing === 'female' ? 'Stop the female voiceover' : 'Play the female voiceover'}
+        >
+          {playing === 'female' ? 'Female on' : 'Female'}
+        </button>
+      </div>
     </div>
   )
 }

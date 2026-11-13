@@ -157,13 +157,17 @@
 }
 /* ==== END COMPONENT CSS ==== */
 
-/* Sound toggle for the flower audio (public/flower-audio/flower.mp3) */
+/* Sound toggles for the flower voiceovers (public/flower-audio/male.mp3, female.mp3) */
 .veyra-flower{position:relative}
-.flower-sound-btn{
+.flower-sound-row{
   position:absolute;
   left:50%;
   bottom:-2.75rem;
   transform:translateX(-50%);
+  display:flex;
+  gap:.5rem;
+}
+.flower-sound-btn{
   padding:.5rem 1.1rem;
   border-radius:999px;
   border:1px solid var(--nx-line,rgba(0,0,0,.15));
