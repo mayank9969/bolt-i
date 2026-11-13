@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Animation test — The Question Continues</title>
+<link rel="stylesheet" href="/practice-relay/theme-bridge.css?v=33" />
+<style>
+  body { margin: 0; background: #f8f1df; font-family: Georgia, serif; padding: 24px; }
+  h1 { font-size: 20px; margin: 0 0 4px; }
+  p.sub { margin: 0 0 16px; color: #555; font-size: 14px; }
+  #host { max-width: 900px; margin: 0 auto; }
+  .v-ending-art { overflow: hidden; background: #f1e8d5; }
+</style>
+</head>
+<body>
+<h1>Animation test — The Question Continues</h1>
+<p class="sub">Standalone page: only the 5s film (scene / man / crowd / orange). Click the film to replay.</p>
+<div id="host" class="v-ending-art"></div>
+<script src="/practice-relay/stills-data.js?v=1"></script>
+<script src="/practice-relay/continue-anim.js?v=10"></script>
+<script>
+  window.addEventListener('load', function () {
+    var host = document.getElementById('host');
+    if (window.veyraMountContinue) window.veyraMountContinue(host);
+    else host.textContent = 'Film script did not load.';
+  });
+</script>
+</body>
+</html>
