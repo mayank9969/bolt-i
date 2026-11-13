@@ -13,6 +13,10 @@ export default function VeyraFlower() {
     const el = ref.current
     if (!el) return
     mountVeyraFlower(el)
+    /* First view: normal 9s bloom, sound off. */
+    const api = (el as unknown as { veyraFlower?: { resetDuration: () => void; setAutoLoop: (on: boolean) => void } }).veyraFlower
+    api?.resetDuration()
+    api?.setAutoLoop(true)
   }, [])
 
   const flowerApi = () =>
@@ -44,18 +48,16 @@ export default function VeyraFlower() {
   }
 
   const toggleVoice = (voice: Voice) => {
+    /* Locked while a voiceover plays — it cannot change mid-way. */
+    if (playing !== null) return
     const el = voice === 'male' ? maleRef.current : femaleRef.current
-    const other = voice === 'male' ? femaleRef.current : maleRef.current
     if (!el) return
-    if (playing === voice) {
-      el.pause()
-      releaseFlower()
-      setPlaying(null)
-      return
-    }
-    other?.pause()
-    syncFlower(el)
-    el.play().then(() => setPlaying(voice)).catch(() => {
+    el.currentTime = 0
+    /* Start the audio on the tap first, then stretch the flower to it. */
+    el.play().then(() => {
+      setPlaying(voice)
+      syncFlower(el)
+    }).catch(() => {
       releaseFlower()
       setPlaying(null)
     })
@@ -139,22 +141,23 @@ export default function VeyraFlower() {
       <audio
         ref={maleRef}
         src="/flower-audio/male.mp3"
-        preload="none"
-        onEnded={() => { if (playing === 'male') { releaseFlower(); setPlaying(null) } }}
+        preload="auto"
+        onEnded={() => { releaseFlower(); setPlaying(null) }}
       />
       <audio
         ref={femaleRef}
         src="/flower-audio/female.mp3"
-        preload="none"
-        onEnded={() => { if (playing === 'female') { releaseFlower(); setPlaying(null) } }}
+        preload="auto"
+        onEnded={() => { releaseFlower(); setPlaying(null) }}
       />
       <div className="flower-sound-row">
         <button
           type="button"
           className="flower-sound-btn"
           onClick={() => toggleVoice('male')}
+          disabled={playing !== null}
           aria-pressed={playing === 'male'}
-          aria-label={playing === 'male' ? 'Stop the male voiceover' : 'Play the male voiceover'}
+          aria-label="Play the male voiceover"
         >
           {playing === 'male' ? 'Male on' : 'Male'}
         </button>
@@ -162,8 +165,9 @@ export default function VeyraFlower() {
           type="button"
           className="flower-sound-btn"
           onClick={() => toggleVoice('female')}
+          disabled={playing !== null}
           aria-pressed={playing === 'female'}
-          aria-label={playing === 'female' ? 'Stop the female voiceover' : 'Play the female voiceover'}
+          aria-label="Play the female voiceover"
         >
           {playing === 'female' ? 'Female on' : 'Female'}
         </button>
