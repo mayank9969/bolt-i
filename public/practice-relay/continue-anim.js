@@ -5,7 +5,10 @@
 
   var DURATION = 5
   var Q_PATH = 'M 14 50 C 14 8, 82 6, 84 46 C 86 82, 48 90, 46 118 L 46 128'
-  var BASE = '/practice-relay/anim/'
+  /* Relative to the iframe document (/practice-relay/index.html) so the
+     stills load in Vite dev, in the Flask production build, and under any
+     sub-path. Absolute /practice-relay/... breaks when the base differs. */
+  var BASE = 'anim/'
 
   function clamp(x, a, b) {
     if (a === undefined) a = 0
@@ -84,12 +87,17 @@
     function setImg(sel, file) {
       var el = host.querySelector(sel)
       if (!el) return
-      var url = BASE + file + '?v=2'
-      el.src = url
+      /* Hide until loaded so a slow/failed still never shows the
+         browser broken-image icon. Handlers are set BEFORE src. */
+      el.style.opacity = '0'
       el.style.filter = 'none'
-      el.onerror = function () {
-        el.style.opacity = '0'
+      el.onload = function () {
+        el.style.opacity = '1'
       }
+      el.onerror = function () {
+        el.style.display = 'none'
+      }
+      el.src = BASE + file + '?v=3'
     }
     setImg('.v-sc-img', 'scene.jpg')
     setImg('.v-man-img', 'man.jpg')

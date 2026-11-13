@@ -340,10 +340,10 @@ a[aria-label^='Daily challenge'],
   position: absolute;
   inset: 0;
 }
-.v-sc { transform-origin: 85% 55%; background: #d9d0bf url('/practice-relay/anim/scene.jpg') center / cover no-repeat; }
-.v-crowd { background: url('/practice-relay/anim/crowd.jpg') center / cover no-repeat; }
-.v-man { background: url('/practice-relay/anim/man.jpg') center / contain no-repeat; }
-.v-orange { background: url('/practice-relay/anim/orange.jpg') center / contain no-repeat; }
+.v-sc { transform-origin: 85% 55%; background: #d9d0bf url('anim/scene.jpg') center / cover no-repeat; }
+.v-crowd { background: url('anim/crowd.jpg') center / cover no-repeat; }
+.v-man { background: url('anim/man.jpg') center / contain no-repeat; }
+.v-orange { background: url('anim/orange.jpg') center / contain no-repeat; }
 .v-sc-img, .v-crowd-img, .v-man-img, .v-orange-img {
   width: 100%;
   height: 100%;
