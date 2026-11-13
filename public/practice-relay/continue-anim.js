@@ -5,10 +5,9 @@
 
   var DURATION = 5
   var Q_PATH = 'M 14 50 C 14 8, 82 6, 84 46 C 86 82, 48 90, 46 118 L 46 128'
-  /* Relative to the iframe document (/practice-relay/index.html) so the
-     stills load in Vite dev, in the Flask production build, and under any
-     sub-path. Absolute /practice-relay/... breaks when the base differs. */
-  var BASE = 'anim/'
+  /* Absolute via origin so the stills load in Vite dev, in the Flask
+     production build, and in the Arena preview proxy. */
+  var BASE = (window.location.origin || '') + '/practice-relay/anim/'
 
   function clamp(x, a, b) {
     if (a === undefined) a = 0
@@ -84,28 +83,33 @@
       '" pathLength="1" fill="none" stroke="#c4302b" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1 1" filter="url(#v-rough)"/>' +
       '<g class="v-qd" transform="translate(46 152)"><circle r="8.5" fill="#c4302b"/></g>'
 
+    /* Visible load status in the caption so a blank frame is diagnosable
+       from a screenshot without devtools. */
+    var statusEl = host.querySelector('.v-time')
+    function setStatus(msg) {
+      if (statusEl) statusEl.setAttribute('data-img', msg)
+    }
     function setImg(sel, file) {
       var el = host.querySelector(sel)
       if (!el) return
-      /* Hide until loaded so a slow/failed still never shows the
-         browser broken-image icon. Handlers are set BEFORE src.
-         Try the relative path first, then the absolute path, so the
-         still loads in dev, in the built site, and under any base. */
-      el.style.opacity = '0'
+      /* Handlers BEFORE src. Try origin-absolute first, then relative. */
       el.style.filter = 'none'
-      var triedAbsolute = false
+      var triedRelative = false
       el.onload = function () {
         el.style.opacity = '1'
+        el.style.display = 'block'
+        setStatus(file + ':ok')
       }
       el.onerror = function () {
-        if (!triedAbsolute) {
-          triedAbsolute = true
-          el.src = '/practice-relay/anim/' + file + '?v=4'
+        if (!triedRelative) {
+          triedRelative = true
+          el.src = 'anim/' + file + '?v=5'
         } else {
           el.style.display = 'none'
+          setStatus(file + ':fail ' + el.src)
         }
       }
-      el.src = BASE + file + '?v=4'
+      el.src = BASE + file + '?v=5'
     }
     setImg('.v-sc-img', 'scene.jpg')
     setImg('.v-man-img', 'man.jpg')
