@@ -88,16 +88,24 @@
       var el = host.querySelector(sel)
       if (!el) return
       /* Hide until loaded so a slow/failed still never shows the
-         browser broken-image icon. Handlers are set BEFORE src. */
+         browser broken-image icon. Handlers are set BEFORE src.
+         Try the relative path first, then the absolute path, so the
+         still loads in dev, in the built site, and under any base. */
       el.style.opacity = '0'
       el.style.filter = 'none'
+      var triedAbsolute = false
       el.onload = function () {
         el.style.opacity = '1'
       }
       el.onerror = function () {
-        el.style.display = 'none'
+        if (!triedAbsolute) {
+          triedAbsolute = true
+          el.src = '/practice-relay/anim/' + file + '?v=4'
+        } else {
+          el.style.display = 'none'
+        }
       }
-      el.src = BASE + file + '?v=3'
+      el.src = BASE + file + '?v=4'
     }
     setImg('.v-sc-img', 'scene.jpg')
     setImg('.v-man-img', 'man.jpg')
