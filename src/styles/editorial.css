@@ -1058,11 +1058,13 @@
     margin-left: auto;
     margin-right: auto;
   }
+  /* Editorial About: centred narrow column, readable left-aligned body,
+     centred stop labels + pull quotes (short text only). */
   .about-ed .field-article {
     max-width: 44rem;
     margin-left: auto;
     margin-right: auto;
-    text-align: center;
+    text-align: left;
   }
   .about-ed .field-story {
     max-width: 48rem;
@@ -1071,9 +1073,8 @@
     margin-right: auto;
   }
   .about-ed .field-prose,
-  .about-ed .field-stop,
-  .about-ed .field-stop-label {
-    text-align: center;
+  .about-ed .field-stop {
+    text-align: left;
   }
   .about-ed .field-prose {
     margin-left: auto;
