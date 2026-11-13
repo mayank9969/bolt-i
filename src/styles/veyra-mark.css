@@ -1,15 +1,22 @@
-/* Bold V mark — static, theme-aware. Defaults are Paper so the mark
-   always renders even before the theme attribute is applied. */
+/* Blade V · Curl — from the Animated mark studio. Paper colourway discarded. */
 
 .veyra-mark {
-  --a: #0d0d0f;
-  --b: #2b8e9a;
-  --c: #b3121b;
+  --k: 0.53;
+  --glow: 0.55;
+  --lnEnd: 0;
+  --starS: 1;
   display: block;
   width: var(--vm-size, 56px);
   height: var(--vm-size, 56px);
   overflow: visible;
+  cursor: pointer;
   transform: translateZ(0);
+}
+[data-theme='paper'] .veyra-mark,
+.veyra-mark[data-theme='crimson'] {
+  --a: #0d0d0f;
+  --b: #2b8e9a;
+  --c: #b3121b;
 }
 [data-theme='ink'] .veyra-mark,
 .veyra-mark[data-theme='ink'] {
@@ -25,8 +32,29 @@
   overflow: visible;
   shape-rendering: geometricPrecision;
 }
+.veyra-mark .ink,
+.veyra-mark .ln,
+.veyra-mark .starG,
+.veyra-mark .halo,
+.veyra-mark .facet,
+.veyra-mark .pulse {
+  will-change: stroke-dashoffset, transform, opacity;
+}
+.veyra-mark .field,
+.veyra-mark .vig,
+.veyra-mark .grainR {
+  display: none;
+}
+.veyra-mark .halo {
+  fill: url(#vmHalo);
+  opacity: calc(var(--glow) * 0.9);
+  transform-origin: 515px 400px;
+  pointer-events: none;
+}
 .veyra-mark .blade,
-.veyra-mark .curlP {
+.veyra-mark .curlP,
+.veyra-mark .flP,
+.veyra-mark .thorn {
   fill: var(--a);
 }
 .veyra-mark .facet {
@@ -34,4 +62,197 @@
 }
 .veyra-mark .starP {
   fill: var(--c);
+}
+.veyra-mark .starG {
+  transform-origin: 515px 400px;
+  transform: scale(var(--starS));
+}
+.veyra-mark .lnS {
+  fill: none;
+  stroke: var(--c);
+  stroke-width: 2.5;
+  opacity: 0;
+}
+.veyra-mark .thorn {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.veyra-mark .flP {
+  transform-origin: 500px 856px;
+}
+.veyra-mark .ln {
+  fill: none;
+  stroke: var(--a);
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+  opacity: var(--lnEnd);
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+.veyra-mark .ink {
+  fill: none;
+  stroke: #fff;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+.veyra-mark .pulse {
+  fill: none;
+  stroke: var(--c);
+  stroke-width: 5;
+  stroke-linecap: round;
+  --po: 0.95;
+  stroke-dasharray: 0.14 2;
+  stroke-dashoffset: 0.14;
+  opacity: 0;
+  pointer-events: none;
+}
+.veyra-mark .pulse.hot {
+  stroke: var(--b);
+  stroke-width: 13;
+  --po: 0.35;
+}
+.veyra-mark .spark {
+  fill: var(--c);
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 0;
+}
+.veyra-mark .flare {
+  fill: none;
+  stroke: var(--c);
+  stroke-width: 3;
+  vector-effect: non-scaling-stroke;
+  opacity: 0;
+  transform-origin: 515px 400px;
+}
+
+.veyra-mark.is-armed .ink {
+  stroke-dashoffset: 1;
+}
+.veyra-mark.is-armed .ln {
+  stroke-dashoffset: 1;
+  opacity: 0;
+}
+.veyra-mark.is-armed .facet,
+.veyra-mark.is-armed .halo,
+.veyra-mark.is-armed .thorn,
+.veyra-mark.is-armed .flP,
+.veyra-mark.is-armed .starG {
+  opacity: 0;
+}
+
+.veyra-mark.is-run .ink {
+  animation: msInk calc(var(--t) * var(--k)) cubic-bezier(0.22, 0.61, 0.36, 1) calc(var(--d) * var(--k)) both;
+}
+.veyra-mark.is-run .ln {
+  animation:
+    msInk calc(var(--t) * var(--k)) cubic-bezier(0.22, 0.61, 0.36, 1) calc(var(--d) * var(--k)) both,
+    msLnSet calc(var(--t) * var(--k)) linear calc(var(--d) * var(--k)) both;
+}
+.veyra-mark.is-run .facet {
+  animation: msFade calc(var(--t) * var(--k)) ease-out calc(var(--d) * var(--k)) both;
+}
+.veyra-mark.is-run .thorn {
+  animation: msPop calc(0.55s * var(--k)) cubic-bezier(0.2, 0.9, 0.3, 1.4) calc(var(--d) * var(--k)) both;
+}
+.veyra-mark.is-run .flP {
+  animation: msFl calc(0.6s * var(--k)) cubic-bezier(0.2, 0.8, 0.3, 1) calc(var(--d) * var(--k)) both;
+}
+.veyra-mark.is-run .starG {
+  animation: msStar calc(0.95s * var(--k)) cubic-bezier(0.2, 0.85, 0.3, 1.15) calc(var(--d) * var(--k)) both;
+}
+.veyra-mark.is-run .spark {
+  animation: msSpark calc(1s * var(--k)) ease-out calc(var(--d) * var(--k)) both;
+}
+.veyra-mark.is-run .flare {
+  animation: msFlare calc(1.3s * var(--k)) ease-out calc(var(--d) * var(--k)) both;
+}
+.veyra-mark.is-run .halo {
+  animation: msHaloIn calc(1.3s * var(--k)) ease-out calc(3.7s * var(--k)) both;
+}
+.veyra-mark.is-run:not(.is-settled) .pulse {
+  animation: msPulse calc(var(--t) * var(--k)) cubic-bezier(0.45, 0, 0.35, 1) calc(var(--d) * var(--k)) both;
+}
+.veyra-mark.is-settled:not(.no-idle) .halo {
+  animation: msBreathe 9s ease-in-out infinite alternate;
+}
+.veyra-mark.is-settled.is-rippling .pulse {
+  animation: msPulse calc(1.5s * var(--k)) cubic-bezier(0.4, 0, 0.3, 1) calc(var(--rd) * var(--k)) both;
+}
+.veyra-mark.is-settled.is-rippling .flare {
+  animation: msFlare calc(1.4s * var(--k)) ease-out both;
+}
+.veyra-mark.is-vanish {
+  animation: msVanish 0.7s ease both;
+}
+.veyra-mark.is-paused * {
+  animation-play-state: paused !important;
+}
+
+@keyframes msInk {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+@keyframes msLnSet {
+  0% { opacity: 0; }
+  4% { opacity: 1; }
+  78% { opacity: 1; }
+  100% { opacity: var(--lnEnd); }
+}
+@keyframes msFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes msPop {
+  from { opacity: 0; transform: scale(0.2); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes msFl {
+  from { opacity: 0; transform: scaleX(0); }
+  to { opacity: 1; transform: scaleX(1); }
+}
+@keyframes msStar {
+  from { opacity: 0; transform: scale(calc(var(--starS) * 0.15)) rotate(-30deg); }
+  to { opacity: 1; transform: scale(var(--starS)) rotate(0deg); }
+}
+@keyframes msSpark {
+  0% { opacity: 0; transform: scale(0.2); }
+  22% { opacity: 1; transform: scale(1); }
+  65% { opacity: 1; }
+  100% { opacity: 0; transform: scale(0.35); }
+}
+@keyframes msFlare {
+  0% { opacity: 0.9; transform: scale(0.2); }
+  100% { opacity: 0; transform: scale(6); }
+}
+@keyframes msHaloIn {
+  from { opacity: 0; }
+  to { opacity: calc(var(--glow) * 0.9); }
+}
+@keyframes msBreathe {
+  from { opacity: calc(var(--glow) * 0.68); }
+  to { opacity: calc(var(--glow) * 0.95); }
+}
+@keyframes msVanish {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+@keyframes msPulse {
+  0% { stroke-dashoffset: 0.14; opacity: 0; }
+  12% { opacity: var(--po); }
+  85% { opacity: calc(var(--po) * 0.9); }
+  100% { stroke-dashoffset: -1; opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .veyra-mark * {
+    animation: none !important;
+    transition: none !important;
+  }
+  .veyra-mark .pulse,
+  .veyra-mark .flare,
+  .veyra-mark .spark {
+    display: none;
+  }
 }
