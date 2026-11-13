@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react'
 import { motion, useMotionValue, useSpring } from 'framer-motion'
 
-/** Replaces the OS pointer on fine mice with a teal arrow. Tip is the hotspot. */
+/** Replaces the OS pointer on fine mice with a sharp teal arrow. Tip is the hotspot. */
 export default function CustomCursor() {
   const x = useMotionValue(-80)
   const y = useMotionValue(-80)
-  const sx = useSpring(x, { stiffness: 900, damping: 48, mass: 0.12 })
-  const sy = useSpring(y, { stiffness: 900, damping: 48, mass: 0.12 })
+  /* Softer spring: smooth trailing follow, no jitter or overshoot. */
+  const sx = useSpring(x, { stiffness: 380, damping: 32, mass: 0.45 })
+  const sy = useSpring(y, { stiffness: 380, damping: 32, mass: 0.45 })
   const [hover, setHover] = useState<'off' | 'nav' | 'ui'>('off')
   const [down, setDown] = useState(false)
   const [visible, setVisible] = useState(false)
@@ -68,31 +69,53 @@ export default function CustomCursor() {
   if (!enabled) return null
 
   const accent = 'var(--nx-accent, #16827e)'
-  const fill = hover === 'ui' ? accent : 'rgb(var(--nx-canvas-rgb))'
-  const scale = down ? 0.86 : hover === 'nav' ? 0.78 : hover === 'ui' ? 1.06 : 1
+  const isUi = hover === 'ui'
+  const fill = isUi ? accent : 'rgb(var(--nx-canvas-rgb))'
+  const scale = down ? 0.86 : hover === 'nav' ? 0.78 : isUi ? 1.18 : 1
 
   return (
     <motion.div
       style={{ x: sx, y: sy }}
       className="pointer-events-none fixed left-0 top-0 z-[9999]"
       animate={{ opacity: visible ? 1 : 0, scale }}
-      transition={{ duration: 0.08, scale: { type: 'spring', stiffness: 500, damping: 32 } }}
+      transition={{
+        duration: 0.16,
+        ease: 'easeOut',
+        scale: { type: 'spring', stiffness: 320, damping: 22 },
+      }}
       aria-hidden="true"
     >
       <svg
-        width="22"
-        height="24"
-        viewBox="0 0 22 24"
+        width="26"
+        height="28"
+        viewBox="0 0 26 28"
         fill="none"
-        className="block drop-shadow-[0_1px_1px_rgb(0_0_0_/_0.28)]"
+        shapeRendering="geometricPrecision"
+        className="block"
+        style={{
+          filter: isUi
+            ? 'drop-shadow(0 0 6px rgb(22 130 126 / 0.85)) drop-shadow(0 1px 1px rgb(0 0 0 / 0.3))'
+            : 'drop-shadow(0 1px 1px rgb(0 0 0 / 0.28))',
+        }}
       >
         <path
-          d="M1.2 1.15 1.05 19.4l5.15-4.55 3.55 8.05 3.2-1.4-3.5-7.85h7.55L1.2 1.15Z"
+          d="M2 1.4 1.7 22.6l6.1-5.3 4.2 9.4 3.8-1.7-4.1-9.2h8.9L2 1.4Z"
           fill={fill}
           stroke={accent}
-          strokeWidth="1.35"
+          strokeWidth="1.6"
           strokeLinejoin="round"
+          strokeLinecap="round"
         />
+        {/* Shine streak — only on clickable hover */}
+        {isUi && (
+          <path
+            d="M4.2 3.2 3.9 18.8l4.6-4"
+            stroke="rgba(255,255,255,0.9)"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+            fill="none"
+          />
+        )}
       </svg>
     </motion.div>
   )
