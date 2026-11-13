@@ -40,7 +40,7 @@
     line-height: var(--nx-lh-body);
     background-color: var(--nx-canvas);
     color: var(--nx-text);
-    overflow-x: hidden;
+    overflow-x: clip;
     overflow-wrap: break-word;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
