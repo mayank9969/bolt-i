@@ -71,6 +71,7 @@ export default function VeyraFlower() {
   }
 
   return (
+    <div className="flower-wrap">
     <div
       ref={ref}
       className="veyra-flower"
@@ -138,6 +139,7 @@ export default function VeyraFlower() {
           <g data-vf="motes" />
         </g>
       </svg>
+    </div>
       <audio
         ref={maleRef}
         src="/flower-audio/male.mp3"

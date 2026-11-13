@@ -160,15 +160,15 @@
 /* Sound toggles for the flower voiceovers (public/flower-audio/male.mp3, female.mp3) */
 .veyra-flower{position:relative}
 .flower-sound-row{
-  position:absolute;
-  left:50%;
-  bottom:-2.75rem;
-  transform:translateX(-50%);
+  position:relative;
+  z-index:10;
   display:flex;
+  justify-content:center;
   gap:.5rem;
+  margin-top:1.25rem;
 }
 .flower-sound-btn{
-  padding:.5rem 1.1rem;
+  padding:.6rem 1.25rem;
   border-radius:999px;
   border:1px solid var(--nx-line,rgba(0,0,0,.15));
   background:var(--nx-canvas,#fff);
