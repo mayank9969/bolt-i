@@ -312,12 +312,12 @@
       d0.onload = go
       document.head.appendChild(d0)
     } else {
-      /* Embedded stills first (no network), then the film logic. */
+      /* Embedded stills first (no network), then the simple film. */
       var d = document.createElement('script')
       d.src = '/practice-relay/stills-data.js?v=1'
       d.onload = function () {
         var s = document.createElement('script')
-        s.src = '/practice-relay/continue-anim.js?v=10'
+        s.src = '/practice-relay/simple-anim.js?v=1'
         s.onload = go
         document.head.appendChild(s)
       }

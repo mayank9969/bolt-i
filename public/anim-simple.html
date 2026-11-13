@@ -12,36 +12,37 @@
   .frame { max-width: 900px; margin: 0 auto; border: 1px solid #111; background: #f8f1df; padding: 10px; box-shadow: 10px 10px 0 #c8382c; }
   .stage { position: relative; width: 100%; aspect-ratio: 3 / 2; overflow: hidden; background: #d9d0bf; }
   .stage img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
-  /* 5s loop, pure CSS — no JavaScript needed for the pictures */
+  /* 5s loop, pure CSS — no JavaScript needed for the pictures.
+     Portrait stills use contain so the whole figure shows (zoomed out). */
   .img-scene { animation: sceneMove 5s linear infinite; }
-  .img-man { object-fit: contain; animation: manMove 5s linear infinite; }
+  .stage img.img-man { object-fit: contain; object-position: 34% 50%; animation: manMove 5s linear infinite; }
   .img-crowd { animation: crowdMove 5s linear infinite; }
-  .img-orange { object-fit: contain; animation: orangeMove 5s linear infinite; }
+  .stage img.img-orange { object-fit: contain; object-position: 50% 50%; animation: orangeMove 5s linear infinite; }
   @keyframes sceneMove {
-    0% { opacity: 1; transform: scale(1); }
-    53% { opacity: 1; transform: scale(1.12); }
-    55% { opacity: 0; transform: scale(1.15); }
-    100% { opacity: 0; transform: scale(1.15); }
+    0% { opacity: 1; transform: scale(0.98); }
+    53% { opacity: 1; transform: scale(1.05); }
+    55% { opacity: 0; transform: scale(1.06); }
+    100% { opacity: 0; transform: scale(1.06); }
   }
   @keyframes manMove {
-    0% { opacity: 0; transform: translateX(-8%) scale(1); }
+    0% { opacity: 0; transform: translateX(-6%) scale(0.92); }
     12% { opacity: 1; }
-    36% { opacity: 1; transform: translateX(0) scale(0.94); }
+    36% { opacity: 1; transform: translateX(0) scale(0.88); }
     55% { opacity: 0; }
     100% { opacity: 0; }
   }
   @keyframes crowdMove {
-    0%, 36% { opacity: 0; transform: scale(1.08); }
-    53% { opacity: 1; transform: scale(1); }
+    0%, 36% { opacity: 0; transform: scale(1.02); }
+    53% { opacity: 1; transform: scale(0.96); }
     64% { opacity: 1; }
-    80% { opacity: 0.45; transform: scale(0.98); }
+    80% { opacity: 0.45; transform: scale(0.94); }
     100% { opacity: 0; }
   }
   @keyframes orangeMove {
-    0%, 65% { opacity: 0; transform: translateX(12%) scale(0.92); }
-    74% { opacity: 1; transform: translateX(0) scale(1); }
-    88% { opacity: 1; transform: translateX(-14%) scale(1); }
-    100% { opacity: 0; transform: translateX(-14%) scale(1); }
+    0%, 65% { opacity: 0; transform: translateX(10%) scale(0.88); }
+    74% { opacity: 1; transform: translateX(0) scale(0.92); }
+    88% { opacity: 1; transform: translateX(-10%) scale(0.92); }
+    100% { opacity: 0; transform: translateX(-10%) scale(0.92); }
   }
   .cap { font-family: ui-monospace, monospace; text-transform: uppercase; letter-spacing: 0.2em; font-size: 12px; font-weight: 700; padding: 12px 6px 4px; display: flex; justify-content: space-between; gap: 12px; }
   .bar { height: 3px; background: #c8382c; width: 0; animation: barMove 5s linear infinite; }

@@ -388,6 +388,38 @@ a[aria-label^='Daily challenge'],
 .v-cover { background: #f1e8d5; pointer-events: none; }
 .v-vig { pointer-events: none; background: radial-gradient(ellipse at center, transparent 55%, rgba(60,40,20,.22) 100%); }
 .v-bar { position: absolute; left: 0; bottom: 0; height: 3px; width: 0; background: #c8382c; pointer-events: none; }
+/* Simple film: four stills, CSS-only loop (zoomed out, whole figures show) */
+.v-simple-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.v-simple-scene { animation: vSimpleScene 5s linear infinite; }
+.v-continue-stage img.v-simple-man { object-fit: contain; object-position: 34% 50%; animation: vSimpleMan 5s linear infinite; }
+.v-simple-crowd { animation: vSimpleCrowd 5s linear infinite; }
+.v-continue-stage img.v-simple-orange { object-fit: contain; object-position: 50% 50%; animation: vSimpleOrange 5s linear infinite; }
+@keyframes vSimpleScene {
+  0% { opacity: 1; transform: scale(0.98); }
+  53% { opacity: 1; transform: scale(1.05); }
+  55% { opacity: 0; transform: scale(1.06); }
+  100% { opacity: 0; transform: scale(1.06); }
+}
+@keyframes vSimpleMan {
+  0% { opacity: 0; transform: translateX(-6%) scale(0.92); }
+  12% { opacity: 1; }
+  36% { opacity: 1; transform: translateX(0) scale(0.88); }
+  55% { opacity: 0; }
+  100% { opacity: 0; }
+}
+@keyframes vSimpleCrowd {
+  0%, 36% { opacity: 0; transform: scale(1.02); }
+  53% { opacity: 1; transform: scale(0.96); }
+  64% { opacity: 1; }
+  80% { opacity: 0.45; transform: scale(0.94); }
+  100% { opacity: 0; }
+}
+@keyframes vSimpleOrange {
+  0%, 65% { opacity: 0; transform: translateX(10%) scale(0.88); }
+  74% { opacity: 1; transform: translateX(0) scale(0.92); }
+  88% { opacity: 1; transform: translateX(-10%) scale(0.92); }
+  100% { opacity: 0; transform: translateX(-10%) scale(0.92); }
+}
 .v-continue-cap {
   font-family: var(--font-mono, ui-monospace, monospace);
   text-transform: uppercase;
