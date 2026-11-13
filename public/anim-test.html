@@ -11,13 +11,35 @@
   p.sub { margin: 0 0 16px; color: #555; font-size: 14px; }
   #host { max-width: 900px; margin: 0 auto; }
   .v-ending-art { overflow: hidden; background: #f1e8d5; }
+  .plain { max-width: 900px; margin: 16px auto; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .plain figure { margin: 0; border: 1px solid #111; padding: 6px; background: #fff; }
+  .plain img { width: 100%; display: block; }
+  .plain figcaption { font-size: 12px; padding-top: 6px; }
 </style>
 </head>
 <body>
 <h1>Animation test — The Question Continues</h1>
-<p class="sub">Standalone page: only the 5s film (scene / man / crowd / orange). Click the film to replay.</p>
+<p class="sub">Top: the four stills as plain pictures (embedded, no animation). Bottom: the 5s film. Click the film to replay.</p>
+<div class="plain" id="plain"></div>
 <div id="host" class="v-ending-art"></div>
 <script src="/practice-relay/stills-data.js?v=1"></script>
+<script>
+  (function () {
+    var wrap = document.getElementById('plain');
+    var stills = window.__veyraStills || {};
+    ['scene', 'crowd', 'man', 'orange'].forEach(function (k) {
+      var fig = document.createElement('figure');
+      var img = document.createElement('img');
+      img.alt = k;
+      img.src = stills[k] || '';
+      var cap = document.createElement('figcaption');
+      cap.textContent = k + (stills[k] ? ' — embedded OK' : ' — MISSING');
+      fig.appendChild(img);
+      fig.appendChild(cap);
+      wrap.appendChild(fig);
+    });
+  })();
+</script>
 <script src="/practice-relay/continue-anim.js?v=10"></script>
 <script>
   window.addEventListener('load', function () {
