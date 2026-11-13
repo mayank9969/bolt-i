@@ -1,17 +1,15 @@
-/* Bold V mark — static, theme-aware. */
+/* Bold V mark — static, theme-aware. Defaults are Paper so the mark
+   always renders even before the theme attribute is applied. */
 
 .veyra-mark {
+  --a: #0d0d0f;
+  --b: #2b8e9a;
+  --c: #b3121b;
   display: block;
   width: var(--vm-size, 56px);
   height: var(--vm-size, 56px);
   overflow: visible;
   transform: translateZ(0);
-}
-[data-theme='paper'] .veyra-mark,
-.veyra-mark[data-theme='crimson'] {
-  --a: #0d0d0f;
-  --b: #2b8e9a;
-  --c: #b3121b;
 }
 [data-theme='ink'] .veyra-mark,
 .veyra-mark[data-theme='ink'] {
