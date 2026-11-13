@@ -64,7 +64,7 @@
   fill: var(--c);
 }
 .veyra-mark .starG {
-  transform-origin: 515px 400px;
+  transform-origin: 50px 36px;
   transform: scale(var(--starS));
 }
 .veyra-mark .lnS {
