@@ -1004,7 +1004,7 @@
   }
 }
 
-/* Laptop / PC: centred opening, story text left-to-right */
+/* Laptop / PC: centred opening and centred story text */
 @media (min-width: 1024px) {
   .about-ed .field-open {
     max-width: 52rem;
@@ -1060,24 +1060,32 @@
   }
   .about-ed .field-article {
     max-width: 44rem;
-    margin-left: 0;
-    margin-right: 0;
-    text-align: left;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
   }
   .about-ed .field-story {
-    max-width: none;
+    max-width: 48rem;
     width: 100%;
-    margin-left: 0;
-    margin-right: 0;
+    margin-left: auto;
+    margin-right: auto;
   }
   .about-ed .field-prose,
-  .about-ed .field-stop {
-    text-align: left;
+  .about-ed .field-stop,
+  .about-ed .field-stop-label {
+    text-align: center;
+  }
+  .about-ed .field-prose {
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .about-ed .field-stop-head {
+    justify-content: center;
   }
   .about-ed .field-pull {
-    text-align: left;
-    margin-left: 0;
-    margin-right: 0;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
   }
 }
 
