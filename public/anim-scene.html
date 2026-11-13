@@ -33,6 +33,7 @@
 <body>
 <h1>Scene animation — The Question Continues</h1>
 <p class="sub">Clean rebuild from the four stills (scene / man / crowd / orange). 5-second loop. Click the film to replay.</p>
+<p class="sub" id="debug" style="font-family:monospace;font-size:12px;">checking images…</p>
 <div class="frame">
   <div class="stage" id="stage" title="Click to replay">
     <div class="layer" id="sceneLayer"><img id="imgScene" alt="Notebook scene" /></div>
@@ -57,6 +58,15 @@
   document.getElementById('imgMan').src = stills.man;
   document.getElementById('imgCrowd').src = stills.crowd;
   document.getElementById('imgOrange').src = stills.orange;
+  setTimeout(function () {
+    var ids = ['imgScene', 'imgMan', 'imgCrowd', 'imgOrange'];
+    var parts = [];
+    ids.forEach(function (id) {
+      var el = document.getElementById(id);
+      parts.push(id + ': complete=' + el.complete + ' w=' + el.naturalWidth + ' srcLen=' + (el.src ? el.src.length : 0));
+    });
+    document.getElementById('debug').textContent = parts.join(' | ');
+  }, 800);
 
   var stage = document.getElementById('stage');
   var sceneLayer = document.getElementById('sceneLayer');
