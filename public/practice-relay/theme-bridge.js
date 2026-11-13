@@ -305,12 +305,23 @@
     function go() {
       if (window.veyraMountContinue) window.veyraMountContinue(art)
     }
-    if (window.veyraMountContinue) go()
-    else {
-      var s = document.createElement('script')
-      s.src = '/practice-relay/continue-anim.js?v=9'
-      s.onload = go
-      document.head.appendChild(s)
+    if (window.veyraMountContinue && window.__veyraStills) go()
+    else if (window.veyraMountContinue) {
+      var d0 = document.createElement('script')
+      d0.src = '/practice-relay/stills-data.js?v=1'
+      d0.onload = go
+      document.head.appendChild(d0)
+    } else {
+      /* Embedded stills first (no network), then the film logic. */
+      var d = document.createElement('script')
+      d.src = '/practice-relay/stills-data.js?v=1'
+      d.onload = function () {
+        var s = document.createElement('script')
+        s.src = '/practice-relay/continue-anim.js?v=10'
+        s.onload = go
+        document.head.appendChild(s)
+      }
+      document.head.appendChild(d)
     }
     return true
   }

@@ -92,8 +92,23 @@
     function setImg(sel, file) {
       var el = host.querySelector(sel)
       if (!el) return
-      /* Handlers BEFORE src. Try origin-absolute first, then relative. */
+      /* Prefer embedded stills (no network request, so the preview proxy
+         and cache can never blank the film). Fall back to network. */
       el.style.filter = 'none'
+      var key = file.replace('.jpg', '')
+      var embedded = window.__veyraStills && window.__veyraStills[key]
+      if (embedded) {
+        el.onload = function () {
+          el.style.opacity = '1'
+          el.style.display = 'block'
+          setStatus(file + ':embedded')
+        }
+        el.onerror = function () {
+          el.src = BASE + file + '?v=6'
+        }
+        el.src = embedded
+        return
+      }
       var triedRelative = false
       el.onload = function () {
         el.style.opacity = '1'
@@ -103,13 +118,13 @@
       el.onerror = function () {
         if (!triedRelative) {
           triedRelative = true
-          el.src = 'anim/' + file + '?v=5'
+          el.src = 'anim/' + file + '?v=6'
         } else {
           el.style.display = 'none'
           setStatus(file + ':fail ' + el.src)
         }
       }
-      el.src = BASE + file + '?v=5'
+      el.src = BASE + file + '?v=6'
     }
     setImg('.v-sc-img', 'scene.jpg')
     setImg('.v-man-img', 'man.jpg')
