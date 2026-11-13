@@ -278,10 +278,44 @@ function initVeyraFlower(root){
   });
 
   /* ---------- state ---------- */
-  var started=false,busy=false,nextRip=0,loopTimer=0;
+  var started=false,busy=false,nextRip=0,loopTimer=0,autoLoop=true;
+  var baseDuration=maxEnd||11,origTimings=null;
+  /* Fixed intro durations that live in CSS (seconds). Scaled with the rest. */
+  var FIXED_T={mote:2,dot:.7,core:1.1,coreD:.15,birth:1.8,birthD:.25,
+               bloom:1.8,bloomD:.2,flare:1.8,flareD:7.4,bloomw:3.2,bloomwD:3.2};
+  function snapshotTimings(){
+    origTimings=[];
+    root.querySelectorAll('*').forEach(function(el){
+      var d=el.style.getPropertyValue('--d'),t=el.style.getPropertyValue('--t'),
+          rd=el.style.getPropertyValue('--rd');
+      if(d||t||rd)origTimings.push({el:el,d:parseFloat(d)||0,t:parseFloat(t)||0,rd:parseFloat(rd)||0});
+    });
+  }
+  function applyScale(f){
+    if(!origTimings)snapshotTimings();
+    origTimings.forEach(function(o){
+      if(o.d)o.el.style.setProperty('--d',(o.d*f).toFixed(2)+'s');
+      if(o.t)o.el.style.setProperty('--t',(o.t*f).toFixed(2)+'s');
+      if(o.rd)o.el.style.setProperty('--rd',(o.rd*f).toFixed(2)+'s');
+    });
+    var s=function(v){return (v*f).toFixed(2)+'s';};
+    root.style.setProperty('--mote-t',s(FIXED_T.mote));
+    root.style.setProperty('--dot-t',s(FIXED_T.dot));
+    root.style.setProperty('--core-t',s(FIXED_T.core));
+    root.style.setProperty('--core-d',s(FIXED_T.coreD));
+    root.style.setProperty('--birth-t',s(FIXED_T.birth));
+    root.style.setProperty('--birth-d',s(FIXED_T.birthD));
+    root.style.setProperty('--bloom-t',s(FIXED_T.bloom));
+    root.style.setProperty('--bloom-d',s(FIXED_T.bloomD));
+    root.style.setProperty('--flare-t',s(FIXED_T.flare));
+    root.style.setProperty('--flare-d',s(FIXED_T.flareD));
+    root.style.setProperty('--bloomw-t',s(FIXED_T.bloomw));
+    root.style.setProperty('--bloomw-d',s(FIXED_T.bloomwD));
+  }
   function settle(){
     root.classList.add('is-settled');
     if(loopTimer) clearTimeout(loopTimer);
+    if(!autoLoop)return;
     loopTimer=setTimeout(function(){
       if(root.veyraFlower) root.veyraFlower.replay();
     },5000);
@@ -305,6 +339,18 @@ function initVeyraFlower(root){
 
   root.veyraFlower={
     ripple:ripple,
+    /* Stretch the whole bloom to last `seconds` (e.g. a voiceover). */
+    setDuration:function(seconds){
+      if(reduce||!seconds||!isFinite(seconds)||seconds<=0)return;
+      applyScale(seconds/baseDuration);
+    },
+    /* Back to the natural ~11s bloom. */
+    resetDuration:function(){applyScale(1);},
+    /* Stop/start the automatic replay loop (used while a voiceover plays). */
+    setAutoLoop:function(on){
+      autoLoop=!!on;
+      if(!autoLoop&&loopTimer){clearTimeout(loopTimer);loopTimer=0;}
+    },
     replay:function(){
       if(reduce)return;
       if(loopTimer) clearTimeout(loopTimer);

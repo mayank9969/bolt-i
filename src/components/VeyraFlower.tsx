@@ -15,22 +15,56 @@ export default function VeyraFlower() {
     mountVeyraFlower(el)
   }, [])
 
+  const flowerApi = () =>
+    (ref.current as unknown as { veyraFlower?: {
+      setDuration: (s: number) => void
+      resetDuration: () => void
+      setAutoLoop: (on: boolean) => void
+      replay: () => void
+    } } | null)?.veyraFlower
+
+  /* Stretch the flower bloom to the voiceover length and restart it. */
+  const syncFlower = (audio: HTMLAudioElement) => {
+    const api = flowerApi()
+    if (!api) return
+    const run = () => {
+      if (isFinite(audio.duration) && audio.duration > 0) api.setDuration(audio.duration)
+      api.setAutoLoop(false)
+      api.replay()
+    }
+    if (isFinite(audio.duration) && audio.duration > 0) run()
+    else audio.addEventListener('loadedmetadata', run, { once: true })
+  }
+
+  const releaseFlower = () => {
+    const api = flowerApi()
+    if (!api) return
+    api.resetDuration()
+    api.setAutoLoop(true)
+  }
+
   const toggleVoice = (voice: Voice) => {
     const el = voice === 'male' ? maleRef.current : femaleRef.current
     const other = voice === 'male' ? femaleRef.current : maleRef.current
     if (!el) return
     if (playing === voice) {
       el.pause()
+      releaseFlower()
       setPlaying(null)
       return
     }
     other?.pause()
-    el.play().then(() => setPlaying(voice)).catch(() => setPlaying(null))
+    syncFlower(el)
+    el.play().then(() => setPlaying(voice)).catch(() => {
+      releaseFlower()
+      setPlaying(null)
+    })
   }
 
   const stopAll = () => {
     maleRef.current?.pause()
     femaleRef.current?.pause()
+    releaseFlower()
     setPlaying(null)
   }
 
@@ -102,8 +136,18 @@ export default function VeyraFlower() {
           <g data-vf="motes" />
         </g>
       </svg>
-      <audio ref={maleRef} src="/flower-audio/male.mp3" loop preload="none" />
-      <audio ref={femaleRef} src="/flower-audio/female.mp3" loop preload="none" />
+      <audio
+        ref={maleRef}
+        src="/flower-audio/male.mp3"
+        preload="none"
+        onEnded={() => { if (playing === 'male') { releaseFlower(); setPlaying(null) } }}
+      />
+      <audio
+        ref={femaleRef}
+        src="/flower-audio/female.mp3"
+        preload="none"
+        onEnded={() => { if (playing === 'female') { releaseFlower(); setPlaying(null) } }}
+      />
       <div className="flower-sound-row">
         <button
           type="button"

@@ -96,13 +96,13 @@
 /* ----- intro (per-element delays/durations are set inline by JS) ----- */
 .veyra-flower.is-run .draw{animation:vf-draw var(--t,1.2s) cubic-bezier(.22,.82,.18,1) var(--d,0s) both}
 .veyra-flower.is-run .fade{animation:vf-fade var(--t,1.5s) cubic-bezier(.22,.7,.2,1) var(--d,0s) both}
-.veyra-flower.is-run .mote{animation:vf-fade 2s ease-out var(--d,0s) both}
-.veyra-flower.is-run .dot{animation:vf-pop .7s ease-out var(--d,0s) both}
+.veyra-flower.is-run .mote{animation:vf-fade var(--mote-t,2s) ease-out var(--d,0s) both}
+.veyra-flower.is-run .dot{animation:vf-pop var(--dot-t,.7s) ease-out var(--d,0s) both}
 .veyra-flower.is-run .petal{animation:vf-unfold var(--t,1.8s) cubic-bezier(.16,.84,.18,1) var(--d,0s) both}
-.veyra-flower.is-run .core{animation:vf-core-in 1.1s cubic-bezier(.2,.8,.2,1) .15s both}
-.veyra-flower.is-run .birth{animation:vf-birth 1.8s ease-out .25s both}
-.veyra-flower.is-run .bloom{animation:vf-bloom-in 1.8s ease-out .2s both, vf-flare 1.8s ease-in-out 7.4s}
-.veyra-flower.is-run .bloom-wide{animation:vf-fade 3.2s ease-out 3.2s both}
+.veyra-flower.is-run .core{animation:vf-core-in var(--core-t,1.1s) cubic-bezier(.2,.8,.2,1) var(--core-d,.15s) both}
+.veyra-flower.is-run .birth{animation:vf-birth var(--birth-t,1.8s) ease-out var(--birth-d,.25s) both}
+.veyra-flower.is-run .bloom{animation:vf-bloom-in var(--bloom-t,1.8s) ease-out var(--bloom-d,.2s) both, vf-flare var(--flare-t,1.8s) ease-in-out var(--flare-d,7.4s)}
+.veyra-flower.is-run .bloom-wide{animation:vf-fade var(--bloomw-t,3.2s) ease-out var(--bloomw-d,3.2s) both}
 .veyra-flower.is-run:not(.is-settled) .pulse{animation:vf-pulse var(--t,1.5s) cubic-bezier(.45,0,.35,1) var(--d,0s) both}
 
 /* ----- settled: near-imperceptible drift, plus one-at-a-time ripple ----- */
