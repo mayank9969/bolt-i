@@ -1,3 +1,5 @@
+import '@/styles/veyra-mark.css'
+
 interface LogoProps {
   size?: number
   className?: string
