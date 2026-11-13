@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Scene animation — The Question Continues</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #f8f1df; font-family: Georgia, serif; padding: 24px; color: #1b1a19; }
+  h1 { font-size: 20px; margin: 0 0 4px; }
+  p.sub { margin: 0 0 16px; color: #555; font-size: 14px; }
+  .frame { max-width: 900px; margin: 0 auto; border: 1px solid #111; background: #f8f1df; padding: 10px; box-shadow: 10px 10px 0 #c8382c; }
+  .stage { position: relative; width: 100%; aspect-ratio: 3 / 2; overflow: hidden; background: #d9d0bf; cursor: pointer; }
+  .layer { position: absolute; inset: 0; }
+  .layer img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .man-wrap { position: absolute; left: 34%; bottom: 8%; height: 66%; aspect-ratio: 1 / 2; opacity: 0; }
+  .man-wrap img { width: 100%; height: 100%; object-fit: contain; display: block; }
+  .orange-wrap { position: absolute; left: 50%; bottom: 1%; height: 96%; aspect-ratio: 2 / 3; opacity: 0; display: none; }
+  .orange-wrap img { width: 100%; height: 100%; object-fit: contain; display: block; }
+  .copy { position: absolute; pointer-events: none; opacity: 0; }
+  .copy-a { left: 4.2%; top: 5.5%; }
+  .copy-b { left: 52.5%; top: 17%; width: 44%; }
+  .kicker { font-family: ui-monospace, monospace; text-transform: uppercase; letter-spacing: 0.28em; font-size: 11px; color: #7b1f1a; margin: 0 0 8px; }
+  .line { font-style: italic; font-size: 42px; line-height: 1.02; margin: 0; }
+  .stand { font-style: italic; font-weight: 800; font-size: 110px; line-height: 0.86; letter-spacing: -0.04em; margin: 0; }
+  .out { color: #f26a1b; }
+  .blank { font-style: italic; font-size: 17px; color: #4a463f; margin: 18px 0 0; }
+  .bar { position: absolute; left: 0; bottom: 0; height: 3px; width: 0; background: #c8382c; }
+  .cap { font-family: ui-monospace, monospace; text-transform: uppercase; letter-spacing: 0.2em; font-size: 12px; font-weight: 700; padding: 12px 6px 4px; display: flex; justify-content: space-between; gap: 12px; }
+  .time { cursor: pointer; }
+</style>
+</head>
+<body>
+<h1>Scene animation — The Question Continues</h1>
+<p class="sub">Clean rebuild from the four stills (scene / man / crowd / orange). 5-second loop. Click the film to replay.</p>
+<div class="frame">
+  <div class="stage" id="stage" title="Click to replay">
+    <div class="layer" id="sceneLayer"><img id="imgScene" alt="Notebook scene" /></div>
+    <div class="man-wrap" id="manWrap"><img id="imgMan" alt="Man in blue coat" /></div>
+    <div class="layer" id="crowdLayer" style="opacity:0; display:none;"><img id="imgCrowd" alt="Crowd" /></div>
+    <div class="orange-wrap" id="orangeWrap"><img id="imgOrange" alt="Orange figure" /></div>
+    <div class="copy copy-a" id="copyA"><p class="kicker">01 — blend in</p><p class="line">Disappear into<br>the crowd?</p></div>
+    <div class="copy copy-b" id="copyB"><p class="kicker">02 — or</p><p class="stand">Stand<br><span class="out">out</span></p><p class="blank">Your page is still blank.</p></div>
+    <div class="bar" id="bar"></div>
+  </div>
+  <div class="cap"><span id="capText">The question begins</span><span class="time" id="timeEl">0.0s / 5.0s · Replay ↻</span></div>
+</div>
+<script src="/practice-relay/stills-data.js?v=1"></script>
+<script>
+(function () {
+  var stills = window.__veyraStills || {};
+  document.getElementById('imgScene').src = stills.scene || '/practice-relay/anim/scene.jpg';
+  document.getElementById('imgMan').src = stills.man || '/practice-relay/anim/man.jpg';
+  document.getElementById('imgCrowd').src = stills.crowd || '/practice-relay/anim/crowd.jpg';
+  document.getElementById('imgOrange').src = stills.orange || '/practice-relay/anim/orange.jpg';
+
+  var stage = document.getElementById('stage');
+  var sceneLayer = document.getElementById('sceneLayer');
+  var manWrap = document.getElementById('manWrap');
+  var crowdLayer = document.getElementById('crowdLayer');
+  var orangeWrap = document.getElementById('orangeWrap');
+  var copyA = document.getElementById('copyA');
+  var copyB = document.getElementById('copyB');
+  var bar = document.getElementById('bar');
+  var capText = document.getElementById('capText');
+  var timeEl = document.getElementById('timeEl');
+
+  function clamp(x, a, b) { return Math.min(b, Math.max(a, x)); }
+  function seg(t, a, b) { return clamp((t - a) / (b - a), 0, 1); }
+  function easeOut(x) { return 1 - Math.pow(1 - x, 3); }
+  function easeInOut(x) { return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; }
+
+  var DURATION = 5;
+  var start = performance.now();
+  var raf = 0;
+
+  function replay() { start = performance.now(); }
+  stage.addEventListener('click', replay);
+  timeEl.addEventListener('click', replay);
+
+  function tick(now) {
+    raf = requestAnimationFrame(tick);
+    var live = (now - start) / 1000;
+    if (live >= DURATION) { start = now; live = 0; }
+    var t = Math.min(live, DURATION);
+
+    /* Scene: slow push-in, fades out as crowd arrives */
+    var sceneScale = 1 + 0.12 * easeOut(seg(t, 0, 2.7));
+    sceneLayer.style.transform = 'scale(' + sceneScale + ')';
+    sceneLayer.style.opacity = String(1 - seg(t, 2.65, 2.75));
+    sceneLayer.style.display = t < 2.8 ? 'block' : 'none';
+
+    /* Man: walks in from the left */
+    var walk = easeOut(seg(t, 0, 1.8));
+    manWrap.style.left = (33 + 3.5 * walk) + '%';
+    manWrap.style.opacity = String(easeOut(seg(t, 0.05, 0.6)));
+    manWrap.style.transform = 'translateX(-50%) scale(' + (1 - 0.08 * walk) + ')';
+
+    /* Crowd: crossfades in over the scene */
+    var crowdOp = easeInOut(seg(t, 1.8, 2.65)) * (1 - 0.55 * easeInOut(seg(t, 3.2, 4.0)));
+    crowdLayer.style.display = crowdOp > 0.01 ? 'block' : 'none';
+    crowdLayer.style.opacity = String(crowdOp);
+    crowdLayer.style.transform = 'scale(' + (1.08 - 0.08 * easeOut(seg(t, 1.8, 3.3))) + ')';
+
+    /* Orange: steps out */
+    var oOp = easeOut(seg(t, 3.25, 3.7));
+    orangeWrap.style.display = oOp > 0.01 ? 'block' : 'none';
+    orangeWrap.style.opacity = String(oOp);
+    orangeWrap.style.left = (50 - 21 * easeInOut(seg(t, 3.75, 4.6))) + '%';
+    orangeWrap.style.transform = 'translateX(-50%) scale(' + (0.92 + 0.08 * easeOut(seg(t, 3.25, 4.0))) + ')';
+
+    /* Copy + caption + bar */
+    copyA.style.opacity = String(easeOut(seg(t, 2.3, 2.5)) * (1 - seg(t, 3.3, 3.65)));
+    copyB.style.opacity = String(t > 3.6 ? 1 : 0);
+    bar.style.width = (t / DURATION * 100) + '%';
+    capText.textContent = t < 1.8 ? 'The question begins' : t < 3.3 ? 'Everyone is walking the same way' : t < 4.4 ? 'Someone just stepped out' : 'The question continues';
+    timeEl.textContent = t.toFixed(1) + 's / 5.0s · Replay ↻';
+  }
+  raf = requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>
