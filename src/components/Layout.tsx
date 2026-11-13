@@ -97,7 +97,7 @@ function Footer() {
       <div className="max-w-page mx-auto px-5 sm:px-8 lg:px-12 py-12 flex flex-col sm:flex-row sm:items-end justify-between gap-6">
         <div>
           <p className="figcap flex items-center gap-2">
-            <LogoMark size={28} animated={false} />
+            <LogoMark size={56} animated={false} />
             VEYRA
           </p>
           <p className="t-caption text-fg-2 mt-2 max-w-sm">
