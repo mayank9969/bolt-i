@@ -28,6 +28,12 @@ export default function VeyraFlower() {
     el.play().then(() => setPlaying(voice)).catch(() => setPlaying(null))
   }
 
+  const stopAll = () => {
+    maleRef.current?.pause()
+    femaleRef.current?.pause()
+    setPlaying(null)
+  }
+
   return (
     <div
       ref={ref}
@@ -116,6 +122,15 @@ export default function VeyraFlower() {
           aria-label={playing === 'female' ? 'Stop the female voiceover' : 'Play the female voiceover'}
         >
           {playing === 'female' ? 'Female on' : 'Female'}
+        </button>
+        <button
+          type="button"
+          className="flower-sound-btn flower-sound-off"
+          onClick={stopAll}
+          disabled={playing === null}
+          aria-label="Turn the sound off"
+        >
+          Sound off
         </button>
       </div>
     </div>

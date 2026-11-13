@@ -184,3 +184,7 @@
   border-color:var(--nx-accent,#2b8e9a);
   color:#fff;
 }
+.flower-sound-btn:disabled{
+  opacity:.45;
+  cursor:default;
+}
