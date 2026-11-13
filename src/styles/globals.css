@@ -41,11 +41,16 @@
     background-color: var(--nx-canvas);
     color: var(--nx-text);
     overflow-x: hidden;
+    overflow-wrap: break-word;
+    text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-feature-settings: 'kern', 'liga', 'calt';
     letter-spacing: 0;
     transition: background-color var(--nx-dur-slow) var(--nx-ease), color var(--nx-dur-slow) var(--nx-ease);
+  }
+  p {
+    text-wrap: pretty;
   }
 
   h1, h2, h3, h4 {
