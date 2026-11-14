@@ -12,8 +12,5 @@ services:
       - key: PYTHON_VERSION
         value: 3.12.0
       # Comma-separated list of allowed frontend origins.
-      # Set this to your InfinityFree domain once the frontend is live,
-      # e.g. https://veyra.infinityfreeapp.com
-      # Leave as * to allow any origin (simpler, less secure).
       - key: ALLOWED_ORIGINS
-        value: "*"
+        value: "https://veyra.ct.ws,http://veyra.ct.ws"
