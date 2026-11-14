@@ -15,7 +15,7 @@ import type {
 //  the hosted API, e.g. https://backend-fc24.onrender.com/api
 // ══════════════════════════════════════════════════════════════
 
-const API_BASE = (import.meta.env.VITE_API_BASE_URL || '/api').replace(/\/+$/, '')
+const API_BASE = (import.meta.env.VITE_API_BASE_URL || 'https://backend-fc24.onrender.com/api').replace(/\/+$/, '')
 
 export class ApiError extends Error {
   status: number
