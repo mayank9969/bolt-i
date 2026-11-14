@@ -60,11 +60,67 @@
 
   function realMark(size) {
     var wrap = document.createElement('div')
-    wrap.className = 'veyra-mark nofield is-settled veyra-ui-mark'
+    wrap.className = 'veyra-mark nofield is-armed veyra-ui-mark'
     wrap.style.setProperty('--vm-size', size + 'px')
     wrap.setAttribute('aria-hidden', 'true')
     wrap.innerHTML = markSvg
+    animateMark(wrap)
     return wrap
+  }
+
+  function animateMark(el) {
+    var reduce = false
+    try {
+      reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    } catch (e) {}
+    if (reduce) {
+      el.classList.add('is-settled')
+      return
+    }
+    var busy = false
+    var settleT = 0
+    var loopT = 0
+    var vanishT = 0
+    function play() {
+      window.clearTimeout(settleT)
+      window.clearTimeout(loopT)
+      window.clearTimeout(vanishT)
+      busy = true
+      el.style.opacity = ''
+      el.classList.remove('is-run', 'is-settled', 'is-rippling', 'is-vanish')
+      void el.offsetWidth
+      el.classList.add('is-run')
+      settleT = window.setTimeout(function () {
+        el.classList.add('is-settled')
+        busy = false
+        loopT = window.setTimeout(function () {
+          el.classList.add('is-vanish')
+          vanishT = window.setTimeout(play, 720)
+        }, 4800)
+      }, 3300)
+    }
+    function replay() {
+      if (busy) return
+      play()
+    }
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (e) {
+            el.classList.toggle('is-paused', !e.isIntersecting)
+            if (e.isIntersecting && !el.classList.contains('is-run')) replay()
+          })
+        },
+        { threshold: 0.2 },
+      )
+      io.observe(el)
+    } else {
+      requestAnimationFrame(function () {
+        requestAnimationFrame(play)
+      })
+    }
+    el.addEventListener('pointerenter', replay)
+    el.addEventListener('click', replay)
   }
 
   function placeMarks() {

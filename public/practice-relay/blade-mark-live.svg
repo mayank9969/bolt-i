@@ -1,8 +1,48 @@
 <svg viewBox="180 120 660 780" aria-hidden="true" focusable="false">
-  <path class="blade" d="M230 170C290 176 360 190 402 212C414 430 450 660 500 856C420 720 292 440 230 170Z"/>
-  <path class="facet" d="M330 186C364 194 390 202 402 212C414 430 450 660 500 856C462 700 392 480 330 186Z"/>
-  <path class="curlP" d="M230 170C170 185 138 262 190 302C216 320 254 302 248 268C232 290 204 282 210 254C214 230 232 200 230 170Z"/>
-  <path class="blade" d="M500 856C556 700 612 450 632 262C640 214 676 184 730 178C770 174 796 160 806 128C808 190 782 236 750 292C702 440 592 730 500 856Z"/>
-  <path class="facet" d="M632 262C640 214 676 184 730 178C770 174 796 160 806 128C790 176 700 214 660 330Z"/>
-  <path class="starP" d="M515 215Q515 400 585 400Q515 400 515 585Q515 400 445 400Q515 400 515 215Z"/>
+  <defs>
+    <radialGradient id="vm-halo">
+      <stop offset="0" style="stop-color:var(--b)" stop-opacity="0.55"/>
+      <stop offset=".45" style="stop-color:var(--b)" stop-opacity="0.16"/>
+      <stop offset="1" style="stop-color:var(--b)" stop-opacity="0"/>
+    </radialGradient>
+    <mask id="vm-ml" maskUnits="userSpaceOnUse" x="-100" y="-100" width="1200" height="1200">
+      <path class="ink" style="--d:.6s;--t:1.4s" pathLength="1" stroke-width="250" d="M310 195C380 330 432 590 500 856"/>
+    </mask>
+    <mask id="vm-mc" maskUnits="userSpaceOnUse" x="-100" y="-100" width="1200" height="1200">
+      <path class="ink" style="--d:.25s;--t:.9s" pathLength="1" stroke-width="95" d="M230 172C182 196 156 258 194 292C214 308 244 298 246 272"/>
+    </mask>
+    <mask id="vm-mr" maskUnits="userSpaceOnUse" x="-100" y="-100" width="1200" height="1200">
+      <path class="ink" style="--d:2s;--t:1.4s" pathLength="1" stroke-width="200" d="M500 856C578 690 648 430 676 268C692 208 748 176 800 136"/>
+    </mask>
+  </defs>
+  <circle class="halo" cx="515" cy="400" r="300" fill="url(#vm-halo)"/>
+  <g mask="url(#vm-ml)">
+    <path class="blade" d="M230 170C290 176 360 190 402 212C414 430 450 660 500 856C420 720 292 440 230 170Z"/>
+    <path class="facet" style="--d:1.7s;--t:.8s" d="M330 186C364 194 390 202 402 212C414 430 450 660 500 856C462 700 392 480 330 186Z"/>
+  </g>
+  <g class="curlG" mask="url(#vm-mc)">
+    <path class="curlP" d="M230 170C170 185 138 262 190 302C216 320 254 302 248 268C232 290 204 282 210 254C214 230 232 200 230 170Z"/>
+  </g>
+  <g mask="url(#vm-mr)">
+    <path class="blade" d="M500 856C556 700 612 450 632 262C640 214 676 184 730 178C770 174 796 160 806 128C808 190 782 236 750 292C702 440 592 730 500 856Z"/>
+    <path class="facet" style="--d:3.05s;--t:.8s" d="M632 262C640 214 676 184 730 178C770 174 796 160 806 128C790 176 700 214 660 330Z"/>
+  </g>
+  <path class="thorn" style="--d:2s" d="M279 322L230 344L281 350Z"/>
+  <path class="thorn" style="--d:3.3s" d="M711 384L768 398L710 412Z"/>
+  <g class="flG">
+    <path class="flP" style="--d:3.35s" d="M500 856C470 880 430 884 404 868C440 872 470 862 500 856Z"/>
+    <path class="flP" style="--d:3.45s" d="M500 856C530 880 570 884 596 868C560 872 530 862 500 856Z"/>
+  </g>
+  <g class="starG" style="--d:3.7s">
+    <path class="starP" d="M515 215Q515 400 585 400Q515 400 515 585Q515 400 445 400Q515 400 515 215Z"/>
+    <path class="lnS" d="M515 215Q515 400 585 400Q515 400 515 585Q515 400 445 400Q515 400 515 215Z"/>
+  </g>
+  <path class="ln" style="--d:.2s;--t:.9s" pathLength="1" d="M230 170C170 185 138 262 190 302C216 320 254 302 248 268C232 290 204 282 210 254C214 230 232 200 230 170Z"/>
+  <path class="ln" style="--d:.55s;--t:1.35s" pathLength="1" d="M230 170C290 176 360 190 402 212C414 430 450 660 500 856C420 720 292 440 230 170Z"/>
+  <path class="ln" style="--d:1.95s;--t:1.35s" pathLength="1" d="M500 856C556 700 612 450 632 262C640 214 676 184 730 178C770 174 796 160 806 128C808 190 782 236 750 292C702 440 592 730 500 856Z"/>
+  <path class="pulse hot" style="--d:4.7s;--t:1.2s;--rd:0s" pathLength="1" d="M230 170C290 176 360 190 402 212C414 430 450 660 500 856C420 720 292 440 230 170Z"/>
+  <path class="pulse" style="--d:4.7s;--t:1.15s;--rd:0s" pathLength="1" d="M230 170C290 176 360 190 402 212C414 430 450 660 500 856C420 720 292 440 230 170Z"/>
+  <path class="pulse" style="--d:4.85s;--t:1.15s;--rd:.12s" pathLength="1" d="M500 856C556 700 612 450 632 262C640 214 676 184 730 178C770 174 796 160 806 128C808 190 782 236 750 292C702 440 592 730 500 856Z"/>
+  <circle class="spark" style="--d:.05s" cx="230" cy="170" r="7"/>
+  <circle class="flare" style="--d:3.8s" cx="515" cy="400" r="16"/>
 </svg>
