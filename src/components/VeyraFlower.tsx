@@ -1,77 +1,16 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { mountVeyraFlower } from '@/lib/veyraFlower'
 import '@/styles/veyra-flower.css'
 
-type Voice = 'male' | 'female'
-
 export default function VeyraFlower() {
   const ref = useRef<HTMLDivElement>(null)
-  const maleRef = useRef<HTMLAudioElement | null>(null)
-  const femaleRef = useRef<HTMLAudioElement | null>(null)
-  const [playing, setPlaying] = useState<Voice | null>(null)
   useEffect(() => {
     const el = ref.current
     if (!el) return
     mountVeyraFlower(el)
-    /* First view: normal 9s bloom, sound off. */
-    const api = (el as unknown as { veyraFlower?: { resetDuration: () => void; setAutoLoop: (on: boolean) => void } }).veyraFlower
-    api?.resetDuration()
-    api?.setAutoLoop(true)
   }, [])
 
-  const flowerApi = () =>
-    (ref.current as unknown as { veyraFlower?: {
-      setDuration: (s: number) => void
-      resetDuration: () => void
-      setAutoLoop: (on: boolean) => void
-      replay: () => void
-    } } | null)?.veyraFlower
-
-  /* Stretch the flower bloom to the voiceover length and restart it. */
-  const syncFlower = (audio: HTMLAudioElement) => {
-    const api = flowerApi()
-    if (!api) return
-    const run = () => {
-      if (isFinite(audio.duration) && audio.duration > 0) api.setDuration(audio.duration)
-      api.setAutoLoop(false)
-      api.replay()
-    }
-    if (isFinite(audio.duration) && audio.duration > 0) run()
-    else audio.addEventListener('loadedmetadata', run, { once: true })
-  }
-
-  const releaseFlower = () => {
-    const api = flowerApi()
-    if (!api) return
-    api.resetDuration()
-    api.setAutoLoop(true)
-  }
-
-  const toggleVoice = (voice: Voice) => {
-    /* Locked while a voiceover plays — it cannot change mid-way. */
-    if (playing !== null) return
-    const el = voice === 'male' ? maleRef.current : femaleRef.current
-    if (!el) return
-    el.currentTime = 0
-    /* Start the audio on the tap first, then stretch the flower to it. */
-    el.play().then(() => {
-      setPlaying(voice)
-      syncFlower(el)
-    }).catch(() => {
-      releaseFlower()
-      setPlaying(null)
-    })
-  }
-
-  const stopAll = () => {
-    maleRef.current?.pause()
-    femaleRef.current?.pause()
-    releaseFlower()
-    setPlaying(null)
-  }
-
   return (
-    <div className="flower-wrap">
     <div
       ref={ref}
       className="veyra-flower"
@@ -139,50 +78,6 @@ export default function VeyraFlower() {
           <g data-vf="motes" />
         </g>
       </svg>
-    </div>
-      <audio
-        ref={maleRef}
-        src="/flower-audio/male.mp3"
-        preload="auto"
-        onEnded={() => { releaseFlower(); setPlaying(null) }}
-      />
-      <audio
-        ref={femaleRef}
-        src="/flower-audio/female.mp3"
-        preload="auto"
-        onEnded={() => { releaseFlower(); setPlaying(null) }}
-      />
-      <div className="flower-sound-row">
-        <button
-          type="button"
-          className="flower-sound-btn"
-          onClick={() => toggleVoice('male')}
-          disabled={playing !== null}
-          aria-pressed={playing === 'male'}
-          aria-label="Play the male voiceover"
-        >
-          {playing === 'male' ? 'Male on' : 'Male'}
-        </button>
-        <button
-          type="button"
-          className="flower-sound-btn"
-          onClick={() => toggleVoice('female')}
-          disabled={playing !== null}
-          aria-pressed={playing === 'female'}
-          aria-label="Play the female voiceover"
-        >
-          {playing === 'female' ? 'Female on' : 'Female'}
-        </button>
-        <button
-          type="button"
-          className="flower-sound-btn flower-sound-off"
-          onClick={stopAll}
-          disabled={playing === null}
-          aria-label="Turn the sound off"
-        >
-          Sound off
-        </button>
-      </div>
     </div>
   )
 }

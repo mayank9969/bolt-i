@@ -151,7 +151,6 @@ export default function About() {
             </p>
             <p className="about-for-you-rule">
               <span>— — — —</span>
-              <span className="about-for-you-mid">a</span>
               <span>— — — —</span>
             </p>
           </div>
