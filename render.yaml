@@ -1,0 +1,19 @@
+# Render blueprint — VEYRA backend (Flask quiz engine).
+# Deploy: Render dashboard → New → Blueprint → select this repo.
+# Or create a Web Service manually with the settings below.
+services:
+  - type: web
+    name: veyra-backend
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python api/server.py
+    healthCheckPath: /
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.0
+      # Comma-separated list of allowed frontend origins.
+      # Set this to your InfinityFree domain once the frontend is live,
+      # e.g. https://veyra.infinityfreeapp.com
+      # Leave as * to allow any origin (simpler, less secure).
+      - key: ALLOWED_ORIGINS
+        value: "*"
